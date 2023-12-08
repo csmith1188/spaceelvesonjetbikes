@@ -27,7 +27,7 @@ window.onload = function () {
 
     //Game
     game = new Game();
-    game.debug = false;
+    game.debug = true;
 
     game.match = new Match();
     game.match.map = new Map();
@@ -41,8 +41,8 @@ window.onload = function () {
     game.player.camera = new Camera({ target: game.player.character });
 
 
-    makeGame(['pool', 'waves', 'track', 'ramps', '2v2', 'randommap'])
-    //makeGame(['pool', 'dummy'])
+    // makeGame(['pool', 'waves', 'track', 'ramps', '2v2', 'randommap'])
+    makeGame(['pool', 'dummy'])
 
 
 
@@ -293,6 +293,7 @@ function setupInputs() {
         let coords = getCanvasRelative(event, true);
         game.player.controller.aimX = coords.x
         game.player.controller.aimY = coords.y
+        console.log(coords.x, coords.y);
     })
 }
 

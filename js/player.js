@@ -15,23 +15,62 @@ class Player {
         }
     }
 
+    createDebug() {
+        let characterSliders = {
+            'speedMulti': { 'min': 0, 'max': 1, 'step': 0.05, 'value': this.character.speedMulti },
+            'maxSpeed': { 'min': 0, 'max': 100, 'step': 0.5, 'value': this.character.maxSpeed },
+            'frictionMulti': { 'min': 0.8, 'max': 1, 'step': 0.001, 'value': this.character.frictionMulti }
+        };
+        this.debugBox = document.createElement('div');
+        this.debugBox.id = 'debugger';
+        for (const debugKey in characterSliders) {
+            let newSlider = document.createElement('input');
+            newSlider.classList.add('debugSlider');
+            newSlider.type = 'range';
+            for (const debugProp in characterSliders[debugKey]) {
+                newSlider[debugProp] = characterSliders[debugKey][debugProp];
+            }
+            newSlider.addEventListener(
+                'change',
+                () => { this.character[debugKey] = newSlider.value; console.log(debugKey, newSlider.value)},
+                false
+            );
+            this.debugBox.appendChild(newSlider);
+        }
+        document.body.appendChild(this.debugBox);
+    }
+
     drawHUD() {
         let compareX = game.player.camera.x - game.player.character.x;
         let compareY = game.player.camera.y - game.player.character.y;
 
         ctx.fillStyle = "#000000";
         if (game.debug) {
+
+            //Create panel
+            if (!this.debugBox) {
+                this.createDebug();
+            }
+
+
             ctx.font = '12px consolas';
             ctx.fillText(this.character.x, 10, 150);
             ctx.fillText(this.character.y, 10, 160);
+            //aimX is the mouse coordinates minus the player coordinates
+            //likewise with aimY (I calculated this elsewhere)
             let aimX = game.player.controller.aimX;
             let aimY = game.player.controller.aimY;
-            if (aimX > 100) aimX = 100;
-            if (aimX < -100) aimX = -100;
-            if (aimY > 100) aimY = 100;
-            if (aimY < -100) aimY = -100;
-            ctx.fillRect((game.window.w / 2) + aimX, (game.window.h / 2) + aimY, 10, 10);
-
+            //find the distance from player to mouse with pythagorean theorem
+            let distance = ((aimX**2) + (aimY**2)) ** 0.5;
+            //Normalize the dimension distance by the real distance (ratio)
+            //Then multiply by the distance of the out circle
+            aimX = (aimX / distance) * 100;
+            aimY = (aimY / distance) * 100;
+            //Draw the crosshair at the point
+            //(in this case, the center of the screen plus the normalized distance)
+            ctx.fillRect(   (game.window.w / 2) + aimX,
+                            (game.window.h / 2) + aimY,
+                            10, 10);
             /*
             ctx.moveTo((game.window.w / 2), (game.window.h / 2));
 
@@ -115,10 +154,10 @@ class Player {
         // ctx.strokeStyle = 'red';
         // ctx.fillStyle = 'rgba(255,0,0,0.1)';
         // ctx.lineWidth = 5;
-    
+
         // ctx.beginPath();
         // ctx.arc(game.window.w / 2, game.window.h / 2, 48, 0, 2 * Math.PI);
-    
+
         // ctx.stroke();
         // ctx.fill();
 
