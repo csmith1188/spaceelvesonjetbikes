@@ -3,6 +3,8 @@ class Player {
         this.character;
         this.controller;
         this.camera;
+        this.xhair = new Image();
+        this.xhair.src = 'img/sprites/xhair.png';
         this.hud = {
             barW: 48
         }
@@ -32,7 +34,7 @@ class Player {
             }
             newSlider.addEventListener(
                 'change',
-                () => { this.character[debugKey] = newSlider.value; console.log(debugKey, newSlider.value)},
+                () => { this.character[debugKey] = newSlider.value; console.log(debugKey, newSlider.value) },
                 false
             );
             this.debugBox.appendChild(newSlider);
@@ -56,37 +58,6 @@ class Player {
             ctx.font = '12px consolas';
             ctx.fillText(this.character.x, 10, 150);
             ctx.fillText(this.character.y, 10, 160);
-            //aimX is the mouse coordinates minus the player coordinates
-            //likewise with aimY (I calculated this elsewhere)
-            let aimX = game.player.controller.aimX;
-            let aimY = game.player.controller.aimY;
-            //find the distance from player to mouse with pythagorean theorem
-            let distance = ((aimX**2) + (aimY**2)) ** 0.5;
-            //Normalize the dimension distance by the real distance (ratio)
-            //Then multiply by the distance of the out circle
-            aimX = (aimX / distance) * 100;
-            aimY = (aimY / distance) * 100;
-            //Draw the crosshair at the point
-            //(in this case, the center of the screen plus the normalized distance)
-            ctx.fillRect(   (game.window.w / 2) + aimX,
-                            (game.window.h / 2) + aimY,
-                            10, 10);
-            /*
-            ctx.moveTo((game.window.w / 2), (game.window.h / 2));
-
-            ctx.beginPath();
-            ctx.moveTo((game.window.w / 2), (game.window.h / 2)); // Start at center of player
-            // radius is known radius value
-            // aimX and aimY are the known cursor position
-            let lY = 0;
-            let lX = aimX/aimY * (x - aimY) + aimX  // What is "x"?
-            if ( aimY > 0 ) // The upper circle
-                lY = (100^2 - lX^2) ^ 1/2
-            else // The lower circle
-                lY = -(100^2 - lX^2) ^ 1/2
-            ctx.lineTo((game.window.w / 2) + lX, (game.window.h / 2) + lY); // Put the end of the line here
-            ctx.stroke(); // Make the line
-            */
         }
 
         ctx.font = '15px Jura';
@@ -149,6 +120,25 @@ class Player {
             ctx.fillStyle = "#00FF00";
         }
         ctx.fillRect(game.window.w / 2 - compareX - (game.player.character.w / 2) + 1, game.window.h / 2 - compareY - (game.player.character.h / 2) + 10 + 57, calcSpeed, 4);
+
+        //Crosshair
+
+        //aimX is the mouse coordinates minus the player coordinates
+        //likewise with aimY (I calculated this elsewhere)
+        let aimX = game.player.controller.aimX;
+        let aimY = game.player.controller.aimY;
+        //find the distance from player to mouse with pythagorean theorem
+        let distance = ((aimX ** 2) + (aimY ** 2)) ** 0.5;
+        //Normalize the dimension distance by the real distance (ratio)
+        //Then multiply by the distance of the out circle
+        aimX = (aimX / distance) * 75;
+        aimY = (aimY / distance) * 75;
+        //Draw the crosshair at the point
+        //(in this case, the center of the screen plus the normalized distance)
+        ctx.drawImage(this.xhair, (game.window.w / 2) + aimX - 8, (game.window.h / 2) + aimY - 8, 16, 16);
+
+
+
 
         // In case I want to use arches for power bars or abilities
         // ctx.strokeStyle = 'red';

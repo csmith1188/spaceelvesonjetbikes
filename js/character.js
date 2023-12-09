@@ -44,6 +44,8 @@ class Character {
         this.power = 300;
         this.power_max = 300;
         this.threatMulti = 1;
+        //Item
+        this.item = new Item();
         //Graphics
         this.img = new Image();
         this.gfx = 'img/sprites/jetbike';
@@ -142,9 +144,9 @@ class Character {
 
 
             //Particle FX
-            let tempx = (Math.random() * 1) - 0.5;
-            let tempy = (Math.random() * 1) - 0.5;
-            if (ticks % 4 == 0) game.match.map.debris.push(new Debris(allID++, this.x + this.exhaust, this.y, { w: 6, h: 6, xspeed: tempx, yspeed: tempy, z: this.z, color: '#dddddd', livetime: 30, alwaysDying: true, landable: false }));
+            // let tempx = (Math.random() * 1) - 0.5;
+            // let tempy = (Math.random() * 1) - 0.5;
+            // if (ticks % 4 == 0) game.match.map.debris.push(new Debris(allID++, this.x + this.exhaust, this.y, { w: 6, h: 6, xspeed: tempx, yspeed: tempy, z: this.z, color: '#dddddd', livetime: 30, alwaysDying: true, landable: false }));
 
             // Break your records!
             if (!this.bot && game.player.best.air < this.z) game.player.best.air = this.z
@@ -220,6 +222,42 @@ class Character {
                 this.power -= this.lungeCost;
             }
             controller.alt.last = controller.alt.current;
+        }
+        // Shoot
+        if (controller.click.current != controller.click.last) {
+            if (controller.click.current) {
+
+                
+                // this.item.use();
+
+
+                // if (this.lungeSFX.duration <= 0 || this.lungeSFX.paused)
+                //     this.lungeSFX.play();
+                let aimX = game.player.controller.aimX;
+                let aimY = game.player.controller.aimY;
+                //find the distance from player to mouse with pythagorean theorem
+                let distance = ((aimX ** 2) + (aimY ** 2)) ** 0.5;
+                //Normalize the dimension distance by the real distance (ratio)
+                //Then multiply by the distance of the out circle
+                // aimX = (aimX / distance) * 10 + this.xspeed;
+                // aimY = (aimY / distance) * 10 + this.yspeed;
+                aimX = (aimX / distance) * 20;
+                aimY = (aimY / distance) * 20;
+
+                game.match.map.blocks.push(new Block(allID++, this.x, this.y, {
+                    color: '#FF0000',
+                    xspeed: aimX,
+                    yspeed: aimY,
+                    dxspeed: aimX,
+                    dyspeed: aimY,
+                    tags: ['nocollide'],
+                    w: 4,
+                    h: 4,
+                    alwaysDying: true,
+                    livetime: 100
+                }));
+            }
+            controller.click.last = controller.click.current;
         }
         if (controller.space && this.power >= this.jumpCost) {
             this.zspeed += 2
@@ -327,7 +365,7 @@ class Character {
                                     this.hp -= damCalc;
                                 }
                             } else {
-                                if (Math.abs(this.xspeed) > game.match.map.collideDamageSpeed)  {
+                                if (Math.abs(this.xspeed) > game.match.map.collideDamageSpeed) {
                                     damCalc = Math.abs(this.xspeed)
                                     c.hp -= damCalc
                                 };
@@ -419,7 +457,6 @@ class NPC extends Character {
                 if (!c.tags.includes('debris') && !c.tags.includes('nocollide') && Math.abs(this.x - c.x) < this.w / 2 + (c.w / 2) + this.lookAhead && Math.abs(this.y - c.y) < this.h / 2 + (c.h / 2) + this.lookAhead && this.z < c.d && c.z < this.d) {
                     // if (this.power >= this.jumpCost) {
                     this.zspeed += 7
-                    console.log(this.zspeed);
                     this.power -= this.jumpCost
                     // }
                 }
@@ -450,7 +487,6 @@ class NPC extends Character {
             if (this.target.team !== undefined) {
                 if (this.target.team == this.team) this.formationRange = this.dformationRange;
                 else this.formationRange = 0;
-                // console.log(this.target);
                 if (this.target.lastColNPC)
                     if (this.target.lastColNPC.team != this.team)
                         this.target = this.target.lastColNPC;

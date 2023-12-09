@@ -81,16 +81,17 @@ class Block {
 
         //Don't run if not active or not after start delay time
         if (this.active && ticks >= this.startDelay) {
-            //If this has a target, move towards it
+            //If this has a target...
             if (this.target) {
-                //Make sure it's active first
+                //Make sure the target is active first
                 if (this.target.active) {
                     if (this.chase) {
                         let compareX = this.target.x - this.x;
                         let compareY = this.target.y - this.y;
                         let speed = this.speedMulti;
-                        //Is this airborne
+                        //Can this block change speed?
                         if (this.speedChange) {
+                            //Is this airborne?
                             if (this.z > game.match.map.windH)
                                 speed *= 0.1;
                             if (compareX > 0 && this.xspeed < this.maxSpeed) {
@@ -101,9 +102,7 @@ class Block {
                                 this.xspeed -= speed;
                                 this.img.src = this.leftgfx + '.png';
                             }
-                        }
-                        //Move towards target
-                        if (this.speedChange) {
+                            //Move towards target
                             if (compareY < 0 && this.yspeed > this.maxSpeed * -1) this.yspeed -= speed;
                             else if (compareY >= 0 && this.yspeed < this.maxSpeed) this.yspeed += speed;
                         }
@@ -127,6 +126,8 @@ class Block {
             if (!this.speedChange) {
                 if (this.xspeed > 0 && Math.abs(this.xspeed) != Math.abs(this.dxspeed)) this.xspeed = this.dxspeed;
                 if (this.xspeed < 0 && Math.abs(this.xspeed) != Math.abs(this.dxspeed)) this.xspeed = this.dxspeed * -1;
+                if (this.yspeed > 0 && Math.abs(this.yspeed) != Math.abs(this.dyspeed)) this.yspeed = this.dyspeed;
+                if (this.yspeed < 0 && Math.abs(this.yspeed) != Math.abs(this.dyspeed)) this.yspeed = this.dyspeed * -1;
             }
 
             // Make the move

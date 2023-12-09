@@ -13,6 +13,7 @@ class Map {
         this.imgSizeW = 480;
         this.imgSizeH = 480;
         this.blocks = [];
+        this.blocks.lastBlock = () => { return this.blocks[this.blocks.length-1]; }
         this.percipitation = false;
         this.debris = [];
         this.debrisAmount = 1000;
@@ -77,7 +78,6 @@ class Map {
         for (const e of this.debris) {
             if (e.cleanup && !e.active) {
                 //Remove debris
-                // console.log('removed');
                 this.debris = this.debris.filter(function (el) { return el != e; });
             }
             if (this.percipitation && this.debris.length < this.debrisAmount) {

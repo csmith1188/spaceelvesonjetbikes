@@ -27,7 +27,7 @@ window.onload = function () {
 
     //Game
     game = new Game();
-    game.debug = true;
+    game.debug = false;
 
     game.match = new Match();
     game.match.map = new Map();
@@ -193,7 +193,7 @@ function draw() {
     for (const block of game.match.map.blocks) {
         block.draw(game.player.character);
     }
-    
+
     //Draw goals
     for (const goal of game.match.goals) {
         goal.draw(game.player.character);
@@ -289,16 +289,27 @@ function setupInputs() {
         event.stopImmediatePropagation();
         getTouch(event);
     }, { passive: false });
+    window.addEventListener("mousedown", (event) => {
+        let coords = getCanvasRelative(event, false); // from top-left
+        game.player.controller.clickX = coords.x;
+        game.player.controller.clickY = coords.y;
+        coords = getCanvasRelative(event, true); // relative to center
+        game.player.controller.rclickX = coords.x;
+        game.player.controller.rclickY = coords.y;
+        game.player.controller.clickButton = 1
+    });
+    window.addEventListener("mouseup", (event) => {
+        game.player.controller.clickButton = 0
+    });
     window.addEventListener('mousemove', (event) => {
         let coords = getCanvasRelative(event, true);
         game.player.controller.aimX = coords.x
         game.player.controller.aimY = coords.y
-        console.log(coords.x, coords.y);
-    })
+    });
+    window.addEventListener("contextmenu", e => e.preventDefault());
 }
 
 function getCanvasRelative(e, center) {
-    // console.log(window.orientation);
     bx = canvas.getBoundingClientRect();
     if (center) {
         let compareX = e.clientX - this.x;

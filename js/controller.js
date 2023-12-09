@@ -5,6 +5,10 @@ class Controller {
             current: false,
             last: false
         }
+        this.click = {
+            current: false,
+            last: false
+        }
         this.gamePad;
         this.touch = {
             enabled: false,
@@ -106,7 +110,8 @@ class Controller {
             else this.shift = 0;
             if (this.altKey) this.alt.current = this.altKey;
             else this.alt.current = 0;
-
+            if (this.clickButton) this.click.current = this.clickButton;
+            else this.click.current = 0;
         }
     }
     /*
