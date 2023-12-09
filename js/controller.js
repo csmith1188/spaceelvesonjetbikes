@@ -52,6 +52,15 @@ class Controller {
             else this.down = 0;
             if (gp.axes[1] < this.deadzone * -1) this.up = gp.axes[1] * -1;
             else this.up = 0;
+            // If eitehr axis of stick 2 is outside of deadzone
+            if (Math.abs(gp.axes[2]) >= this.deadzone || Math.abs(gp.axes[3]) >= this.deadzone) {
+                game.player.controller.aimX = gp.axes[2] * 100;
+                game.player.controller.aimY = gp.axes[3] * 100;
+            }
+            // else this.up = 0;
+            // if (Math.abs(gp.axes[3]) > this.deadzone) game.player.controller.aimY = gp.axes[3] * 100;
+            // else game.player.controller.aimX = 0;
+            console.log(game.player.controller.aimX, gp.axes[3]);
             if (gp.buttons[10].pressed) this.shift = 1;
             else this.shift = 0;
             if (gp.buttons[4].pressed) this.alt.current = 1;
@@ -59,7 +68,7 @@ class Controller {
 
             if (gp.buttons[6].pressed) this.space = 1;
             else this.space = 0;
-            
+
             if (gp.buttons[8].pressed) if (ticks > 180) location.reload();
             // else this.alt.current = 0;
 
@@ -76,43 +85,43 @@ class Controller {
         ###     ########   ########   ########  ###    ###
         */
         else
-        if (this.touch.enabled) {
-            if (this.leftTouch) this.left = this.leftTouch;
-            else this.left = 0;
-            if (this.rightTouch) this.right = this.rightTouch;
-            else this.right = 0;
-            if (this.upTouch) this.up = this.upTouch;
-            else this.up = 0;
-            if (this.downTouch) this.down = this.downTouch;
-            else this.down = 0;
-        }
-        /*
-              :::    ::: :::::::::: :::   ::: :::::::::   ::::::::      :::     :::::::::  :::::::::
-             :+:   :+:  :+:        :+:   :+: :+:    :+: :+:    :+:   :+: :+:   :+:    :+: :+:    :+:
-            +:+  +:+   +:+         +:+ +:+  +:+    +:+ +:+    +:+  +:+   +:+  +:+    +:+ +:+    +:+
-           +#++:++    +#++:++#     +#++:   +#++:++#+  +#+    +:+ +#++:++#++: +#++:++#:  +#+    +:+
-          +#+  +#+   +#+           +#+    +#+    +#+ +#+    +#+ +#+     +#+ +#+    +#+ +#+    +#+
-         #+#   #+#  #+#           #+#    #+#    #+# #+#    #+# #+#     #+# #+#    #+# #+#    #+#
-        ###    ### ##########    ###    #########   ########  ###     ### ###    ### #########
-        */
-        else {
-            if (this.rightKey) this.right = this.rightKey;
-            else this.right = 0;
-            if (this.leftKey) this.left = this.leftKey;
-            else this.left = 0;
-            if (this.downKey) this.down = this.downKey;
-            else this.down = 0;
-            if (this.upKey) this.up = this.upKey;
-            else this.up = 0;
-            if (this.spaceKey) this.space = this.spaceKey;
-            else this.space = 0;
-            if (this.shiftKey) this.shift = this.shiftKey;
-            else this.shift = 0;
-            if (this.altKey) this.alt.current = this.altKey;
-            else this.alt.current = 0;
-            if (this.clickButton) this.click.current = this.clickButton;
-            else this.click.current = 0;
-        }
+            if (this.touch.enabled) {
+                if (this.leftTouch) this.left = this.leftTouch;
+                else this.left = 0;
+                if (this.rightTouch) this.right = this.rightTouch;
+                else this.right = 0;
+                if (this.upTouch) this.up = this.upTouch;
+                else this.up = 0;
+                if (this.downTouch) this.down = this.downTouch;
+                else this.down = 0;
+            }
+            /*
+                  :::    ::: :::::::::: :::   ::: :::::::::   ::::::::      :::     :::::::::  :::::::::
+                 :+:   :+:  :+:        :+:   :+: :+:    :+: :+:    :+:   :+: :+:   :+:    :+: :+:    :+:
+                +:+  +:+   +:+         +:+ +:+  +:+    +:+ +:+    +:+  +:+   +:+  +:+    +:+ +:+    +:+
+               +#++:++    +#++:++#     +#++:   +#++:++#+  +#+    +:+ +#++:++#++: +#++:++#:  +#+    +:+
+              +#+  +#+   +#+           +#+    +#+    +#+ +#+    +#+ +#+     +#+ +#+    +#+ +#+    +#+
+             #+#   #+#  #+#           #+#    #+#    #+# #+#    #+# #+#     #+# #+#    #+# #+#    #+#
+            ###    ### ##########    ###    #########   ########  ###     ### ###    ### #########
+            */
+            else {
+                if (this.rightKey) this.right = this.rightKey;
+                else this.right = 0;
+                if (this.leftKey) this.left = this.leftKey;
+                else this.left = 0;
+                if (this.downKey) this.down = this.downKey;
+                else this.down = 0;
+                if (this.upKey) this.up = this.upKey;
+                else this.up = 0;
+                if (this.spaceKey) this.space = this.spaceKey;
+                else this.space = 0;
+                if (this.shiftKey) this.shift = this.shiftKey;
+                else this.shift = 0;
+                if (this.altKey) this.alt.current = this.altKey;
+                else this.alt.current = 0;
+                if (this.clickButton) this.click.current = this.clickButton;
+                else this.click.current = 0;
+            }
     }
     /*
           :::::::::  :::::::::      :::     :::       :::

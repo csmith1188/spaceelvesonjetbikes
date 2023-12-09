@@ -11,7 +11,7 @@ class Character {
     constructor(id, spawnx, spawny) {
         this.id = id;
         this.active = true;
-        this.cleanup = true;
+        this.cleanup = false;
         this.team = 0;
         //Location
         this.x = spawnx;
@@ -20,7 +20,7 @@ class Character {
         this.hover = 12;
         this.w = 48;
         this.h = 48;
-        this.d = 16;
+        this.d = 48;
         //Speed
         this.xspeed = 0;
         this.yspeed = 0;
@@ -138,15 +138,15 @@ class Character {
                 this.yspeed *= game.match.map.groundFriction;
                 let tempx = (Math.random() * 3) - 1.5;
                 let tempz = (Math.random() * 3) - 1.5;
-                game.match.map.debris.push(new Debris(allID++, this.x, this.y + (this.h / 2), { wind: false, w: 16, h: 12, z: this.z, color: '#995500', livetime: 60, alwaysDying: true, landable: true }))
-                game.match.map.debris.push(new Debris(allID++, this.x, this.y + (this.h / 2), { wind: false, w: 6, h: 6, xspeed: tempx, zspeed: 5 + tempz, z: this.z + this.hover, color: '#995500', livetime: 60, alwaysDying: true, landable: true }))
+                game.match.map.debris.push(new Debris(allID++, this.x, this.y + (this.h / 2), { wind: false, w: 16, h: 12, z: this.z, color: '#995500', livetime: 60, dying: true, landable: true }))
+                game.match.map.debris.push(new Debris(allID++, this.x, this.y + (this.h / 2), { wind: false, w: 6, h: 6, xspeed: tempx, zspeed: 5 + tempz, z: this.z + this.hover, color: '#995500', livetime: 60, dying: true, landable: true }))
             }
 
 
             //Particle FX
-            // let tempx = (Math.random() * 1) - 0.5;
-            // let tempy = (Math.random() * 1) - 0.5;
-            // if (ticks % 4 == 0) game.match.map.debris.push(new Debris(allID++, this.x + this.exhaust, this.y, { w: 6, h: 6, xspeed: tempx, yspeed: tempy, z: this.z, color: '#dddddd', livetime: 30, alwaysDying: true, landable: false }));
+            let tempx = (Math.random() * 1) - 0.5;
+            let tempy = (Math.random() * 1) - 0.5;
+            if (ticks % 4 == 0) game.match.map.debris.push(new Debris(allID++, this.x + this.exhaust, this.y, { w: 6, h: 6, xspeed: tempx, yspeed: tempy, z: this.z, color: '#dddddd', livetime: 10, dying: true, landable: false }));
 
             // Break your records!
             if (!this.bot && game.player.best.air < this.z) game.player.best.air = this.z
@@ -173,13 +173,12 @@ class Character {
                 if (Math.abs(this.yspeed) > game.match.map.collideDamageSpeed) this.hp -= Math.abs(this.yspeed);
                 this.yspeed *= -1;
             }
-
             //Check HP
             if (this.hp <= 0) { //Dead
                 this.active = false;
+                this.cleanup = true;
                 this.brakeSFX.play();
-                game.match.map.debris.push(new Debris(allID++, this.x, this.y + (this.h / 2), { frictionMulti: 0.5, w: 36, h: 12, z: this.z, xspeed: this.xspeed, yspeed: this.yspeed, zspeed: this.zspeed, weight: this.weight, color: '#990000', livetime: 600, alwaysDying: true, landable: true }))
-
+                game.match.map.debris.push(new Debris(allID++, this.x, this.y + (this.h / 2), { frictionMulti: 1, w: 36, h: 12, z: this.z, xspeed: this.xspeed, yspeed: this.yspeed, zspeed: this.zspeed, weight: this.weight, color: '#990000', livetime: 50, dying: true, landable: true }))
             }
         }
     }
@@ -244,17 +243,13 @@ class Character {
                 aimX = (aimX / distance) * 20;
                 aimY = (aimY / distance) * 20;
 
-                game.match.map.blocks.push(new Block(allID++, this.x, this.y, {
-                    color: '#FF0000',
+                game.match.map.missiles.push(new Missile(allID++, this.x, this.y, {
+                    parent: this,
+                    z: this.z,
                     xspeed: aimX,
                     yspeed: aimY,
                     dxspeed: aimX,
                     dyspeed: aimY,
-                    tags: ['nocollide'],
-                    w: 4,
-                    h: 4,
-                    alwaysDying: true,
-                    livetime: 100
                 }));
             }
             controller.click.last = controller.click.current;

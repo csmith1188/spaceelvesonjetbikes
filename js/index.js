@@ -42,7 +42,11 @@ window.onload = function () {
 
 
     // makeGame(['pool', 'waves', 'track', 'ramps', '2v2', 'randommap'])
-    makeGame(['pool', 'dummy'])
+    // makeGame(['pool', 'dummy'])
+    makeGame(['randommap'])
+    // game.match.npcs.push(new NPC(allID++, (game.match.map.w / 2) + 1000, (game.match.map.h / 2) - 1000, { target: game.player.character, nameTag: 'Jaysin', gfx: 'img/sprites/dark2' })) //Kevin
+
+
 
 
 
@@ -117,6 +121,9 @@ function step() {
         for (const block of game.match.map.blocks) {
             block.collide([game.player.character, ...game.match.npcs, ...game.match.map.blocks])
         }
+        for (const missile of game.match.map.missiles) {
+            missile.collide([game.player.character, ...game.match.npcs, ...game.match.map.blocks])
+        }
         for (const debris of game.match.map.debris) {
             debris.collide([game.player.character, ...game.match.npcs, ...game.match.map.debris])
         }
@@ -133,6 +140,9 @@ function step() {
         }
         for (const block of game.match.map.blocks) {
             block.step();
+        }
+        for (const missile of game.match.map.missiles) {
+            missile.step();
         }
         for (const debris of game.match.map.debris) {
             if (debris.active) {
@@ -192,6 +202,11 @@ function draw() {
     //Draw blocks
     for (const block of game.match.map.blocks) {
         block.draw(game.player.character);
+    }
+
+    //Draw missiles
+    for (const missile of game.match.map.missiles) {
+        missile.draw(game.player.character);
     }
 
     //Draw goals
@@ -402,7 +417,7 @@ function makeGame(type) {
             let tempy = (Math.floor(Math.random() * (game.match.map.h / 48)) * 48) + 24
             let tempw = (Math.ceil(Math.random() * 2) * 48)
             let temph = (Math.ceil(Math.random() * 2) * 48)
-            game.match.map.blocks.push(new Block(allID++, tempx, tempy, { color: '#333333', w: tempw, h: temph }))
+            game.match.map.blocks.push(new Block(allID++, tempx, tempy, { color: '#333333', colorSide: '#666666', w: tempw, h: temph, d: 32 }))
         }
         for (let i = 0; i < 25; i++) {
             let tempx = (Math.floor(Math.random() * (game.match.map.w / 48)) * 48) + 24

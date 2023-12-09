@@ -13,7 +13,8 @@ class Map {
         this.imgSizeW = 480;
         this.imgSizeH = 480;
         this.blocks = [];
-        this.blocks.lastBlock = () => { return this.blocks[this.blocks.length-1]; }
+        // this.blocks.lastBlock = () => { return this.blocks[this.blocks.length - 1]; }
+        this.missiles = [];
         this.percipitation = false;
         this.debris = [];
         this.debrisAmount = 1000;
@@ -68,9 +69,9 @@ class Map {
                 let tileY = compareY + (col * this.imgSizeH)
                 let totalX = tileX + game.player.camera.x - this.imgSizeW;
                 let totalY = tileY + game.player.camera.y - this.imgSizeH;
-                if (totalX <= this.w && totalY <= this.h && totalX >= 0 && totalY >= 0) 
+                if (totalX <= this.w && totalY <= this.h && totalX >= 0 && totalY >= 0)
                     ctx.drawImage(this.bgimg, Math.floor(tileX), Math.floor(tileY), this.imgSizeW, this.imgSizeH);
-            } 
+            }
         }
     }
 
@@ -82,6 +83,12 @@ class Map {
             }
             if (this.percipitation && this.debris.length < this.debrisAmount) {
                 this.debris.push(this.debrisSpawn())
+            }
+        }
+        for (const e of this.missiles) {
+            if (e.cleanup && !e.active) {
+                //Remove missile
+                this.missiles = this.missiles.filter(function (el) { return el != e; });
             }
         }
         this.wind();
