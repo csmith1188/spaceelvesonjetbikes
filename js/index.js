@@ -43,7 +43,9 @@ window.onload = function () {
 
     // makeGame(['pool', 'waves', 'track', 'ramps', '2v2', 'randommap'])
     // makeGame(['pool', 'dummy'])
-    makeGame(['randommap'])
+    // makeGame(['randommap', 'fortnite'])
+    makeGame(['waves', 'lonewarrior', 'randommap']);
+    // makeGame(['lonewarrior']);
     // game.match.npcs.push(new NPC(allID++, (game.match.map.w / 2) + 1000, (game.match.map.h / 2) - 1000, { target: game.player.character, nameTag: 'Jaysin', gfx: 'img/sprites/dark2' })) //Kevin
 
 
@@ -145,12 +147,12 @@ function step() {
             missile.step();
         }
         for (const debris of game.match.map.debris) {
-            if (debris.active) {
+            if (debris.active)
                 debris.step();
-            } else {
-                //Remove it from this list
-            }
         }
+    } else {
+        game.player.controller.read();
+
     }
 
     // Move camera to next sensible target when player character is inactive or missing
@@ -199,34 +201,45 @@ function draw() {
     //Draw Map
     game.match.map.draw(game.player.character);
 
-    //Draw blocks
-    for (const block of game.match.map.blocks) {
-        block.draw(game.player.character);
+    let renderList =
+        [game.player.character, ...game.match.map.blocks, ...game.match.map.missiles, ...game.match.goals, ...game.match.map.debris, ...game.match.npcs]
+            .sort((a, b) => {
+                if (a.y + a.z < b.y + b.z) return -1;
+                if (a.y + a.z > b.y + b.z) return 1;
+                return 0;
+            });
+    for (const entity of renderList) {
+        entity.draw(game.player.character);
     }
 
-    //Draw missiles
-    for (const missile of game.match.map.missiles) {
-        missile.draw(game.player.character);
-    }
+    // //Draw blocks
+    // for (const block of game.match.map.blocks) {
+    //     block.draw(game.player.character);
+    // }
 
-    //Draw goals
-    for (const goal of game.match.goals) {
-        goal.draw(game.player.character);
-    }
+    // //Draw missiles
+    // for (const missile of game.match.map.missiles) {
+    //     missile.draw(game.player.character);
+    // }
 
-    //Draw debris
-    for (const debris of game.match.map.debris) {
-        debris.draw(game.player.character);
-    }
+    // //Draw goals
+    // for (const goal of game.match.goals) {
+    //     goal.draw(game.player.character);
+    // }
+
+    // //Draw debris
+    // for (const debris of game.match.map.debris) {
+    //     debris.draw(game.player.character);
+    // }
 
 
-    //Draw npcs
-    for (const npc of game.match.npcs) {
-        npc.draw(game.player.character);
-    }
+    // //Draw npcs
+    // for (const npc of game.match.npcs) {
+    //     npc.draw(game.player.character);
+    // }
 
-    //Draw player
-    game.player.character.draw();
+    // //Draw player
+    // game.player.character.draw();
 
     //Draw Map Lighting
     game.match.map.lighting();
@@ -311,10 +324,17 @@ function setupInputs() {
         coords = getCanvasRelative(event, true); // relative to center
         game.player.controller.rclickX = coords.x;
         game.player.controller.rclickY = coords.y;
-        game.player.controller.clickButton = 1
+        // Get which mousebutton they clicked
+        if (event.button == 0)
+            game.player.controller.clickButton = 1
+        else if (event.button == 2)
+            game.player.controller.rclickButton = 1
     });
     window.addEventListener("mouseup", (event) => {
-        game.player.controller.clickButton = 0
+        if (event.button == 0)
+            game.player.controller.clickButton = 0;
+        else if (event.button == 2)
+            game.player.controller.rclickButton = 0;
     });
     window.addEventListener('mousemove', (event) => {
         let coords = getCanvasRelative(event, true);
@@ -417,7 +437,7 @@ function makeGame(type) {
             let tempy = (Math.floor(Math.random() * (game.match.map.h / 48)) * 48) + 24
             let tempw = (Math.ceil(Math.random() * 2) * 48)
             let temph = (Math.ceil(Math.random() * 2) * 48)
-            game.match.map.blocks.push(new Block(allID++, tempx, tempy, { color: '#333333', colorSide: '#666666', w: tempw, h: temph, d: 32 }))
+            game.match.map.blocks.push(new Block(allID++, tempx, tempy, { color: '#333333', colorSide: '#666666', w: tempw, h: temph, d: 128 }))
         }
         for (let i = 0; i < 25; i++) {
             let tempx = (Math.floor(Math.random() * (game.match.map.w / 48)) * 48) + 24
@@ -428,6 +448,11 @@ function makeGame(type) {
             let tempx = (Math.floor(Math.random() * (game.match.map.w / 48)) * 48) + 24
             let tempy = (Math.floor(Math.random() * (game.match.map.h / 48)) * 48) + 24
             game.match.map.blocks.push(new SpeedPad(allID++, tempx, tempy, { color: '#9999FF' }))
+        }
+        for (let i = 0; i < 25; i++) {
+            let tempx = (Math.floor(Math.random() * (game.match.map.w / 48)) * 48) + 24
+            let tempy = (Math.floor(Math.random() * (game.match.map.h / 48)) * 48) + 24
+            game.match.map.blocks.push(new AmmoPickup(allID++, tempx, tempy))
         }
         for (let i = 0; i < 10; i++) {
             let tempx = (Math.floor(Math.random() * (game.match.map.w / 48)) * 48) + 24
@@ -504,7 +529,16 @@ function makeGame(type) {
             let tempx = Math.floor(Math.random() * game.match.map.w);
             let tempy = Math.floor(Math.random() * game.match.map.h);
             game.match.npcs.push(new NPC(allID++, tempx, tempy, { target: null, nameTag: 'Frendo ' + (i + 1), team: 0 })) //Anti-Kevin
-        }
+        } a
+    }
+    if (type.includes('lonewarrior')) {
+        game.match.map.runFuncs.push(() => {
+            if (ticks % 1600 == 0) {
+                let tempx = Math.floor(Math.random() * game.match.map.w);
+                let tempy = Math.floor(Math.random() * game.match.map.h);
+                game.match.npcs.push(new NPC(allID++, tempx, tempy, { target: game.player.character, nameTag: 'Kevin' + allID, gfx: 'img/sprites/dark2' })) //Kevin
+            }
+        })
     }
     if (type.includes('ramps')) {
         game.match.map.blocks.push(new Wave(allID++, 7200 / 4, (game.match.map.h / 2), { color: '#aaaaFF', w: 100, h: 400 }))

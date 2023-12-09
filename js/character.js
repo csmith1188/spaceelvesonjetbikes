@@ -11,7 +11,7 @@ class Character {
     constructor(id, spawnx, spawny) {
         this.id = id;
         this.active = true;
-        this.cleanup = false;
+        this.cleanup = true;
         this.team = 0;
         //Location
         this.x = spawnx;
@@ -44,8 +44,15 @@ class Character {
         this.power = 300;
         this.power_max = 300;
         this.threatMulti = 1;
-        //Item
-        this.item = new Item();
+        this.accuracy = 0.1; // Spread magnitude of weapon
+        //Items
+        this.item = 0;
+        this.inventory = [new Pistol()];
+        this.ammo = {
+            pistol: 25,
+            flamer: 50,
+            jumpdropper: 3
+        }
         //Graphics
         this.img = new Image();
         this.gfx = 'img/sprites/jetbike';
@@ -176,23 +183,12 @@ class Character {
             //Check HP
             if (this.hp <= 0) { //Dead
                 this.active = false;
-                this.cleanup = true;
                 this.brakeSFX.play();
                 game.match.map.debris.push(new Debris(allID++, this.x, this.y + (this.h / 2), { frictionMulti: 1, w: 36, h: 12, z: this.z, xspeed: this.xspeed, yspeed: this.yspeed, zspeed: this.zspeed, weight: this.weight, color: '#990000', livetime: 50, dying: true, landable: true }))
             }
         }
     }
 
-
-    /*
-              :::     :::::::::::
-           :+: :+:       :+:
-         +:+   +:+      +:+
-       +#++:++#++:     +#+
-      +#+     +#+     +#+
-     #+#     #+#     #+#
-    ###     ### ###########
-    */
     AI() {
         return
     }
@@ -223,37 +219,19 @@ class Character {
             controller.alt.last = controller.alt.current;
         }
         // Shoot
+
+        //Torrent code (needs single clicks to be handled by item)
+        // if (controller.click.current)
+        //     this.inventory[this.item].use(this, 0);
+
+        // Single shot code
         if (controller.click.current != controller.click.last) {
-            if (controller.click.current) {
-
-                
-                // this.item.use();
-
-
-                // if (this.lungeSFX.duration <= 0 || this.lungeSFX.paused)
-                //     this.lungeSFX.play();
-                let aimX = game.player.controller.aimX;
-                let aimY = game.player.controller.aimY;
-                //find the distance from player to mouse with pythagorean theorem
-                let distance = ((aimX ** 2) + (aimY ** 2)) ** 0.5;
-                //Normalize the dimension distance by the real distance (ratio)
-                //Then multiply by the distance of the out circle
-                // aimX = (aimX / distance) * 10 + this.xspeed;
-                // aimY = (aimY / distance) * 10 + this.yspeed;
-                aimX = (aimX / distance) * 20;
-                aimY = (aimY / distance) * 20;
-
-                game.match.map.missiles.push(new Missile(allID++, this.x, this.y, {
-                    parent: this,
-                    z: this.z,
-                    xspeed: aimX,
-                    yspeed: aimY,
-                    dxspeed: aimX,
-                    dyspeed: aimY,
-                }));
-            }
+            if (controller.click.current)
+                this.inventory[this.item].use(this, 0);
             controller.click.last = controller.click.current;
         }
+
+        // Jump
         if (controller.space && this.power >= this.jumpCost) {
             this.zspeed += 2
             this.power -= this.jumpCost

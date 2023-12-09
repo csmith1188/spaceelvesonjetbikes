@@ -19,7 +19,7 @@ class Block {
         this.id = id;
         this.active = true; //Are we tracking this in the game?
         this.dying = false; //Is the lifespan counting down?
-        this.cleanup = false; //Is this ready to be removed from the game?
+        this.cleanup = true; //Is this ready to be removed from the game?
         this.startDelay = 0; //Reset after {options}
         this.livetime = -1; //Number of frames to live (-1 forever)
         this.spawnX = x;
@@ -81,7 +81,6 @@ class Block {
         // If counting lifespan, remove when it reaches 0
         if (this.livetime == 0) {
             this.active = false;
-            this.cleanup = true;
             return
         }
 
@@ -206,10 +205,10 @@ class Block {
                             ctx.fillRect(game.window.w / 2 - compareX - (this.w / 2), game.window.h / 2 - compareY - (this.h / 2) - this.z, this.w, this.h);
                         } else {
                             ctx.fillStyle = this.color;
-                            ctx.fillRect(game.window.w / 2 - compareX - (this.w / 2), game.window.h / 2 - compareY - (this.h / 2) - this.z, this.w, this.h);
+                            ctx.fillRect(game.window.w / 2 - compareX - (this.w / 2), game.window.h / 2 - compareY - (this.h / 2) - this.z - this.d, this.w, this.h);
                             if (this.colorSide) {
                                 ctx.fillStyle = this.colorSide;
-                                ctx.fillRect(game.window.w / 2 - compareX - (this.w / 2), game.window.h / 2 - compareY - (this.h / 2) - this.z + this.h, this.w, this.d);
+                                ctx.fillRect(game.window.w / 2 - compareX - (this.w / 2), game.window.h / 2 - compareY - (this.h / 2) - this.z  - this.d + this.h, this.w, this.d);
                             }
                         }
                     }
@@ -530,15 +529,22 @@ class JumpPad extends Block {
         super(id, x, y, options);
         this.tags = ['immobile', 'nocollide']; //Made it nocollide so you can enter the space
         this.jumpBoost = 3;
+        // Options
+        if (typeof options === 'object')
+            for (var key of Object.keys(options)) {
+                this[key] = options[key];
+            }
     }
 
     collide(colliders, options) {
-        // custom collide code "activates" the powerup
-        for (const c of colliders) {
-            if (c != this) {
-                if (!c.tags.includes('immobile') && Math.abs(this.x - c.x) < this.w / 2 + (c.w / 2) && Math.abs(this.y - c.y) < this.h / 2 + (c.h / 2) && this.z < c.d && c.z < this.d) {
-                    // if (Math.abs(c.z) <= 1)
-                    c.zspeed += this.jumpBoost * ((Math.abs(c.xspeed) + Math.abs(c.yspeed)) / 2)
+        if (this.active && ticks >= this.startDelay) {
+            // custom collide code "activates" the powerup
+            for (const c of colliders) {
+                if (c != this) {
+                    if (!c.tags.includes('immobile') && Math.abs(this.x - c.x) < this.w / 2 + (c.w / 2) && Math.abs(this.y - c.y) < this.h / 2 + (c.h / 2) && this.z < c.d && c.z < this.d) {
+                        // if (Math.abs(c.z) <= 1)
+                        c.zspeed += this.jumpBoost * ((Math.abs(c.xspeed) + Math.abs(c.yspeed)) / 2)
+                    }
                 }
             }
         }
@@ -558,6 +564,31 @@ class SpeedPad extends Block {
                 if (!c.tags.includes('immobile') && Math.abs(this.x - c.x) < this.w / 2 + (c.w / 2) && Math.abs(this.y - c.y) < this.h / 2 + (c.h / 2) && this.z < c.d && c.z < this.d) {
                     c.xspeed *= 1.1
                     c.yspeed *= 1.1
+                }
+            }
+        }
+    }
+}
+
+class AmmoPickup extends Block {
+    constructor(id, x, y, options) {
+        super(id, x, y, options);
+        this.w = this.h = 32;
+        this.color = '#FF00FF';
+        this.ammoType = 'pistol';
+        this.ammoAmount = 25;
+        this.tags = ['immobile', 'nocollide']; //Made it nocollide so you can enter the space
+    }
+
+    collide(colliders, options) {
+        // custom collide code "activates" the powerup
+        for (const c of colliders) {
+            if (this.active) {
+                if (c != c.team != undefined) {
+                    if (!c.tags.includes('immobile') && Math.abs(this.x - c.x) < this.w / 2 + (c.w / 2) && Math.abs(this.y - c.y) < this.h / 2 + (c.h / 2) && this.z < c.d && c.z < this.d) {
+                        c.ammo[this.ammoType] += this.ammoAmount;
+                        this.active = false;
+                    }
                 }
             }
         }
@@ -701,8 +732,6 @@ class Missile extends Block {
         this.color = '#FF0000';
         this.tags = ['nocollide']; //Made it nocollide so you can enter the space
         this.touchSFX = new Audio('sfx/hit_01.wav');
-        this.shootSFX = new Audio('sfx/laser_01.wav');
-        this.shootSFX.play();
         this.damage = 10;
         this.runFunc = function () {
             let tempx = (Math.random() * 1) - 0.5;
@@ -720,6 +749,10 @@ class Missile extends Block {
                     landable: false
                 }));
         }
+        if (typeof options === 'object')
+            for (var key of Object.keys(options)) {
+                this[key] = options[key];
+            }
 
     }
 
@@ -745,7 +778,7 @@ class Missile extends Block {
                                     xspeed: tempx,
                                     yspeed: tempy,
                                     z: this.z,
-                                    color: '#ff'+tempC.toString(16)+'00',
+                                    color: '#ff' + tempC.toString(16) + '00',
                                     livetime: 20,
                                     dying: true,
                                     landable: false

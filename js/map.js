@@ -27,6 +27,7 @@ class Map {
         this.xwind = 2;
         this.ywind = 0;
         this.lightValue = [0, 0, 0, 0.0];
+        this.runFuncs = []; // A list of functions to run during the step
         // this.lightValue = [0, 0, 128, 0.25];
         if (typeof options == 'object')
             for (const setting of Object.keys(options)) {
@@ -91,11 +92,16 @@ class Map {
                 this.missiles = this.missiles.filter(function (el) { return el != e; });
             }
         }
+        
         this.wind();
+
+        // Run all runFuncs
+        for (const func of this.runFuncs) {
+            func();
+        }
     }
 
     wind() {
-
         for (const e of [game.player.character, ...game.match.npcs, ...this.blocks, ...this.debris]) {
             if (e.wind && e.z + e.hover >= (this.windH * ((e.landable) ? 1 : 0))) {
                 e.x += this.xwind * (1 - e.weight);

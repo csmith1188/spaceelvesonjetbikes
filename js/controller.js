@@ -9,6 +9,14 @@ class Controller {
             current: false,
             last: false
         }
+        this.rclick = {
+            current: false,
+            last: false
+        }
+        this.start = {
+            current: false,
+            last: false
+        }
         this.gamePad;
         this.touch = {
             enabled: false,
@@ -52,28 +60,39 @@ class Controller {
             else this.down = 0;
             if (gp.axes[1] < this.deadzone * -1) this.up = gp.axes[1] * -1;
             else this.up = 0;
-            // If eitehr axis of stick 2 is outside of deadzone
+            // If either axis of stick 2 is outside of deadzone
             if (Math.abs(gp.axes[2]) >= this.deadzone || Math.abs(gp.axes[3]) >= this.deadzone) {
                 game.player.controller.aimX = gp.axes[2] * 100;
                 game.player.controller.aimY = gp.axes[3] * 100;
             }
-            // else this.up = 0;
-            // if (Math.abs(gp.axes[3]) > this.deadzone) game.player.controller.aimY = gp.axes[3] * 100;
-            // else game.player.controller.aimX = 0;
-            console.log(game.player.controller.aimX, gp.axes[3]);
             if (gp.buttons[10].pressed) this.shift = 1;
             else this.shift = 0;
             if (gp.buttons[4].pressed) this.alt.current = 1;
             else this.alt.current = 0;
 
+            // Left trigger to space
             if (gp.buttons[6].pressed) this.space = 1;
             else this.space = 0;
 
-            if (gp.buttons[8].pressed) if (ticks > 180) location.reload();
-            // else this.alt.current = 0;
+            // Right trigger to click
+            if (gp.buttons[7].pressed) this.click.current = 1;
+            else this.click.current = 0;
 
-            if (gp.buttons[9].pressed) game.paused = !game.paused;
-            // else this.alt.current = 0;
+            // Select Button reloads window
+            if (gp.buttons[8].pressed) if (ticks > 180) location.reload();
+
+            // Start button pauses game
+            if (gp.buttons[9].pressed) {
+                this.start.current = 1;
+                if (this.start.current != this.start.last) {
+                    game.paused = !game.paused;
+                }
+                this.start.last = this.start.current;
+            }
+            else {
+                this.start.current = 0;
+                this.start.last = this.start.current;
+            }
         }
         /*
           ::::::::::: ::::::::  :::    :::  ::::::::  :::    :::
@@ -121,6 +140,8 @@ class Controller {
                 else this.alt.current = 0;
                 if (this.clickButton) this.click.current = this.clickButton;
                 else this.click.current = 0;
+                if (this.rclickButton) this.rclick.current = this.rclickButton;
+                else this.rclick.current = 0;
             }
     }
     /*
