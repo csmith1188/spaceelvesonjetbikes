@@ -40,27 +40,7 @@ window.onload = function () {
     game.player.character = new Character(allID++, (game.match.map.w / 2), (game.match.map.h / 2));
     game.player.camera = new Camera({ target: game.player.character });
 
-
-    // makeGame(['pool', 'waves', 'track', 'ramps', '2v2', 'randommap'])
-    // makeGame(['pool', 'dummy'])
-    // makeGame(['randommap', 'fortnite'])
-    makeGame(['waves', 'lonewarrior', 'randommap']);
-    // makeGame(['lonewarrior']);
-    // game.match.npcs.push(new NPC(allID++, (game.match.map.w / 2) + 1000, (game.match.map.h / 2) - 1000, { target: game.player.character, nameTag: 'Jaysin', gfx: 'img/sprites/dark2' })) //Kevin
-
-
-
-
-
-    //NPC
-    // game.match.npcs.push(new NPC(allID++, (game.match.map.w / 2) + 1000, (game.match.map.h / 2) + 500, {target: game.player.character, nameTag: 'Kevin', gfx: 'img/sprites/dark2'})) //Kevin
-
-    // game.player.camera.target = game.match.npcs[game.match.npcs.length-1] //Kevin-vision
-    // game.match.npcs.push(new NPC(allID++, (game.match.map.w / 2) - 1000, (game.match.map.h / 2) + 500, {target: game.match.npcs[game.match.npcs.length-1], nameTag: 'Fren', team: 0})) //Anti-Kevin
-
-    // game.match.npcs.push(new NPC(allID++, (game.match.map.w / 2) - 1000, (game.match.map.h / 2) + 500, { target: game.player.character, nameTag: 'Fren', team: 0 })) //Anti-Kevin
-
-    // game.match.npcs.push(new NPC(allID++, (game.match.map.w / 2) + 1000, (game.match.map.h / 2) + 1000, { target: game.player.character, nameTag: 'Fren', team: 0, gfx: 'img/sprites/dark1' })) //racer
+    makeGame(['lonewarrior', 'randommap']);
 
     //start game loop
     //Run the step() function every 16ms (60fps)
@@ -212,35 +192,6 @@ function draw() {
         entity.draw(game.player.character);
     }
 
-    // //Draw blocks
-    // for (const block of game.match.map.blocks) {
-    //     block.draw(game.player.character);
-    // }
-
-    // //Draw missiles
-    // for (const missile of game.match.map.missiles) {
-    //     missile.draw(game.player.character);
-    // }
-
-    // //Draw goals
-    // for (const goal of game.match.goals) {
-    //     goal.draw(game.player.character);
-    // }
-
-    // //Draw debris
-    // for (const debris of game.match.map.debris) {
-    //     debris.draw(game.player.character);
-    // }
-
-
-    // //Draw npcs
-    // for (const npc of game.match.npcs) {
-    //     npc.draw(game.player.character);
-    // }
-
-    // //Draw player
-    // game.player.character.draw();
-
     //Draw Map Lighting
     game.match.map.lighting();
 
@@ -335,6 +286,10 @@ function setupInputs() {
             game.player.controller.clickButton = 0;
         else if (event.button == 2)
             game.player.controller.rclickButton = 0;
+    });
+    window.addEventListener("wheel", (event) => {
+        game.player.controller.wheelUp = (event.wheelDelta > 0) * 1;
+        game.player.controller.wheelDown = (event.wheelDelta < 0) * 1;
     });
     window.addEventListener('mousemove', (event) => {
         let coords = getCanvasRelative(event, true);
@@ -454,6 +409,11 @@ function makeGame(type) {
             let tempy = (Math.floor(Math.random() * (game.match.map.h / 48)) * 48) + 24
             game.match.map.blocks.push(new AmmoPickup(allID++, tempx, tempy))
         }
+        for (let i = 0; i < 25; i++) {
+            let tempx = (Math.floor(Math.random() * (game.match.map.w / 48)) * 48) + 24
+            let tempy = (Math.floor(Math.random() * (game.match.map.h / 48)) * 48) + 24
+            game.match.map.blocks.push(new AmmoPickup(allID++, tempx, tempy, {ammoType: 'flamer', ammoAmount: 25, color:"#FFFF00"}))
+        }
         for (let i = 0; i < 10; i++) {
             let tempx = (Math.floor(Math.random() * (game.match.map.w / 48)) * 48) + 24
             let tempy = (Math.floor(Math.random() * (game.match.map.h / 48)) * 48) + 24
@@ -529,14 +489,14 @@ function makeGame(type) {
             let tempx = Math.floor(Math.random() * game.match.map.w);
             let tempy = Math.floor(Math.random() * game.match.map.h);
             game.match.npcs.push(new NPC(allID++, tempx, tempy, { target: null, nameTag: 'Frendo ' + (i + 1), team: 0 })) //Anti-Kevin
-        } a
+        }
     }
     if (type.includes('lonewarrior')) {
         game.match.map.runFuncs.push(() => {
             if (ticks % 1600 == 0) {
                 let tempx = Math.floor(Math.random() * game.match.map.w);
                 let tempy = Math.floor(Math.random() * game.match.map.h);
-                game.match.npcs.push(new NPC(allID++, tempx, tempy, { target: game.player.character, nameTag: 'Kevin' + allID, gfx: 'img/sprites/dark2' })) //Kevin
+                game.match.npcs.push(new NPC(allID++, tempx, tempy, { item: Math.round(Math.random()), target: game.player.character, nameTag: 'Kevin' + allID, gfx: 'img/sprites/dark2' })) //Kevin
             }
         })
     }
@@ -551,7 +511,7 @@ function makeGame(type) {
     if (type.includes('2v2')) {
         game.match.npcs.push(new NPC(allID++, (game.match.map.w / 2) + 1000, (game.match.map.h / 2) - 1000, { target: game.player.character, nameTag: 'Jaysin', gfx: 'img/sprites/dark2' })) //Kevin
         game.match.npcs.push(new NPC(allID++, (game.match.map.w / 2) + 1000, (game.match.map.h / 2) + 1000, { target: game.match.npcs[game.match.npcs.length - 2], nameTag: 'Jason', gfx: 'img/sprites/dark2' })) //Kevin
-        game.match.npcs.push(new NPC(allID++, (game.match.map.w / 2) - 1000, (game.match.map.h / 2) - 1000, { target: game.player.character, nameTag: 'Logan', team: 0 })) //Anti-Kevin
+        game.match.npcs.push(new NPC(allID++, (game.match.map.w / 2) - 1000, (game.match.map.h / 2) - 1000, { color: '#006600', target: game.player.character, nameTag: 'Logan', team: 0 })) //Anti-Kevin
     }
     if (type.includes('4v4')) {
         game.match.npcs.push(new NPC(allID++, (game.match.map.w / 2) + 1000, (game.match.map.h / 2) - 1000, { target: game.player.character, nameTag: 'Jaysin', gfx: 'img/sprites/dark2' })) //Kevin
@@ -561,5 +521,47 @@ function makeGame(type) {
         game.match.npcs.push(new NPC(allID++, (game.match.map.w / 2) - 1000, (game.match.map.h / 2) - 1500, { target: game.player.character, nameTag: 'Logan', team: 0 })) //Anti-Kevin
         game.match.npcs.push(new NPC(allID++, (game.match.map.w / 2) - 1000, (game.match.map.h / 2), { target: game.player.character, nameTag: 'Logan', team: 0 })) //Anti-Kevin
         game.match.npcs.push(new NPC(allID++, (game.match.map.w / 2) - 1000, (game.match.map.h / 2) + 1500, { target: game.player.character, nameTag: 'Logan', team: 0 })) //Anti-Kevin
+    }
+}
+
+// origin / target
+function compareXY(x1, y1, x2, y2) {
+    let xd = x2 - x1;
+    let yd = y2 - y1;
+    let distance = Math.sqrt(xd ** 2 + yd ** 2);
+    return {
+        xd: xd,             // From origin to target x distance
+        yd: yd,             // From origin to target y distance
+        xa: xd / distance,    // From origin to target x speed
+        ya: yd / distance,    // From origin to target y speed
+        d: distance         // From origin to target direct distance
+    }
+}
+
+// Takes two regions from object.getRegion()
+function collideRect(entity, collider) {
+    let left = (entity.x + entity.w > x && entity.x < x.collider) * -1; // Left (x - 1)
+    let rear = (entity.y + entity.h > collider.y && entity.y < collider.y) * -1; // Rear (y - 1)
+    let under = (entity.z + entity.d > collider.z && entity.z < collider.z) * -1; // Under (z - 1)
+    let right = (entity.x < entity.x + collider.w && entity.x > collider.x) * 1; // Right (x + 1)
+    let front = (entity.y < entity.y + collider.h && entity.y > collider.y) * 1; // Front (y + 1)
+    let top = (entity.z < entity.z + collider.d && entity.z > collider.z) * 1; // Top (z + 1)
+    let withinX = (entity.x + entity.w > collider.x && entity.x + entity.w < collider.x + collider.w) * 1; // wholly within X (x ??)
+    let withinY = (entity.y + entity.h > collider.y && entity.y + entity.h < collider.y + collider.h) * 1; // wholly within Y (y ??)
+    let withinZ = (entity.z + entity.d > collider.z && entity.z + entity.d < collider.z + collider.d) * 1; // whilly within Z (z ??)
+    let contains = (withinX * withinY * withinZ); // wholly within collider
+    let contained = (left + right == 0) ? 1 : 0; // Collider is wholly within
+    return {
+        left: left,
+        rear: rear,
+        under: under,
+        right: right,
+        front: front,
+        top: top,
+        withinX: withinX,
+        withinY: withinY,
+        withinZ: withinZ,
+        contains: contains,
+        contained: contained
     }
 }

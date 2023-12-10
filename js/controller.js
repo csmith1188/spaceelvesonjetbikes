@@ -142,6 +142,16 @@ class Controller {
                 else this.click.current = 0;
                 if (this.rclickButton) this.rclick.current = this.rclickButton;
                 else this.rclick.current = 0;
+                if (this.wheelUp) {
+                    this.weaponPrevious = this.wheelUp;
+                    this.wheelUp = 0;
+                }
+                else this.weaponPrevious = 0;
+                if (this.wheelDown) {
+                    this.weaponNext = this.wheelDown;
+                    this.wheelDown = 0;
+                }
+                else this.weaponNext = 0;
             }
     }
     /*

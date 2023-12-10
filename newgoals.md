@@ -23,28 +23,22 @@ Dark elves believe everything is random:
 #########   ########          ###        ########### ###    ###  ########     ###
 -->
 
-- Blocks and polyblocks with a top and side texture, and transparency if behind
-- Block/polyblock footprint, then render upwards by z hover and z height
-- Will they also hover?
-- Make a pathing grid on map load that determines if any blocks are in each grid square
-- use A* pathing with grid
-- Universal block and polyblock collider function
 - Complete speed physics (acceleration, top speed, actual speed, friction/weight)
+- AABB Collision for 3d (and polyblocks as well)?
+- Blocks and polyblocks with a top and side texture, and transparency if behind
 
+- Tilemaps
+- Make a pathing grid on map load that determines if any blocks are in each grid square
+- Tilemap to collision blocks
+- use A* pathing with grid
 
 - Fix X/Y npc movement
-- Camera Zoom/Pan/Shake
 - Only draw in camera
-- Tilemaps
-- Tilemap to collision blocks
+- Camera Zoom/Pan/Shake
 - Foot Physics
-
-
 
 - block heights
 - hitboxes (graphics can be bigger than collision area)
     -- hitbox and graphic should just both be blocks attached to the x.y position of the character
     -- if blocks have parents, and another collider hits the hitbox, send the damage to the hitbox parent
-- depth / z height affects render order
-- particle block / dispenser block
 - animators

@@ -20,13 +20,20 @@ class Character {
         this.hover = 12;
         this.w = 48;
         this.h = 48;
-        this.d = 48;
+        this.d = 24;
+        this.center = () => {
+            return {
+                x: (this.x + this.w) / 2,
+                y: (this.y + this.h) / 2,
+                z: (this.z + this.d) / 2
+            }
+        }
         //Speed
         this.xspeed = 0;
         this.yspeed = 0;
         this.zspeed = 0;
-        this.xytrueSpeed = function () { return (((Math.abs(this.xspeed) + Math.abs(this.yspeed)) / 2)) }
-        this.trueSpeed = function () { return (((Math.abs(this.xspeed) + Math.abs(this.yspeed) + Math.abs(this.zspeed)) / 3)) }
+        this.xytrueSpeed = function () { return (((Math.abs(this.xspeed) + Math.abs(this.yspeed)) / 2)) };
+        this.trueSpeed = function () { return (((Math.abs(this.xspeed) + Math.abs(this.yspeed) + Math.abs(this.zspeed)) / 3)) };
         this.maxSpeed = 8;
         this.speedMulti = 0.25;
         this.frictionMulti = 1;
@@ -46,11 +53,11 @@ class Character {
         this.threatMulti = 1;
         this.accuracy = 0.1; // Spread magnitude of weapon
         //Items
-        this.item = 0;
-        this.inventory = [new Pistol()];
+        this.item = 1;
+        this.inventory = [new Pistol(), new Flamer(), new JumpDropper()];
         this.ammo = {
             pistol: 25,
-            flamer: 50,
+            flamer: 25,
             jumpdropper: 3
         }
         //Graphics
@@ -59,6 +66,7 @@ class Character {
         this.leftgfx = 'img/sprites/jetbike_l';
         this.img.src = this.gfx + '.png'
         this.bot = false;
+        this.color = '#FF0000';
         this.tags = [];
         this.shadow = {
             active: true,
@@ -227,7 +235,7 @@ class Character {
         // Single shot code
         if (controller.click.current != controller.click.last) {
             if (controller.click.current)
-                this.inventory[this.item].use(this, 0);
+                this.inventory[this.item].use(this, game.player.controller.aimX, game.player.controller.aimY, 0);
             controller.click.last = controller.click.current;
         }
 
@@ -250,6 +258,15 @@ class Character {
         if (controller.left > controller.right) {
             this.img.src = this.leftgfx + '.png';
             this.exhaust = (this.w / 2)
+        }
+
+        if (controller.weaponNext) {
+            this.item++;
+            if (this.item >= this.inventory.length) this.item = 0;
+        }
+        if (controller.weaponPrevious) {
+            this.item--;
+            if (this.item < 0) this.item = this.inventory.length-1;
         }
     }
 
@@ -375,6 +392,17 @@ class Character {
             }
         }
     }
+
+    getRegion() {
+        return {
+            x: this.x,
+            y: this.y,
+            z: this.z,
+            w: this.w,
+            h: this.h,
+            d: this.d
+        }
+    }
 }
 
 
@@ -404,6 +432,7 @@ class NPC extends Character {
         this.speedMulti = 0.65 - (this.frictionMulti * 3);
         this.frictionMulti += 0.9;
         this.gfx = 'img/sprites/dark1';
+        this.color = '#330099';
         this.hud = {
             barW: 48
         }
@@ -442,6 +471,7 @@ class NPC extends Character {
             } else {
                 let compareX = this.target.x - this.x;
                 let compareY = this.target.y - this.y;
+
                 let speed = this.speedMulti;
                 if (this.z > game.match.map.windH)
                     speed *= 0.1;
@@ -455,6 +485,19 @@ class NPC extends Character {
                 }
                 if (compareY < 0 && this.yspeed > this.maxSpeed * -1) this.yspeed -= speed;
                 else if (compareY >= 0 && this.yspeed < this.maxSpeed) this.yspeed += speed;
+
+                let distance = Math.sqrt(compareX ** 2 + compareY ** 2);
+
+                // Switch guns when empty
+                if (this.ammo[this.inventory[this.item].type] <= 0) {
+                    this.item++;
+                    if (this.item >= this.inventory.length) this.item = 0;
+                }
+
+                // Attack
+                if (Math.abs(distance) <= this.inventory[this.item].range && this.target.team != this.team)
+                    if (ticks % 20 == 0) this.inventory[this.item].use(this, compareX, compareY, 0);
+
             }
 
             if (this.target.team !== undefined) {

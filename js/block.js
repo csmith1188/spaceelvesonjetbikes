@@ -42,6 +42,13 @@ class Block {
         this.h = 48;
         this.d = 16;
         this.hover = 0;
+        this.center = () => {
+            return {
+                x: (this.x + this.w) / 2,
+                y: (this.y + this.h) / 2,
+                z: (this.z + this.d) / 2
+            }
+        }
         // Speed
         this.xspeed = 0;
         this.yspeed = 0;
@@ -208,7 +215,7 @@ class Block {
                             ctx.fillRect(game.window.w / 2 - compareX - (this.w / 2), game.window.h / 2 - compareY - (this.h / 2) - this.z - this.d, this.w, this.h);
                             if (this.colorSide) {
                                 ctx.fillStyle = this.colorSide;
-                                ctx.fillRect(game.window.w / 2 - compareX - (this.w / 2), game.window.h / 2 - compareY - (this.h / 2) - this.z  - this.d + this.h, this.w, this.d);
+                                ctx.fillRect(game.window.w / 2 - compareX - (this.w / 2), game.window.h / 2 - compareY - (this.h / 2) - this.z - this.d + this.h, this.w, this.d);
                             }
                         }
                     }
@@ -219,6 +226,17 @@ class Block {
 
     collide() {
         return
+    }
+
+    getRegion() {
+        return {
+            x: this.x,
+            y: this.y,
+            z: this.z,
+            w: this.w,
+            h: this.h,
+            d: this.d
+        }
     }
 
 }
@@ -578,6 +596,11 @@ class AmmoPickup extends Block {
         this.ammoType = 'pistol';
         this.ammoAmount = 25;
         this.tags = ['immobile', 'nocollide']; //Made it nocollide so you can enter the space
+        // Options
+        if (typeof options === 'object')
+            for (var key of Object.keys(options)) {
+                this[key] = options[key];
+            }
     }
 
     collide(colliders, options) {

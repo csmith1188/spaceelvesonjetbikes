@@ -6,29 +6,31 @@ class Item {
                 this[key] = options[key];
             }
     }
-    use(user, mode) {
+    use(user, xaim, yaim, mode) {
     }
 }
 
 class Pistol extends Item {
     constructor(options) {
         super(options);
+        this.type = 'pistol';
         this.shootSFX = new Audio('sfx/laser_01.wav');
         this.projectileSpeed = 20;
+        this.range = 300;
         // Options
         if (typeof options === 'object')
             for (var key of Object.keys(options)) {
                 this[key] = options[key];
             }
     }
-    use(user, mode) {
+    use(user, xaim, yaim, mode) {
         if (user.ammo.pistol > 0) {
             user.ammo.pistol--;
             this.shootSFX.play();
             // if (this.lungeSFX.duration <= 0 || this.lungeSFX.paused)
             //     this.lungeSFX.play();
-            let aimX = game.player.controller.aimX;
-            let aimY = game.player.controller.aimY;
+            let aimX = xaim;
+            let aimY = yaim;
             //find the distance from player to mouse with pythagorean theorem
             let distance = ((aimX ** 2) + (aimY ** 2)) ** 0.5;
             //Normalize the dimension distance by the real distance (ratio)
@@ -56,6 +58,7 @@ class Pistol extends Item {
             // aimY *= spreadY;
 
             game.match.map.missiles.push(new Missile(allID++, user.x, user.y, {
+                color: user.color,
                 parent: user,
                 z: user.z,
                 xspeed: aimX,
@@ -70,6 +73,8 @@ class Pistol extends Item {
 class Flamer extends Item {
     constructor(options) {
         super(options);
+        this.type = 'flamer';
+        this.range = 200;
         this.shootSFX = new Audio('sfx/hit_02.wav');
         this.projectileSpeed = 10;
         // Options
@@ -79,15 +84,15 @@ class Flamer extends Item {
             }
     }
 
-    use(user, mode) {
+    use(user, xaim, yaim, mode) {
         if (user.ammo.flamer > 0) {
             user.ammo.flamer--;
             this.shootSFX.play();
             for (let i = 0; i < 5; i++) {
                 // if (this.lungeSFX.duration <= 0 || this.lungeSFX.paused)
                 //     this.lungeSFX.play();
-                let aimX = game.player.controller.aimX;
-                let aimY = game.player.controller.aimY;
+                let aimX = xaim;
+                let aimY = yaim;
                 //find the distance from player to mouse with pythagorean theorem
                 let distance = Math.sqrt(aimX ** 2 + aimY ** 2);
                 //Normalize the dimension distance by the real distance (ratio)
@@ -107,13 +112,14 @@ class Flamer extends Item {
 
                 game.match.map.missiles.push(new Missile(allID++, user.x, user.y, {
                     parent: user,
+                    color: user.color,
                     z: user.z,
                     xspeed: aimX,
                     yspeed: aimY,
                     dxspeed: aimX,
                     dyspeed: aimY,
                     livetime: 10,
-                    damage: 1,
+                    damage: 3,
                     wind: true
                 }));
             }
@@ -124,9 +130,11 @@ class Flamer extends Item {
 class JumpDropper extends Item {
     constructor(options) {
         super(options);
+        this.type = 'jumpdropper';
         this.bonus = 10;
         this.live = 20;
         this.delay = 0;
+        this.range = 0;
         this.shootSFX = new Audio('sfx/laser_01.wav');
         // Options
         if (typeof options === 'object')
@@ -135,7 +143,7 @@ class JumpDropper extends Item {
             }
     }
 
-    use(user, mode) {
+    use(user, xaim, yaim, mode) {
         if (user.ammo.jumpdropper > 0) {
             user.ammo.jumpdropper--;
             game.match.map.blocks.push(new JumpPad(allID++, user.x, user.y, {

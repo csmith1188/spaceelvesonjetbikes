@@ -73,11 +73,21 @@ class Player {
             ctx.fillText(game.player.best.lap.toFixed(2), 100, 65);
             ctx.fillText("Damage:  ", 10, 80);
             ctx.fillText(game.player.best.damage.toFixed(2), 100, 80);
-            ctx.fillStyle = "#006600";
+
+            // Weapons
+            ctx.fillStyle = "#660000";
+            if (game.player.character.inventory[game.player.character.item].type == 'pistol')
+                ctx.fillStyle = "#006600";
             ctx.fillText("Pistol:  ", 10, 100);
             ctx.fillText(game.player.character.ammo.pistol, 100, 100);
+            ctx.fillStyle = "#660000";
+            if (game.player.character.inventory[game.player.character.item].type == 'flamer')
+                ctx.fillStyle = "#006600";
             ctx.fillText("Flamer:  ", 10, 115);
             ctx.fillText(game.player.character.ammo.flamer, 100, 115);
+            ctx.fillStyle = "#660000";
+            if (game.player.character.inventory[game.player.character.item].type == 'jumpdropper')
+                ctx.fillStyle = "#006600";
             ctx.fillText("Jumper:  ", 10, 130);
             ctx.fillText(game.player.character.ammo.jumpdropper, 100, 130);
 
@@ -145,10 +155,9 @@ class Player {
                 //Draw the crosshair at the point
                 //(in this case, the center of the screen plus the normalized distance)
                 ctx.drawImage(this.xhair, (game.window.w / 2) + aimX - 8, (game.window.h / 2) + aimY - 8, 16, 16);
+                // Sniper Xhair
+                // ctx.drawImage(this.xhair, (game.window.w / 2) + (aimX * 2) - 16, (game.window.h / 2) + (aimY * 2) - 16, 32, 32);
             }
-
-
-
 
             // In case I want to use arches for power bars or abilities
             // ctx.strokeStyle = 'red';
