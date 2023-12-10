@@ -196,7 +196,7 @@ function draw() {
     game.match.map.lighting();
 
     //Draw HUD
-    game.player.drawHUD();
+    game.player.interface.drawHUD();
 
     //Draw Controller HUD
     game.player.controller.draw();
@@ -270,8 +270,8 @@ function setupInputs() {
     }, { passive: false });
     window.addEventListener("mousedown", (event) => {
         let coords = getCanvasRelative(event, false); // from top-left
-        game.player.controller.clickX = coords.x;
-        game.player.controller.clickY = coords.y;
+        game.player.controller.fireX = coords.x;
+        game.player.controller.fireY = coords.y;
         coords = getCanvasRelative(event, true); // relative to center
         game.player.controller.rclickX = coords.x;
         game.player.controller.rclickY = coords.y;
@@ -392,7 +392,7 @@ function makeGame(type) {
             let tempy = (Math.floor(Math.random() * (game.match.map.h / 48)) * 48) + 24
             let tempw = (Math.ceil(Math.random() * 2) * 48)
             let temph = (Math.ceil(Math.random() * 2) * 48)
-            game.match.map.blocks.push(new Block(allID++, tempx, tempy, { color: '#333333', colorSide: '#666666', w: tempw, h: temph, d: 128 }))
+            game.match.map.blocks.push(new Block(allID++, tempx, tempy, { color: '#333333', colorSide: '#666666', w: tempw, h: temph, d: 64 }))
         }
         for (let i = 0; i < 25; i++) {
             let tempx = (Math.floor(Math.random() * (game.match.map.w / 48)) * 48) + 24
@@ -412,7 +412,7 @@ function makeGame(type) {
         for (let i = 0; i < 25; i++) {
             let tempx = (Math.floor(Math.random() * (game.match.map.w / 48)) * 48) + 24
             let tempy = (Math.floor(Math.random() * (game.match.map.h / 48)) * 48) + 24
-            game.match.map.blocks.push(new AmmoPickup(allID++, tempx, tempy, {ammoType: 'flamer', ammoAmount: 25, color:"#FFFF00"}))
+            game.match.map.blocks.push(new AmmoPickup(allID++, tempx, tempy, { ammoType: 'flamer', ammoAmount: 25, color: "#FFFF00" }))
         }
         for (let i = 0; i < 10; i++) {
             let tempx = (Math.floor(Math.random() * (game.match.map.w / 48)) * 48) + 24
@@ -524,19 +524,6 @@ function makeGame(type) {
     }
 }
 
-// origin / target
-function compareXY(x1, y1, x2, y2) {
-    let xd = x2 - x1;
-    let yd = y2 - y1;
-    let distance = Math.sqrt(xd ** 2 + yd ** 2);
-    return {
-        xd: xd,             // From origin to target x distance
-        yd: yd,             // From origin to target y distance
-        xa: xd / distance,    // From origin to target x speed
-        ya: yd / distance,    // From origin to target y speed
-        d: distance         // From origin to target direct distance
-    }
-}
 
 // Takes two regions from object.getRegion()
 function collideRect(entity, collider) {
@@ -563,5 +550,49 @@ function collideRect(entity, collider) {
         withinZ: withinZ,
         contains: contains,
         contained: contained
+    }
+}
+
+class Vect3 {
+    constructor(x, y, z) {
+        this.x = x || 0;
+        this.y = y || 0;
+        this.z = z || 0;
+    }
+    compare(target) {
+        let xd = target.x - this.x;
+        let yd = target.y - this.y;
+        let zd = target.z - this.z;
+        let dist2 = Math.sqrt(xd ** 2 + yd ** 2);
+        let dist3 = Math.sqrt(xd ** 2 + yd ** 2 + zd ** 2);
+        return {
+            angle2: new Vect3(xd / dist2, yd / dist2, 0),
+            angle3: new Vect3(xd / dist3, yd / dist3, zd / dist3),
+            difference: new Vect3(xd, yd, zd),
+            distance2: dist2,
+            distance3: dist3
+        }
+    }
+}
+
+class Cube {
+    constructor(origin, width) {
+        this.pos = origin;
+        this.width = width;
+        this.end = new Vect3(origin.x + width.x, origin.y + width.y, origin.z + width.z);
+    }
+    half() {
+        return new Vect3(this.width.x / 2, this.width.y / 2, this.width.z / 2)
+    }
+    center() {
+        return new Vect3(this.pos.x + (this.width.x / 2), this.pos.x + (this.width.y / 2), this.pos.x + (this.width.z / 2))
+    }
+}
+
+class Cylinder {
+    constructor(origin, radius, height) {
+        this.pos = origin;
+        this.radius = radius;
+        this.height = height;
     }
 }

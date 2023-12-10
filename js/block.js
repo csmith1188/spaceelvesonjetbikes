@@ -31,7 +31,14 @@ class Block {
         this.type = 'block';
         this.tags = ['immobile'];
         this.runFunc = function () { return }
+        
         // Position
+        this.pos = new Vect3(x, y, 0);
+        this.width = new Vect3(48, 48, 24);
+        this.offset = new Vect3(0, 0, 0);
+        this.aim = new Vect3(0,0,0);
+        this.angle = new Vect3(0,0,0);
+
         this.x = x;
         this.y = y;
         this.z = 0;
@@ -41,14 +48,9 @@ class Block {
         this.w = 48;
         this.h = 48;
         this.d = 16;
+
         this.hover = 0;
-        this.center = () => {
-            return {
-                x: (this.x + this.w) / 2,
-                y: (this.y + this.h) / 2,
-                z: (this.z + this.d) / 2
-            }
-        }
+
         // Speed
         this.xspeed = 0;
         this.yspeed = 0;

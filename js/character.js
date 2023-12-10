@@ -8,27 +8,34 @@
 ########  ###    ### ###     ### ###    ### ###     ###  ########     ###     ########## ###    ###
 */
 class Character {
-    constructor(id, spawnx, spawny) {
+    constructor(id, spawnx, spawny, parent) {
         this.id = id;
+        this.parent = parent;
         this.active = true;
         this.cleanup = true;
         this.team = 0;
+        
         //Location
+        this.pos = new Vect3(spawnx, spawny, 0);
+        this.radius = 24;
+        this.height = 24;
+        this.tube = new Cylinder(this.pos, this.radius, this.height);
+        this.aim = new Vect3(0,0,0);
+        this.angle = new Vect3(0,0,0);
+
+        this.hover = 12;
+
         this.x = spawnx;
         this.y = spawny;
         this.z = 0;
-        this.hover = 12;
         this.w = 48;
         this.h = 48;
         this.d = 24;
-        this.center = () => {
-            return {
-                x: (this.x + this.w) / 2,
-                y: (this.y + this.h) / 2,
-                z: (this.z + this.d) / 2
-            }
-        }
+        
         //Speed
+        this.speed = new Vect3(0,0,0);
+        this.accel = new Vect3(0,0,0);
+
         this.xspeed = 0;
         this.yspeed = 0;
         this.zspeed = 0;
@@ -75,6 +82,8 @@ class Character {
             d: 200,
             x: 0,
             y: this.h / 2,
+            pos: new Vect3(0, this.h/2, 0),
+            width: new Vect3(48, 24, 200)
         }
         this.shadowImg = new Image();
         this.shadowImg.src = "img/sprites/shadow.png";
@@ -102,9 +111,9 @@ class Character {
         if (this.active) {
             if (this.power < this.power_max) {
                 if (Math.abs(this.xspeed) <= game.match.map.collideDamageSpeed && Math.abs(this.yspeed) <= game.match.map.collideDamageSpeed)
-                    this.power++;
-                if (this.zspeed < 0)
-                    this.power -= this.zspeed;
+                this.power++;
+            if (this.zspeed < 0)
+            this.power -= this.zspeed;
                 if (this.power > this.power_max) this.power = this.power_max;
             }
             //Wind
@@ -204,18 +213,18 @@ class Character {
     userInput(controller) {
         //Airborne
         if (this.z > game.match.map.windH) {
-            controller.right *= 0.1;
-            controller.left *= 0.1;
-            controller.up *= 0.1;
-            controller.down *= 0.1;
+            controller.buttons.moveRight.current *= 0.1;
+            controller.buttons.moveLeft.current *= 0.1;
+            controller.buttons.moveUp.current *= 0.1;
+            controller.buttons.moveDown.current *= 0.1;
         }
         // Brakes
-        if (controller.shift) this.zspeed -= this.brakes;
-        // if (controller.shift)
+        if (controller.buttons.brake.current) this.zspeed -= this.brakes;
+        // if (controller.buttons.brake.current)
         //     this.brakeSFX.play();
         // Lunge
-        if (controller.alt.current != controller.alt.last && this.power >= this.lungeCost) {
-            if (controller.alt.current) {
+        if (controller.buttons.boost.current != controller.buttons.boost.last && this.power >= this.lungeCost) {
+            if (controller.buttons.boost.current) {
                 if (this.lungeSFX.duration <= 0 || this.lungeSFX.paused)
                     this.lungeSFX.play();
                 if (controller.right) this.xspeed += this.lungeSpeed;
@@ -224,47 +233,47 @@ class Character {
                 if (controller.up) this.yspeed -= this.lungeSpeed;
                 this.power -= this.lungeCost;
             }
-            controller.alt.last = controller.alt.current;
+            controller.buttons.boost.last = controller.buttons.boost.current;
         }
         // Shoot
 
         //Torrent code (needs single clicks to be handled by item)
-        // if (controller.click.current)
+        // if (controller.buttons.fire.current)
         //     this.inventory[this.item].use(this, 0);
 
         // Single shot code
-        if (controller.click.current != controller.click.last) {
-            if (controller.click.current)
+        if (controller.buttons.fire.current != controller.buttons.fire.last) {
+            if (controller.buttons.fire.current)
                 this.inventory[this.item].use(this, game.player.controller.aimX, game.player.controller.aimY, 0);
-            controller.click.last = controller.click.current;
+            controller.buttons.fire.last = controller.buttons.fire.current;
         }
 
         // Jump
-        if (controller.space && this.power >= this.jumpCost) {
+        if (controller.buttons.jump.current&& this.power >= this.jumpCost) {
             this.zspeed += 2
             this.power -= this.jumpCost
         }
         // TODO: Account for moving both directions at once goign too fast
         // Apply player input and character speed if not going faster than max speed
-        if (controller.right && this.xspeed < this.maxSpeed) this.xspeed += controller.right * this.speedMulti;
-        else if (controller.left && this.xspeed > this.maxSpeed * -1) this.xspeed -= controller.left * this.speedMulti;
-        if (controller.up && this.yspeed > this.maxSpeed * -1) this.yspeed -= controller.up * this.speedMulti;
-        else if (controller.down && this.yspeed < this.maxSpeed) this.yspeed += controller.down * this.speedMulti;
+        if (controller.buttons.moveRight.current && this.xspeed < this.maxSpeed) this.xspeed += controller.buttons.moveRight.current * this.speedMulti;
+        else if (controller.buttons.moveLeft.current && this.xspeed > this.maxSpeed * -1) this.xspeed -= controller.buttons.moveLeft.current * this.speedMulti;
+        if (controller.buttons.moveUp.current && this.yspeed > this.maxSpeed * -1) this.yspeed -= controller.buttons.moveUp.current * this.speedMulti;
+        else if (controller.buttons.moveDown.current && this.yspeed < this.maxSpeed) this.yspeed += controller.buttons.moveDown.current * this.speedMulti;
         // Change the graphics based on direction
-        if (controller.left < controller.right) {
+        if (controller.buttons.moveLeft.current < controller.right) {
             this.img.src = this.gfx + '.png';
             this.exhaust = - (this.w / 2)
         }
-        if (controller.left > controller.right) {
+        if (controller.buttons.moveLeft.current > controller.right) {
             this.img.src = this.leftgfx + '.png';
             this.exhaust = (this.w / 2)
         }
 
-        if (controller.weaponNext) {
+        if (controller.buttons.weaponNext.current) {
             this.item++;
             if (this.item >= this.inventory.length) this.item = 0;
         }
-        if (controller.weaponPrevious) {
+        if (controller.buttons.weaponPrevious.current) {
             this.item--;
             if (this.item < 0) this.item = this.inventory.length-1;
         }
@@ -290,6 +299,18 @@ class Character {
             ctx.fillRect(game.window.w / 2 - compareX - (this.w / 2), game.window.h / 2 - compareY - (this.h / 2) - this.z, this.w, this.h);
             ctx.fillStyle = "#000000";
             ctx.fillRect((game.window.w / 2) - 2, (game.window.h / 2) - 2, 4, 4);
+            ctx.beginPath();
+            ctx.arc(
+                game.window.w / 2 - compareX - (this.player.character.w / 2) + this.player.character.tube.radius,
+                game.window.h / 2 - compareY - (this.player.character.h / 2) + this.player.character.tube.radius - this.player.character.z,
+                game.player.character.tube.radius,
+                0, 2 * Math.PI);
+            ctx.arc(
+                game.window.w / 2 - compareX - (this.player.character.w / 2) + this.player.character.tube.radius,
+                game.window.h / 2 - compareY - (this.player.character.h / 2) + this.player.character.tube.radius - this.player.character.tube.height - this.player.character.z,
+                game.player.character.tube.radius,
+                0, 2 * Math.PI);
+            ctx.stroke();
         } else {
             this.shadow.w = (this.w - this.hover) * (1 - (((this.z > this.shadow.d) ? this.shadow.d : this.z) / this.shadow.d));
             this.shadow.h = this.shadow.w / 2;
@@ -497,7 +518,6 @@ class NPC extends Character {
                 // Attack
                 if (Math.abs(distance) <= this.inventory[this.item].range && this.target.team != this.team)
                     if (ticks % 20 == 0) this.inventory[this.item].use(this, compareX, compareY, 0);
-
             }
 
             if (this.target.team !== undefined) {
