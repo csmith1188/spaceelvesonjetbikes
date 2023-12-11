@@ -15,6 +15,13 @@
 
 class Block {
     constructor(id, x, y, options) {
+        // Position
+        this.pos = new Vect3(x, y, 0);
+        this.width = new Vect3(48, 48, 24);
+        this.offset = new Vect3(0, 0, 0);
+        this.aim = new Vect3(0,0,0);
+        this.angle = new Vect3(0,0,0);
+        
         // Lifespan
         this.id = id;
         this.active = true; //Are we tracking this in the game?
@@ -32,12 +39,6 @@ class Block {
         this.tags = ['immobile'];
         this.runFunc = function () { return }
         
-        // Position
-        this.pos = new Vect3(x, y, 0);
-        this.width = new Vect3(48, 48, 24);
-        this.offset = new Vect3(0, 0, 0);
-        this.aim = new Vect3(0,0,0);
-        this.angle = new Vect3(0,0,0);
 
         this.x = x;
         this.y = y;
@@ -205,19 +206,19 @@ class Block {
                 } else if (this.color) {
                     if (game.debug) {
                         ctx.fillStyle = "#00FF00";
-                        ctx.fillRect(game.window.w / 2 - compareX - (this.w / 2), game.window.h / 2 - compareY - (this.h / 2), this.w, this.h);
+                        ctx.fillRect(game.window.w / 2 - compareX, game.window.h / 2 - compareY - (this.h / 2), this.w, this.h);
                         ctx.fillStyle = "#000000";
                         ctx.fillRect(game.window.w / 2 - compareX - 2, game.window.h / 2 - compareY - 2, 4, 4);
                     } else {
                         if (this.activeGoal) {
                             ctx.fillStyle = this.colorActive;
-                            ctx.fillRect(game.window.w / 2 - compareX - (this.w / 2), game.window.h / 2 - compareY - (this.h / 2) - this.z, this.w, this.h);
+                            ctx.fillRect(game.window.w / 2 - compareX, game.window.h / 2 - compareY - this.z, this.w, this.h);
                         } else {
                             ctx.fillStyle = this.color;
-                            ctx.fillRect(game.window.w / 2 - compareX - (this.w / 2), game.window.h / 2 - compareY - (this.h / 2) - this.z - this.d, this.w, this.h);
+                            ctx.fillRect(game.window.w / 2 - compareX, game.window.h / 2 - compareY - this.z - this.d, this.w, this.h);
                             if (this.colorSide) {
                                 ctx.fillStyle = this.colorSide;
-                                ctx.fillRect(game.window.w / 2 - compareX - (this.w / 2), game.window.h / 2 - compareY - (this.h / 2) - this.z - this.d + this.h, this.w, this.d);
+                                ctx.fillRect(game.window.w / 2 - compareX, game.window.h / 2 - compareY - this.z - this.d + this.h, this.w, this.d);
                             }
                         }
                     }
@@ -228,17 +229,6 @@ class Block {
 
     collide() {
         return
-    }
-
-    getRegion() {
-        return {
-            x: this.x,
-            y: this.y,
-            z: this.z,
-            w: this.w,
-            h: this.h,
-            d: this.d
-        }
     }
 
 }

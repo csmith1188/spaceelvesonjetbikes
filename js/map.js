@@ -1,7 +1,9 @@
 class Map {
     constructor(options) {
-        this.w = 7200;
-        this.h = 4800;
+        this.w = 7200; //7200
+        this.h = 4800; //4800
+        this.nodes = [];
+
         this.friction = 0.99;
         this.gravity = 1;
         this.gravityFriction = 0.9;
@@ -37,6 +39,21 @@ class Map {
 
     }
 
+    buildNavMesh() {
+        for (let x = 0; x < this.w / 64; x++) {
+            for (let y = 0; y < this.h / 64; y++) {
+                this.nodes.push(new Node(x * 64, y * 64))
+                for (const block of game.match.map.blocks) {
+                    if (this.nodes[this.nodes.length - 1].pos.collideRect(new Rect(block.x, block.y, block.w, block.h))) {
+                        this.nodes[this.nodes.length - 1].pass = false;
+                    } else {
+                    }
+                }
+            }
+        }
+    }
+
+
     postLoad() {
         //INIT DEBRIS
         if (this.percipitation) {
@@ -55,7 +72,6 @@ class Map {
     }
 
     draw() {
-        // ctx.drawImage(this.bgimg, (game.player.camera.x * -1) + game.window.w / 2, (game.player.camera.y * -1) + game.window.h / 2, this.w, this.h);
         let mw = Math.ceil(game.window.w / this.imgSizeW) + 1 // How many "tiles" wide is the screen?
         let mh = Math.ceil(game.window.h / this.imgSizeH) + 1// How many "tiles" high is it?
         for (let row = 0; row < mw; row++) {
@@ -73,6 +89,10 @@ class Map {
                 if (totalX <= this.w && totalY <= this.h && totalX >= 0 && totalY >= 0)
                     ctx.drawImage(this.bgimg, Math.floor(tileX), Math.floor(tileY), this.imgSizeW, this.imgSizeH);
             }
+        }
+
+        for (const node of this.nodes) {
+            node.draw();
         }
     }
 
@@ -92,13 +112,14 @@ class Map {
                 this.missiles = this.missiles.filter(function (el) { return el != e; });
             }
         }
-        
+
         this.wind();
 
         // Run all runFuncs
         for (const func of this.runFuncs) {
             func();
         }
+
     }
 
     wind() {
@@ -118,4 +139,23 @@ class Map {
         // ctx.globalCompositeOperation = "source-over";
     }
 
+}
+
+class Node {
+    constructor(x, y, w = 64, h = 64) {
+        this.pos = new Rect(x, y, w, h)
+        this.pass = true;
+    }
+    draw() {
+        if (this.pass) {
+
+            let compareX = game.player.camera.x - this.pos.x;
+            let compareY = game.player.camera.y - this.pos.y;
+            if (game.player.camera.radius > Math.max(Math.abs(compareX), Math.abs(compareY))) {
+                ctx.strokeStyle = "#00FF00"
+                ctx.strokeRect(game.window.w / 2 - compareX, game.window.h / 2 - compareY, this.pos.w, this.pos.h);
+            }
+        }
+
+    }
 }

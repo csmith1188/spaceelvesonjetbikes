@@ -80,7 +80,6 @@ class Bot {
                     this.controller.buttons.moveDown.current = this.controller.buttons.moveUp.current = 0;
                 }
 
-                console.log(this.controller.buttons.moveLeft.current, this.controller.buttons.moveUp.current, this.controller.buttons.moveRight.current, this.controller.buttons.moveDown.current);
                 // Switch guns when empty
                 if (this.character.ammo[this.character.inventory[this.character.item].type] <= 0) {
                     this.character.item++;

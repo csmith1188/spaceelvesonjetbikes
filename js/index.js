@@ -38,7 +38,11 @@ window.onload = function () {
     game.player.character = new Character(allID++, (game.match.map.w / 2), (game.match.map.h / 2), game.player);
     game.player.camera = new Camera({ target: game.player.character });
 
-    makeGame(['aitest']);
+    // makeGame(['aitest', 'randommap']);
+    makeGame(['blocks']);
+
+
+    game.match.map.buildNavMesh();
 
     //start game loop
     //Run the step() function every 16ms (60fps)
@@ -62,6 +66,7 @@ function step() {
     // The next two lines will always max screen
     game.window.h = window.innerHeight;
     game.window.w = window.innerWidth;
+    game.player.camera.radius = Math.sqrt((game.window.w / 2)**2 + (game.window.h / 2)**2)
 
     canvas.width = game.window.w;
     canvas.height = game.window.h;
@@ -282,46 +287,20 @@ function makeGame(type) {
         // game.player.camera.target = game.match.bots[game.match.bots.length - 1] //race-vision
     }
     if (type.includes('blocks')) {
-        //Blocks
-        game.match.map.blocks.push(new Block(allID++, (game.match.map.w / 2) + 100, (game.match.map.h / 2), { color: '#0000FF' }))
-        game.match.map.blocks.push(new Block(allID++, (game.match.map.w / 2), (game.match.map.h / 2), { color: '#FF9900', w: 48, h: 96 }))
-        game.match.map.blocks.push(new JumpPad(allID++, (game.match.map.w / 2) + 100, (game.match.map.h / 2) + 300, { color: '#FF9900' }))
-        game.match.map.blocks.push(new HealthBlock(allID++, (game.match.map.w / 2) + 500, (game.match.map.h / 2) + 500, { color: '#990000', healthCollide: 2 }))
-        game.match.map.blocks.push(new HealthBlock(allID++, (game.match.map.w / 2) + 200, (game.match.map.h / 2) + 200, { color: '#996666', healthCollide: 20, tags: ['immobile'] }))
-        game.match.map.blocks.push(new HealthBlock(allID++, (game.match.map.w / 2) + 200, (game.match.map.h / 2) + 200, { color: '#66FF66', healthCollide: -1 }))
-        // Speed Strip
-        for (let i = 0; i < game.match.map.w / 48; i++) {
-            game.match.map.blocks.push(new SpeedPad(allID++, (i * 48 * 10) + 24, (game.match.map.h / 2), { color: '#0066FF' }))
+        // Random Blocks
+        for (let i = 0; i < 100; i++) {
+            let tempx = (Math.floor(Math.random() * (game.match.map.w / 48)) * 48) + 24
+            let tempy = (Math.floor(Math.random() * (game.match.map.h / 48)) * 48) + 24
+            let tempw = (Math.ceil(Math.random() * 2) * 48)
+            let temph = (Math.ceil(Math.random() * 2) * 48)
+            game.match.map.blocks.push(new Block(allID++, tempx, tempy, { color: '#333333', colorSide: '#666666', w: tempw, h: temph, d: 64 }))
         }
-        //Ball
-        game.match.map.blocks.push(new Ball(allID++, (game.match.map.w / 2) - 200, (game.match.map.h / 2) + 200, { color: '#FFFFFF' }))
     }
-    if (type.includes('debris')) {
-        //Debris
-        for (let i = 0; i < 1000; i++) {
-            let tempx = Math.floor(Math.random() * game.match.map.w);
-            let tempy = Math.floor(Math.random() * game.match.map.h);
-            let tempt = Math.floor(Math.random() * 2000);
-            game.match.map.debris.push(new Debris(allID++, tempx, tempy, { imgFile: 'img/sprites/leaf1.png', w: 12, h: 12, z: tempt }));
-        }
-        game.match.map.debris.push(new Debris(allID++, (game.match.map.w / 2), (game.match.map.h / 2), { imgFile: 'img/sprites/leaf1.png', w: 12, h: 12, z: 100 }));
-    }
+
     if (type.includes('waves')) {
         game.match.map.blocks.push(new Wave(allID++, 0, (game.match.map.h / 2), { color: '#aaaaFF', w: 100, h: game.match.map.h, xspeed: 6, dxspeed: 6, repeat: true, startDelay: 0 }))
         game.match.map.blocks.push(new Wave(allID++, 0, (game.match.map.h / 2), { color: '#aaaaFF', w: 100, h: game.match.map.h, xspeed: 6, dxspeed: 6, repeat: true, startDelay: 300 }))
         game.match.map.blocks.push(new Wave(allID++, 0, (game.match.map.h / 2), { color: '#aaaaFF', w: 100, h: game.match.map.h, xspeed: 6, dxspeed: 6, repeat: true, startDelay: 360 }))
-    }
-    if (type.includes('fortnite')) {
-        for (let i = 0; i < 50; i++) {
-            let tempx = Math.floor(Math.random() * game.match.map.w);
-            let tempy = Math.floor(Math.random() * game.match.map.h);
-            game.match.bots.push(new NPC(allID++, tempx, tempy, { target: game.player.character, nameTag: 'Kevin ' + (i + 1), gfx: 'img/sprites/dark2' })) //Kevin
-        }
-        for (let i = 0; i < 50; i++) {
-            let tempx = Math.floor(Math.random() * game.match.map.w);
-            let tempy = Math.floor(Math.random() * game.match.map.h);
-            game.match.bots.push(new NPC(allID++, tempx, tempy, { target: null, nameTag: 'Frendo ' + (i + 1), team: 0 })) //Anti-Kevin
-        }
     }
     if (type.includes('lonewarrior')) {
         game.match.map.runFuncs.push(() => {
@@ -345,25 +324,32 @@ function makeGame(type) {
         game.match.bots.push(new NPC(allID++, (game.match.map.w / 2) + 1000, (game.match.map.h / 2) + 1000, { target: game.match.bots[game.match.bots.length - 2], nameTag: 'Jason', gfx: 'img/sprites/dark2' })) //Kevin
         game.match.bots.push(new NPC(allID++, (game.match.map.w / 2) - 1000, (game.match.map.h / 2) - 1000, { color: '#006600', target: game.player.character, nameTag: 'Logan', team: 0 })) //Anti-Kevin
     }
-    if (type.includes('4v4')) {
-        game.match.bots.push(new NPC(allID++, (game.match.map.w / 2) + 1000, (game.match.map.h / 2) - 1000, { target: game.player.character, nameTag: 'Jaysin', gfx: 'img/sprites/dark2' })) //Kevin
-        game.match.bots.push(new NPC(allID++, (game.match.map.w / 2) + 1000, (game.match.map.h / 2) - 2000, { target: game.match.bots[game.match.bots.length - 1], nameTag: 'Jayson', gfx: 'img/sprites/dark2' })) //Kevin
-        game.match.bots.push(new NPC(allID++, (game.match.map.w / 2) + 1000, (game.match.map.h / 2) + 1000, { target: game.match.bots[game.match.bots.length - 2], nameTag: 'Jason', gfx: 'img/sprites/dark2' })) //Kevin
-        game.match.bots.push(new NPC(allID++, (game.match.map.w / 2) + 1000, (game.match.map.h / 2) + 2000, { target: game.match.bots[game.match.bots.length - 3], nameTag: 'Jacob', gfx: 'img/sprites/dark2' })) //Kevin
-        game.match.bots.push(new NPC(allID++, (game.match.map.w / 2) - 1000, (game.match.map.h / 2) - 1500, { target: game.player.character, nameTag: 'Logan', team: 0 })) //Anti-Kevin
-        game.match.bots.push(new NPC(allID++, (game.match.map.w / 2) - 1000, (game.match.map.h / 2), { target: game.player.character, nameTag: 'Logan', team: 0 })) //Anti-Kevin
-        game.match.bots.push(new NPC(allID++, (game.match.map.w / 2) - 1000, (game.match.map.h / 2) + 1500, { target: game.player.character, nameTag: 'Logan', team: 0 })) //Anti-Kevin
-    }
     if (type.includes('aitest')) {
         game.match.bots.push(new Bot()) //Kevin
         game.match.bots[game.match.bots.length - 1].character = new Character(allID++, (game.match.map.w / 2) + 1000, (game.match.map.h / 2) - 1000, game.match.bots[game.match.bots.length - 1], { target: game.player.character, nameTag: 'Jaysin', gfx: 'img/sprites/dark2', team: 1 });
     }
 }
 
-class Vect3 {
-    constructor(x, y, z) {
+class Vect2 {
+    constructor(x, y) {
         this.x = x || 0;
         this.y = y || 0;
+    }
+    compare(target) {
+        let xd = target.x - this.x;
+        let yd = target.y - this.y;
+        let dist2 = Math.sqrt(xd ** 2 + yd ** 2);
+        return {
+            angle2: new Vect3(xd / dist2, yd / dist2, 0),
+            difference: new Vect3(xd, yd, zd),
+            distance2: dist2,
+        }
+    }
+}
+
+class Vect3 extends Vect2 {
+    constructor(x, y, z) {
+        super(x, y)
         this.z = z || 0;
     }
     compare(target) {
@@ -379,6 +365,27 @@ class Vect3 {
             distance2: dist2,
             distance3: dist3
         }
+    }
+}
+
+class Rect {
+    constructor(x, y, w, h) {
+        this.x = x || 0;
+        this.y = y || 0;
+        this.w = w || 0;
+        this.h = h || 0;
+    }
+    center() {
+        return {
+            x: this.x + (this.w / 2),
+            y: this.y + (this.h / 2)
+        }
+    }
+    collideRect(collider) {
+        if (this.x < collider.x + collider.w && this.x + this.w > collider.x)
+            if (this.y < collider.y + collider.h && this.y + this.h > collider.y)
+                return true
+        return false
     }
 }
 
