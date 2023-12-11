@@ -2,9 +2,9 @@
 ## For Speed. For Honor. Forever.
 Far away in the galaxy, a race of elves from outer space roam the stars and planets, mounted on their lightning-fast jetbikes. Their eternal race is a beacon of values that us mere humans can barely comprehend, such as speed, and honor.
 
-In the darkest shadows of the galaxy, those who have strayed from these mores lurk. The Dark Elves, seek to defile that which is revered by the Space Elves, and use their gifts for their own short-term gains.
+In the darkest shadows of the galaxy, those who have strayed from these mores lurk. The Dark Elves seek to defile that which is revered by the Space Elves, and use their gifts for their own short-term gains.
 
-As a valiant knight of the Space Elves, you are to defeat these Dark Elves in the immortal battlefield of Speed and Honor.
+As a valiant knight of the Space Elves, you are to defeat these Dark Elves in the immortal battlefields of speed and honor.
 
 ### Scope
 

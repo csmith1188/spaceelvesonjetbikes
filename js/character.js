@@ -8,20 +8,20 @@
 ########  ###    ### ###     ### ###    ### ###     ###  ########     ###     ########## ###    ###
 */
 class Character {
-    constructor(id, spawnx, spawny, parent) {
+    constructor(id, spawnx, spawny, parent, options) {
         this.id = id;
         this.parent = parent;
         this.active = true;
         this.cleanup = true;
         this.team = 0;
-        
+
         //Location
         this.pos = new Vect3(spawnx, spawny, 0);
         this.radius = 24;
         this.height = 24;
         this.tube = new Cylinder(this.pos, this.radius, this.height);
-        this.aim = new Vect3(0,0,0);
-        this.angle = new Vect3(0,0,0);
+        this.aim = new Vect3(0, 0, 0);
+        this.angle = new Vect3(0, 0, 0);
 
         this.hover = 12;
 
@@ -31,10 +31,10 @@ class Character {
         this.w = 48;
         this.h = 48;
         this.d = 24;
-        
+
         //Speed
-        this.speed = new Vect3(0,0,0);
-        this.accel = new Vect3(0,0,0);
+        this.speed = new Vect3(0, 0, 0);
+        this.accel = new Vect3(0, 0, 0);
 
         this.xspeed = 0;
         this.yspeed = 0;
@@ -52,6 +52,7 @@ class Character {
         this.wind = true;
         this.landable = true;
         this.weight = 0.1;
+
         //Stats
         this.hp = 100;
         this.hp_max = 100;
@@ -59,6 +60,7 @@ class Character {
         this.power_max = 300;
         this.threatMulti = 1;
         this.accuracy = 0.1; // Spread magnitude of weapon
+
         //Items
         this.item = 0;
         this.inventory = [new Pistol(), new Flamer(), new JumpDropper()];
@@ -67,11 +69,10 @@ class Character {
             flamer: 25,
             jumpdropper: 3
         }
+
         //Graphics
         this.img = new Image();
         this.gfx = 'img/sprites/jetbike';
-        this.leftgfx = 'img/sprites/jetbike_l';
-        this.img.src = this.gfx + '.png'
         this.bot = false;
         this.color = '#FF0000';
         this.tags = [];
@@ -82,20 +83,30 @@ class Character {
             d: 200,
             x: 0,
             y: this.h / 2,
-            pos: new Vect3(0, this.h/2, 0),
+            pos: new Vect3(0, this.h / 2, 0),
             width: new Vect3(48, 24, 200)
         }
         this.shadowImg = new Image();
         this.shadowImg.src = "img/sprites/shadow.png";
         this.exhaust = 0;
+
         //SFX
         this.touchSFX = new Audio('sfx/hardhit_01.wav');
         this.jumpSFX = new Audio('sfx/jump_01.wav');
         this.lungeSFX = new Audio('sfx/pup_01.wav');
         this.brakeSFX = new Audio('sfx/exp_01.wav');
+
         //Misc?
         this.lastColBlock = null;
         this.lastColNPC = null;
+
+        // Options
+        if (typeof options === 'object')
+            for (var key of Object.keys(options)) {
+                this[key] = options[key];
+            }
+        this.leftgfx = this.gfx + '_l'; // Set this after options so you only have to set gfx
+        this.img.src = this.gfx + '.png'
     }
 
     /*
@@ -111,9 +122,9 @@ class Character {
         if (this.active) {
             if (this.power < this.power_max) {
                 if (Math.abs(this.xspeed) <= game.match.map.collideDamageSpeed && Math.abs(this.yspeed) <= game.match.map.collideDamageSpeed)
-                this.power++;
-            if (this.zspeed < 0)
-            this.power -= this.zspeed;
+                    this.power++;
+                if (this.zspeed < 0)
+                    this.power -= this.zspeed;
                 if (this.power > this.power_max) this.power = this.power_max;
             }
             //Wind
@@ -139,8 +150,7 @@ class Character {
                 this.z = 0;
             }
             this.zspeed *= game.match.map.gravityFriction * this.frictionMulti;
-            if (!this.bot) this.userInput(controller);
-            else this.AI();
+            this.userInput(controller);
             // Slow down when hitting max speed
             if (this.xspeed > game.match.map.maxSpeed) this.xspeed = game.match.map.maxSpeed;
             else if (this.xspeed < game.match.map.maxSpeed * -1) this.xspeed = game.match.map.maxSpeed * -1;
@@ -218,10 +228,12 @@ class Character {
             controller.buttons.moveUp.current *= 0.1;
             controller.buttons.moveDown.current *= 0.1;
         }
+
         // Brakes
         if (controller.buttons.brake.current) this.zspeed -= this.brakes;
         // if (controller.buttons.brake.current)
         //     this.brakeSFX.play();
+
         // Lunge
         if (controller.buttons.boost.current != controller.buttons.boost.last && this.power >= this.lungeCost) {
             if (controller.buttons.boost.current) {
@@ -235,6 +247,7 @@ class Character {
             }
             controller.buttons.boost.last = controller.buttons.boost.current;
         }
+
         // Shoot
 
         //Torrent code (needs single clicks to be handled by item)
@@ -248,11 +261,10 @@ class Character {
         }
 
         // Jump
-        if (controller.buttons.jump.current&& this.power >= this.jumpCost) {
+        if (controller.buttons.jump.current && this.power >= this.jumpCost) {
             this.zspeed += 2
             this.power -= this.jumpCost
         }
-        // TODO: Account for moving both directions at once goign too fast
         // Apply player input and character speed if not going faster than max speed
         if (controller.buttons.moveRight.current && this.xspeed < this.maxSpeed) this.xspeed += controller.buttons.moveRight.current * this.speedMulti;
         else if (controller.buttons.moveLeft.current && this.xspeed > this.maxSpeed * -1) this.xspeed -= controller.buttons.moveLeft.current * this.speedMulti;
@@ -274,7 +286,7 @@ class Character {
         }
         if (controller.buttons.weaponPrevious.current) {
             this.item--;
-            if (this.item < 0) this.item = this.inventory.length-1;
+            if (this.item < 0) this.item = this.inventory.length - 1;
         }
     }
 
@@ -464,96 +476,7 @@ class NPC extends Character {
         this.img.src = this.gfx + '.png'
     }
 
-    /*
-              :::     :::::::::::
-           :+: :+:       :+:
-         +:+   +:+      +:+
-       +#++:++#++:     +#+
-      +#+     +#+     +#+
-     #+#     #+#     #+#
-    ###     ### ###########
-    */
-    AI() {
-        for (const c of game.match.map.blocks) {
-            if (c != this) {
-                if (!c.tags.includes('debris') && !c.tags.includes('nocollide') && Math.abs(this.x - c.x) < this.w / 2 + (c.w / 2) + this.lookAhead && Math.abs(this.y - c.y) < this.h / 2 + (c.h / 2) + this.lookAhead && this.z < c.d && c.z < this.d) {
-                    // if (this.power >= this.jumpCost) {
-                    this.zspeed += 7
-                    this.power -= this.jumpCost
-                    // }
-                }
-            }
-        }
-        if (this.target) {
-            if (this.target.type == 'goal') this.formationRange = 0;
-            if (Math.abs(this.x - this.target.x) < this.w / 2 + (this.target.w / 2) + this.formationRange && Math.abs(this.y - this.target.y) < this.h / 2 + (this.target.h / 2) + this.formationRange && this.z < this.target.d && this.target.z < this.d) {
-                this.inFormation = true;
-            } else {
-                let compareX = this.target.x - this.x;
-                let compareY = this.target.y - this.y;
 
-                let speed = this.speedMulti;
-                if (this.z > game.match.map.windH)
-                    speed *= 0.1;
-                if (compareX > 0 && this.xspeed < this.maxSpeed) {
-                    this.xspeed += speed;
-                    this.img.src = this.gfx + '.png';
-                }
-                else if (compareX <= 0 && this.xspeed > this.maxSpeed * -1) {
-                    this.xspeed -= speed;
-                    this.img.src = this.leftgfx + '.png';
-                }
-                if (compareY < 0 && this.yspeed > this.maxSpeed * -1) this.yspeed -= speed;
-                else if (compareY >= 0 && this.yspeed < this.maxSpeed) this.yspeed += speed;
-
-                let distance = Math.sqrt(compareX ** 2 + compareY ** 2);
-
-                // Switch guns when empty
-                if (this.ammo[this.inventory[this.item].type] <= 0) {
-                    this.item++;
-                    if (this.item >= this.inventory.length) this.item = 0;
-                }
-
-                // Attack
-                if (Math.abs(distance) <= this.inventory[this.item].range && this.target.team != this.team)
-                    if (ticks % 20 == 0) this.inventory[this.item].use(this, compareX, compareY, 0);
-            }
-
-            if (this.target.team !== undefined) {
-                if (this.target.team == this.team) this.formationRange = this.dformationRange;
-                else this.formationRange = 0;
-                if (this.target.lastColNPC)
-                    if (this.target.lastColNPC.team != this.team)
-                        this.target = this.target.lastColNPC;
-            }
-
-            //If my target is not active
-            if (!this.target.active) this.findTarget();
-        } else {
-            this.findTarget();
-        }
-    }
-
-    findTarget() {
-        this.target = null;
-        // If the player is active, rally to them or attack them
-        if (game.player.character.active) {
-            this.target = game.player.character;
-        }
-        // Look for another NPC to attack!
-        for (const npc of game.match.npcs) {
-            if (npc.active && npc.team != this.team) this.target = npc;
-        }
-        // Look for a goal to race through?
-        if (!this.target) this.target = game.match.goals[0];
-        //Try to get back into formation
-        if (!this.target)
-            for (const npc of game.match.npcs) {
-                if (npc.active && npc.team == this.team) this.target = npc;
-            }
-        // Target itself?
-        if (!this.target) this.target = this;
-    }
 
     /*
           :::::::::  :::::::::      :::     :::       :::

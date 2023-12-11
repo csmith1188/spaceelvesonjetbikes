@@ -102,7 +102,7 @@ class Map {
     }
 
     wind() {
-        for (const e of [game.player.character, ...game.match.npcs, ...this.blocks, ...this.debris]) {
+        for (const e of [game.player.character, ...game.match.bots, ...this.blocks, ...this.debris]) {
             if (e.wind && e.z + e.hover >= (this.windH * ((e.landable) ? 1 : 0))) {
                 e.x += this.xwind * (1 - e.weight);
                 e.y += this.ywind * (1 - e.weight);

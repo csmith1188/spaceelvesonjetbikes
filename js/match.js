@@ -1,7 +1,7 @@
 class Match {
     constructor() {
         this.map;
-        this.npcs = [];
+        this.bots = [];
         this.goals = [];
         this.goalIndex = 0;
         this.laps = [];
@@ -12,7 +12,7 @@ class Match {
     }
 
     step() {
-        for (const e of this.npcs) {
+        for (const e of this.bots) {
             if (e.cleanup && !e.active) {
                 //Remove npcs
                 this.npcs = this.npcs.filter(function (el) { return el != e; });

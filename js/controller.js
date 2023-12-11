@@ -119,20 +119,6 @@ function getCanvasRelative(e, center) {
 }
 
 
-/*
-  ::::::::::: ::::::::  :::    :::  ::::::::  :::    :::
-     :+:    :+:    :+: :+:    :+: :+:    :+: :+:    :+:
-    +:+    +:+    +:+ +:+    +:+ +:+        +:+    +:+
-   +#+    +#+    +:+ +#+    +:+ +#+        +#++:++#++
-  +#+    +#+    +#+ +#+    +#+ +#+        +#+    +#+
- #+#    #+#    #+# #+#    #+# #+#    #+# #+#    #+#
-###     ########   ########   ########  ###    ###
-*/
-
-
-
-
-
 
 
 
@@ -418,6 +404,9 @@ class Controller {
 }
 
 class DummyController extends Controller {
-    read() {}
-    draw() {}
+    constructor() {
+        super();
+    }
+    read() { return }
+    draw() { return }
 }

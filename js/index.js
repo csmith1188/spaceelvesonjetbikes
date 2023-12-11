@@ -40,7 +40,7 @@ window.onload = function () {
     game.player.character = new Character(allID++, (game.match.map.w / 2), (game.match.map.h / 2), game.player);
     game.player.camera = new Camera({ target: game.player.character });
 
-    makeGame(['lonewarrior', 'randommap']);
+    makeGame(['aitest']);
 
     //start game loop
     //Run the step() function every 16ms (60fps)
@@ -69,44 +69,41 @@ function step() {
     canvas.width = game.window.w;
     canvas.height = game.window.h;
 
+    //Put Bot player characters into a list
+    let npcs = [];
+    for (const npc in game.match.bots) {
+        npcs.push(game.match.bots[npc].character);
+    }
+
     if (!game.paused) {
-        //Handle goals and collisions
-        for (const goal of game.match.goals) {
-            if (game.match.goalIndex >= game.match.goals.length) {
-                game.match.goalIndex = 0;
-                game.match.lapEnd = ticks;
-                if (game.player.best.lap == 0 || game.player.best.lap > game.match.lapEnd - game.match.lapStart) game.player.best.lap = game.match.lapEnd - game.match.lapStart;
-                game.match.lapStart = ticks;
-            }
-            goal.activeGoal = false;
-            if (game.match.goals.indexOf(goal) == game.match.goalIndex)
-                goal.activeGoal = true;
-            goal.collide([game.player.character, ...game.match.npcs])
-        }
 
         game.match.step();
         game.match.map.step();
 
         //Do all collision. It has to be in this order, or else pads/blocks won't activate for players and npcs
         for (const block of game.match.map.blocks) {
-            block.collide([game.player.character, ...game.match.npcs, ...game.match.map.blocks])
+            block.collide([game.player.character, ...npcs, ...game.match.map.blocks])
         }
         for (const missile of game.match.map.missiles) {
-            missile.collide([game.player.character, ...game.match.npcs, ...game.match.map.blocks])
+            missile.collide([game.player.character, ...npcs, ...game.match.map.blocks])
         }
         for (const debris of game.match.map.debris) {
-            debris.collide([game.player.character, ...game.match.npcs, ...game.match.map.debris])
+            debris.collide([game.player.character, ...npcs, ...game.match.map.debris])
         }
-        game.player.character.collide([...game.match.npcs, ...game.match.map.blocks, ...game.match.map.debris])
-        for (const npc of game.match.npcs) {
-            npc.collide([game.player.character, ...game.match.npcs, ...game.match.map.blocks, ...game.match.map.debris])
+        game.player.character.collide([...npcs, ...game.match.map.blocks, ...game.match.map.debris])
+        for (const npc of npcs) {
+            npc.collide([game.player.character, ...npcs, ...game.match.map.blocks, ...game.match.map.debris])
         }
 
         //Do all steps and movement
         game.player.controller.read();
+        for (const bot of game.match.bots) {
+            bot.AI();
+            bot.character.step(bot.controller);
+        }
         game.player.character.step(game.player.controller);
-        for (const npc of game.match.npcs) {
-            npc.step(game.player.controller);
+        for (const bot of game.match.bots) {
+            bot.character.step(bot.controller);
         }
         for (const block of game.match.map.blocks) {
             block.step();
@@ -130,12 +127,12 @@ function step() {
             if (game.player.character.lastColNPC.active)
                 game.player.camera.target = game.player.character.lastColNPC
             else
-                for (const npc of game.match.npcs) {
+                for (const npc of npcs) {
                     if (npc.active && npc.team == game.player.character.team)
                         game.player.camera.target = npc
                 }
         if (!game.player.camera.target)
-            for (const npc of game.match.npcs) {
+            for (const npc of npcs) {
                 if (npc.active)
                     game.player.camera.target = npc
             }
@@ -169,8 +166,14 @@ function draw() {
     //Draw Map
     game.match.map.draw(game.player.character);
 
+    //Put Bot player characters into a list
+    let npcs = [];
+    for (const npc in game.match.bots) {
+        npcs.push(game.match.bots[npc].character);
+    }
+
     let renderList =
-        [game.player.character, ...game.match.map.blocks, ...game.match.map.missiles, ...game.match.goals, ...game.match.map.debris, ...game.match.npcs]
+        [game.player.character, ...game.match.map.blocks, ...game.match.map.missiles, ...game.match.goals, ...game.match.map.debris, ...npcs]
             .sort((a, b) => {
                 if (a.y + a.z < b.y + b.z) return -1;
                 if (a.y + a.z > b.y + b.z) return 1;
@@ -266,9 +269,9 @@ function makeGame(type) {
         game.match.goals.push(new Goal(allID++, (game.match.map.w / 2) + 500, (game.match.map.h / 2) - 1000, { color: '#000066', colorActive: '#0000FF', w: 24, h: 144 }))
         game.match.goals.push(new Goal(allID++, (game.match.map.w / 2) + 24, (game.match.map.h / 2) - 1000, { color: '#000066', colorActive: '#0000FF', w: 24, h: 144 }))
 
-        // game.match.npcs.push(new NPC(allID++, (game.match.map.w / 2) + 1000, (game.match.map.h / 2), { target: game.match.goals[0], nameTag: 'Rais', team: 0, gfx: 'img/sprites/dark1' })) //racer
+        // game.match.bots.push(new NPC(allID++, (game.match.map.w / 2) + 1000, (game.match.map.h / 2), { target: game.match.goals[0], nameTag: 'Rais', team: 0, gfx: 'img/sprites/dark1' })) //racer
 
-        // game.player.camera.target = game.match.npcs[game.match.npcs.length - 1] //race-vision
+        // game.player.camera.target = game.match.bots[game.match.bots.length - 1] //race-vision
     }
     if (type.includes('blocks')) {
         //Blocks
@@ -304,12 +307,12 @@ function makeGame(type) {
         for (let i = 0; i < 50; i++) {
             let tempx = Math.floor(Math.random() * game.match.map.w);
             let tempy = Math.floor(Math.random() * game.match.map.h);
-            game.match.npcs.push(new NPC(allID++, tempx, tempy, { target: game.player.character, nameTag: 'Kevin ' + (i + 1), gfx: 'img/sprites/dark2' })) //Kevin
+            game.match.bots.push(new NPC(allID++, tempx, tempy, { target: game.player.character, nameTag: 'Kevin ' + (i + 1), gfx: 'img/sprites/dark2' })) //Kevin
         }
         for (let i = 0; i < 50; i++) {
             let tempx = Math.floor(Math.random() * game.match.map.w);
             let tempy = Math.floor(Math.random() * game.match.map.h);
-            game.match.npcs.push(new NPC(allID++, tempx, tempy, { target: null, nameTag: 'Frendo ' + (i + 1), team: 0 })) //Anti-Kevin
+            game.match.bots.push(new NPC(allID++, tempx, tempy, { target: null, nameTag: 'Frendo ' + (i + 1), team: 0 })) //Anti-Kevin
         }
     }
     if (type.includes('lonewarrior')) {
@@ -317,7 +320,7 @@ function makeGame(type) {
             if (ticks % 1600 == 0) {
                 let tempx = Math.floor(Math.random() * game.match.map.w);
                 let tempy = Math.floor(Math.random() * game.match.map.h);
-                game.match.npcs.push(new NPC(allID++, tempx, tempy, { item: Math.round(Math.random()), target: game.player.character, nameTag: 'Kevin' + allID, gfx: 'img/sprites/dark2' })) //Kevin
+                game.match.bots.push(new NPC(allID++, tempx, tempy, { item: Math.round(Math.random()), target: game.player.character, nameTag: 'Kevin' + allID, gfx: 'img/sprites/dark2' })) //Kevin
             }
         })
     }
@@ -327,25 +330,27 @@ function makeGame(type) {
         game.match.map.blocks.push(new Wave(allID++, 7200 / 4 + 7200 / 2, (game.match.map.h / 2), { color: '#aaaaFF', w: 100, h: 400 }))
     }
     if (type.includes('dummy')) {
-        game.match.npcs.push(new NPC(allID++, (game.match.map.w / 2) + 100, (game.match.map.h / 2) - 100, { active: false, cleanup: false, target: game.player.character, nameTag: 'Kevin', gfx: 'img/sprites/dark2' })) //Kevin
+        game.match.bots.push(new NPC(allID++, (game.match.map.w / 2) + 100, (game.match.map.h / 2) - 100, { active: false, cleanup: false, target: game.player.character, nameTag: 'Kevin', gfx: 'img/sprites/dark2' })) //Kevin
     }
     if (type.includes('2v2')) {
-        game.match.npcs.push(new NPC(allID++, (game.match.map.w / 2) + 1000, (game.match.map.h / 2) - 1000, { target: game.player.character, nameTag: 'Jaysin', gfx: 'img/sprites/dark2' })) //Kevin
-        game.match.npcs.push(new NPC(allID++, (game.match.map.w / 2) + 1000, (game.match.map.h / 2) + 1000, { target: game.match.npcs[game.match.npcs.length - 2], nameTag: 'Jason', gfx: 'img/sprites/dark2' })) //Kevin
-        game.match.npcs.push(new NPC(allID++, (game.match.map.w / 2) - 1000, (game.match.map.h / 2) - 1000, { color: '#006600', target: game.player.character, nameTag: 'Logan', team: 0 })) //Anti-Kevin
+        game.match.bots.push(new NPC(allID++, (game.match.map.w / 2) + 1000, (game.match.map.h / 2) - 1000, { target: game.player.character, nameTag: 'Jaysin', gfx: 'img/sprites/dark2' })) //Kevin
+        game.match.bots.push(new NPC(allID++, (game.match.map.w / 2) + 1000, (game.match.map.h / 2) + 1000, { target: game.match.bots[game.match.bots.length - 2], nameTag: 'Jason', gfx: 'img/sprites/dark2' })) //Kevin
+        game.match.bots.push(new NPC(allID++, (game.match.map.w / 2) - 1000, (game.match.map.h / 2) - 1000, { color: '#006600', target: game.player.character, nameTag: 'Logan', team: 0 })) //Anti-Kevin
     }
     if (type.includes('4v4')) {
-        game.match.npcs.push(new NPC(allID++, (game.match.map.w / 2) + 1000, (game.match.map.h / 2) - 1000, { target: game.player.character, nameTag: 'Jaysin', gfx: 'img/sprites/dark2' })) //Kevin
-        game.match.npcs.push(new NPC(allID++, (game.match.map.w / 2) + 1000, (game.match.map.h / 2) - 2000, { target: game.match.npcs[game.match.npcs.length - 1], nameTag: 'Jayson', gfx: 'img/sprites/dark2' })) //Kevin
-        game.match.npcs.push(new NPC(allID++, (game.match.map.w / 2) + 1000, (game.match.map.h / 2) + 1000, { target: game.match.npcs[game.match.npcs.length - 2], nameTag: 'Jason', gfx: 'img/sprites/dark2' })) //Kevin
-        game.match.npcs.push(new NPC(allID++, (game.match.map.w / 2) + 1000, (game.match.map.h / 2) + 2000, { target: game.match.npcs[game.match.npcs.length - 3], nameTag: 'Jacob', gfx: 'img/sprites/dark2' })) //Kevin
-        game.match.npcs.push(new NPC(allID++, (game.match.map.w / 2) - 1000, (game.match.map.h / 2) - 1500, { target: game.player.character, nameTag: 'Logan', team: 0 })) //Anti-Kevin
-        game.match.npcs.push(new NPC(allID++, (game.match.map.w / 2) - 1000, (game.match.map.h / 2), { target: game.player.character, nameTag: 'Logan', team: 0 })) //Anti-Kevin
-        game.match.npcs.push(new NPC(allID++, (game.match.map.w / 2) - 1000, (game.match.map.h / 2) + 1500, { target: game.player.character, nameTag: 'Logan', team: 0 })) //Anti-Kevin
+        game.match.bots.push(new NPC(allID++, (game.match.map.w / 2) + 1000, (game.match.map.h / 2) - 1000, { target: game.player.character, nameTag: 'Jaysin', gfx: 'img/sprites/dark2' })) //Kevin
+        game.match.bots.push(new NPC(allID++, (game.match.map.w / 2) + 1000, (game.match.map.h / 2) - 2000, { target: game.match.bots[game.match.bots.length - 1], nameTag: 'Jayson', gfx: 'img/sprites/dark2' })) //Kevin
+        game.match.bots.push(new NPC(allID++, (game.match.map.w / 2) + 1000, (game.match.map.h / 2) + 1000, { target: game.match.bots[game.match.bots.length - 2], nameTag: 'Jason', gfx: 'img/sprites/dark2' })) //Kevin
+        game.match.bots.push(new NPC(allID++, (game.match.map.w / 2) + 1000, (game.match.map.h / 2) + 2000, { target: game.match.bots[game.match.bots.length - 3], nameTag: 'Jacob', gfx: 'img/sprites/dark2' })) //Kevin
+        game.match.bots.push(new NPC(allID++, (game.match.map.w / 2) - 1000, (game.match.map.h / 2) - 1500, { target: game.player.character, nameTag: 'Logan', team: 0 })) //Anti-Kevin
+        game.match.bots.push(new NPC(allID++, (game.match.map.w / 2) - 1000, (game.match.map.h / 2), { target: game.player.character, nameTag: 'Logan', team: 0 })) //Anti-Kevin
+        game.match.bots.push(new NPC(allID++, (game.match.map.w / 2) - 1000, (game.match.map.h / 2) + 1500, { target: game.player.character, nameTag: 'Logan', team: 0 })) //Anti-Kevin
+    }
+    if (type.includes('aitest')) {
+        game.match.bots.push(new Bot()) //Kevin
+        game.match.bots[game.match.bots.length - 1].character = new Character(allID++, (game.match.map.w / 2) + 1000, (game.match.map.h / 2) - 1000, game.match.bots[game.match.bots.length - 1], { target: game.player.character, nameTag: 'Jaysin', gfx: 'img/sprites/dark2', team: 1 });
     }
 }
-
-
 
 class Vect3 {
     constructor(x, y, z) {
