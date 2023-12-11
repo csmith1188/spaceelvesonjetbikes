@@ -35,8 +35,6 @@ window.onload = function () {
 
     //Player
     game.player = new Player();
-    game.player.controller = new Controller();
-    // game.player.character = new Character(allID++, 24, 24);
     game.player.character = new Character(allID++, (game.match.map.w / 2), (game.match.map.h / 2), game.player);
     game.player.camera = new Camera({ target: game.player.character });
 
@@ -61,7 +59,6 @@ window.onload = function () {
 */
 
 function step() {
-
     // The next two lines will always max screen
     game.window.h = window.innerHeight;
     game.window.w = window.innerWidth;
@@ -73,6 +70,20 @@ function step() {
     let npcs = [];
     for (const npc in game.match.bots) {
         npcs.push(game.match.bots[npc].character);
+    }
+
+    //Handle goals and collisions
+    for (const goal of game.match.goals) {
+        if (game.match.goalIndex >= game.match.goals.length) {
+            game.match.goalIndex = 0;
+            game.match.lapEnd = ticks;
+            if (game.player.best.lap == 0 || game.player.best.lap > game.match.lapEnd - game.match.lapStart) game.player.best.lap = game.match.lapEnd - game.match.lapStart;
+            game.match.lapStart = ticks;
+        }
+        goal.activeGoal = false;
+        if (game.match.goals.indexOf(goal) == game.match.goalIndex)
+            goal.activeGoal = true;
+        goal.collide([game.player.character, ...npcs])
     }
 
     if (!game.paused) {
@@ -97,12 +108,9 @@ function step() {
 
         //Do all steps and movement
         game.player.controller.read();
-        for (const bot of game.match.bots) {
-            bot.AI();
-            bot.character.step(bot.controller);
-        }
         game.player.character.step(game.player.controller);
         for (const bot of game.match.bots) {
+            bot.AI();
             bot.character.step(bot.controller);
         }
         for (const block of game.match.map.blocks) {

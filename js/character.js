@@ -144,21 +144,23 @@ class Character {
                 this.airtime = 0;
             }
             if (this.z < 0) this.zspeed += game.match.map.gravity;
-            // if (Math.abs(this.z) < 4) this.zspeed *= 0.8
             if (Math.abs(this.zspeed) < 0.5 && Math.abs(this.z) < 2) {
                 this.zspeed = 0;
                 this.z = 0;
             }
             this.zspeed *= game.match.map.gravityFriction * this.frictionMulti;
             this.userInput(controller);
+
             // Slow down when hitting max speed
             if (this.xspeed > game.match.map.maxSpeed) this.xspeed = game.match.map.maxSpeed;
             else if (this.xspeed < game.match.map.maxSpeed * -1) this.xspeed = game.match.map.maxSpeed * -1;
             if (this.yspeed > game.match.map.maxSpeed) this.yspeed = game.match.map.maxSpeed;
             else if (this.yspeed < game.match.map.maxSpeed * -1) this.yspeed = game.match.map.maxSpeed * -1;
+
             // Make the move
             this.x += this.xspeed;
             this.y += this.yspeed;
+
             // Gravity
             this.z += this.zspeed;
             if (this.zspeed > 5)
@@ -175,7 +177,6 @@ class Character {
                 game.match.map.debris.push(new Debris(allID++, this.x, this.y + (this.h / 2), { wind: false, w: 16, h: 12, z: this.z, color: '#995500', livetime: 60, dying: true, landable: true }))
                 game.match.map.debris.push(new Debris(allID++, this.x, this.y + (this.h / 2), { wind: false, w: 6, h: 6, xspeed: tempx, zspeed: 5 + tempz, z: this.z + this.hover, color: '#995500', livetime: 60, dying: true, landable: true }))
             }
-
 
             //Particle FX
             let tempx = (Math.random() * 1) - 0.5;
@@ -207,6 +208,7 @@ class Character {
                 if (Math.abs(this.yspeed) > game.match.map.collideDamageSpeed) this.hp -= Math.abs(this.yspeed);
                 this.yspeed *= -1;
             }
+
             //Check HP
             if (this.hp <= 0) { //Dead
                 this.active = false;
@@ -214,10 +216,6 @@ class Character {
                 game.match.map.debris.push(new Debris(allID++, this.x, this.y + (this.h / 2), { frictionMulti: 1, w: 36, h: 12, z: this.z, xspeed: this.xspeed, yspeed: this.yspeed, zspeed: this.zspeed, weight: this.weight, color: '#990000', livetime: 50, dying: true, landable: true }))
             }
         }
-    }
-
-    AI() {
-        return
     }
 
     userInput(controller) {
@@ -257,7 +255,7 @@ class Character {
         // Single shot code
         if (controller.buttons.fire.current != controller.buttons.fire.last) {
             if (controller.buttons.fire.current)
-                this.inventory[this.item].use(this, game.player.controller.aimX, game.player.controller.aimY, 0);
+                this.inventory[this.item].use(this, this.parent.controller.aimX, this.parent.controller.aimY, 0);
         }
 
         // Jump
@@ -300,47 +298,50 @@ class Character {
     #########  ###    ### ###     ###   ###   ###
     */
     draw() {
-        let compareX = game.player.camera.x - this.x;
-        let compareY = game.player.camera.y - this.y;
-        let compareZ = game.player.camera.z - this.z;
-        if (game.debug) {
-            ctx.fillStyle = "#FF0000";
-            ctx.fillRect(game.window.w / 2 - compareX - (this.w / 2), game.window.h / 2 - compareY - (this.h / 2), this.w, this.h);
-            ctx.fillStyle = "#0000FF";
-            ctx.fillRect(game.window.w / 2 - compareX - (this.w / 2), game.window.h / 2 - compareY - (this.h / 2) - this.z, this.w, this.h);
-            ctx.fillStyle = "#000000";
-            ctx.fillRect((game.window.w / 2) - 2, (game.window.h / 2) - 2, 4, 4);
-            ctx.beginPath();
-            ctx.arc(
-                game.window.w / 2 - compareX - (this.w / 2) + this.tube.radius,
-                game.window.h / 2 - compareY - (this.h / 2) + this.tube.radius - this.z,
-                game.tube.radius,
-                0, 2 * Math.PI);
-            ctx.arc(
-                game.window.w / 2 - compareX - (this.w / 2) + this.tube.radius,
-                game.window.h / 2 - compareY - (this.h / 2) + this.tube.radius - this.tube.height - this.z,
-                game.tube.radius,
-                0, 2 * Math.PI);
-            ctx.stroke();
-        } else {
-            this.shadow.w = (this.w - this.hover) * (1 - (((this.z > this.shadow.d) ? this.shadow.d : this.z) / this.shadow.d));
-            this.shadow.h = this.shadow.w / 2;
-            ctx.globalAlpha = 0.5;
-            ctx.drawImage(this.shadowImg, game.window.w / 2 - compareX - (this.shadow.w / 2), game.window.h / 2 - compareY - (this.shadow.h / 2) + this.shadow.y, this.shadow.w, this.shadow.h);
-            ctx.globalAlpha = 1;
-            ctx.drawImage(this.img, game.window.w / 2 - compareX - (this.w / 2), game.window.h / 2 - compareY - (this.h / 2) - this.z, this.w, this.h);
+        if (this.active) {
+
+            let compareX = game.player.camera.x - this.x;
+            let compareY = game.player.camera.y - this.y;
+            let compareZ = game.player.camera.z - this.z;
+            if (game.debug) {
+                ctx.fillStyle = "#FF0000";
+                ctx.fillRect(game.window.w / 2 - compareX - (this.w / 2), game.window.h / 2 - compareY - (this.h / 2), this.w, this.h);
+                ctx.fillStyle = "#0000FF";
+                ctx.fillRect(game.window.w / 2 - compareX - (this.w / 2), game.window.h / 2 - compareY - (this.h / 2) - this.z, this.w, this.h);
+                ctx.fillStyle = "#000000";
+                ctx.fillRect((game.window.w / 2) - 2, (game.window.h / 2) - 2, 4, 4);
+                ctx.beginPath();
+                ctx.arc(
+                    game.window.w / 2 - compareX - (this.w / 2) + this.tube.radius,
+                    game.window.h / 2 - compareY - (this.h / 2) + this.tube.radius - this.z,
+                    game.tube.radius,
+                    0, 2 * Math.PI);
+                ctx.arc(
+                    game.window.w / 2 - compareX - (this.w / 2) + this.tube.radius,
+                    game.window.h / 2 - compareY - (this.h / 2) + this.tube.radius - this.tube.height - this.z,
+                    game.tube.radius,
+                    0, 2 * Math.PI);
+                ctx.stroke();
+            } else {
+                this.shadow.w = (this.w - this.hover) * (1 - (((this.z > this.shadow.d) ? this.shadow.d : this.z) / this.shadow.d));
+                this.shadow.h = this.shadow.w / 2;
+                ctx.globalAlpha = 0.5;
+                ctx.drawImage(this.shadowImg, game.window.w / 2 - compareX - (this.shadow.w / 2), game.window.h / 2 - compareY - (this.shadow.h / 2) + this.shadow.y, this.shadow.w, this.shadow.h);
+                ctx.globalAlpha = 1;
+                ctx.drawImage(this.img, game.window.w / 2 - compareX - (this.w / 2), game.window.h / 2 - compareY - (this.h / 2) - this.z, this.w, this.h);
+            }
+
+            // In case I want to use arches for power bars or abilities
+            // ctx.strokeStyle = 'blue';
+            // ctx.fillStyle = 'rgba(128,128,255,0.1)';
+            // ctx.lineWidth = 2;
+
+            // ctx.beginPath();
+            // ctx.arc(game.window.w / 2 - compareX, game.window.h / 2 - compareY - this.z, 48, 0, 2 * Math.PI);
+
+            // ctx.stroke();
+            // ctx.fill();
         }
-
-        // In case I want to use arches for power bars or abilities
-        // ctx.strokeStyle = 'blue';
-        // ctx.fillStyle = 'rgba(128,128,255,0.1)';
-        // ctx.lineWidth = 2;
-
-        // ctx.beginPath();
-        // ctx.arc(game.window.w / 2 - compareX, game.window.h / 2 - compareY - this.z, 48, 0, 2 * Math.PI);
-
-        // ctx.stroke();
-        // ctx.fill();
     }
 
     /*

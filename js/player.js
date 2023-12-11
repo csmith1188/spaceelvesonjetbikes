@@ -29,11 +29,10 @@ class Bot {
     AI() {
         for (const c of game.match.map.blocks) {
             if (c != this.character) {
-                if (!c.tags.includes('debris') && !c.tags.includes('nocollide') && Math.abs(this.character.x - c.x) < this.character.w / 2 + (c.w / 2) + this.character.lookAhead && Math.abs(this.character.y - c.y) < this.character.h / 2 + (c.h / 2) + this.character.lookAhead && this.character.z < c.d && c.z < this.character.d) {
-                    // if (this.character.power >= this.character.jumpCost) {
-                    this.character.zspeed += 7
-                    this.character.power -= this.character.jumpCost
-                    // }
+                if (!c.tags.includes('debris') && !c.tags.includes('nocollide') && Math.abs(this.character.x - c.x) < this.character.w / 2 + (c.w / 2) + 50 && Math.abs(this.character.y - c.y) < this.character.h / 2 + (c.h / 2) + 50 && this.character.z < c.d && c.z < this.character.d) {
+                        this.controller.buttons.jump.current = 1;
+                } else {
+                    this.controller.buttons.jump.current = 0;
                 }
             }
         }
@@ -45,22 +44,43 @@ class Bot {
                 let compareX = this.character.target.x - this.character.x;
                 let compareY = this.character.target.y - this.character.y;
 
-                let speed = this.character.speedMulti;
-                if (this.character.z > game.match.map.windH)
-                    speed *= 0.1;
-                if (compareX > 0 && this.character.xspeed < this.character.maxSpeed) {
-                    this.character.xspeed += speed;
-                    this.character.img.src = this.character.gfx + '.png';
-                }
-                else if (compareX <= 0 && this.character.xspeed > this.character.maxSpeed * -1) {
-                    this.character.xspeed -= speed;
-                    this.character.img.src = this.character.leftgfx + '.png';
-                }
-                if (compareY < 0 && this.character.yspeed > this.character.maxSpeed * -1) this.character.yspeed -= speed;
-                else if (compareY >= 0 && this.character.yspeed < this.character.maxSpeed) this.character.yspeed += speed;
-
                 let distance = Math.sqrt(compareX ** 2 + compareY ** 2);
 
+                let dx = compareX / distance;
+                let dy = compareY / distance;
+
+                let directX = (Math.abs(dx) + 1.4) / 2;
+                if (directX > 1) directX = 1;
+                let directY = (Math.abs(dy) + 1.4) / 2;
+                if (directY > 1) directY = 1;
+
+                this.controller.aimX = dx;
+                this.controller.aimY = dy;
+
+                if (compareX > 0) {
+                    this.controller.buttons.moveLeft.current = 0;
+                    this.controller.buttons.moveRight.current = directX;
+                    this.character.img.src = this.character.gfx + '.png';
+                }
+                else if (compareX <= 0) {
+                    this.controller.buttons.moveLeft.current = directX;
+                    this.controller.buttons.moveRight.current = 0;
+                    this.character.img.src = this.character.leftgfx + '.png';
+                } else {
+                    this.controller.buttons.moveLeft.current = this.controller.buttons.moveRight.current = 0;
+                }
+                if (compareY < 0) {
+                    this.controller.buttons.moveUp.current = directX;
+                    this.controller.buttons.moveDown.current = 0;
+                }
+                else if (compareY > 0) {
+                    this.controller.buttons.moveUp.current = 0;
+                    this.controller.buttons.moveDown.current = directX;
+                } else {
+                    this.controller.buttons.moveDown.current = this.controller.buttons.moveUp.current = 0;
+                }
+
+                console.log(this.controller.buttons.moveLeft.current, this.controller.buttons.moveUp.current, this.controller.buttons.moveRight.current, this.controller.buttons.moveDown.current);
                 // Switch guns when empty
                 if (this.character.ammo[this.character.inventory[this.character.item].type] <= 0) {
                     this.character.item++;
@@ -69,7 +89,10 @@ class Bot {
 
                 // Attack
                 if (Math.abs(distance) <= this.character.inventory[this.character.item].range && this.character.target.team != this.character.team)
-                    if (ticks % 20 == 0) this.character.inventory[this.character.item].use(this.character, compareX, compareY, 0);
+                    this.controller.buttons.fire.current = 1;
+                else
+                    this.controller.buttons.fire.current = 0;
+
             }
 
             if (this.character.target.team !== undefined) {
@@ -81,32 +104,33 @@ class Bot {
             }
 
             //If my target is not active
-            if (this.target)
-                if (!this.target.active) this.findTarget();
+            if (!this.character.target.active) {
+                this.findTarget();
+            }
         } else {
             this.findTarget();
         }
     }
 
     findTarget() {
-        this.target = null;
+        this.character.target = null;
         // If the player is active, rally to them or attack them
         if (game.player.character.active) {
-            this.target = game.player.character;
+            this.character.target = game.player.character;
         }
         // Look for another NPC to attack!
         for (const npc of game.match.bots) {
-            if (npc.active && npc.team != this.team) this.target = npc;
+            if (npc.character.active && npc.character.team != this.character.team) this.character.target = npc.character;
         }
         // Look for a goal to race through?
-        if (!this.target) this.target = game.match.goals[0];
+        if (!this.character.target) this.character.target = game.match.goals[0];
         //Try to get back into formation
-        if (!this.target)
+        if (!this.character.target)
             for (const npc of game.match.bots) {
-                if (npc.active && npc.team == this.team) this.target = npc;
+                if (npc.character.active && npc.character.team == this.team) this.character.target = npc.character;
             }
         // Target itself?
-        if (!this.target) this.target = this;
+        if (!this.character.target) this.character.target = this.character;
     }
 
 }
