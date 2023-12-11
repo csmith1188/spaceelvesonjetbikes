@@ -22,6 +22,7 @@ class Player {
 
 class Bot extends Player {
     constructor(options) {
+        super(options);
         this.type = 'bot';
         this.character;
         this.controller;

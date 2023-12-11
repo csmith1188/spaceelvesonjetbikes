@@ -37,7 +37,7 @@ window.onload = function () {
     game.player = new Player();
     game.player.controller = new Controller();
     // game.player.character = new Character(allID++, 24, 24);
-    game.player.character = new Character(allID++, (game.match.map.w / 2), (game.match.map.h / 2));
+    game.player.character = new Character(allID++, (game.match.map.w / 2), (game.match.map.h / 2), game.player);
     game.player.camera = new Camera({ target: game.player.character });
 
     makeGame(['lonewarrior', 'randommap']);
@@ -62,19 +62,7 @@ window.onload = function () {
 
 function step() {
 
-    // Resize screen if needed
-    // if (window.innerWidth < game.window.dw) {
-    //     game.window.w = window.innerWidth;
-    //     game.window.h = game.window.w * (2 / 3)
-    //     if (window.innerHeight >= game.window.h)
-    //         game.window.h = window.innerHeight;
-    // }
-    // if (window.innerHeight < game.window.dh) {
-    //     game.window.h = window.innerHeight;
-    //     game.window.w = game.window.h / (2 / 3);
-    // }
-
-    // The next two lines will always max screen (comment out above)
+    // The next two lines will always max screen
     game.window.h = window.innerHeight;
     game.window.w = window.innerWidth;
 
@@ -200,173 +188,6 @@ function draw() {
 
     //Draw Controller HUD
     game.player.controller.draw();
-}
-
-/*
-      ::::::::::: ::::    ::: :::::::::  :::    ::: ::::::::::: ::::::::
-         :+:     :+:+:   :+: :+:    :+: :+:    :+:     :+:    :+:    :+:
-        +:+     :+:+:+  +:+ +:+    +:+ +:+    +:+     +:+    +:+
-       +#+     +#+ +:+ +#+ +#++:++#+  +#+    +:+     +#+    +#++:++#++
-      +#+     +#+  +#+#+# +#+        +#+    +#+     +#+           +#+
-     #+#     #+#   #+#+# #+#        #+#    #+#     #+#    #+#    #+#
-########### ###    #### ###         ########      ###     ########
-*/
-// Collect all input data and send it to the controller for better handling
-function setupInputs() {
-    document.addEventListener("keydown", function (event) {
-        game.player.controller.touch.enabled = false;
-        if (event.shiftKey) {
-            game.player.controller.shiftKey = Number(event.shiftKey)
-        }
-        if (event.altKey) {
-            event.preventDefault();
-            game.player.controller.altKey = Number(event.altKey)
-        }
-        if (event.key.toLocaleLowerCase() === "w" || event.key === "ArrowUp") game.player.controller.upKey = 1;
-        if (event.key.toLocaleLowerCase() === "a" || event.key === "ArrowLeft") game.player.controller.leftKey = 1;
-        if (event.key.toLocaleLowerCase() === "s" || event.key === "ArrowDown") game.player.controller.downKey = 1;
-        if (event.key.toLocaleLowerCase() === "d" || event.key === "ArrowRight") game.player.controller.rightKey = 1;
-        if (event.key.toLocaleLowerCase() === " ") game.player.controller.spaceKey = 1;
-        if (event.key === "Escape" || event.key === "Escape") game.paused = !game.paused;
-    });
-    document.addEventListener("keyup", function (event) {
-        game.player.controller.shiftKey = Number(event.shiftKey)
-        game.player.controller.altKey = Number(event.altKey)
-        if (event.key.toLocaleLowerCase() === "w" || event.key === "ArrowUp") game.player.controller.upKey = 0;
-        if (event.key.toLocaleLowerCase() === "a" || event.key === "ArrowLeft") game.player.controller.leftKey = 0;
-        if (event.key.toLocaleLowerCase() === "s" || event.key === "ArrowDown") game.player.controller.downKey = 0;
-        if (event.key.toLocaleLowerCase() === "d" || event.key === "ArrowRight") game.player.controller.rightKey = 0;
-        if (event.key.toLocaleLowerCase() === " ") game.player.controller.spaceKey = 0;
-    });
-    window.addEventListener('gamepadconnected', (event) => {
-        game.player.controller.gamePad = event.gamepad.index;
-    });
-    window.addEventListener('gamepaddisconnected', (event) => {
-        game.player.controller.gamePad = null;
-    });
-    window.addEventListener('touchstart', (event) => {
-        event.preventDefault();
-        event.stopImmediatePropagation();
-        game.player.controller.touch.enabled = true;
-        getTouch(event);
-    }, { passive: false });
-
-    window.addEventListener('touchmove', (event) => {
-        event.preventDefault();
-        event.stopImmediatePropagation();
-        getTouch(event, 'move');
-    }, { passive: false });
-
-    window.addEventListener('touchend', (event) => {
-        event.preventDefault();
-        event.stopImmediatePropagation();
-        getTouch(event, 'end');
-    }, { passive: false });
-
-    window.addEventListener('touchcancel', (event) => {
-        event.preventDefault();
-        event.stopImmediatePropagation();
-        getTouch(event);
-    }, { passive: false });
-    window.addEventListener("mousedown", (event) => {
-        let coords = getCanvasRelative(event, false); // from top-left
-        game.player.controller.fireX = coords.x;
-        game.player.controller.fireY = coords.y;
-        coords = getCanvasRelative(event, true); // relative to center
-        game.player.controller.rclickX = coords.x;
-        game.player.controller.rclickY = coords.y;
-        // Get which mousebutton they clicked
-        if (event.button == 0)
-            game.player.controller.clickButton = 1
-        else if (event.button == 2)
-            game.player.controller.rclickButton = 1
-    });
-    window.addEventListener("mouseup", (event) => {
-        if (event.button == 0)
-            game.player.controller.clickButton = 0;
-        else if (event.button == 2)
-            game.player.controller.rclickButton = 0;
-    });
-    window.addEventListener("wheel", (event) => {
-        game.player.controller.wheelUp = (event.wheelDelta > 0) * 1;
-        game.player.controller.wheelDown = (event.wheelDelta < 0) * 1;
-    });
-    window.addEventListener('mousemove', (event) => {
-        let coords = getCanvasRelative(event, true);
-        game.player.controller.aimX = coords.x
-        game.player.controller.aimY = coords.y
-    });
-    window.addEventListener("contextmenu", e => e.preventDefault());
-}
-
-function getCanvasRelative(e, center) {
-    bx = canvas.getBoundingClientRect();
-    if (center) {
-        let compareX = e.clientX - this.x;
-        let compareY = e.clientY - this.y;
-        return {
-            x: e.clientX - (bx.width / 2),
-            y: e.clientY - (bx.height / 2),
-            bx: bx
-        };
-    } else {
-        return {
-            x: e.clientX - bx.left,
-            y: e.clientY - bx.top,
-            bx: bx
-        };
-    }
-}
-
-
-/*
-  ::::::::::: ::::::::  :::    :::  ::::::::  :::    :::
-     :+:    :+:    :+: :+:    :+: :+:    :+: :+:    :+:
-    +:+    +:+    +:+ +:+    +:+ +:+        +:+    +:+
-   +#+    +#+    +:+ +#+    +:+ +#+        +#++:++#++
-  +#+    +#+    +#+ +#+    +#+ +#+        +#+    +#+
- #+#    #+#    #+# #+#    #+# #+#    #+# #+#    #+#
-###     ########   ########   ########  ###    ###
-*/
-
-function getTouch(event, type) {
-    if (event.target == canvas) {
-        let touchLeftFound = false;
-        for (const touch of event.targetTouches) {
-            let touchCoord = getCanvasRelative(touch);
-            let touchX = touchCoord.x - game.player.controller.touch.left.centerX
-            let touchY = touchCoord.y - game.player.controller.touch.left.centerY
-            if ((Math.abs(touchX) < game.player.controller.touch.left.w / 2 && Math.abs(touchY) < game.player.controller.touch.left.h / 2) || type == 'move') {
-                touchLeftFound = true
-                if (touchX < 0) {
-                    game.player.controller.leftTouch = (touchX / (game.player.controller.touch.left.w / 2)) * -1;
-                    if (game.player.controller.leftTouch > 1) game.player.controller.leftTouch = 1;
-                    game.player.controller.rightTouch = 0;
-                }
-                else if (touchX > 0) {
-                    game.player.controller.rightTouch = (touchX / (game.player.controller.touch.left.w / 2));
-                    if (game.player.controller.rightTouch > 1) game.player.controller.rightTouch = 1;
-                    game.player.controller.leftTouch = 0;
-                }
-                if (touchY < 0) {
-                    game.player.controller.upTouch = (touchY / (game.player.controller.touch.left.h / 2)) * -1;
-                    if (game.player.controller.upTouch < 1) game.player.controller.upTouch = 1;
-                    game.player.controller.downTouch = 0;
-                }
-                else if (touchY > 0) {
-                    game.player.controller.downTouch = (touchY / (game.player.controller.touch.left.h / 2));
-                    if (game.player.controller.downTouch > 1) game.player.controller.downTouch = 1;
-                    game.player.controller.upTouch = 0;
-                }
-            }
-        }
-        if (!touchLeftFound) {
-            game.player.controller.rightTouch = 0;
-            game.player.controller.leftTouch = 0;
-            game.player.controller.upTouch = 0;
-            game.player.controller.downTouch = 0;
-        }
-    }
 }
 
 /*
@@ -525,33 +346,6 @@ function makeGame(type) {
 }
 
 
-// Takes two regions from object.getRegion()
-function collideRect(entity, collider) {
-    let left = (entity.x + entity.w > x && entity.x < x.collider) * -1; // Left (x - 1)
-    let rear = (entity.y + entity.h > collider.y && entity.y < collider.y) * -1; // Rear (y - 1)
-    let under = (entity.z + entity.d > collider.z && entity.z < collider.z) * -1; // Under (z - 1)
-    let right = (entity.x < entity.x + collider.w && entity.x > collider.x) * 1; // Right (x + 1)
-    let front = (entity.y < entity.y + collider.h && entity.y > collider.y) * 1; // Front (y + 1)
-    let top = (entity.z < entity.z + collider.d && entity.z > collider.z) * 1; // Top (z + 1)
-    let withinX = (entity.x + entity.w > collider.x && entity.x + entity.w < collider.x + collider.w) * 1; // wholly within X (x ??)
-    let withinY = (entity.y + entity.h > collider.y && entity.y + entity.h < collider.y + collider.h) * 1; // wholly within Y (y ??)
-    let withinZ = (entity.z + entity.d > collider.z && entity.z + entity.d < collider.z + collider.d) * 1; // whilly within Z (z ??)
-    let contains = (withinX * withinY * withinZ); // wholly within collider
-    let contained = (left + right == 0) ? 1 : 0; // Collider is wholly within
-    return {
-        left: left,
-        rear: rear,
-        under: under,
-        right: right,
-        front: front,
-        top: top,
-        withinX: withinX,
-        withinY: withinY,
-        withinZ: withinZ,
-        contains: contains,
-        contained: contained
-    }
-}
 
 class Vect3 {
     constructor(x, y, z) {
@@ -572,6 +366,14 @@ class Vect3 {
             distance2: dist2,
             distance3: dist3
         }
+    }
+}
+
+class Circle {
+    constructor(x, y, r) {
+        this.x = x || 0;
+        this.y = y || 0;
+        this.r = r || 0;
     }
 }
 

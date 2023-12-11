@@ -17,6 +17,8 @@ class Pistol extends Item {
         this.shootSFX = new Audio('sfx/laser_01.wav');
         this.projectileSpeed = 20;
         this.range = 300;
+        this.coolDown = 10;
+        this.nextCool = 0;
         // Options
         if (typeof options === 'object')
             for (var key of Object.keys(options)) {
@@ -24,48 +26,51 @@ class Pistol extends Item {
             }
     }
     use(user, xaim, yaim, mode) {
-        if (user.ammo.pistol > 0) {
-            user.ammo.pistol--;
-            this.shootSFX.play();
-            // if (this.lungeSFX.duration <= 0 || this.lungeSFX.paused)
-            //     this.lungeSFX.play();
-            let aimX = xaim;
-            let aimY = yaim;
-            //find the distance from player to mouse with pythagorean theorem
-            let distance = ((aimX ** 2) + (aimY ** 2)) ** 0.5;
-            //Normalize the dimension distance by the real distance (ratio)
-            //Then multiply by the distance of the out circle
+        if (ticks > this.nextCool) {
+            this.nextCool = ticks + this.coolDown;
+            if (user.ammo.pistol > 0) {
+                user.ammo.pistol--;
+                this.shootSFX.play();
+                // if (this.lungeSFX.duration <= 0 || this.lungeSFX.paused)
+                //     this.lungeSFX.play();
+                let aimX = xaim;
+                let aimY = yaim;
+                //find the distance from player to mouse with pythagorean theorem
+                let distance = ((aimX ** 2) + (aimY ** 2)) ** 0.5;
+                //Normalize the dimension distance by the real distance (ratio)
+                //Then multiply by the distance of the out circle
 
-            // Use these to shoot directly at crosshair
-            aimX = (aimX / distance);
-            aimY = (aimY / distance);
+                // Use these to shoot directly at crosshair
+                aimX = (aimX / distance);
+                aimY = (aimY / distance);
 
-            let spreadMagnitude = user.accuracy;
+                let spreadMagnitude = user.accuracy;
 
-            let spreadX = (Math.random() * 2 - 1) * spreadMagnitude;
-            let spreadY = (Math.random() * 2 - 1) * spreadMagnitude;
+                let spreadX = (Math.random() * 2 - 1) * spreadMagnitude;
+                let spreadY = (Math.random() * 2 - 1) * spreadMagnitude;
 
-            aimX += spreadX;
-            aimY += spreadY;
+                aimX += spreadX;
+                aimY += spreadY;
 
-            aimX *= this.projectileSpeed;
-            aimY *= this.projectileSpeed;
+                aimX *= this.projectileSpeed;
+                aimY *= this.projectileSpeed;
 
-            // Apply spread. Could slow down missiles which is a problem
-            // let spreadY = (Math.random() * user.accuracy) + (1 - (user.accuracy / 2));
-            // let spreadX = (Math.random() * user.accuracy) + (1 - (user.accuracy / 2));
-            // aimX *= spreadX;
-            // aimY *= spreadY;
+                // Apply spread. Could slow down missiles which is a problem
+                // let spreadY = (Math.random() * user.accuracy) + (1 - (user.accuracy / 2));
+                // let spreadX = (Math.random() * user.accuracy) + (1 - (user.accuracy / 2));
+                // aimX *= spreadX;
+                // aimY *= spreadY;
 
-            game.match.map.missiles.push(new Missile(allID++, user.x, user.y, {
-                color: user.color,
-                parent: user,
-                z: user.z,
-                xspeed: aimX,
-                yspeed: aimY,
-                dxspeed: aimX,
-                dyspeed: aimY,
-            }));
+                game.match.map.missiles.push(new Missile(allID++, user.x, user.y, {
+                    color: user.color,
+                    parent: user,
+                    z: user.z,
+                    xspeed: aimX,
+                    yspeed: aimY,
+                    dxspeed: aimX,
+                    dyspeed: aimY,
+                }));
+            }
         }
     }
 }
@@ -77,6 +82,8 @@ class Flamer extends Item {
         this.range = 200;
         this.shootSFX = new Audio('sfx/hit_02.wav');
         this.projectileSpeed = 10;
+        this.coolDown = 6;
+        this.nextCool = 0;
         // Options
         if (typeof options === 'object')
             for (var key of Object.keys(options)) {
@@ -86,42 +93,45 @@ class Flamer extends Item {
 
     use(user, xaim, yaim, mode) {
         if (user.ammo.flamer > 0) {
-            user.ammo.flamer--;
-            this.shootSFX.play();
-            for (let i = 0; i < 5; i++) {
-                // if (this.lungeSFX.duration <= 0 || this.lungeSFX.paused)
-                //     this.lungeSFX.play();
-                let aimX = xaim;
-                let aimY = yaim;
-                //find the distance from player to mouse with pythagorean theorem
-                let distance = Math.sqrt(aimX ** 2 + aimY ** 2);
-                //Normalize the dimension distance by the real distance (ratio)
-                //Then multiply by the distance of the out circle
+            if (ticks > this.nextCool) {
+                this.nextCool = ticks + this.coolDown;
+                user.ammo.flamer--;
+                this.shootSFX.play();
+                for (let i = 0; i < 5; i++) {
+                    // if (this.lungeSFX.duration <= 0 || this.lungeSFX.paused)
+                    //     this.lungeSFX.play();
+                    let aimX = xaim;
+                    let aimY = yaim;
+                    //find the distance from player to mouse with pythagorean theorem
+                    let distance = Math.sqrt(aimX ** 2 + aimY ** 2);
+                    //Normalize the dimension distance by the real distance (ratio)
+                    //Then multiply by the distance of the out circle
 
-                // Add the user's speed and multiply speed BEFORE spread for satisfying flamer
-                aimX = (aimX / distance) * this.projectileSpeed + user.xspeed;
-                aimY = (aimY / distance) * this.projectileSpeed + user.yspeed;
+                    // Add the user's speed and multiply speed BEFORE spread for satisfying flamer
+                    aimX = (aimX / distance) * this.projectileSpeed + user.xspeed;
+                    aimY = (aimY / distance) * this.projectileSpeed + user.yspeed;
 
-                let spreadMagnitude = user.accuracy * 40;
+                    let spreadMagnitude = user.accuracy * 40;
 
-                let spreadX = (Math.random() * 2 - 1) * spreadMagnitude;
-                let spreadY = (Math.random() * 2 - 1) * spreadMagnitude;
+                    let spreadX = (Math.random() * 2 - 1) * spreadMagnitude;
+                    let spreadY = (Math.random() * 2 - 1) * spreadMagnitude;
 
-                aimX += spreadX;
-                aimY += spreadY;
+                    aimX += spreadX;
+                    aimY += spreadY;
 
-                game.match.map.missiles.push(new Missile(allID++, user.x, user.y, {
-                    parent: user,
-                    color: user.color,
-                    z: user.z,
-                    xspeed: aimX,
-                    yspeed: aimY,
-                    dxspeed: aimX,
-                    dyspeed: aimY,
-                    livetime: 10,
-                    damage: 3,
-                    wind: true
-                }));
+                    game.match.map.missiles.push(new Missile(allID++, user.x, user.y, {
+                        parent: user,
+                        color: user.color,
+                        z: user.z,
+                        xspeed: aimX,
+                        yspeed: aimY,
+                        dxspeed: aimX,
+                        dyspeed: aimY,
+                        livetime: 10,
+                        damage: 3,
+                        wind: true
+                    }));
+                }
             }
         }
     }

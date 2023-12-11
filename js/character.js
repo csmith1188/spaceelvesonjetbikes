@@ -60,7 +60,7 @@ class Character {
         this.threatMulti = 1;
         this.accuracy = 0.1; // Spread magnitude of weapon
         //Items
-        this.item = 1;
+        this.item = 0;
         this.inventory = [new Pistol(), new Flamer(), new JumpDropper()];
         this.ammo = {
             pistol: 25,
@@ -245,7 +245,6 @@ class Character {
         if (controller.buttons.fire.current != controller.buttons.fire.last) {
             if (controller.buttons.fire.current)
                 this.inventory[this.item].use(this, game.player.controller.aimX, game.player.controller.aimY, 0);
-            controller.buttons.fire.last = controller.buttons.fire.current;
         }
 
         // Jump
@@ -301,14 +300,14 @@ class Character {
             ctx.fillRect((game.window.w / 2) - 2, (game.window.h / 2) - 2, 4, 4);
             ctx.beginPath();
             ctx.arc(
-                game.window.w / 2 - compareX - (this.player.character.w / 2) + this.player.character.tube.radius,
-                game.window.h / 2 - compareY - (this.player.character.h / 2) + this.player.character.tube.radius - this.player.character.z,
-                game.player.character.tube.radius,
+                game.window.w / 2 - compareX - (this.w / 2) + this.tube.radius,
+                game.window.h / 2 - compareY - (this.h / 2) + this.tube.radius - this.z,
+                game.tube.radius,
                 0, 2 * Math.PI);
             ctx.arc(
-                game.window.w / 2 - compareX - (this.player.character.w / 2) + this.player.character.tube.radius,
-                game.window.h / 2 - compareY - (this.player.character.h / 2) + this.player.character.tube.radius - this.player.character.tube.height - this.player.character.z,
-                game.player.character.tube.radius,
+                game.window.w / 2 - compareX - (this.w / 2) + this.tube.radius,
+                game.window.h / 2 - compareY - (this.h / 2) + this.tube.radius - this.tube.height - this.z,
+                game.tube.radius,
                 0, 2 * Math.PI);
             ctx.stroke();
         } else {
