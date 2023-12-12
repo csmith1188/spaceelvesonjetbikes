@@ -75,7 +75,6 @@ class Character {
                 if (controller.buttons.moveDown.current) this.mom.y = 1;
                 if (controller.buttons.jump.current && !controller.buttons.jump.last)
                     this.speed.z = 12;
-
             }
 
             // Single shot code
@@ -106,9 +105,7 @@ class Character {
             if (Math.abs(this.speed.y) < game.match.map.stopZone) this.speed.y = 0;
             if (Math.abs(this.speed.z) < game.match.map.stopZone) this.speed.z = 0;
 
-
             //Predict
-
 
             //Move
             this.HB.pos.x += this.speed.x
@@ -121,7 +118,6 @@ class Character {
                 this.speed.z *= -0.5
             }
 
-            if (this.HB.pos.z != 0) console.log(this.HB);
 
         }
     }
@@ -178,8 +174,12 @@ class Character {
     ########   ########  ########## ########## ########### #########  ##########
     */
 
-    collide(collider) {
-
+    collide(colliders) {
+        for (const c of colliders) {
+            if (this.HB.collide(c.HB)) {
+                console.log("hit");
+            }
+        }
     }
 
 }

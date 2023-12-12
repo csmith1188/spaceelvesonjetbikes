@@ -14,74 +14,39 @@
 */
 
 class Block {
-    constructor(id, x, y, options) {
+    constructor(id, x, y, z, vx, vy, vz, options) {
         // Position
-        this.pos = new Vect3(x, y, 0);
-        this.width = new Vect3(48, 48, 24);
-        this.offset = new Vect3(0, 0, 0);
-        this.aim = new Vect3(0,0,0);
-        this.angle = new Vect3(0,0,0);
-        
+        this.spawn = new Vect3(x, y, z)
+        this.HB = new Cube(new Vect3(x, y, z), new Vect3(vx, vy, vz))
+        this.aim = new Vect3(0, 0, 0);
+        this.angle = new Vect3(0, 0, 0);
+
         // Lifespan
         this.id = id;
+        this.parent = {};   // Who does this belong to?
         this.active = true; //Are we tracking this in the game?
         this.dying = false; //Is the lifespan counting down?
         this.cleanup = true; //Is this ready to be removed from the game?
         this.startDelay = 0; //Reset after {options}
         this.livetime = -1; //Number of frames to live (-1 forever)
-        this.spawnX = x;
-        this.spawnY = y;
         this.repeat = 0;
 
         // Properties
         this.target = {};   // What is it chasing?
-        this.parent = {};   // Who does this belong to?
         this.mobile = false;
         this.solid = true;
-        this.visible = true;
-        this.type = 'block';
-        this.tags = ['immobile'];
-        this.runFunc = function () { return }
-        
-
-        this.x = x;
-        this.y = y;
-        this.z = 0;
-        this.xO = x; // Offset from target
-        this.yO = y;
-        this.zO = 0;
-        this.w = 48;
-        this.h = 48;
-        this.d = 16;
-
-        this.hover = 0;
-
-        // Speed
-        this.xspeed = 0;
-        this.yspeed = 0;
-        this.zspeed = 0;
-        this.dxspeed = 0; // Default speed
-        this.dyspeed = 0;
-        this.dzspeed = 0;
-        this.xytrueSpeed = function () { return (((Math.abs(this.xspeed) + Math.abs(this.yspeed)) / 2)) }
-        this.trueSpeed = function () { return (((Math.abs(this.xspeed) + Math.abs(this.yspeed) + Math.abs(this.zspeed)) / 3)) }
         this.gravity = false;
-        this.maxSpeed = 8;
-        this.speedMulti = 0.25;
-        this.weight = 0.2;
-        this.frictionMulti = 1;
-        this.terminalVel = 1;
-        this.speedChange = false; //Can the speed of this be changed?
-        this.bounce = false;
-        this.contained = true;
-        this.wind = false;
+        this.visible = true;
+        this.runFunc = [];
+
         // Graphics
         this.imgFile = '';  // Leave blank to add collision to a background
-        this.color = '';    // Leave blank to add collision to a background
+        this.color = '#DDDDDD';    // Leave blank to add collision to a background
         this.colorSide = ''; //The color of the wall of the block
         this.img = new Image();
         this.img.src = this.imgFile;
         this.pattern = false;
+
         // Options
         if (typeof options === 'object')
             for (var key of Object.keys(options)) {
@@ -92,144 +57,29 @@ class Block {
     }
 
     step() {
-        // If counting lifespan, remove when it reaches 0
-        if (this.livetime == 0) {
-            this.active = false;
-            return
+
+
+        for (const func in this.runFunc) {
+            func();
         }
-
-        //Don't run if not active or not after start delay time
-        if (this.active && ticks >= this.startDelay) {
-            //If this has a target...
-            if (this.target) {
-                //Make sure the target is active first
-                if (this.target.active) {
-                    if (this.chase) {
-                        let compareX = this.target.x - this.x;
-                        let compareY = this.target.y - this.y;
-                        let speed = this.speedMulti;
-                        //Can this block change speed?
-                        if (this.speedChange) {
-                            //Is this airborne?
-                            if (this.z > game.match.map.windH)
-                                speed *= 0.1;
-                            if (compareX > 0 && this.xspeed < this.maxSpeed) {
-                                this.xspeed += speed;
-                                this.img.src = this.gfx + '.png';
-                            }
-                            else if (compareX <= 0 && this.xspeed > this.maxSpeed * -1) {
-                                this.xspeed -= speed;
-                                this.img.src = this.leftgfx + '.png';
-                            }
-                            //Move towards target
-                            if (compareY < 0 && this.yspeed > this.maxSpeed * -1) this.yspeed -= speed;
-                            else if (compareY >= 0 && this.yspeed < this.maxSpeed) this.yspeed += speed;
-                        }
-
-                    }
-                }
-            }
-
-            // If it has jetbike physics
-            if (this.jetphys && this.speedChange) {
-                this.xspeed *= game.match.map.friction * this.frictionMulti * this.weight;
-                this.yspeed *= game.match.map.friction * this.frictionMulti * this.weight;
-            }
-
-            // Gravity is true or false ( * 0 or * 1)
-            if (this.z > 0 && this.zspeed > -1 * this.terminalVel) {
-                this.zspeed -= game.match.map.gravity * this.weight * this.frictionMulti * ((this.gravity) ? 1 : 0);
-            }
-
-            //Reset speed changes
-            if (!this.speedChange) {
-                if (this.xspeed > 0 && Math.abs(this.xspeed) != Math.abs(this.dxspeed)) this.xspeed = this.dxspeed;
-                if (this.xspeed < 0 && Math.abs(this.xspeed) != Math.abs(this.dxspeed)) this.xspeed = this.dxspeed * -1;
-                if (this.yspeed > 0 && Math.abs(this.yspeed) != Math.abs(this.dyspeed)) this.yspeed = this.dyspeed;
-                if (this.yspeed < 0 && Math.abs(this.yspeed) != Math.abs(this.dyspeed)) this.yspeed = this.dyspeed * -1;
-            }
-
-            // Make the move
-            this.x += this.xspeed;
-            this.y += this.yspeed;
-            this.z += this.zspeed;
-
-            // If this can die and is always dying
-            if (this.dying && this.livetime > 0) this.livetime--;
-
-            // Else die as it's calculating falling physics
-            if (this.z < this.hover * -1) {
-                if (!this.dying) this.livetime--;
-                this.z = this.hover * -1;
-                this.xspeed *= 0.85;
-                this.yspeed *= 0.85;
-                this.zspeed *= -1 * this.weight;
-            }
-
-            // If it's not allowed to leave the map
-            if (this.contained) {
-                if (this.x > game.match.map.w || this.x < 0) {
-                    if (this.bounce)
-                        this.xspeed *= -1;
-                    else
-                        if (this.repeat) {
-                            // this.active = false;
-                            this.x = this.spawnX;
-                            this.y = this.spawnY;
-
-                        }
-
-                }
-                if (this.y > game.match.map.h || this.y < 0) {
-                    if (this.bounce)
-                        this.yspeed *= -1;
-                    else
-                        if (this.repeat) {
-                            // this.active = false;
-                            this.x = this.spawnX;
-                            this.y = this.spawnY;
-                        }
-                }
-            }
-
-        }
-
-        // Run custom function
-        this.runFunc()
-
 
     }
 
-    draw(options) {
-        if (this.active && ticks >= this.startDelay) {
-            let compareX = game.player.camera.x - this.x;
-            let compareY = game.player.camera.y - this.y;
-            if (Math.abs(compareX) - this.w < game.window.w / 2 && Math.abs(compareY) - this.h - this.z < game.window.h / 2) {
-                if (this.imgFile) {
-                    ctx.drawImage(this.img, game.window.w / 2 - compareX - (this.w / 2), game.window.h / 2 - compareY - (this.h / 2) - this.z, this.w, this.h);
-                } else if (this.color) {
-                    if (game.debug) {
-                        ctx.fillStyle = "#00FF00";
-                        ctx.fillRect(game.window.w / 2 - compareX, game.window.h / 2 - compareY - (this.h / 2), this.w, this.h);
-                        ctx.fillStyle = "#000000";
-                        ctx.fillRect(game.window.w / 2 - compareX - 2, game.window.h / 2 - compareY - 2, 4, 4);
-                    } else {
-                        if (this.activeGoal) {
-                            ctx.fillStyle = this.colorActive;
-                            ctx.fillRect(game.window.w / 2 - compareX, game.window.h / 2 - compareY - this.z, this.w, this.h);
-                        } else {
-                            ctx.fillStyle = this.color;
-                            ctx.fillRect(game.window.w / 2 - compareX, game.window.h / 2 - compareY - this.z - this.d, this.w, this.h);
-                            if (this.colorSide) {
-                                ctx.fillStyle = this.colorSide;
-                                ctx.fillRect(game.window.w / 2 - compareX, game.window.h / 2 - compareY - this.z - this.d + this.h, this.w, this.d);
-                            }
-                        }
-                    }
-                }
+    draw() {
+        let compareX = game.player.camera.x - this.HB.pos.x;
+        let compareY = game.player.camera.y - this.HB.pos.y;
+        if (this.imgFile) {
+            // ctx.drawImage(this.img, game.window.w / 2 - compareX, game.window.h / 2 - compareY - this.HB.pos.z, this.HB.volume.x, this.HB.volume.y);
+        } else if (this.color) {
+            ctx.fillStyle = this.color;
+            ctx.fillRect(game.window.w / 2 - compareX, game.window.h / 2 - compareY - this.HB.volume.z , this.HB.volume.x, this.HB.volume.y);
+            if (this.colorSide) {
+                ctx.fillStyle = this.colorSide;
+                ctx.fillRect(game.window.w / 2 - compareX, game.window.h / 2 - compareY - this.HB.pos.z - this.HB.volume.z + this.HB.volume.y, this.HB.volume.x, this.HB.volume.z);
             }
         }
     }
+
 
     collide() {
         return
