@@ -32,9 +32,13 @@ class Block {
         this.spawnX = x;
         this.spawnY = y;
         this.repeat = 0;
+
         // Properties
         this.target = {};   // What is it chasing?
         this.parent = {};   // Who does this belong to?
+        this.mobile = false;
+        this.solid = true;
+        this.visible = true;
         this.type = 'block';
         this.tags = ['immobile'];
         this.runFunc = function () { return }

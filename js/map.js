@@ -4,30 +4,22 @@ class Map {
         this.h = 4800; //4800
         this.nodes = [];
 
-        this.friction = 0.99;
+        this.friction = {
+            air: 0.99,
+            ground: 0.9
+        }
         this.gravity = 1;
-        this.gravityFriction = 0.9;
-        this.groundFriction = 0.5;
-        this.maxSpeed = 20;
-        this.collideDamageSpeed = 5;
+        this.stopZone = 0.1;
+        this.grace = 10;
         this.bgimg = new Image();
         this.bgimg.src = "img/maps/grass480.png";
         this.imgSizeW = 480;
         this.imgSizeH = 480;
         this.blocks = [];
-        // this.blocks.lastBlock = () => { return this.blocks[this.blocks.length - 1]; }
+        this.lastBlock = () => { return this.blocks[this.blocks.length - 1]; }
         this.missiles = [];
-        this.percipitation = false;
         this.debris = [];
-        this.debrisAmount = 1000;
-        this.debrisSpawn = function () {
-            let tempx = Math.floor(Math.random() * this.w);
-            let tempy = Math.floor(Math.random() * this.h * 1.5);
-            return new Debris(allID++, tempx, tempy, { contained: false, imgFile: 'img/sprites/leaf1.png', w: 12, h: 12, z: this.h - (this.h - tempy) })
-        }
-        this.windH = 32; //z-height where wind takes place
-        this.xwind = 2;
-        this.ywind = 0;
+        this.wind = new Vect3(0,0,0);
         this.lightValue = [0, 0, 0, 0.0];
         this.runFuncs = []; // A list of functions to run during the step
         // this.lightValue = [0, 0, 128, 0.25];
@@ -53,33 +45,11 @@ class Map {
         }
     }
 
-
-    postLoad() {
-        //INIT DEBRIS
-        if (this.percipitation) {
-            for (let i = 0; i < 1000; i++) {
-                let tempx = Math.floor(Math.random() * this.w);
-                let tempy = Math.floor(Math.random() * this.h);
-                this.debris.push(new Debris(allID++, tempx, tempy, { imgFile: 'img/sprites/leaf1.png', w: 12, h: 12, z: this.h - (this.h - tempy) }));
-            }
-            // THIS IS SUPPOSED TO FAST-FORWARD WIND DEBRIS BUT DOESN'T WORK
-            // for (let i = 0; i < 60000; i++) {
-            //     for (const e of this.debris) {
-            //         e.step()
-            //     }
-            // }
-        }
-    }
-
     draw() {
         let mw = Math.ceil(game.window.w / this.imgSizeW) + 1 // How many "tiles" wide is the screen?
         let mh = Math.ceil(game.window.h / this.imgSizeH) + 1// How many "tiles" high is it?
         for (let row = 0; row < mw; row++) {
             for (let col = 0; col < mh; col++) {
-                let nx = game.player.camera.x;
-                let ny = game.player.camera.y;
-                let shx = game.window.w / 2;
-                let shy = game.window.h / 2;
                 let compareX = ((game.player.camera.x - game.window.w / 2) % this.imgSizeW) * -1;
                 let compareY = ((game.player.camera.y - game.window.h / 2) % this.imgSizeH) * -1;
                 let tileX = compareX + (row * this.imgSizeW)
@@ -113,7 +83,7 @@ class Map {
             }
         }
 
-        this.wind();
+        this.applyWind();
 
         // Run all runFuncs
         for (const func of this.runFuncs) {
@@ -122,7 +92,7 @@ class Map {
 
     }
 
-    wind() {
+    applyWind() {
         for (const e of [game.player.character, ...game.match.bots, ...this.blocks, ...this.debris]) {
             if (e.wind && e.z + e.hover >= (this.windH * ((e.landable) ? 1 : 0))) {
                 e.x += this.xwind * (1 - e.weight);

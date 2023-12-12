@@ -152,8 +152,8 @@ function step() {
     }
     //Update Camera Position
     if (game.player.camera.target) {
-        game.player.camera.x = game.player.camera.target.x;
-        game.player.camera.y = game.player.camera.target.y;
+        game.player.camera.x = game.player.camera.target.HB.pos.x;
+        game.player.camera.y = game.player.camera.target.HB.pos.y;
     }
 
     //Draw game
@@ -398,16 +398,16 @@ class Circle {
 }
 
 class Cube {
-    constructor(origin, width) {
+    constructor(origin, volume) {
         this.pos = origin;
-        this.width = width;
-        this.end = new Vect3(origin.x + width.x, origin.y + width.y, origin.z + width.z);
+        this.volume = volume;
+        this.end = new Vect3(origin.x + volume.x, origin.y + volume.y, origin.z + volume.z);
     }
     half() {
-        return new Vect3(this.width.x / 2, this.width.y / 2, this.width.z / 2)
+        return new Vect3(this.volume.x / 2, this.volume.y / 2, this.volume.z / 2)
     }
     center() {
-        return new Vect3(this.pos.x + (this.width.x / 2), this.pos.x + (this.width.y / 2), this.pos.x + (this.width.z / 2))
+        return new Vect3(this.pos.x + (this.volume.x / 2), this.pos.x + (this.volume.y / 2), this.pos.x + (this.volume.z / 2))
     }
 }
 
