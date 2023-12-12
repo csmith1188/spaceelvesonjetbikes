@@ -159,6 +159,7 @@ class Character {
             ctx.globalAlpha = 0.5;
             //shadow
             ctx.globalAlpha = 1;
+            //sineAnimate(1, 0.1) <- subtract this from the y position of the image to hover effect.
             ctx.drawImage(this.img, game.window.w / 2 - compareX - this.HB.radius, game.window.h / 2 - compareX - this.HB.height - this.HB.pos.z, this.HB.radius * 2, this.HB.height);
 
         }
@@ -177,6 +178,7 @@ class Character {
     collide(colliders) {
         for (const c of colliders) {
             if (this.HB.collide(c.HB)) {
+                c.trigger();
                 console.log("hit");
             }
         }

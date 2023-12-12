@@ -256,9 +256,15 @@ class Rect {
             y: this.y + (this.h / 2)
         }
     }
-    collideRect(collider) {
-        if (this.x < collider.x + collider.w && this.x + this.w > collider.x)
-            if (this.y < collider.y + collider.h && this.y + this.h > collider.y)
+    collideRect(c) {
+        if (this.x < c.x + c.w && this.x + this.w > c.x)
+            if (this.y < c.y + c.h && this.y + this.h > c.y)
+                return true
+        return false
+    }
+    collideCube(c) {
+        if (this.x < c.pos.x + c.volume.x && this.x + this.w > c.pos.x)
+            if (this.y < c.pos.y + c.volume.y && this.y + this.h > c.pos.y)
                 return true
         return false
     }
@@ -336,4 +342,8 @@ class Cylinder {
 
         }
     }
+}
+
+function sineAnimate(amp, freq) {
+    return amp * Math.sin(freq * ticks);
 }

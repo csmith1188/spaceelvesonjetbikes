@@ -36,7 +36,7 @@ class Map {
             for (let y = 0; y < this.h / 64; y++) {
                 this.nodes.push(new Node(x * 64, y * 64))
                 for (const block of game.match.map.blocks) {
-                    if (this.nodes[this.nodes.length - 1].pos.collideRect(new Rect(block.x, block.y, block.w, block.h))) {
+                    if (this.nodes[this.nodes.length - 1].pos.collideCube(block.HB)) {
                         this.nodes[this.nodes.length - 1].pass = false;
                     } else {
                     }

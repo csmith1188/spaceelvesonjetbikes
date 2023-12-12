@@ -57,8 +57,6 @@ class Block {
     }
 
     step() {
-
-
         for (const func in this.runFunc) {
             func();
         }
@@ -80,8 +78,11 @@ class Block {
         }
     }
 
+    trigger(actor) {
 
-    collide() {
+    }
+
+    collide(colliders) {
         return
     }
 
