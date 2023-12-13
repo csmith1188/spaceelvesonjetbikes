@@ -15,7 +15,7 @@ class Character {
         this.cleanup = true;
         this.team = 0;
 
-        //Position Data. This is a Tube
+        //Position Data
         this.HB = new Cylinder(new Vect3(spawnx, spawny, 0), 8, 32);
         this.aim = new Vect3(0, 0, 0);
         this.angle = new Vect3(0, 0, 0);
@@ -23,10 +23,11 @@ class Character {
         this.bouyancy = 2;
         this.hover = 0; // 12
 
-        //Speed
+        //Physics
         this.speed = new Vect3(0, 0, 0);
         this.mom = new Vect3(0, 0, 0);
         this.accel = new Vect3(0.15, 0.15, 0.15);
+        this.colliders = [];
 
         //Stats
         this.hp = 100;
@@ -106,6 +107,10 @@ class Character {
             if (Math.abs(this.speed.z) < game.match.map.stopZone) this.speed.z = 0;
 
             //Predict
+            //
+            // This works, but what should happen is each HB shape should have a shape vs shape collision checker
+            // that should return if there would be a collision
+            //
             let c = game.match.map.blocks[0]
 
             // Calculate the potential new position of the circle after movement
