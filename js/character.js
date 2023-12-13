@@ -16,7 +16,7 @@ class Character {
         this.team = 0;
 
         //Position Data. This is a Tube
-        this.HB = new Cylinder(new Vect3(spawnx, spawny, 0), 16, 64);
+        this.HB = new Cylinder(new Vect3(spawnx, spawny, 0), 8, 32);
         this.aim = new Vect3(0, 0, 0);
         this.angle = new Vect3(0, 0, 0);
 
@@ -94,30 +94,32 @@ class Character {
 
             //Friction
             if (this.HB.pos.z < game.match.map.grace) {
-                this.speed.x *= game.match.map.friction.ground;
-                this.speed.y *= game.match.map.friction.ground;
+                this.speed.x *= 1 - game.match.map.friction.ground;
+                this.speed.y *= 1 - game.match.map.friction.ground;
             } else {
-                this.speed.x *= game.match.map.friction.air;
-                this.speed.y *= game.match.map.friction.air;
+                this.speed.x *= 1 - game.match.map.friction.air;
+                this.speed.y *= 1 - game.match.map.friction.air;
             }
-            this.speed.z *= game.match.map.friction.air;
+            this.speed.z *= 1 - game.match.map.friction.air;
             if (Math.abs(this.speed.x) < game.match.map.stopZone) this.speed.x = 0;
             if (Math.abs(this.speed.y) < game.match.map.stopZone) this.speed.y = 0;
             if (Math.abs(this.speed.z) < game.match.map.stopZone) this.speed.z = 0;
 
             //Predict
+            let c = game.match.map.blocks[0]
+
+            // If the distance is less than or equal to the circle's radius, a collision occurs
 
             //Move
             this.HB.pos.x += this.speed.x
             this.HB.pos.y += this.speed.y
             this.HB.pos.z += this.speed.z
 
-            //Collide
+            //Ground
             if (-this.speed.z > this.HB.pos.z) {
                 this.HB.pos.z = 0;
                 this.speed.z *= -0.5
             }
-
 
         }
     }
@@ -162,6 +164,16 @@ class Character {
             //sineAnimate(1, 0.1) <- subtract this from the y position of the image to hover effect.
             ctx.drawImage(this.img, game.window.w / 2 - compareX - this.HB.radius, game.window.h / 2 - compareX - this.HB.height - this.HB.pos.z, this.HB.radius * 2, this.HB.height);
 
+            // //This can draw a line to the closest part of a rectangle
+            // ctx.strokeStyle = "#FF0000"
+            // ctx.lineWidth = 5;
+            // ctx.beginPath();
+            // ctx.moveTo(game.window.w / 2, game.window.h / 2);
+            // compareX = game.player.camera.x - this.lockon.x; //If you change this to the lockon
+            // compareY = game.player.camera.y - this.lockon.y; //If you change this to the lockon
+            // ctx.lineTo(game.window.w / 2 - compareX, game.window.h / 2 - compareY);
+            // ctx.stroke();
+
         }
     }
 
@@ -179,7 +191,6 @@ class Character {
         for (const c of colliders) {
             if (this.HB.collide(c.HB)) {
                 c.trigger();
-                console.log("hit");
             }
         }
     }

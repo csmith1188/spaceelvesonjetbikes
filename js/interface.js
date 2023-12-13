@@ -77,7 +77,7 @@ class Interface {
                 aimY = (aimY / distance) * 75;
                 //Draw the crosshair at the point
                 //(in this case, the center of the screen plus the normalized distance)
-                ctx.drawImage(this.xhair, (game.window.w / 2) + aimX - 8, (game.window.h / 2) + aimY - 8, 16, 16);
+                ctx.drawImage(this.xhair, (game.window.w / 2) + aimX - 8, (game.window.h / 2) + aimY - 8 - (this.player.character.HB.height / 2), 16, 16);
                 // Sniper Xhair
                 // ctx.drawImage(this.xhair, (game.window.w / 2) + (aimX * 2) - 16, (game.window.h / 2) + (aimY * 2) - 16, 32, 32);
             }

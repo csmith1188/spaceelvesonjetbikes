@@ -5,8 +5,8 @@ class Map {
         this.nodes = [];
 
         this.friction = {
-            air: 0.99,
-            ground: 0.9
+            air: 0.01,
+            ground: 0.1
         }
         this.gravity = 1;
         this.stopZone = 0.1;
@@ -19,7 +19,7 @@ class Map {
         this.lastBlock = () => { return this.blocks[this.blocks.length - 1]; }
         this.missiles = [];
         this.debris = [];
-        this.wind = new Vect3(0,0,0);
+        this.wind = new Vect3(0, 0, 0);
         this.lightValue = [0, 0, 0, 0.0];
         this.runFuncs = []; // A list of functions to run during the step
         // this.lightValue = [0, 0, 128, 0.25];
@@ -83,23 +83,11 @@ class Map {
             }
         }
 
-        this.applyWind();
-
         // Run all runFuncs
         for (const func of this.runFuncs) {
             func();
         }
 
-    }
-
-    applyWind() {
-        for (const e of [game.player.character, ...game.match.bots, ...this.blocks, ...this.debris]) {
-            if (e.wind && e.z + e.hover >= (this.windH * ((e.landable) ? 1 : 0))) {
-                e.x += this.xwind * (1 - e.weight);
-                e.y += this.ywind * (1 - e.weight);
-            }
-
-        }
     }
 
     lighting() {
