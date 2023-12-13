@@ -79,7 +79,7 @@ class Block {
     }
 
     trigger(actor) {
-
+        console.log("ouch");
     }
 
     collide(colliders) {
