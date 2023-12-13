@@ -24,8 +24,9 @@ Dark elves believe everything is random:
 -->
 
 - Finalizing control inputs (Bot extends Player, has controller, makes AI. Character only takes input)
-    - Keyboard, Mouse, TOuch, Gampead classes
+    - Keyboard, Mouse, Touch, Gampead classes
     - Fix Touch radius and add buttons
+- Camera angle
 - HUD elements to interface.js in Interface class, belonging to Players
 - Cubes and Tubes
     - Cubes made from cubes and Tubes from cylinders

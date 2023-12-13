@@ -70,10 +70,13 @@ class Block {
             // ctx.drawImage(this.img, game.window.w / 2 - compareX, game.window.h / 2 - compareY - this.HB.pos.z, this.HB.volume.x, this.HB.volume.y);
         } else if (this.color) {
             ctx.fillStyle = this.color;
-            ctx.fillRect(game.window.w / 2 - compareX, game.window.h / 2 - compareY - this.HB.volume.z , this.HB.volume.x, this.HB.volume.y);
+            ctx.fillRect(game.window.w / 2 - compareX, game.window.h / 2 - compareY - (this.HB.volume.z * game.player.camera.angle), this.HB.volume.x, (this.HB.volume.y * game.player.camera.angle));
             if (this.colorSide) {
                 ctx.fillStyle = this.colorSide;
-                ctx.fillRect(game.window.w / 2 - compareX, game.window.h / 2 - compareY - this.HB.pos.z - this.HB.volume.z + this.HB.volume.y, this.HB.volume.x, this.HB.volume.z);
+                ctx.fillRect(
+                    game.window.w / 2 - compareX,
+                    game.window.h / 2 - compareY - this.HB.pos.z - (this.HB.volume.z  * game.player.camera.angle) + (this.HB.volume.y * game.player.camera.angle),
+                    this.HB.volume.x, (this.HB.volume.z * (1 - game.player.camera.angle)));
             }
         }
     }

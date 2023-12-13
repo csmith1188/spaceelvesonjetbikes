@@ -184,28 +184,30 @@ class Character {
             let compareZ = game.player.camera.z - this.HB.pos.z;
             if (game.debug) {
                 ctx.fillStyle = "#FF0000";
-                ctx.fillRect(game.window.w / 2 - compareX - 5, game.window.h / 2 - compareY - 5, 10, 10);
+                ctx.fillRect(game.window.w / 2 - compareX - 2, game.window.h / 2 - compareY - 2, 4, 4);
                 ctx.strokeStyle = "#FF0000";
                 ctx.beginPath();
-                ctx.arc(
+                ctx.ellipse(
                     game.window.w / 2 - compareX,
                     game.window.h / 2 - compareY - this.HB.pos.z,
                     this.HB.radius,
-                    0, 2 * Math.PI);
+                    this.HB.radius * game.player.camera.angle,
+                    0, 0, 2 * Math.PI);
                 ctx.stroke();
                 ctx.beginPath();
-                ctx.arc(
+                ctx.ellipse(
                     game.window.w / 2 - compareX,
-                    game.window.h / 2 - compareY - this.HB.height - this.HB.pos.z,
+                    game.window.h / 2 - compareY - (this.HB.height * (1 - game.player.camera.angle)) - this.HB.pos.z,
                     this.HB.radius,
-                    0, 2 * Math.PI);
+                    this.HB.radius * game.player.camera.angle,
+                    0, 0, 2 * Math.PI);
                 ctx.stroke();
             }
             ctx.globalAlpha = 0.5;
             //shadow
             ctx.globalAlpha = 1;
             //sineAnimate(1, 0.1) <- subtract this from the y position of the image to hover effect.
-            ctx.drawImage(this.img, game.window.w / 2 - compareX - this.HB.radius, game.window.h / 2 - compareX - this.HB.height - this.HB.pos.z, this.HB.radius * 2, this.HB.height);
+            ctx.drawImage(this.img, game.window.w / 2 - compareX - this.HB.radius, game.window.h / 2 - compareX - (this.HB.height * (1 - game.player.camera.angle)) - this.HB.pos.z, this.HB.radius * 2, this.HB.height * (1 - game.player.camera.angle));
 
             // //This can draw a line to the closest part of a rectangle
             // ctx.strokeStyle = "#FF0000"

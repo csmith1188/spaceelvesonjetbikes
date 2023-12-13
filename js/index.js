@@ -38,13 +38,15 @@ window.onload = function () {
     game.player.camera = new Camera({ target: game.player.character });
 
     // makeGame(['blocks']);
-    game.match.map.blocks.push(new Block(allID++, (game.match.map.w / 2) + 32, (game.match.map.h / 2) + 16, 0, 32, 32, 0, { color: '#333333', colorSide: '#666666' }))
+    game.match.map.blocks.push(new Block(allID++, (game.match.map.w / 2) + 32, (game.match.map.h / 2) + 16, 0, 32, 32, 64, { color: '#333333', colorSide: '#666666' }))
 
     game.match.map.buildNavMesh();
 
     //start game loop
     //Run the step() function every 16ms (60fps)
     gameLoop = setInterval(step, 16);
+
+    game.player.interface.createDebug();
 
     draw();
 

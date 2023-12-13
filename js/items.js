@@ -55,12 +55,6 @@ class Pistol extends Item {
                 aimX *= this.projectileSpeed;
                 aimY *= this.projectileSpeed;
 
-                // Apply spread. Could slow down missiles which is a problem
-                // let spreadY = (Math.random() * user.accuracy) + (1 - (user.accuracy / 2));
-                // let spreadX = (Math.random() * user.accuracy) + (1 - (user.accuracy / 2));
-                // aimX *= spreadX;
-                // aimY *= spreadY;
-
                 game.match.map.missiles.push(new Missile(allID++, user.x, user.y, {
                     color: user.color,
                     parent: user,

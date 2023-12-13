@@ -10,9 +10,7 @@ class Interface {
 
     createDebug() {
         let characterSliders = {
-            'speedMulti': { 'min': 0, 'max': 1, 'step': 0.05, 'value': this.player.character.speedMulti },
-            'maxSpeed': { 'min': 0, 'max': 100, 'step': 0.5, 'value': this.player.character.maxSpeed },
-            'frictionMulti': { 'min': 0.8, 'max': 1, 'step': 0.001, 'value': this.player.character.frictionMulti }
+            'angle': { 'min': 0, 'max': 1, 'step': 0.05, 'value': this.player.camera.angle }
         };
         this.player.debugBox = document.createElement('div');
         this.player.debugBox.id = 'debugger';
@@ -24,8 +22,8 @@ class Interface {
                 newSlider[debugProp] = characterSliders[debugKey][debugProp];
             }
             newSlider.addEventListener(
-                'change',
-                () => { this.player.character[debugKey] = newSlider.value; console.log(debugKey, newSlider.value) },
+                'input',
+                () => { this.player.camera[debugKey] = newSlider.value; console.log(debugKey, newSlider.value) },
                 false
             );
             this.player.debugBox.appendChild(newSlider);
@@ -55,7 +53,7 @@ class Interface {
             ctx.fillRect(game.window.w - 6, (this.player.camera.y / game.match.map.h) * game.window.h - 3, 6, 6);
 
             //Background
-         
+
             //Health Bar
 
             //power bar
@@ -73,11 +71,33 @@ class Interface {
                 let distance = ((aimX ** 2) + (aimY ** 2)) ** 0.5;
                 //Normalize the dimension distance by the real distance (ratio)
                 //Then multiply by the distance of the out circle
-                aimX = (aimX / distance) * 75;
-                aimY = (aimY / distance) * 75;
-                //Draw the crosshair at the point
-                //(in this case, the center of the screen plus the normalized distance)
-                ctx.drawImage(this.xhair, (game.window.w / 2) + aimX - 8, (game.window.h / 2) + aimY - 8 - (this.player.character.HB.height / 2), 16, 16);
+                aimX = (aimX / distance);
+                aimY = (aimY / distance);
+                // Set the distance for the other images
+                const aimRad = 75;
+
+                // Calculate the angles for the additional images (+10% and -10%)
+                const angle = Math.atan2(aimY, aimX);
+                const anglePlus10Percent = angle + game.player.character.accuracy;
+                const angleMinus10Percent = angle - game.player.character.accuracy;
+
+                // Calculate positions for the additional images
+                const aimXPlus10Percent = Math.cos(anglePlus10Percent) * aimRad;
+                const aimYPlus10Percent = Math.sin(anglePlus10Percent) * aimRad;
+
+                const aimXMinus10Percent = Math.cos(angleMinus10Percent) * aimRad;
+                const aimYMinus10Percent = Math.sin(angleMinus10Percent) * aimRad;
+
+                // Draw the original image
+                ctx.drawImage(this.xhair, (game.window.w / 2) + aimX * aimRad - 8, (game.window.h / 2) + aimY * aimRad - 8 - (this.player.character.HB.height / 2), 16, 16);
+
+                // Draw the image at +10%
+                // ctx.drawImage(this.xhair, (game.window.w / 2) + aimXPlus10Percent - 8, (game.window.h / 2) + aimYPlus10Percent - 8 - (this.player.character.HB.height / 2), 16, 16);
+
+                // Draw the image at -10%
+                // ctx.drawImage(this.xhair, (game.window.w / 2) + aimXMinus10Percent - 8, (game.window.h / 2) + aimYMinus10Percent - 8 - (this.player.character.HB.height / 2), 16, 16);
+
+
                 // Sniper Xhair
                 // ctx.drawImage(this.xhair, (game.window.w / 2) + (aimX * 2) - 16, (game.window.h / 2) + (aimY * 2) - 16, 32, 32);
             }
