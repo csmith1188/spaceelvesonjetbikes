@@ -29,7 +29,7 @@ class Bot {
     AI() {
         for (const c of game.match.map.blocks) {
             if (c != this.character) {
-                if (!c.tags.includes('debris') && !c.tags.includes('nocollide') && Math.abs(this.character.x - c.x) < this.character.w / 2 + (c.w / 2) + 50 && Math.abs(this.character.y - c.y) < this.character.h / 2 + (c.h / 2) + 50 && this.character.z < c.d && c.z < this.character.d) {
+                if (Math.abs(this.character.x - c.x) < this.character.w / 2 + (c.w / 2) + 50 && Math.abs(this.character.y - c.y) < this.character.h / 2 + (c.h / 2) + 50 && this.character.z < c.d && c.z < this.character.d) {
                         this.controller.buttons.jump.current = 1;
                 } else {
                     this.controller.buttons.jump.current = 0;

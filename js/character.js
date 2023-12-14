@@ -14,6 +14,7 @@ class Character {
         this.active = true;
         this.cleanup = true;
         this.team = 0;
+        this.target = {}
 
         //Position Data
         this.HB = new Cylinder(new Vect3(spawnx, spawny, 0), 8, 32);
@@ -106,63 +107,34 @@ class Character {
             if (Math.abs(this.speed.y) < game.match.map.stopZone) this.speed.y = 0;
             if (Math.abs(this.speed.z) < game.match.map.stopZone) this.speed.z = 0;
 
-            //Predict
-            //
-            // This works, but what should happen is each HB shape should have a shape vs shape collision checker
-            // that should return if there would be a collision
-            //
+            //Predictive collision
             for (const c of game.match.map.blocks) {
-                // Calculate the potential new position of the circle after movement
-                let newX = this.HB.pos.x + this.speed.x;
-                let newY = this.HB.pos.y + this.speed.y;
-
-                let newC = new Rect(c.HB.pos.x - this.HB.radius, c.HB.pos.y - this.HB.radius, c.HB.volume.x + this.HB.radius, c.HB.volume.y + this.HB.radius);
-
-                // Find the closest point on the rectangle to the circle
-                let closestX = Math.max(Math.min(newX, c.HB.pos.x + c.HB.volume.x), c.HB.pos.x);
-                let closestY = Math.max(Math.min(newY, c.HB.pos.y + c.HB.volume.y), c.HB.pos.y);
-
-                // Calculate the distance between the circle's center and the closest point on the rectangle
-                let distanceX = newX - closestX;
-                let distanceY = newY - closestY;
-
-                // Calculate penetration depths
-                let penX = Math.abs(distanceX);
-                let penY = Math.abs(distanceY);
-
-                let side;
-                if (penX <= this.HB.radius && penY <= this.HB.radius) {
-                    c.trigger();
-                    if (penX < penY) {
-                        this.speed.y *= -1;
-                        this.mom.y *= -1;
-                        this.speed.y = 0;
-                        this.mom.y = 0;
-                        if (distanceY > 0) {
-                            this.HB.pos.y = c.HB.pos.y + c.HB.volume.y + this.HB.radius;
-                            console.log('down');
-                        } else {
-                            this.HB.pos.y = c.HB.pos.y - this.HB.radius;
-                            console.log('up');
-                        }
-                    } else {
-                        this.speed.x *= -1;
-                        this.mom.x *= -1;
-                        if (distanceX > 0) {
-                            this.HB.pos.x = c.HB.pos.x + c.HB.volume.x + this.HB.radius;
-                            console.log('right');
-                        } else {
-                            this.HB.pos.x = c.HB.pos.x - this.HB.radius;
-                            console.log('left');
-                        }
-                    }
-                } else {
-                    //Move
-                    this.HB.pos.x += this.speed.x
-                    this.HB.pos.y += this.speed.y
-                    this.HB.pos.z += this.speed.z
+                let side = this.HB.collide(c.HB);
+                let reflect = 0.5;
+                switch (side) {
+                    case 'front':
+                        this.speed.y *= -reflect; this.mom.y *= -reflect;
+                        this.HB.pos.y = c.HB.pos.y + c.HB.volume.y + this.HB.radius;
+                        break;
+                    case 'rear':
+                        this.speed.y *= -reflect; this.mom.y *= -reflect;
+                        this.HB.pos.y = c.HB.pos.y - this.HB.radius;
+                        break;
+                    case 'right':
+                        this.speed.x *= -reflect; this.mom.x *= -reflect;
+                        this.HB.pos.x = c.HB.pos.x + c.HB.volume.x + this.HB.radius;
+                        break;
+                    case 'left':
+                        this.speed.x *= -reflect; this.mom.x *= -reflect;
+                        this.HB.pos.x = c.HB.pos.x - this.HB.radius;
+                        break;
+                    default:
+                        //Move
+                        this.HB.pos.x += this.speed.x;
+                        this.HB.pos.y += this.speed.y;
+                        this.HB.pos.z += this.speed.z;
+                        break;
                 }
-
             }
 
             //Ground
@@ -189,11 +161,11 @@ class Character {
         } else {
             let compareX = game.player.camera.x - this.HB.pos.x;
             let compareY = game.player.camera.y - this.HB.pos.y;
-            let compareZ = game.player.camera.z - this.HB.pos.z;
             if (game.debug) {
                 ctx.fillStyle = "#FF0000";
                 ctx.fillRect(game.window.w / 2 - compareX - 2, game.window.h / 2 - compareY - 2, 4, 4);
                 ctx.strokeStyle = "#FF0000";
+                ctx.lineWidth = 2;
                 ctx.beginPath();
                 ctx.ellipse(
                     game.window.w / 2 - compareX,
@@ -216,13 +188,20 @@ class Character {
             ctx.globalAlpha = 1;
             //sineAnimate(1, 0.1) <- subtract this from the y position of the image to hover effect
             if (game.player.camera._3D)
-                ctx.drawImage(this.img, game.window.w / 2 - compareX - this.HB.radius, game.window.h / 2 - compareX - (this.HB.height * (1 - game.player.camera.angle)) - this.HB.pos.z, this.HB.radius * 2, this.HB.height * (1 - game.player.camera.angle));
+                ctx.drawImage(
+                    this.img,
+                    game.window.w / 2 - compareX - this.HB.radius,
+                    game.window.h / 2 - compareY - (this.HB.height * (1 - game.player.camera.angle)) - this.HB.pos.z,
+                    this.HB.radius * 2,
+                    this.HB.height * (1 - game.player.camera.angle)
+                );
             else
                 ctx.drawImage(
                     this.img,
                     game.window.w / 2 - compareX - this.HB.radius,
-                    game.window.h / 2 - compareX - this.HB.height - this.HB.pos.z,
-                    this.HB.radius * 2, this.HB.height);
+                    game.window.h / 2 - compareY - this.HB.height - this.HB.pos.z,
+                    this.HB.radius * 2, this.HB.height
+                );
 
             // //This can draw a line to the closest part of a rectangle
             // ctx.strokeStyle = "#FF0000"
@@ -241,13 +220,14 @@ class Character {
         let compareY = game.player.camera.y - this.HB.pos.y;
         let compareZ = game.player.camera.z - this.HB.pos.z;
         if (game.debug) {
+            ctx.lineWidth = 2;
             ctx.fillStyle = "#FF0000";
-            ctx.fillRect(game.window.w / 2 - compareX - 2, game.window.h / 2 - compareY - 2, 4, 4);
+            ctx.fillRect(game.window.w / 2 - compareX - 2, game.window.h / 2 - (compareY * game.player.camera.angle) - 2, 4, 4);
             ctx.strokeStyle = "#FF0000";
             ctx.beginPath();
             ctx.ellipse(
                 game.window.w / 2 - compareX,
-                game.window.h / 2 - compareY - this.HB.pos.z,
+                game.window.h / 2 - (compareY * game.player.camera.angle) - this.HB.pos.z,
                 this.HB.radius,
                 this.HB.radius * game.player.camera.angle,
                 0, 0, 2 * Math.PI);
@@ -255,7 +235,7 @@ class Character {
             ctx.beginPath();
             ctx.ellipse(
                 game.window.w / 2 - compareX,
-                game.window.h / 2 - compareY - (this.HB.height * (1 - game.player.camera.angle)) - this.HB.pos.z,
+                game.window.h / 2 - (compareY * game.player.camera.angle) - (this.HB.height * (1 - game.player.camera.angle)) - this.HB.pos.z,
                 this.HB.radius,
                 this.HB.radius * game.player.camera.angle,
                 0, 0, 2 * Math.PI);
@@ -265,7 +245,13 @@ class Character {
         //shadow
         ctx.globalAlpha = 1;
         //sineAnimate(1, 0.1) <- subtract this from the y position of the image to hover effect.
-        ctx.drawImage(this.img, game.window.w / 2 - compareX - this.HB.radius, game.window.h / 2 - compareX - (this.HB.height * (1 - game.player.camera.angle)) - this.HB.pos.z, this.HB.radius * 2, this.HB.height * (1 - game.player.camera.angle));
+        ctx.drawImage(
+            this.img,
+            game.window.w / 2 - compareX - this.HB.radius,
+            game.window.h / 2 - (compareY * game.player.camera.angle) - (this.HB.height * (1 - game.player.camera.angle)) - this.HB.pos.z,
+            this.HB.radius * 2,
+            this.HB.height * (1 - game.player.camera.angle)
+        );
 
     }
 

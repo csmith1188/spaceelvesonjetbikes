@@ -93,6 +93,11 @@ class Map {
                 ctx.fillStyle = "#8cb8ff";
                 ctx.fillRect(0, 0, game.window.w, (game.window.h / 2) * (1 - game.player.camera.angle));
             }
+            //If in 3D mode, draw the underground (This overdraws things past the underground, even if visible)
+            if (game.player.camera._3D) {
+                ctx.fillStyle = "#281800";
+                ctx.fillRect(0, (game.window.h / 2) + ((game.window.h / 2) * (game.player.camera.angle)), game.window.w, game.window.h);
+            }
         }
 
         //If debugging, show node grid
@@ -103,13 +108,6 @@ class Map {
     }
 
     step() {
-
-        for (const e of this.debris) {
-            if (e.cleanup && !e.active) {
-                //Remove debris
-                this.debris = this.debris.filter(function (el) { return el != e; });
-            }
-        }
 
         for (const e of this.missiles) {
             if (e.cleanup && !e.active) {

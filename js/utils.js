@@ -91,45 +91,46 @@ class Cylinder {
         this.radius = radius;
         this.height = height;
     }
-    collide(c) {
-        if (c instanceof Rect) {
-            testX = this.pos.x;
-            testY = this.pos.y;
+    collide(c, speed = new Vect3(0, 0, 0)) {
+        //RECT/CUBE COLLIDE
+        if (c instanceof Rect || c instanceof Cube) {
+            // Calculate the potential new position of the circle after movement
+            let newX = this.pos.x + speed.x;
+            let newY = this.pos.y + speed.y;
 
-            //Find edge to check
-            if (this.pos.x < c.pos.x) testX = c.pos.x;
-            else if (this.pos.x > c.pos.x + c.volume.x) testX = c.volume.x + c.volume.x;
-            if (this.pos.y < c.pos.y) testY = c.pos.y;
-            else if (this.pos.y > c.pos.y + c.volume.y) testy = c.volume.y + c.volume.y;
+            // Find the closest point on the rectangle to the circle
+            let closestX = Math.max(Math.min(newX, c.pos.x + c.volume.x), c.pos.x);
+            let closestY = Math.max(Math.min(newY, c.pos.y + c.volume.y), c.pos.y);
 
-            let distX = this.pos.x - textX;
-            let distY = this.pos.y - textY;
-            let distance = Math.sqrt(distX ** 2 + distY ** 2);
+            // Calculate the distance between the circle's center and the closest point on the rectangle
+            let distanceX = newX - closestX;
+            let distanceY = newY - closestY;
 
-            if (distance <= this.radius)
-                return true;
-            return false;
-        } else if (c instanceof Cube) {
-            let testX = this.pos.x;
-            let testY = this.pos.y;
+            // Calculate penetration depths
+            let penX = Math.abs(distanceX);
+            let penY = Math.abs(distanceY);
 
-            //Find edge to check
-            if (this.pos.x < c.pos.x) testX = c.pos.x;
-            else if (this.pos.x > c.pos.x + c.volume.x) testX = c.pos.x + c.volume.x;
-            if (this.pos.y < c.pos.y) testY = c.pos.y;
-            else if (this.pos.y > c.pos.y + c.volume.y) testY = c.pos.y + c.volume.y;
-
-            let distX = this.pos.x - testX;
-            let distY = this.pos.y - testY;
-            let distance = Math.sqrt(distX ** 2 + distY ** 2);
-
-            if (distance <= this.radius)
-                // if (!this.pos.z >= c.pos.z + c.volume.z && !this.pos.z + this.height <= c.pos.z)
-                return true;
-            return false;
-        } else if (c instanceof Circle) {
-
-        } else if (c instanceof Cylinder) {
+            let side;
+            if (penX <= this.radius && penY <= this.radius) {
+                if (penX < penY) {
+                    if (distanceY > 0) {
+                        side = 'front';
+                    } else {
+                        this.pos.y = c.pos.y - this.radius;
+                        side = 'rear';
+                    }
+                } else {
+                    if (distanceX > 0) {
+                        side = 'right';
+                    } else {
+                        side = 'left';
+                    }
+                }
+                return side;
+            } else {
+                return false;
+            }
+        } else if (c instanceof Circle || c instanceof Cylinder) {
 
         } else {
 
@@ -140,7 +141,6 @@ class Cylinder {
 function sineAnimate(amp, freq) {
     return amp * Math.sin(freq * ticks);
 }
-
 
 function easeout(userValue, maxValue) {
     const normalizedValue = userValue / maxValue;

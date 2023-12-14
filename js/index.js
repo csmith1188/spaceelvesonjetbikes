@@ -41,6 +41,17 @@ window.onload = function () {
     game.match.map.blocks.push(new Block(allID++, (game.match.map.w / 2) + 32, (game.match.map.h / 2) + 32, 0, 32, 32, 64, { color: '#333333', colorSide: '#666666' }))
     game.match.map.blocks.push(new Block(allID++, (game.match.map.w / 2) - 72, (game.match.map.h / 2) - 36, 0, 32, 128, 128, { color: '#333333', colorSide: '#666666' }))
 
+    game.match.bots.push(new Bot()) //Kevin
+    game.match.bots[game.match.bots.length - 1].character = new Character(
+        allID++,
+        (game.match.map.w / 2) + 100,
+        (game.match.map.h / 2) - 100,
+        game.match.bots[game.match.bots.length - 1],
+        // { target: game.player.character, nameTag: 'Jaysin', gfx: 'img/sprites/dark2', team: 1 }
+        { target: game.player.character, nameTag: 'Jaysin', team: 1 }
+    );
+
+
     game.match.map.buildNavMesh();
 
     //start game loop
@@ -154,7 +165,7 @@ function draw() {
     }
 
     let renderList =
-        [game.player.character, ...game.match.map.blocks, ...game.match.map.missiles, ...game.match.goals, ...game.match.map.debris, ...npcs]
+        [game.player.character, ...npcs, ...game.match.map.blocks, ...game.match.map.missiles]
             .sort((a, b) => {
                 if (a.y + a.z < b.y + b.z) return -1;
                 if (a.y + a.z > b.y + b.z) return 1;
