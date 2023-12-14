@@ -1,8 +1,9 @@
 class Map {
     constructor(options) {
-        this.w = 256; //7200
-        this.h = 256; //4800
+        this.w = 1024; //7200
+        this.h = 1024; //4800
         this.tileSize = 32;
+        this.tileSet = [[]]
         this.nodes = [];
 
         this.friction = {
@@ -52,15 +53,22 @@ class Map {
     }
 
     draw() {
+        //Ground
+        ctx.fillStyle = "#333300";
+        ctx.fillRect(0, 0, game.window.w, game.window.h);
+        // For every column that the map can make from the total space
         for (let x = 0; x < this.w / this.tileSize; x++) {
+            let compareX = game.player.camera.x - (x * this.tileSize);
+            //For every row
             for (let y = 0; y < this.h / this.tileSize; y++) {
-                let compareX = game.player.camera.x - (x * this.tileSize);
-                let compareY;
+                let compareY = game.player.camera.y - (y * this.tileSize);
+                //If the tile is within the camera's viewable radius and the horizon
+                // TODO: horizon count doesn't actually line up with the horizon. sky overdraws it
+                let horizonCalc = 0;
                 if (game.player.camera._3D)
-                    compareY = game.player.camera.y - (y * this.tileSize * game.player.camera.angle);
-                else
-                    compareY = game.player.camera.y - (y * this.tileSize);
-                if (game.player.camera.radius > Math.max(Math.abs(compareX), Math.abs(compareY))) {
+                    horizonCalc = (game.window.h / 2) * (1 - game.player.camera.angle)
+                if (game.player.camera.radius > Math.max(Math.abs(compareX), Math.abs(compareY)) + horizonCalc) {
+
                     if (game.player.camera._3D)
                         ctx.drawImage(
                             this.bgimg,
@@ -78,6 +86,10 @@ class Map {
                             this.tileSize
                         );
                 }
+            }
+            if (game.player.camera._3D) {
+                ctx.fillStyle = "#8cb8ff";
+                ctx.fillRect(0, 0, game.window.w, (game.window.h / 2) * (1 - game.player.camera.angle));
             }
         }
 

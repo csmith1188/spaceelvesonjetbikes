@@ -47,7 +47,7 @@ window.onload = function () {
     //Run the step() function every 16ms (60fps)
     gameLoop = setInterval(step, 16);
 
-    game.player.interface.createDebug();
+    // game.player.interface.createDebug();
 
     draw();
 
@@ -157,8 +157,8 @@ function step() {
 
 function draw() {
     //Clear the canvas 
-    ctx.fillStyle = "#333300";
-    ctx.fillRect(0, 0, game.window.w, game.window.h);
+    // ctx.fillStyle = "#000000";
+    // ctx.fillRect(0, 0, game.window.w, game.window.h);
 
     //Draw Map
     game.match.map.draw(game.player.character);
