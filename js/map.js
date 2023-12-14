@@ -9,21 +9,26 @@ class Map {
             air: 0.01,
             ground: 0.1
         }
+
         this.gravity = 1;
         this.stopZone = 0.1;
         this.grace = 10;
+
         this.bgimg = new Image();
         this.bgimg.src = "img/tiles/tile001.png";
         this.imgSizeW = 32;
         this.imgSizeH = 32;
+
         this.blocks = [];
         this.lastBlock = () => { return this.blocks[this.blocks.length - 1]; }
         this.missiles = [];
         this.debris = [];
-        this.wind = new Vect3(0, 0, 0);
+
         this.lightValue = [0, 0, 0, 0.0];
-        this.runFuncs = []; // A list of functions to run during the step
         // this.lightValue = [0, 0, 128, 0.25];
+
+        this.runFuncs = []; // A list of functions to run during the step
+
         if (typeof options == 'object')
             for (const setting of Object.keys(options)) {
                 if (this[setting] !== undefined)
@@ -47,19 +52,32 @@ class Map {
     }
 
     draw() {
-        let mw = Math.ceil(game.window.w / this.tileSize) + 1 // How many "tiles" wide is the screen?
-        let mh = Math.ceil(game.window.h / this.tileSize) + 1// How many "tiles" high is it?
-        for (let row = 0; row < mw; row++) {
-            for (let col = 0; col < mh; col++) {
-                let compareX = ((game.player.camera.x - game.window.w / 2) % this.tileSize) * -1;
-                let compareY = ((game.player.camera.y - game.window.h / 2) % this.tileSize) * -1;
-                let tileX = compareX + (row * this.tileSize)
-                let tileY = compareY + (col * this.tileSize)
-                let totalX = tileX + game.player.camera.x - this.tileSize;
-                let totalY = tileY + game.player.camera.y - this.tileSize;
-                if (totalX <= this.w && totalY <= this.h && totalX >= 0 && totalY >= 0)
-                    ctx.drawImage(this.bgimg, Math.floor(tileX), Math.floor(tileY), this.tileSize, this.tileSize);
-
+        for (let x = 0; x < this.w / this.tileSize; x++) {
+            for (let y = 0; y < this.h / this.tileSize; y++) {
+                let compareX = game.player.camera.x - (x * this.tileSize);
+                let compareY;
+                if (game.player.camera._3D)
+                    compareY = game.player.camera.y - (y * this.tileSize * game.player.camera.angle);
+                else
+                    compareY = game.player.camera.y - (y * this.tileSize);
+                if (game.player.camera.radius > Math.max(Math.abs(compareX), Math.abs(compareY))) {
+                    if (game.player.camera._3D)
+                        ctx.drawImage(
+                            this.bgimg,
+                            game.window.w / 2 - compareX,
+                            game.window.h / 2 - (compareY * game.player.camera.angle),
+                            this.tileSize,
+                            this.tileSize * game.player.camera.angle
+                        );
+                    else
+                        ctx.drawImage(
+                            this.bgimg,
+                            game.window.w / 2 - compareX,
+                            game.window.h / 2 - compareY,
+                            this.tileSize,
+                            this.tileSize
+                        );
+                }
             }
         }
 
@@ -112,7 +130,7 @@ class Node {
             let compareY = game.player.camera.y - this.pos.y;
             if (game.player.camera.radius > Math.max(Math.abs(compareX), Math.abs(compareY))) {
                 ctx.strokeStyle = "#00FF00"
-                ctx.strokeRect(game.window.w / 2 - compareX, game.window.h / 2 - compareY, this.pos.w, this.pos.h);
+                // ctx.strokeRect(game.window.w / 2 - compareX, game.window.h / 2 - compareY, this.pos.w, this.pos.h);
             }
         }
 

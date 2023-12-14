@@ -23,7 +23,7 @@ class Interface {
             }
             newSlider.addEventListener(
                 'input',
-                () => { this.player.camera[debugKey] = newSlider.value; console.log(debugKey, newSlider.value) },
+                () => { this.player.camera[debugKey] = newSlider.value; },
                 false
             );
             this.player.debugBox.appendChild(newSlider);
