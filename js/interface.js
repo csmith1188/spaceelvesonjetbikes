@@ -8,29 +8,6 @@ class Interface {
         }
     }
 
-    createDebug() {
-        let characterSliders = {
-            'angle': { 'min': 0, 'max': 1, 'step': 0.05, 'value': this.player.camera.angle }
-        };
-        this.player.debugBox = document.createElement('div');
-        this.player.debugBox.id = 'debugger';
-        for (const debugKey in characterSliders) {
-            let newSlider = document.createElement('input');
-            newSlider.classList.add('debugSlider');
-            newSlider.type = 'range';
-            for (const debugProp in characterSliders[debugKey]) {
-                newSlider[debugProp] = characterSliders[debugKey][debugProp];
-            }
-            newSlider.addEventListener(
-                'input',
-                () => { this.player.camera[debugKey] = newSlider.value; },
-                false
-            );
-            this.player.debugBox.appendChild(newSlider);
-        }
-        document.body.appendChild(this.player.debugBox);
-    }
-
     drawHUD() {
         if (this.player.character.active) {
 
@@ -89,7 +66,7 @@ class Interface {
                 const aimYMinus10Percent = Math.sin(angleMinus10Percent) * aimRad;
 
                 // Draw the original image
-                ctx.drawImage(this.xhair, (game.window.w / 2) + aimX * aimRad - 8, (game.window.h / 2) + aimY * aimRad - 8 - (this.player.character.HB.height / 2), 16, 16);
+                // ctx.drawImage(this.xhair, (game.window.w / 2) + aimX * aimRad - 8, (game.window.h / 2) + aimY * aimRad - 8 - (this.player.character.HB.height / 2), 16, 16);
 
                 // Draw the image at +10%
                 // ctx.drawImage(this.xhair, (game.window.w / 2) + aimXPlus10Percent - 8, (game.window.h / 2) + aimYPlus10Percent - 8 - (this.player.character.HB.height / 2), 16, 16);

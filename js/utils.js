@@ -140,3 +140,19 @@ class Cylinder {
 function sineAnimate(amp, freq) {
     return amp * Math.sin(freq * ticks);
 }
+
+
+function easeout(userValue, maxValue) {
+    const normalizedValue = userValue / maxValue;
+    const easedValue = normalizedValue * (2 - normalizedValue);
+    const modifiedValue = easedValue * maxValue;
+    return modifiedValue;
+}
+
+function easeinout(userValue, maxValue) {
+    const normalizedValue = userValue / maxValue;
+    const easeInValue = normalizedValue < 0.5 ? 2 * normalizedValue * normalizedValue : -1 + (4 - 2 * normalizedValue) * normalizedValue;
+    const easeOutValue = normalizedValue * (2 - normalizedValue);
+    const modifiedValue = (easeInValue + easeOutValue) / 2 * maxValue;
+    return modifiedValue
+}

@@ -75,7 +75,7 @@ class Character {
                 if (controller.buttons.moveUp.current) this.mom.y = -1;
                 if (controller.buttons.moveDown.current) this.mom.y = 1;
                 if (controller.buttons.jump.current && !controller.buttons.jump.last)
-                    this.speed.z = 12;
+                    this.speed.z = 8;
             }
 
             // Single shot code

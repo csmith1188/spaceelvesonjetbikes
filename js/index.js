@@ -47,8 +47,6 @@ window.onload = function () {
     //Run the step() function every 16ms (60fps)
     gameLoop = setInterval(step, 16);
 
-    // game.player.interface.createDebug();
-
     draw();
 
 }

@@ -147,7 +147,7 @@ class Node {
         let compareX = game.player.camera.x - this.pos.x;
         let compareY = game.player.camera.y - this.pos.y;
         if (game.player.camera.radius > Math.max(Math.abs(compareX), Math.abs(compareY))) {
-            ctx.lineWidth = 0.1;
+            ctx.lineWidth = 0.2;
             if (game.player.camera._3D)
                 ctx.strokeRect(
                     game.window.w / 2 - compareX,
