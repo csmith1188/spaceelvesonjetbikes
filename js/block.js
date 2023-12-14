@@ -117,10 +117,6 @@ class Block {
         console.log("ouch");
     }
 
-    collide(colliders) {
-        return
-    }
-
 }
 
 /*

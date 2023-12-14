@@ -57,6 +57,7 @@ class Map {
         ctx.fillStyle = "#333300";
         ctx.fillRect(0, 0, game.window.w, game.window.h);
         // For every column that the map can make from the total space
+        let count = 0;
         for (let x = 0; x < this.w / this.tileSize; x++) {
             let compareX = game.player.camera.x - (x * this.tileSize);
             //For every row
@@ -67,8 +68,9 @@ class Map {
                 let horizonCalc = 0;
                 if (game.player.camera._3D)
                     horizonCalc = (game.window.h / 2) * (1 - game.player.camera.angle)
-                if (game.player.camera.radius > Math.max(Math.abs(compareX), Math.abs(compareY)) + horizonCalc) {
-
+                if (game.player.camera.radius > Math.abs(compareX) && game.player.camera.radius > compareY - horizonCalc) {
+                    count++;
+                    // Adjust y and h if 3D draw mode
                     if (game.player.camera._3D)
                         ctx.drawImage(
                             this.bgimg,
@@ -77,6 +79,7 @@ class Map {
                             this.tileSize,
                             this.tileSize * game.player.camera.angle
                         );
+                    //Otherwise, draw normally
                     else
                         ctx.drawImage(
                             this.bgimg,
@@ -87,27 +90,30 @@ class Map {
                         );
                 }
             }
+            //If in 3D mode, draw the sky (This overdraws things past the horizon, even if visible)
             if (game.player.camera._3D) {
                 ctx.fillStyle = "#8cb8ff";
                 ctx.fillRect(0, 0, game.window.w, (game.window.h / 2) * (1 - game.player.camera.angle));
             }
         }
+        console.log(count);
 
-        for (const node of this.nodes) {
-            node.draw();
-        }
+        //If debugging, show node grid
+        if (game.debug)
+            for (const node of this.nodes) {
+                node.draw();
+            }
     }
 
     step() {
+
         for (const e of this.debris) {
             if (e.cleanup && !e.active) {
                 //Remove debris
                 this.debris = this.debris.filter(function (el) { return el != e; });
             }
-            if (this.percipitation && this.debris.length < this.debrisAmount) {
-                this.debris.push(this.debrisSpawn())
-            }
         }
+
         for (const e of this.missiles) {
             if (e.cleanup && !e.active) {
                 //Remove missile
@@ -137,14 +143,26 @@ class Node {
         this.pass = true;
     }
     draw() {
-        if (this.pass) {
-            let compareX = game.player.camera.x - this.pos.x;
-            let compareY = game.player.camera.y - this.pos.y;
-            if (game.player.camera.radius > Math.max(Math.abs(compareX), Math.abs(compareY))) {
-                ctx.strokeStyle = "#00FF00"
-                // ctx.strokeRect(game.window.w / 2 - compareX, game.window.h / 2 - compareY, this.pos.w, this.pos.h);
-            }
-        }
+        if (this.pass)
+            ctx.strokeStyle = "#0000FF"
+        else
+            ctx.strokeStyle = "#FF0000"
+        let compareX = game.player.camera.x - this.pos.x;
+        let compareY = game.player.camera.y - this.pos.y;
+        if (game.player.camera.radius > Math.max(Math.abs(compareX), Math.abs(compareY))) {
+            ctx.lineWidth = 0.1;
+            if (game.player.camera._3D)
+                ctx.strokeRect(
+                    game.window.w / 2 - compareX,
+                    game.window.h / 2 - (compareY * game.player.camera.angle),
+                    this.pos.w,
+                    this.pos.h * game.player.camera.angle
+                );
+            else
+                ctx.strokeRect(game.window.w / 2 - compareX, game.window.h / 2 - compareY, this.pos.w, this.pos.h);
 
+        }
     }
+
+
 }

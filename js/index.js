@@ -39,7 +39,7 @@ window.onload = function () {
 
     // makeGame(['blocks']);
     game.match.map.blocks.push(new Block(allID++, (game.match.map.w / 2) + 32, (game.match.map.h / 2) + 32, 0, 32, 32, 64, { color: '#333333', colorSide: '#666666' }))
-    game.match.map.blocks.push(new Block(allID++, (game.match.map.w / 2) - 64, (game.match.map.h / 2) - 32, 0, 32, 128, 128, { color: '#333333', colorSide: '#666666' }))
+    game.match.map.blocks.push(new Block(allID++, (game.match.map.w / 2) - 72, (game.match.map.h / 2) - 36, 0, 32, 128, 128, { color: '#333333', colorSide: '#666666' }))
 
     game.match.map.buildNavMesh();
 
@@ -83,24 +83,10 @@ function step() {
         game.match.step();
         game.match.map.step();
 
-        //Do all collision. It has to be in this order, or else pads/blocks won't activate for players and npcs
-        for (const block of game.match.map.blocks) {
-            block.collide([game.player.character, ...npcs, ...game.match.map.blocks])
-        }
-        for (const missile of game.match.map.missiles) {
-            missile.collide([game.player.character, ...npcs, ...game.match.map.blocks])
-        }
-        for (const debris of game.match.map.debris) {
-            debris.collide([game.player.character, ...npcs, ...game.match.map.debris])
-        }
-        game.player.character.collide([...npcs, ...game.match.map.blocks, ...game.match.map.debris])
-        for (const npc of npcs) {
-            npc.collide([game.player.character, ...npcs, ...game.match.map.blocks, ...game.match.map.debris])
-        }
-
         //Do all steps and movement
         game.player.controller.read();
         game.player.character.step(game.player.controller);
+
         for (const bot of game.match.bots) {
             bot.AI();
             bot.character.step(bot.controller);
