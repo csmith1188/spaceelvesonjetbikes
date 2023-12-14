@@ -57,7 +57,6 @@ class Map {
         ctx.fillStyle = "#333300";
         ctx.fillRect(0, 0, game.window.w, game.window.h);
         // For every column that the map can make from the total space
-        let count = 0;
         for (let x = 0; x < this.w / this.tileSize; x++) {
             let compareX = game.player.camera.x - (x * this.tileSize);
             //For every row
@@ -69,7 +68,6 @@ class Map {
                 if (game.player.camera._3D)
                     horizonCalc = (game.window.h / 2) * (1 - game.player.camera.angle)
                 if (game.player.camera.radius > Math.abs(compareX) && game.player.camera.radius > compareY - horizonCalc) {
-                    count++;
                     // Adjust y and h if 3D draw mode
                     if (game.player.camera._3D)
                         ctx.drawImage(
@@ -96,7 +94,6 @@ class Map {
                 ctx.fillRect(0, 0, game.window.w, (game.window.h / 2) * (1 - game.player.camera.angle));
             }
         }
-        console.log(count);
 
         //If debugging, show node grid
         if (game.debug)
