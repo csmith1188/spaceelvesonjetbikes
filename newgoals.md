@@ -38,6 +38,7 @@ Dark elves believe everything is random:
 - Waves
 - Racing
 - Graphics are block attached to character
+-- Are shadows blocks, too?
 - Animators
 - Emitters
 - Melee Weapons

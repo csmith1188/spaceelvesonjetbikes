@@ -6,8 +6,8 @@ class Interface {
         this.hud = {
             barW: 48
         }
-        this.drawFriendlyRing = true;
-        this.drawEnemyRing = true;
+        this.drawFriendlyRing = 0.75;
+        this.drawEnemyRing = 1;
     }
 
     drawHUD() {

@@ -27,6 +27,7 @@ class Character {
 
         //Physics
         this.speed = new Vect3(0, 0, 0);
+        this.maxSpeed = new Vect3(8, 8, 12)
         this.mom = new Vect3(0, 0, 0);
         this.accel = new Vect3(0.15, 0.15, 1);
         this.airAccel = new Vect3(0.08, 0.08, 1);
@@ -48,8 +49,12 @@ class Character {
         //Graphics
         this.img = new Image();
         this.gfx = 'img/sprites/lilguy';
-        this.color = '#FF0000';
+        this.color = [0, 255, 0];
         this.faceCamera = true;
+        this.shadow = {
+            img: new Image()
+        }
+        this.shadow.img.src = 'img/sprites/shadow.png';
 
         // Options
         if (typeof options === 'object')
@@ -88,6 +93,10 @@ class Character {
                 if (controller.buttons.fire.current)
                     this.inventory[this.item].use(this, this.parent.controller.aimX, this.parent.controller.aimY, 0);
             }
+
+            //Max Speed Momentum Cap
+            if (Math.abs(this.speed.x) > this.maxSpeed) this.mom.x = 0;
+            if (Math.abs(this.speed.y) > this.maxSpeed) this.mom.y = 0;
 
             //Gravity
             this.speed.z -= game.match.map.gravity;
@@ -238,9 +247,36 @@ class Character {
                     0, 0, 2 * Math.PI);
                 ctx.stroke();
             }
+
+            //
+            // DRAW SHADOW ON BOTTOM
+            //
             ctx.globalAlpha = 0.5;
-            //shadow
+            ctx.drawImage(
+                this.shadow.img,
+                game.window.w / 2 - this.HB.radius,
+                game.window.h / 2 - this.HB.radius,
+                this.HB.radius * 2,
+                this.HB.radius * 2
+            );
             ctx.globalAlpha = 1;
+
+            //
+            // Draw SELECTOR RING
+            //
+            if (game.player.interface.drawFriendlyRing) {
+                ctx.strokeStyle = `rgba(${this.color[0]}, ${this.color[1]}, ${this.color[2]}, ${game.player.interface.drawFriendlyRing})`;
+                ctx.lineWidth = 5;
+                ctx.beginPath();
+                ctx.ellipse(
+                    game.window.w / 2 - compareX,
+                    game.window.h / 2 - compareY,
+                    this.HB.radius,
+                    this.HB.radius,
+                    0, 0, 2 * Math.PI);
+                ctx.stroke();
+            }
+
             //sineAnimate(1, 0.1) <- subtract this from the y position of the image to hover effect
             ctx.drawImage(
                 this.img,
@@ -248,7 +284,6 @@ class Character {
                 game.window.h / 2 - compareY - this.HB.height - this.HB.pos.z,
                 this.HB.radius * 2, this.HB.height
             );
-
         }
         // This can draw a line to the closest part of a rectangle
         // except it broke at some point when i moved to utils
@@ -265,12 +300,13 @@ class Character {
         }
     }
 
-    draw3D(compareX, compareY) {
-        if (!compareX)
-            compareX = game.player.camera.x - this.HB.pos.x;
-        if (!compareY)
-            compareY = game.player.camera.y - this.HB.pos.y;
-        let compareZ = game.player.camera.z - this.HB.pos.z;
+    draw3D() {
+        let compareX = game.player.camera.x - this.HB.pos.x;
+        let compareY = game.player.camera.y - this.HB.pos.y;
+
+        //
+        // DEBUG: DRAW HITBOX
+        //
         if (game.debug) {
             ctx.lineWidth = 2;
             ctx.fillStyle = "#FF0000";
@@ -293,14 +329,41 @@ class Character {
                 0, 0, 2 * Math.PI);
             ctx.stroke();
         }
+
+        //
+        // DRAW SHADOW ON BOTTOM
+        //
         ctx.globalAlpha = 0.5;
-        //shadow
+        ctx.drawImage(
+            this.shadow.img,
+            game.window.w / 2 - this.HB.radius,
+            game.window.h / 2 - this.HB.radius + (this.HB.height * (1 - game.player.camera.angle)),
+            this.HB.radius * 2,
+            this.HB.radius * 2 * game.player.camera.angle
+        );
         ctx.globalAlpha = 1;
+
+        //
+        // DRAW SELECTOR RING
+        //
+        if (game.player.interface.drawFriendlyRing) {
+            ctx.strokeStyle = `rgba(${this.color[0]}, ${this.color[1]}, ${this.color[2]}, ${game.player.interface.drawFriendlyRing})`;
+            ctx.lineWidth = 5;
+            ctx.beginPath();
+            ctx.ellipse(
+                game.window.w / 2 - compareX,
+                game.window.h / 2 - (compareY * game.player.camera.angle),
+                this.HB.radius,
+                this.HB.radius * game.player.camera.angle,
+                0, 0, 2 * Math.PI);
+            ctx.stroke();
+        }
+
         if (this.faceCamera)
             ctx.drawImage(
                 this.img,
                 game.window.w / 2 - compareX - this.HB.radius,
-                game.window.h / 2 - (compareY * game.player.camera.angle) - this.HB.height - this.HB.pos.z,
+                game.window.h / 2 - (compareY * game.player.camera.angle) - this.HB.height - (this.HB.pos.z * (1 - game.player.camera.angle)),
                 this.HB.radius * 2,
                 this.HB.height
             );
@@ -308,11 +371,10 @@ class Character {
             ctx.drawImage(
                 this.img,
                 game.window.w / 2 - compareX - this.HB.radius,
-                game.window.h / 2 - (compareY * game.player.camera.angle) - (this.HB.height * (1 - game.player.camera.angle)) - this.HB.pos.z,
+                game.window.h / 2 - (compareY * game.player.camera.angle) - (this.HB.height * (1 - game.player.camera.angle)) - (this.HB.pos.z * (1 - game.player.camera.angle)),
                 this.HB.radius * 2,
                 this.HB.height * (1 - game.player.camera.angle)
             );
-
     }
 
     //Save this code for utils

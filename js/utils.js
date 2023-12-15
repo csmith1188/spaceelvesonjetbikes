@@ -143,8 +143,9 @@ class Cylinder {
     }
 }
 
-function sineAnimate(amp, freq) {
-    return amp * Math.sin(freq * ticks);
+function sineAnimate(amp, freq, offset) {
+    if (!offset) offset = 0
+    return amp * Math.sin(freq * (ticks + offset));
 }
 
 function easeout(userValue, maxValue) {

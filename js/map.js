@@ -1,8 +1,8 @@
 class Map {
     constructor(options) {
-        this.w = 7200; //7200
-        this.h = 4800; //4800
-        this.tileSize = 256;
+        this.w = 1024; //7200
+        this.h = 1024; //4800
+        this.tileSize = 32;
         this.tileSet = [[]]
         this.nodes = [];
 

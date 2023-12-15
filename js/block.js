@@ -41,6 +41,11 @@ class Block {
         this.colorSide = ''; //The color of the wall of the block
         this.img = new Image();
         this.img.src = this.imgFile;
+        this.shadow = {
+            img: new Image()
+        }
+        this.shadow.img.src = 'img/sprites/shadow.png';
+
         this.pattern = false;
 
         // Options
@@ -65,14 +70,23 @@ class Block {
 
             let compareX = game.player.camera.x - this.HB.pos.x;
             let compareY = game.player.camera.y - this.HB.pos.y;
+            ctx.globalAlpha = 0.5;
+            ctx.drawImage(
+                this.shadow.img,
+                game.window.w / 2 - compareX,
+                game.window.h / 2 - compareY,
+                this.HB.volume.x,
+                this.HB.volume.y
+            );
+            ctx.globalAlpha = 1;
             if (this.imgFile) {
-                // ctx.drawImage(this.img, game.window.w / 2 - compareX, game.window.h / 2 - compareY - this.HB.pos.z, this.HB.volume.x, this.HB.volume.y);
+                ctx.drawImage(this.img, game.window.w / 2 - compareX, game.window.h / 2 - compareY - this.HB.pos.z, this.HB.volume.x, this.HB.volume.y);
             } else {
                 //TOP
                 ctx.fillStyle = `rgba(${this.color[0]}, ${this.color[1]}, ${this.color[2]}, ${this.opacity})`;
                 ctx.fillRect(
                     game.window.w / 2 - compareX,
-                    game.window.h / 2 - compareY - this.HB.volume.z,
+                    game.window.h / 2 - compareY - this.HB.volume.z - this.HB.pos.z,
                     this.HB.volume.x,
                     this.HB.volume.y
                 );
@@ -91,23 +105,36 @@ class Block {
     draw3D() {
         let compareX = game.player.camera.x - this.HB.pos.x;
         let compareY = game.player.camera.y - this.HB.pos.y;
-        if (
-            game.window.h / 2 - (compareY * game.player.camera.angle) - this.HB.pos.z - (this.HB.volume.z * (1 - game.player.camera.angle)) + (this.HB.volume.y * game.player.camera.angle) + this.HB.volume.z * (1 - game.player.camera.angle)
-            >
-            (game.window.h / 2) * (1 - game.player.camera.angle)
-        )
-            if (
-                game.window.h / 2 - (compareY * game.player.camera.angle) - this.HB.pos.z - (this.HB.volume.z * (1 - game.player.camera.angle)) + (this.HB.volume.y * game.player.camera.angle)
-                <
-                (game.window.h / 2) + ((game.window.h / 2) * (game.player.camera.angle))
-            )
+        // if (
+        //     game.window.h / 2 - (compareY * game.player.camera.angle) - this.HB.pos.z - (this.HB.volume.z * (1 - game.player.camera.angle)) + (this.HB.volume.y * game.player.camera.angle) + this.HB.volume.z * (1 - game.player.camera.angle)
+        //     >
+        //     (game.window.h / 2) * (1 - game.player.camera.angle)
+        // ) {
+
+        //     if (
+        //         game.window.h / 2 - (compareY * game.player.camera.angle) - this.HB.pos.z - (this.HB.volume.z * (1 - game.player.camera.angle)) + (this.HB.volume.y * game.player.camera.angle)
+        //         <
+        //         (game.window.h / 2) + ((game.window.h / 2) * (game.player.camera.angle))
+        //     ) {
+                //
+                // DRAW SHADOW ON BOTTOM
+                //
+                ctx.globalAlpha = 0.5;
+                ctx.drawImage(
+                    this.shadow.img,
+                    game.window.w / 2 - compareX,
+                    game.window.h / 2 - (compareY * game.player.camera.angle),
+                    this.HB.volume.x,
+                    this.HB.volume.y * game.player.camera.angle
+                );
+                ctx.globalAlpha = 1;
                 if (this.imgFile) {
                     // ctx.drawImage(this.img, game.window.w / 2 - compareX, game.window.h / 2 - compareY - this.HB.pos.z, this.HB.volume.x, this.HB.volume.y);
                 } else if (this.color) {
                     ctx.fillStyle = `rgba(${this.color[0]}, ${this.color[1]}, ${this.color[2]}, ${this.opacity})`;
                     ctx.fillRect(
                         game.window.w / 2 - compareX,
-                        game.window.h / 2 - (compareY * game.player.camera.angle) - (this.HB.volume.z * (1 - game.player.camera.angle)),
+                        game.window.h / 2 - (compareY * game.player.camera.angle) - (this.HB.volume.z * (1 - game.player.camera.angle)) - (this.HB.pos.z * (1 - game.player.camera.angle)),
                         this.HB.volume.x,
                         this.HB.volume.y * game.player.camera.angle
                     );
@@ -115,12 +142,14 @@ class Block {
                         ctx.fillStyle = `rgba(${this.colorSide[0]}, ${this.colorSide[1]}, ${this.colorSide[2]}, ${this.opacity})`;
                         ctx.fillRect(
                             game.window.w / 2 - compareX,
-                            game.window.h / 2 - (compareY * game.player.camera.angle) - this.HB.pos.z - (this.HB.volume.z * (1 - game.player.camera.angle)) + (this.HB.volume.y * game.player.camera.angle),
+                            game.window.h / 2 - (compareY * game.player.camera.angle) - (this.HB.pos.z * (1 - game.player.camera.angle)) - (this.HB.volume.z * (1 - game.player.camera.angle)) + (this.HB.volume.y * game.player.camera.angle),
                             this.HB.volume.x,
                             this.HB.volume.z * (1 - game.player.camera.angle)
                         );
                     }
                 }
+        //     }
+        // }
     }
 
     trigger(actor, side) {

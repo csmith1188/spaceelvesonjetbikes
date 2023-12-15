@@ -36,30 +36,51 @@ window.onload = function () {
 
     //Player
     game.player = new Player();
-    game.player.character = new Character(allID++, 0, 0, game.player, { nameTag: 'Cpt. Fabius', gfx: 'img/sprites/jetbike', hover: 32, airAccel: new Vect3(0.15,0.15,0.15)});
+    game.player.character = new Character(allID++, 0, 0, game.player, { nameTag: 'Cpt. Fabius', gfx: 'img/sprites/jetbike', hover: 32, airAccel: new Vect3(0.15, 0.15, 0.15) });
     game.player.camera = new Camera({ target: game.player.character });
     game.player.character.HB = new Cylinder(new Vect3((game.match.map.w / 2), (game.match.map.h / 2) + 200, 0), 29, 37);
 
     // makeGame(['blocks']);
-    game.match.map.blocks.push(new Block(allID++, (game.match.map.w / 2) + 32, (game.match.map.h / 2) + 32, 0, 32, 32, 64, { color: [101,101,101], colorSide: [201,201,201] }))
-    game.match.map.blocks.push(new Block(allID++, (game.match.map.w / 2) - 72, (game.match.map.h / 2) - 36, 0, 32, 128, 128, { color: [101,101,101], colorSide: [201,201,201] }))
+    game.match.map.blocks.push(new Block(allID++, (game.match.map.w / 2) + 32, (game.match.map.h / 2) + 32, 0, 32, 32, 64, { color: [101, 101, 101], colorSide: [201, 201, 201] }))
+    game.match.map.blocks.push(new Block(allID++, (game.match.map.w / 2) - 72, (game.match.map.h / 2) - 36, 0, 32, 128, 128, { color: [101, 101, 101], colorSide: [201, 201, 201] }))
+    game.match.map.blocks.push(new Block(allID++, (game.match.map.w / 2) - 300, (game.match.map.h / 2) - 0, 0, 128, 128, 64, { color: [101, 101, 101], colorSide: [201, 201, 201] }))
+    game.match.map.blocks[game.match.map.blocks.length - 1].HB.pos.z = 100;
 
     //wave
     game.match.map.blocks.push(new Block(
         allID++,
         (game.match.map.w / 2) + 100,
         (game.match.map.h / 2) + 100,
-        0, 32, 32, 0,
-        { color: [50,50,255], colorSide: [150,150,250], solid: false, opacity: 0.5 }
+        0, 32, 32, 16,
+        { color: [50, 50, 255], colorSide: [150, 150, 250], solid: false, opacity: 0.5 }
     ));
     game.match.map.blocks[game.match.map.blocks.length - 1].runFunc.push(
-        function() {
-            this.HB.volume.z = sineAnimate(5, 0.05) + 5;
+        function () {
+            this.HB.pos.z = sineAnimate(10, 0.05) + 10;
         }.bind(game.match.map.blocks[game.match.map.blocks.length - 1])
     );
-    game.match.map.blocks[game.match.map.blocks.length - 1].trigger = 
-        function(actor, side) {
-            actor.speed.z += 1
+    game.match.map.blocks[game.match.map.blocks.length - 1].trigger =
+        function (actor, side) {
+            actor.speed.z += sineAnimate(0.5, 0.05) + 0.5
+        }.bind(game.match.map.blocks[game.match.map.blocks.length - 1]); //end wave
+
+    //wave
+    game.match.map.blocks.push(new Block(
+        allID++,
+        (game.match.map.w / 2) + 100,
+        (game.match.map.h / 2) + 164,
+        0, 32, 32, 16,
+        { color: [50, 50, 255], colorSide: [150, 150, 250], solid: false, opacity: 0.5 }
+    ));
+    game.match.map.blocks[game.match.map.blocks.length - 1].runFunc.push(
+        function () {
+            this.HB.pos.z = sineAnimate(10, 0.05, 100) + 10 + 16;
+        }.bind(game.match.map.blocks[game.match.map.blocks.length - 1])
+    );
+    game.match.map.blocks[game.match.map.blocks.length - 1].trigger =
+        function (actor, side) {
+            if (actor.HB.pos.z >= this.HB.pos.z)
+            actor.speed.z += sineAnimate(0.5, 0.05) + 0.5
         }.bind(game.match.map.blocks[game.match.map.blocks.length - 1]); //end wave
 
     // for (let i = 0; i < 100; i++) {
