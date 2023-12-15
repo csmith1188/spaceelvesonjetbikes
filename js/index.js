@@ -7,6 +7,8 @@ let gameLoop;
 let game;
 let allID = 0;
 let ticks = 0;
+let lastTimestamp = 0;
+let fps = 0;
 
 
 /*
@@ -34,26 +36,52 @@ window.onload = function () {
 
     //Player
     game.player = new Player();
-    game.player.character = new Character(allID++, (game.match.map.w / 2), (game.match.map.h / 2), game.player);
+    game.player.character = new Character(allID++, 0, 0, game.player, { nameTag: 'Cpt. Fabius', gfx: 'img/sprites/jetbike', hover: 100});
     game.player.camera = new Camera({ target: game.player.character });
+    game.player.character.HB = new Cylinder(new Vect3((game.match.map.w / 2), (game.match.map.h / 2) + 200, 0), 29, 37);
 
     // makeGame(['blocks']);
-    game.match.map.blocks.push(new Block(allID++, (game.match.map.w / 2) + 32, (game.match.map.h / 2) + 32, 0, 32, 32, 64, { color: '#333333', colorSide: '#666666' }))
-    game.match.map.blocks.push(new Block(allID++, (game.match.map.w / 2) - 72, (game.match.map.h / 2) - 36, 0, 32, 128, 128, { color: '#333333', colorSide: '#666666' }))
+    game.match.map.blocks.push(new Block(allID++, (game.match.map.w / 2) + 32, (game.match.map.h / 2) + 32, 0, 32, 32, 64, { color: [101,101,101], colorSide: [201,201,201] }))
+    game.match.map.blocks.push(new Block(allID++, (game.match.map.w / 2) - 72, (game.match.map.h / 2) - 36, 0, 32, 128, 128, { color: [101,101,101], colorSide: [201,201,201] }))
 
-    for (let i = 0; i < 100; i++) {
-        game.match.map.blocks.push(new Block(allID++, Math.round(Math.random() * game.match.map.w), Math.round(Math.random() * game.match.map.h), 0, 32, 32, 64, { color: '#333333', colorSide: '#666666' }))
-    }
-
-    game.match.bots.push(new Bot()) //Kevin
-    game.match.bots[game.match.bots.length - 1].character = new Character(
+    //wave
+    game.match.map.blocks.push(new Block(
         allID++,
         (game.match.map.w / 2) + 100,
-        (game.match.map.h / 2) - 100,
-        game.match.bots[game.match.bots.length - 1],
-        // { target: game.player.character, nameTag: 'Jaysin', gfx: 'img/sprites/dark2', team: 1 }
-        { target: game.player.character, nameTag: 'Jaysin', team: 1 }
+        (game.match.map.h / 2) + 100,
+        0, 32, 32, 0,
+        { color: [50,50,255], colorSide: [150,150,250], solid: false, opacity: 0.5 }
+    ));
+    game.match.map.blocks[game.match.map.blocks.length - 1].runFunc.push(
+        function() {
+            this.HB.volume.z = sineAnimate(5, 0.05) + 5;
+        }.bind(game.match.map.blocks[game.match.map.blocks.length - 1])
     );
+    game.match.map.blocks[game.match.map.blocks.length - 1].trigger = 
+        function(actor, side) {
+            actor.speed.z += 1
+        }.bind(game.match.map.blocks[game.match.map.blocks.length - 1]); //end wave
+
+    // for (let i = 0; i < 100; i++) {
+    //     game.match.map.blocks.push(
+    //         new Block(
+    //             allID++,
+    //             Math.round(Math.random() * game.match.map.w),
+    //             Math.round(Math.random() * game.match.map.h),
+    //             0, 32, 32, 64,
+    //             { color: [101,101,101], colorSide: [201,201,201], nameTag: 'Kevin' }
+    //         ));
+    // }
+
+    // game.match.bots.push(new Bot()) //Kevin
+    // game.match.bots[game.match.bots.length - 1].character = new Character(
+    //     allID++,
+    //     (game.match.map.w / 2) + 100,
+    //     (game.match.map.h / 2) - 100,
+    //     game.match.bots[game.match.bots.length - 1],
+    //     // { target: game.player.character, nameTag: 'Jaysin', gfx: 'img/sprites/dark2', team: 1 }
+    //     { target: game.player.character, nameTag: 'Kevin', team: 1 }
+    // );
 
 
     game.match.map.buildNavMesh();
@@ -139,6 +167,14 @@ function step() {
         game.player.camera.y = game.player.camera.target.HB.pos.y;
     }
 
+    //Performance Check
+    const currentTimestamp = performance.now();
+    const elapsedMilliseconds = currentTimestamp - lastTimestamp;
+    fps = Math.round(1000 / elapsedMilliseconds);
+
+    // Update last timestamp
+    lastTimestamp = currentTimestamp;
+
     //Draw game
     draw();
     ticks++;
@@ -155,6 +191,9 @@ function step() {
 */
 
 function draw() {
+
+    // game.player.camera.angle = sineAnimate(0.5, 0.01) + 0.5;
+
     //Clear the canvas 
     // ctx.fillStyle = "#000000";
     // ctx.fillRect(0, 0, game.window.w, game.window.h);
@@ -171,8 +210,8 @@ function draw() {
     let renderList =
         [game.player.character, ...npcs, ...game.match.map.blocks, ...game.match.map.missiles]
             .sort((a, b) => {
-                if (a.y + a.z < b.y + b.z) return -1;
-                if (a.y + a.z > b.y + b.z) return 1;
+                if (a.HB.pos.y < b.HB.pos.y + b.HB.pos.z) return -1;
+                if (a.HB.pos.y > b.HB.pos.y + b.HB.pos.z) return 1;
                 return 0;
             });
     for (const entity of renderList) {

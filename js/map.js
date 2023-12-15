@@ -15,6 +15,7 @@ class Map {
         this.stopZone = 0.1;
         this.grace = 10;
         this.floor = 0;
+        this.collideReflect = 0.5
 
         this.bgimg = new Image();
         this.bgimg.src = "img/tiles/tile001.png";

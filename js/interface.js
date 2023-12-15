@@ -19,8 +19,7 @@ class Interface {
             ctx.fillStyle = "#000000";
             if (game.debug) {
                 ctx.font = '12px consolas';
-                ctx.fillText(this.player.character.x, 10, 150);
-                ctx.fillText(this.player.character.y, 10, 160);
+                ctx.fillText(fps, 10, 150);
             }
 
             // Map locators

@@ -10,6 +10,7 @@
 class Character {
     constructor(id, spawnx, spawny, parent, options) {
         this.id = id;
+        this.name = '';
         this.parent = parent;
         this.active = true;
         this.cleanup = true;
@@ -21,13 +22,14 @@ class Character {
         this.aim = new Vect3(0, 0, 0);
         this.angle = new Vect3(0, 0, 0);
 
-        this.bouyancy = 2;
+        this.bouyancy = 1.2;
         this.hover = 0; // 12
 
         //Physics
         this.speed = new Vect3(0, 0, 0);
         this.mom = new Vect3(0, 0, 0);
         this.accel = new Vect3(0.15, 0.15, 0.15);
+        this.airAccel = new Vect3(1, 1, 1);
         this.colliders = [];
 
         //Stats
@@ -87,59 +89,104 @@ class Character {
                     this.inventory[this.item].use(this, this.parent.controller.aimX, this.parent.controller.aimY, 0);
             }
 
-            //Accelerate
-            this.speed.x += this.mom.x * this.accel.x;
-            this.speed.y += this.mom.y * this.accel.y;
-            this.speed.z += this.mom.z * this.accel.z;
-
             //Gravity
             this.speed.z -= game.match.map.gravity;
-            if (this.HB.pos.z < this.hover) this.speed.z += this.bouyancy;
 
             //Friction
-            if (this.HB.pos.z < game.match.map.grace) {
+            if (this.HB.pos.z < game.match.map.floor + game.match.map.grace) { //Ground
+                //Accelerate
+                this.speed.x += this.mom.x * this.accel.x;
+                this.speed.y += this.mom.y * this.accel.y;
+                this.speed.z += this.mom.z * this.accel.z;
                 this.speed.x *= 1 - game.match.map.friction.ground;
                 this.speed.y *= 1 - game.match.map.friction.ground;
-            } else {
+            } else { //Air
+                //Accelerate
+                this.speed.x += this.mom.x * this.airAccel.x;
+                this.speed.y += this.mom.y * this.airAccel.y;
+                this.speed.z += this.mom.z * this.airAccel.z;
                 this.speed.x *= 1 - game.match.map.friction.air;
                 this.speed.y *= 1 - game.match.map.friction.air;
             }
-            this.speed.z *= 1 - game.match.map.friction.air;
+            this.speed.z *= 1 - game.match.map.friction.air; //Air friction always applies to falling/rising
             if (Math.abs(this.speed.x) < game.match.map.stopZone) this.speed.x = 0;
             if (Math.abs(this.speed.y) < game.match.map.stopZone) this.speed.y = 0;
-            if (Math.abs(this.speed.z) < game.match.map.stopZone) this.speed.z = 0;
+            // if (Math.abs(this.speed.z) < game.match.map.stopZone) this.speed.z = 0; //Enabling this makes hover never level out
 
+            //Hover
+            if (this.HB.pos.z < this.hover) //If you are lower than the hover threshold
+                this.speed.z += Math.max((1 - (this.HB.pos.z / this.hover)) * this.bouyancy, 0); //Move up by your bouyancy times the percent between your z and you hover, not negative
+            else if (this.HB.pos.z > this.hover)
+                this.speed.z += Math.max((1 - ((this.HB.pos.z - this.hover) / this.hover)) * this.bouyancy, 0); //Move up by your bouyancy times the percent over the hover, not negative
+
+            //
             //Predictive collision
+            //
+
+            //Other characters
+            for (let c of game.match.bots) {
+                if (c.character === this)
+                    continue;
+                c = c.character;
+                let side = this.HB.collide(c.HB);
+                if (side) c.trigger(this, side);
+                if (c.solid)
+                    switch (side) {
+                        case 'front':
+                            this.speed.y *= -game.match.map.collideReflect; this.mom.y *= -game.match.map.collideReflect;
+                            this.HB.pos.y = c.HB.pos.y + c.HB.volume.y + this.HB.radius;
+                            break;
+                        case 'rear':
+                            this.speed.y *= -game.match.map.collideReflect; this.mom.y *= -game.match.map.collideReflect;
+                            this.HB.pos.y = c.HB.pos.y - this.HB.radius;
+                            break;
+                        case 'right':
+                            this.speed.x *= -game.match.map.collideReflect; this.mom.x *= -game.match.map.collideReflect;
+                            this.HB.pos.x = c.HB.pos.x + c.HB.volume.x + this.HB.radius;
+                            break;
+                        case 'left':
+                            this.speed.x *= -game.match.map.collideReflect; this.mom.x *= -game.match.map.collideReflect;
+                            this.HB.pos.x = c.HB.pos.x - this.HB.radius;
+                            break;
+                        default:
+
+                            break;
+                    }
+            }
+            //All cubes
             for (const c of game.match.map.blocks) {
                 let side = this.HB.collide(c.HB);
-                let reflect = 0.5;
-                switch (side) {
-                    case 'front':
-                        this.speed.y *= -reflect; this.mom.y *= -reflect;
-                        this.HB.pos.y = c.HB.pos.y + c.HB.volume.y + this.HB.radius;
-                        break;
-                    case 'rear':
-                        this.speed.y *= -reflect; this.mom.y *= -reflect;
-                        this.HB.pos.y = c.HB.pos.y - this.HB.radius;
-                        break;
-                    case 'right':
-                        this.speed.x *= -reflect; this.mom.x *= -reflect;
-                        this.HB.pos.x = c.HB.pos.x + c.HB.volume.x + this.HB.radius;
-                        break;
-                    case 'left':
-                        this.speed.x *= -reflect; this.mom.x *= -reflect;
-                        this.HB.pos.x = c.HB.pos.x - this.HB.radius;
-                        break;
-                    default:
+                if (side) c.trigger(this, side);
+                if (c.solid)
+                    switch (side) {
+                        case 'front':
+                            this.speed.y *= -game.match.map.collideReflect; this.mom.y *= -game.match.map.collideReflect;
+                            this.HB.pos.y = c.HB.pos.y + c.HB.volume.y + this.HB.radius;
+                            break;
+                        case 'rear':
+                            this.speed.y *= -game.match.map.collideReflect; this.mom.y *= -game.match.map.collideReflect;
+                            this.HB.pos.y = c.HB.pos.y - this.HB.radius;
+                            break;
+                        case 'right':
+                            this.speed.x *= -game.match.map.collideReflect; this.mom.x *= -game.match.map.collideReflect;
+                            this.HB.pos.x = c.HB.pos.x + c.HB.volume.x + this.HB.radius;
+                            break;
+                        case 'left':
+                            this.speed.x *= -game.match.map.collideReflect; this.mom.x *= -game.match.map.collideReflect;
+                            this.HB.pos.x = c.HB.pos.x - this.HB.radius;
+                            break;
+                        default:
 
-                        break;
-                }
+                            break;
+                    }
             }
-                this.HB.pos.x += this.speed.x;
-                this.HB.pos.y += this.speed.y;
-                this.HB.pos.z += this.speed.z;
 
-            //Ground
+            //Make the Move
+            this.HB.pos.x += this.speed.x;
+            this.HB.pos.y += this.speed.y;
+            this.HB.pos.z += this.speed.z;
+
+            //Ground Collision
             if (-this.speed.z > this.HB.pos.z + game.match.map.floor) {
                 this.HB.pos.z = 0;
                 this.speed.z *= -0.5
@@ -158,6 +205,11 @@ class Character {
     #########  ###    ### ###     ###   ###   ###
     */
     draw() {
+
+        //Draw correct graphic
+        if (this.mom.x < 0) this.img.src = this.leftgfx + '.png'
+        if (this.mom.x > 0) this.img.src = this.gfx + '.png'
+
         let compareX = game.player.camera.x - this.HB.pos.x;
         let compareY = game.player.camera.y - this.HB.pos.y;
         if (game.player.camera._3D) {
@@ -265,7 +317,8 @@ class Character {
     //Save this code for utils
     trigger(actor) {
 
-        //trade momentum/speed with actor
+        //this mom to their speed
+        //their mom to this speed
 
     }
 

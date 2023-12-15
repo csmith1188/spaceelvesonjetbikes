@@ -130,9 +130,8 @@ class Cylinder {
 
             let distance = Math.sqrt(newX ** 2 + newY ** 2);
 
-            if (distance < this.radius + c.radius) {
-                console.log("side collision");
-            }
+            if (distance < this.radius + c.radius) return 'side';
+            else return false;
 
         } else {
 
