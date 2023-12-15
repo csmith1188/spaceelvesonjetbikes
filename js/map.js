@@ -2,7 +2,7 @@ class Map {
     constructor(options) {
         this.w = 7200; //7200
         this.h = 4800; //4800
-        this.tileSize = 32;
+        this.tileSize = 256;
         this.tileSet = [[]]
         this.nodes = [];
 
@@ -19,8 +19,6 @@ class Map {
 
         this.bgimg = new Image();
         this.bgimg.src = "img/tiles/tile001.png";
-        this.imgSizeW = 32;
-        this.imgSizeH = 32;
 
         this.blocks = [];
         this.lastBlock = () => { return this.blocks[this.blocks.length - 1]; }

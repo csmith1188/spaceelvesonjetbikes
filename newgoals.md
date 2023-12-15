@@ -23,33 +23,26 @@ Dark elves believe everything is random:
 #########   ########          ###        ########### ###    ###  ########     ###
 -->
 
-- Finalizing control inputs (Bot extends Player, has controller, makes AI. Character only takes input)
-    - Keyboard, Mouse, Touch, Gampead classes
-    - Fix Touch radius and add buttons
-- 
-- HUD elements to interface.js in Interface class, belonging to Players
-- Cubes and Tubes
-    - Cubes made from cubes and Tubes from cylinders
-    - Cubes cannot move and do not collide if they do
-    - Tubes can move and collide with other Tubes
-- Physics to new module
-- Complete speed physics (acceleration, top speed, actual speed, friction/weight, bounce)
-- AABB Collision for 3d (and polyblocks as well)?
-- Blocks and polyblocks with a top and side texture, and transparency if behind
-- Give blocks friction for wall jumping rooftop drag
 
-- Tilemaps
-- Make a pathing grid on map load that determines if any blocks are in each grid square
-- Tilemap to collision blocks
-- use A* pathing with grid
-
-- Fix X/Y npc movement
+- Cylinder -> Cylinder Collision
+- Top/Bottom Z Collision All
 - Only draw in camera
+- Give blocks friction for wall jumping rooftop drag
+- Complete speed physics (top speed, actual speed, weight)
+- Bot chasing / targets / paths
+- Shooting with magazines/ammo
+- Bot Shooting
+- Fix Gamepad
+- Keyboard, Mouse, Touch, Gampead classes
+- Fix Touch radius and add buttons
+- Waves
+- Racing
+- Graphics are block attached to character
+- Animators
+- Emitters
+- Melee Weapons
+- A* pathing
+- Tilemaps
+- Polyblock regions
+- 3D Polyblocks
 - Camera Zoom/Pan/Shake
-- Foot Physics
-
-- block heights
-- hitboxes (graphics can be bigger than collision area)
-    -- hitbox and graphic should just both be blocks attached to the x.y position of the character
-    -- if blocks have parents, and another collider hits the hitbox, send the damage to the hitbox parent
-- animators
