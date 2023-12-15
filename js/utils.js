@@ -89,18 +89,22 @@ class Cylinder {
             // Calculate the potential new position of the circle after movement
             let newX = this.pos.x + speed.x;
             let newY = this.pos.y + speed.y;
+            let newZ = this.pos.z + speed.z;
 
             // Find the closest point on the rectangle to the circle
             let closestX = Math.max(Math.min(newX, c.pos.x + c.volume.x), c.pos.x);
             let closestY = Math.max(Math.min(newY, c.pos.y + c.volume.y), c.pos.y);
+            let closestZ = Math.max(Math.min(newZ, c.pos.z + c.volume.z), c.pos.z); // Considering the z-axis
 
             // Calculate the distance between the circle's center and the closest point on the rectangle
             let distanceX = newX - closestX;
             let distanceY = newY - closestY;
+            let distanceZ = newZ - closestZ;
 
             // Calculate penetration depths
             let penX = Math.abs(distanceX);
             let penY = Math.abs(distanceY);
+            let penZ = Math.abs(distanceZ);
 
             let side;
             if (penX <= this.radius && penY <= this.radius) {

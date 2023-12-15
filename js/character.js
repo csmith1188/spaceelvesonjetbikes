@@ -28,7 +28,7 @@ class Character {
         //Physics
         this.speed = new Vect3(0, 0, 0);
         this.mom = new Vect3(0, 0, 0);
-        this.accel = new Vect3(0.15, 0.15, 0.15);
+        this.accel = new Vect3(0.15, 0.15, 1);
         this.airAccel = new Vect3(0.08, 0.08, 1);
         this.colliders = [];
 
@@ -78,7 +78,7 @@ class Character {
             if (controller.buttons.moveRight.current) this.mom.x = 1;
             if (controller.buttons.moveUp.current) this.mom.y = -1;
             if (controller.buttons.moveDown.current) this.mom.y = 1;
-            if (this.HB.pos.z < game.match.map.grace) {
+            if (this.HB.pos.z < game.match.map.grace + this.hover) {
                 if (controller.buttons.jump.current && !controller.buttons.jump.last)
                     this.speed.z = 12;
             }
@@ -129,6 +129,7 @@ class Character {
                     continue;
                 c = c.character;
                 let side = this.HB.collide(c.HB);
+                console.log(side);
                 if (side) c.trigger(this, side);
                 if (c.solid)
                     switch (side) {
