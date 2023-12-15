@@ -29,7 +29,7 @@ class Character {
         this.speed = new Vect3(0, 0, 0);
         this.mom = new Vect3(0, 0, 0);
         this.accel = new Vect3(0.15, 0.15, 0.15);
-        this.airAccel = new Vect3(1, 1, 1);
+        this.airAccel = new Vect3(0.08, 0.08, 1);
         this.colliders = [];
 
         //Stats
@@ -74,11 +74,11 @@ class Character {
 
             this.mom = new Vect3();
 
+            if (controller.buttons.moveLeft.current) this.mom.x = -1;
+            if (controller.buttons.moveRight.current) this.mom.x = 1;
+            if (controller.buttons.moveUp.current) this.mom.y = -1;
+            if (controller.buttons.moveDown.current) this.mom.y = 1;
             if (this.HB.pos.z < game.match.map.grace) {
-                if (controller.buttons.moveLeft.current) this.mom.x = -1;
-                if (controller.buttons.moveRight.current) this.mom.x = 1;
-                if (controller.buttons.moveUp.current) this.mom.y = -1;
-                if (controller.buttons.moveDown.current) this.mom.y = 1;
                 if (controller.buttons.jump.current && !controller.buttons.jump.last)
                     this.speed.z = 12;
             }
@@ -93,7 +93,7 @@ class Character {
             this.speed.z -= game.match.map.gravity;
 
             //Friction
-            if (this.HB.pos.z < game.match.map.floor + game.match.map.grace) { //Ground
+            if (this.HB.pos.z <= game.match.map.floor) { //Ground
                 //Accelerate
                 this.speed.x += this.mom.x * this.accel.x;
                 this.speed.y += this.mom.y * this.accel.y;

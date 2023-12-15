@@ -36,7 +36,7 @@ window.onload = function () {
 
     //Player
     game.player = new Player();
-    game.player.character = new Character(allID++, 0, 0, game.player, { nameTag: 'Cpt. Fabius', gfx: 'img/sprites/jetbike', hover: 100});
+    game.player.character = new Character(allID++, 0, 0, game.player, { nameTag: 'Cpt. Fabius', gfx: 'img/sprites/jetbike', hover: 32, airAccel: new Vect3(0.15,0.15,0.15)});
     game.player.camera = new Camera({ target: game.player.character });
     game.player.character.HB = new Cylinder(new Vect3((game.match.map.w / 2), (game.match.map.h / 2) + 200, 0), 29, 37);
 
