@@ -26,17 +26,17 @@ Dark elves believe everything is random:
 - Finalizing control inputs (Bot extends Player, has controller, makes AI. Character only takes input)
     - Keyboard, Mouse, Touch, Gampead classes
     - Fix Touch radius and add buttons
-- Camera angle
+- 
 - HUD elements to interface.js in Interface class, belonging to Players
 - Cubes and Tubes
     - Cubes made from cubes and Tubes from cylinders
     - Cubes cannot move and do not collide if they do
-    - Tubes can move and collide with other Tubes and collide with Cubes
-    - Tubes can predictive collide and current collide
+    - Tubes can move and collide with other Tubes
 - Physics to new module
 - Complete speed physics (acceleration, top speed, actual speed, friction/weight, bounce)
 - AABB Collision for 3d (and polyblocks as well)?
 - Blocks and polyblocks with a top and side texture, and transparency if behind
+- Give blocks friction for wall jumping rooftop drag
 
 - Tilemaps
 - Make a pathing grid on map load that determines if any blocks are in each grid square

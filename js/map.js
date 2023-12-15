@@ -1,7 +1,7 @@
 class Map {
     constructor(options) {
-        this.w = 1024; //7200
-        this.h = 1024; //4800
+        this.w = 7200; //7200
+        this.h = 4800; //4800
         this.tileSize = 32;
         this.tileSet = [[]]
         this.nodes = [];
@@ -14,6 +14,7 @@ class Map {
         this.gravity = 1;
         this.stopZone = 0.1;
         this.grace = 10;
+        this.floor = 0;
 
         this.bgimg = new Image();
         this.bgimg.src = "img/tiles/tile001.png";

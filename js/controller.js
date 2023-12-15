@@ -157,10 +157,10 @@ class Controller {
             enabled: false,
             event: {},
             left: {
-                pos: new Circle(150, 150, 75),
+                pos: new Vect3(150, 150, 75),
             },
             right: {
-                pos: new Circle(150, 150, 75),
+                pos: new Vect3(150, 150, 75),
             }
         };
     }

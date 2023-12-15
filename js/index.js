@@ -41,6 +41,10 @@ window.onload = function () {
     game.match.map.blocks.push(new Block(allID++, (game.match.map.w / 2) + 32, (game.match.map.h / 2) + 32, 0, 32, 32, 64, { color: '#333333', colorSide: '#666666' }))
     game.match.map.blocks.push(new Block(allID++, (game.match.map.w / 2) - 72, (game.match.map.h / 2) - 36, 0, 32, 128, 128, { color: '#333333', colorSide: '#666666' }))
 
+    for (let i = 0; i < 100; i++) {
+        game.match.map.blocks.push(new Block(allID++, Math.round(Math.random() * game.match.map.w), Math.round(Math.random() * game.match.map.h), 0, 32, 32, 64, { color: '#333333', colorSide: '#666666' }))
+    }
+
     game.match.bots.push(new Bot()) //Kevin
     game.match.bots[game.match.bots.length - 1].character = new Character(
         allID++,

@@ -63,14 +63,6 @@ class Rect {
     }
 }
 
-class Circle {
-    constructor(x, y, r) {
-        this.x = x || 0;
-        this.y = y || 0;
-        this.r = r || 0;
-    }
-}
-
 class Cube {
     constructor(origin, volume) {
         this.pos = origin;
@@ -113,24 +105,34 @@ class Cylinder {
             let side;
             if (penX <= this.radius && penY <= this.radius) {
                 if (penX < penY) {
-                    if (distanceY > 0) {
+                    if (distanceY > 0)
                         side = 'front';
-                    } else {
-                        this.pos.y = c.pos.y - this.radius;
+                    else
                         side = 'rear';
-                    }
                 } else {
-                    if (distanceX > 0) {
+                    if (distanceX > 0)
                         side = 'right';
-                    } else {
+                    else
                         side = 'left';
-                    }
                 }
                 return side;
             } else {
                 return false;
             }
-        } else if (c instanceof Circle || c instanceof Cylinder) {
+        } else if (c instanceof Cylinder) {
+            // Calculate the potential new position of the circle after movement
+            let newX = this.pos.x + speed.x;
+            let newY = this.pos.y + speed.y;
+
+            // Calculate the distance between centers
+            newX = newX - c.pos.x;
+            newY = newY - c.pos.y;
+
+            let distance = Math.sqrt(newX ** 2 + newY ** 2);
+
+            if (distance < this.radius + c.radius) {
+                console.log("side collision");
+            }
 
         } else {
 
