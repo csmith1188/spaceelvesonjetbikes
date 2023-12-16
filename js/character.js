@@ -67,6 +67,7 @@ class Character {
             }
         this.leftgfx = this.gfx + '_l'; // Set this after options so you only have to set gfx
         this.img.src = this.gfx + '.png'
+        this.runFunc = [];
     }
 
     /*
@@ -195,7 +196,7 @@ class Character {
             }
             // All blocks
             for (const c of game.match.map.blocks) { //For each block
-                if (this.HB.above(c.HB)) //If you are above the other character
+                if (this.HB.above(c.HB) && !c.solid) //If you are above the other character
                     this.floor = c.HB.pos.z + c.HB.volume.z; //Set the floor to the other character's height
                 let side = this.HB.collide(c.HB); //Check for collision
                 if (side) c.trigger(this, side); //Trigger the block's trigger function
@@ -246,9 +247,13 @@ class Character {
 
             //Ground Collision
             if (-this.speed.z > this.HB.pos.z + game.match.map.floor) {
-                sounds.dam1.play();
                 this.HB.pos.z = 0;
                 // this.speed.z *= -0.5
+                // sounds.dam1.play();
+            }
+
+            for (const func of this.runFunc) {
+                func();
             }
 
         }
@@ -281,8 +286,8 @@ class Character {
             let shadowShrink = this.HB.radius * Math.min(((this.HB.pos.z - this.floor) / 128), 1)
             ctx.drawImage(
                 this.shadow.img,
-                game.window.w / 2 - this.HB.radius + shadowShrink,
-                game.window.h / 2 - this.HB.radius + shadowShrink - this.floor,
+                game.window.w / 2 - compareX - this.HB.radius + shadowShrink,
+                game.window.h / 2 - compareY - this.HB.radius + shadowShrink - this.floor,
                 this.HB.radius * 2 - shadowShrink * 2,
                 this.HB.radius * 2 - shadowShrink * 2
             );
@@ -373,8 +378,8 @@ class Character {
         let shadowShrink = this.HB.radius * Math.min(((this.HB.pos.z - this.floor) / 128), 1)
         ctx.drawImage(
             this.shadow.img,
-            game.window.w / 2 - this.HB.radius + shadowShrink,
-            game.window.h / 2 - this.HB.radius + (this.HB.height * (1 - game.player.camera.angle)) + (shadowShrink * game.player.camera.angle)  - (this.floor * (1 - game.player.camera.angle)),
+            game.window.w / 2 - compareX - this.HB.radius + shadowShrink,
+            game.window.h / 2 - (compareY * game.player.camera.angle) - this.HB.radius + (this.HB.height * (1 - game.player.camera.angle)) + (shadowShrink * game.player.camera.angle)  - (this.floor * (1 - game.player.camera.angle)),
             (this.HB.radius * 2) - (shadowShrink * 2),
             ((this.HB.radius * 2) - (shadowShrink * 2)) * game.player.camera.angle
         );

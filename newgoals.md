@@ -25,7 +25,6 @@ Dark elves believe everything is random:
 
 
 - Cylinder -> Cylinder Collision
-- Top/Bottom Z Collision All
 - Only draw in camera
 - Give blocks friction for wall jumping rooftop drag
 - Complete speed physics (top speed, actual speed, weight)
