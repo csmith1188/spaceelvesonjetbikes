@@ -22,7 +22,7 @@ class Character {
         this.aim = new Vect3(0, 0, 0);
         this.angle = new Vect3(0, 0, 0);
 
-        this.bouyancy = 1.2;
+        this.bouyancy = 1;
         this.hover = 0; // 12
 
         //Physics
@@ -98,9 +98,6 @@ class Character {
             if (Math.abs(this.speed.x) > this.maxSpeed) this.mom.x = 0;
             if (Math.abs(this.speed.y) > this.maxSpeed) this.mom.y = 0;
 
-            //Gravity
-            this.speed.z -= game.match.map.gravity;
-
             //Friction
             if (this.HB.pos.z <= game.match.map.floor) { //Ground
                 //Accelerate
@@ -123,10 +120,14 @@ class Character {
             // if (Math.abs(this.speed.z) < game.match.map.stopZone) this.speed.z = 0; //Enabling this makes hover never level out
 
             //Hover
-            if (this.HB.pos.z < this.hover) //If you are lower than the hover threshold
+            if (this.HB.pos.z < this.hover) {//If you are lower than the hover threshold
                 this.speed.z += Math.max((1 - (this.HB.pos.z / this.hover)) * this.bouyancy, 0); //Move up by your bouyancy times the percent between your z and you hover, not negative
-            else if (this.HB.pos.z > this.hover)
+            }
+            else if (this.HB.pos.z > this.hover) {
                 this.speed.z += Math.max((1 - ((this.HB.pos.z - this.hover) / this.hover)) * this.bouyancy, 0); //Move up by your bouyancy times the percent over the hover, not negative
+                //Gravity
+                this.speed.z -= game.match.map.gravity;
+            }
 
             //
             //Predictive collision
@@ -251,13 +252,14 @@ class Character {
             //
             // DRAW SHADOW ON BOTTOM
             //
-            ctx.globalAlpha = 0.5;
+            ctx.globalAlpha = 0.4;
+            let shadowShrink = this.HB.radius * Math.min((this.HB.pos.z / 128), 1)
             ctx.drawImage(
                 this.shadow.img,
-                game.window.w / 2 - this.HB.radius,
-                game.window.h / 2 - this.HB.radius,
-                this.HB.radius * 2,
-                this.HB.radius * 2
+                game.window.w / 2 - this.HB.radius + shadowShrink,
+                game.window.h / 2 - this.HB.radius + shadowShrink,
+                this.HB.radius * 2 - shadowShrink * 2,
+                this.HB.radius * 2 - shadowShrink * 2
             );
             ctx.globalAlpha = 1;
 
@@ -333,13 +335,14 @@ class Character {
         //
         // DRAW SHADOW ON BOTTOM
         //
-        ctx.globalAlpha = 0.5;
+        ctx.globalAlpha = 0.4;
+        let shadowShrink = this.HB.radius * Math.min((this.HB.pos.z / 128), 1)
         ctx.drawImage(
             this.shadow.img,
-            game.window.w / 2 - this.HB.radius,
-            game.window.h / 2 - this.HB.radius + (this.HB.height * (1 - game.player.camera.angle)),
-            this.HB.radius * 2,
-            this.HB.radius * 2 * game.player.camera.angle
+            game.window.w / 2 - this.HB.radius + shadowShrink,
+            game.window.h / 2 - this.HB.radius + (this.HB.height * (1 - game.player.camera.angle)) + (shadowShrink * game.player.camera.angle),
+            (this.HB.radius * 2) - (shadowShrink * 2),
+            ((this.HB.radius * 2) - (shadowShrink * 2)) * game.player.camera.angle
         );
         ctx.globalAlpha = 1;
 
