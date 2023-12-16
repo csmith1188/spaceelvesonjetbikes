@@ -38,7 +38,6 @@ class Interface {
 
             //Speed bar
 
-
             //Crosshair
             if (!game.paused) {
                 //aimX is the mouse coordinates minus the this.player coordinates

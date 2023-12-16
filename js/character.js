@@ -74,11 +74,15 @@ class Character {
     #+#    #+#    #+#     #+#        #+#
     ########     ###     ########## ###
     */
+   
     step(controller) {
         if (this.active) {
+            // create a logpoint after each time the speed.z changes in this function
 
+            //Reset Momentum
             this.mom = new Vect3();
 
+            //Movement
             if (controller.buttons.moveLeft.current) this.mom.x = -1;
             if (controller.buttons.moveRight.current) this.mom.x = 1;
             if (controller.buttons.moveUp.current) this.mom.y = -1;
@@ -100,49 +104,51 @@ class Character {
 
             //Friction
             if (this.HB.pos.z <= game.match.map.floor) { //Ground
-                //Accelerate
+                //Accelerate Ground
                 this.speed.x += this.mom.x * this.accel.x;
                 this.speed.y += this.mom.y * this.accel.y;
                 this.speed.z += this.mom.z * this.accel.z;
+                // Friction Ground
                 this.speed.x *= 1 - game.match.map.friction.ground;
                 this.speed.y *= 1 - game.match.map.friction.ground;
             } else { //Air
-                //Accelerate
+                //Accelerate Air
                 this.speed.x += this.mom.x * this.airAccel.x;
                 this.speed.y += this.mom.y * this.airAccel.y;
                 this.speed.z += this.mom.z * this.airAccel.z;
+                //Friction Air
                 this.speed.x *= 1 - game.match.map.friction.air;
                 this.speed.y *= 1 - game.match.map.friction.air;
             }
             this.speed.z *= 1 - game.match.map.friction.air; //Air friction always applies to falling/rising
-            if (Math.abs(this.speed.x) < game.match.map.stopZone) this.speed.x = 0;
-            if (Math.abs(this.speed.y) < game.match.map.stopZone) this.speed.y = 0;
+            if (Math.abs(this.speed.x) < game.match.map.stopZone) this.speed.x = 0; //Stop if you are below the stop speed
+            if (Math.abs(this.speed.y) < game.match.map.stopZone) this.speed.y = 0; 
             // if (Math.abs(this.speed.z) < game.match.map.stopZone) this.speed.z = 0; //Enabling this makes hover never level out
 
             //Hover
-            if (this.HB.pos.z < this.hover) {//If you are lower than the hover threshold
+            if (this.HB.pos.z < this.hover) { //If you are lower than the hover threshold
                 this.speed.z += Math.max((1 - (this.HB.pos.z / this.hover)) * this.bouyancy, 0); //Move up by your bouyancy times the percent between your z and you hover, not negative
             }
-            else if (this.HB.pos.z > this.hover) {
+            else if (this.HB.pos.z > this.hover) { //If you are higher than the hover threshold
                 this.speed.z += Math.max((1 - ((this.HB.pos.z - this.hover) / this.hover)) * this.bouyancy, 0); //Move up by your bouyancy times the percent over the hover, not negative
                 //Gravity
-                this.speed.z -= game.match.map.gravity;
+                this.speed.z -= game.match.map.gravity; 
             }
 
             //
             //Predictive collision
             //
 
-            //Other characters
+            //All players
             for (let c of game.match.bots) {
-                if (c.character === this)
+                if (c.character === this) //Don't collide with yourself
                     continue;
-                c = c.character;
-                let side = this.HB.collide(c.HB);
-                console.log(side);
+                c = c.character; //Get the character from the bot
+                let side = this.HB.collide(c.HB); //Check for collision
+                console.log(side); 
                 if (side) c.trigger(this, side);
-                if (c.solid)
-                    switch (side) {
+                if (c.solid) //If the other character is solid
+                    switch (side) { //Move this character to the edge of the other character
                         case 'front':
                             this.speed.y *= -game.match.map.collideReflect; this.mom.y *= -game.match.map.collideReflect;
                             this.HB.pos.y = c.HB.pos.y + c.HB.volume.y + this.HB.radius;
@@ -164,32 +170,55 @@ class Character {
                             break;
                     }
             }
-            //All cubes
-            for (const c of game.match.map.blocks) {
-                let side = this.HB.collide(c.HB);
-                if (side) c.trigger(this, side);
-                if (c.solid)
+            // All blocks
+            for (const c of game.match.map.blocks) { //For each block
+                let side = this.HB.collide(c.HB); //Check for collision
+                if (side) c.trigger(this, side); //Trigger the block's trigger function
+                if (side) {
+                    game.paused = true;
+                    console.log("Before:", side);
+                    console.log(this.speed.z, this.mom.z);
+                }
+                if (c.solid) //If the block is solid
                     switch (side) {
                         case 'front':
-                            this.speed.y *= -game.match.map.collideReflect; this.mom.y *= -game.match.map.collideReflect;
+                            this.speed.y *= -game.match.map.collideReflect;
+                            this.mom.y *= -game.match.map.collideReflect;
                             this.HB.pos.y = c.HB.pos.y + c.HB.volume.y + this.HB.radius;
                             break;
                         case 'rear':
-                            this.speed.y *= -game.match.map.collideReflect; this.mom.y *= -game.match.map.collideReflect;
+                            this.speed.y *= -game.match.map.collideReflect;
+                            this.mom.y *= -game.match.map.collideReflect;
                             this.HB.pos.y = c.HB.pos.y - this.HB.radius;
                             break;
                         case 'right':
-                            this.speed.x *= -game.match.map.collideReflect; this.mom.x *= -game.match.map.collideReflect;
+                            this.speed.x *= -game.match.map.collideReflect;
+                            this.mom.x *= -game.match.map.collideReflect;
                             this.HB.pos.x = c.HB.pos.x + c.HB.volume.x + this.HB.radius;
                             break;
                         case 'left':
-                            this.speed.x *= -game.match.map.collideReflect; this.mom.x *= -game.match.map.collideReflect;
+                            this.speed.x *= -game.match.map.collideReflect;
+                            this.mom.x *= -game.match.map.collideReflect;
                             this.HB.pos.x = c.HB.pos.x - this.HB.radius;
                             break;
+                        case 'top':
+                            this.speed.z *= -game.match.map.collideReflect;
+                            this.mom.z *= -game.match.map.collideReflect;
+                            this.HB.pos.z = c.HB.pos.z + c.HB.volume.z;
+                            break;
+                        case 'bottom':
+                            this.speed.z *= -game.match.map.collideReflect;
+                            this.mom.z *= -game.match.map.collideReflect;
+                            this.HB.pos.z = c.HB.pos.z - this.HB.height;
+                            break;
                         default:
-
                             break;
                     }
+                if (side) {
+                    game.paused = true;
+                    console.log("After", side);
+                    console.log(this.speed.z, this.mom.z);
+                }
             }
 
             //Make the Move
