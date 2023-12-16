@@ -236,11 +236,14 @@ class Cylinder {
             // Calculate the potential new position of the circle after movement
             let newX = this.pos.x + speed.x;
             let newY = this.pos.y + speed.y;
+            let newZ = this.pos.z + speed.z + this.height / 2;
 
             // Calculate the distance between centers
             newX = newX - c.pos.x;
             newY = newY - c.pos.y;
+            newZ = newZ - c.pos.z;
 
+            // Find the closest point on the rectangle to the circle
             let distance = Math.sqrt(newX ** 2 + newY ** 2);
 
             if (distance < this.radius + c.radius) return 'side';
@@ -257,10 +260,17 @@ class Cylinder {
      * @returns {boolean} - True if the object is above the volume, false otherwise.
      */
     above(c) {
-        const xWithinVolume = this.pos.x + this.radius >= c.pos.x && this.pos.x - this.radius <= c.pos.x + c.volume.x;
-        const yWithinVolume = this.pos.y + this.radius >= c.pos.y && this.pos.y - this.radius <= c.pos.y + c.volume.y;
-        const zHigherThanVolume = this.pos.z + this.height / 2 >= c.pos.z + c.volume.z;
-        return xWithinVolume && yWithinVolume && zHigherThanVolume;
+        if (c instanceof Rect || c instanceof Cube) { // Check if the circle is positioned above the rectangle
+            const xWithinVolume = this.pos.x + this.radius >= c.pos.x && this.pos.x - this.radius <= c.pos.x + c.volume.x;
+            const yWithinVolume = this.pos.y + this.radius >= c.pos.y && this.pos.y - this.radius <= c.pos.y + c.volume.y;
+            const zHigherThanVolume = this.pos.z + this.height / 2 >= c.pos.z + c.volume.z;
+            return xWithinVolume && yWithinVolume && zHigherThanVolume;
+        } else if (c instanceof Cylinder) { // Check if the circle is positioned above the cylinder
+            const xWithinVolume = this.pos.x + this.radius >= c.pos.x && this.pos.x - this.radius <= c.pos.x + c.radius;
+            const yWithinVolume = this.pos.y + this.radius >= c.pos.y && this.pos.y - this.radius <= c.pos.y + c.radius;
+            const zHigherThanVolume = this.pos.z >= c.pos.z + c.height;
+            return xWithinVolume && yWithinVolume && zHigherThanVolume;
+        }
     }
 }
 

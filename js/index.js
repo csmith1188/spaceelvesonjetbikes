@@ -81,24 +81,24 @@ window.onload = function () {
                 actor.speed.z += sineAnimate(0.5, 0.05) + 0.5
         }.bind(game.match.map.blocks[game.match.map.blocks.length - 1]); //end wave
 
-
-    game.match.bots.push(new Bot()) //Kevin
-    game.match.bots[game.match.bots.length - 1].character = new Character(
-        allID++,
-        (game.match.map.w / 2) + 100,
-        (game.match.map.h / 2) - 100,
-        game.match.bots[game.match.bots.length - 1],
-        // { target: game.player.character, nameTag: 'Jaysin', gfx: 'img/sprites/dark2', team: 1 }
-        {
-            target: game.player.character, nameTag: 'Kevin', team: 1, gfx: 'img/sprites/dark2',
-            hover: 16, airAccel: new Vect3(0.15, 0.15, 1),
-            runFunc: [
-                function () { }.bind(game.match.bots[game.match.bots.length - 1].character)
-            ]
-        }
-    );
-    game.match.bots[game.match.bots.length - 1].character.HB = new Cylinder(new Vect3((game.match.map.w / 2), (game.match.map.h / 2) + 200, 0), 29, 37);
-
+    for (let i = 0; i < 10; i++) {
+        game.match.bots.push(new Bot()) //Kevin
+        game.match.bots[game.match.bots.length - 1].character = new Character(
+            allID++,
+            (game.match.map.w / 2) + 100,
+            (game.match.map.h / 2) - 100,
+            game.match.bots[game.match.bots.length - 1],
+            // { target: game.player.character, nameTag: 'Jaysin', gfx: 'img/sprites/dark2', team: 1 }
+            {
+                target: game.player.character, nameTag: 'Kevin', team: 1, gfx: 'img/sprites/dark2',
+                hover: 16, airAccel: new Vect3(0.15, 0.15, 1),
+                runFunc: [
+                    function () { }.bind(game.match.bots[game.match.bots.length - 1].character)
+                ]
+            }
+        );
+        game.match.bots[game.match.bots.length - 1].character.HB = new Cylinder(new Vect3((game.match.map.w / 2), (game.match.map.h / 2) + 200, 0), 29, 37);
+    }
 
     game.match.map.buildNavMesh();
 

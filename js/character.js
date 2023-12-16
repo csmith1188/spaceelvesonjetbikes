@@ -33,6 +33,7 @@ class Character {
         this.accel = new Vect3(0.15, 0.15, 1);      // Represents the acceleration of the character in the x, y, and z directions.
         this.airAccel = new Vect3(0.08, 0.08, 1);   // Represents the air acceleration of the character in the x, y, and z directions.
         this.brace = 0;                             // Represents the amount of "bracing" the character is doing. 0 = no "bracing", 1 = full "bracing".
+        this.solid = true;                          // Represents whether or not the character is solid.   
         this.colliders = [];                        // Represents an array of colliders associated with the character.
 
         //Stats
@@ -153,10 +154,8 @@ class Character {
                 this.speed.z += Math.max((1 - ((this.HB.pos.z - this.hover) / this.hover)) * this.bouyancy, 0); //Move up by your bouyancy times the percent over the hover, not negative
             }
 
-
             //Gravity
             this.speed.z -= game.match.map.gravity;
-
 
             //
             //Predictive collision
@@ -171,23 +170,19 @@ class Character {
                 if (side) c.trigger(this, side);
                 if (c.solid) //If the other character is solid
                     switch (side) { //See which side you collided on
-                        case 'front':
-                            //Reflect the speed and mom by the map's reflect value
-                            this.speed.y *= -game.match.map.collideReflect; this.mom.y *= -game.match.map.collideReflect;
-                            //Move the character to the edge of the other character
-                            this.HB.pos.y = c.HB.pos.y + c.HB.volume.y + this.HB.radius;
-                            break;
-                        case 'rear':
-                            this.speed.y *= -game.match.map.collideReflect; this.mom.y *= -game.match.map.collideReflect;
-                            this.HB.pos.y = c.HB.pos.y - this.HB.radius;
-                            break;
-                        case 'right':
-                            this.speed.x *= -game.match.map.collideReflect; this.mom.x *= -game.match.map.collideReflect;
-                            this.HB.pos.x = c.HB.pos.x + c.HB.volume.x + this.HB.radius;
-                            break;
-                        case 'left':
-                            this.speed.x *= -game.match.map.collideReflect; this.mom.x *= -game.match.map.collideReflect;
-                            this.HB.pos.x = c.HB.pos.x - this.HB.radius;
+                        case 'side': //If you collided on the side
+                            let xDistance = this.HB.pos.x - c.HB.pos.x;
+                            let yDistance = this.HB.pos.y - c.HB.pos.y;
+                            //get the distance between the two characters
+                            let distance = Math.sqrt(xDistance**2 + yDistance**2);
+                            if (distance > 0) {
+                                //find the x and y angles between the two characters, normalized to 1
+                                let xAngle = xDistance / distance;
+                                let yAngle = yDistance / distance;
+                                //move the character to the edge of the other character
+                                this.HB.pos.x = c.HB.pos.x + (c.HB.radius + this.HB.radius) * xAngle;
+                                this.HB.pos.y = c.HB.pos.y + (c.HB.radius + this.HB.radius) * yAngle;
+                            }
                             break;
                         default:
                             //break if you didn't collide
