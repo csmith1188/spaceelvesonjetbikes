@@ -33,6 +33,8 @@ class Block {
         this.gravity = false;
         this.visible = true;
         this.runFunc = [];
+        this.reflection = 0.5;
+        this.friction = 0.5;
 
         // Graphics
         this.imgFile = '';  // Leave blank to add collision to a background

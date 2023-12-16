@@ -21,22 +21,26 @@ class Character {
         this.HB = new Cylinder(new Vect3(spawnx, spawny, 0), 8, 32);
         this.aim = new Vect3(0, 0, 0);
         this.angle = new Vect3(0, 0, 0);
+        this.floor = 0;
 
         this.bouyancy = 1;
         this.hover = 0; // 12
 
         //Physics
-        this.speed = new Vect3(0, 0, 0);
-        this.maxSpeed = new Vect3(8, 8, 12)
-        this.mom = new Vect3(0, 0, 0);
-        this.accel = new Vect3(0.15, 0.15, 1);
-        this.airAccel = new Vect3(0.08, 0.08, 1);
-        this.colliders = [];
+        this.speed = new Vect3(0, 0, 0);            // Represents the current speed of the character in the x, y, and z directions.
+        this.maxSpeed = new Vect3(8, 8, 12);        // Represents the maximum speed of the character in the x, y, and z directions.
+        this.mom = new Vect3(0, 0, 0);              // Represents the momentum of the character in the x, y, and z directions.
+        this.accel = new Vect3(0.15, 0.15, 1);      // Represents the acceleration of the character in the x, y, and z directions.
+        this.airAccel = new Vect3(0.08, 0.08, 1);   // Represents the air acceleration of the character in the x, y, and z directions.
+        this.brace = 0;                             // Represents the amount of "bracing" the character is doing. 0 = no "bracing", 1 = full "bracing".
+        this.colliders = [];                        // Represents an array of colliders associated with the character.
 
         //Stats
-        this.hp = 100;
-        this.hp_max = 100;
-        this.accuracy = 0.1; // Spread magnitude of weapon
+        this.hp = 100;          // Health Points
+        this.hp_max = 100;      // Max Health Points
+        this.accuracy = 0.1;    // Spread magnitude of weapon
+        this.pp = 100;          // Power Points
+        this.pp_max = 100;      // Max Power Points
 
         //Items
         this.item = 0;
@@ -74,10 +78,11 @@ class Character {
     #+#    #+#    #+#     #+#        #+#
     ########     ###     ########## ###
     */
-   
+
     step(controller) {
         if (this.active) {
-            // create a logpoint after each time the speed.z changes in this function
+            this.pp += 1;
+            this.floor = 0;
 
             //Reset Momentum
             this.mom = new Vect3();
@@ -87,9 +92,21 @@ class Character {
             if (controller.buttons.moveRight.current) this.mom.x = 1;
             if (controller.buttons.moveUp.current) this.mom.y = -1;
             if (controller.buttons.moveDown.current) this.mom.y = 1;
-            if (this.HB.pos.z < game.match.map.grace + this.hover) {
-                if (controller.buttons.jump.current && !controller.buttons.jump.last)
-                    this.speed.z = 12;
+            if (controller.buttons.jump.current && controller.buttons.brake.current) {
+                this.brace = 1;
+            }
+            else {
+                if (controller.buttons.jump.current) {
+                    // If the player has positive power points (pp)
+                    if (this.pp > 2) {
+                        // Set the z momentum to 1 (move upwards)
+                        this.mom.z = 1;
+                        // Decrease the power points by 1
+                        this.pp -= 2;
+                    }
+                }
+                if (controller.buttons.brake.current) this.mom.z = -1;
+
             }
 
             // Single shot code
@@ -122,18 +139,23 @@ class Character {
             }
             this.speed.z *= 1 - game.match.map.friction.air; //Air friction always applies to falling/rising
             if (Math.abs(this.speed.x) < game.match.map.stopZone) this.speed.x = 0; //Stop if you are below the stop speed
-            if (Math.abs(this.speed.y) < game.match.map.stopZone) this.speed.y = 0; 
-            // if (Math.abs(this.speed.z) < game.match.map.stopZone) this.speed.z = 0; //Enabling this makes hover never level out
+            if (Math.abs(this.speed.y) < game.match.map.stopZone) this.speed.y = 0;
+            // if (Math.abs(this.speed.z) < game.match.map.stopZone) this.speed.z = 0; //I don't know if this one makes a difference
 
             //Hover
             if (this.HB.pos.z < this.hover) { //If you are lower than the hover threshold
-                this.speed.z += Math.max((1 - (this.HB.pos.z / this.hover)) * this.bouyancy, 0); //Move up by your bouyancy times the percent between your z and you hover, not negative
+                this.speed.z += Math.max((1 - (this.HB.pos.z / this.hover)) * this.bouyancy, 0) + game.match.map.gravity;
+                //Move up by your bouyancy times the percent between your z and you hover, not negative
+                //Also cancel out gravity
             }
             else if (this.HB.pos.z > this.hover) { //If you are higher than the hover threshold
                 this.speed.z += Math.max((1 - ((this.HB.pos.z - this.hover) / this.hover)) * this.bouyancy, 0); //Move up by your bouyancy times the percent over the hover, not negative
-                //Gravity
-                this.speed.z -= game.match.map.gravity; 
             }
+
+
+            //Gravity
+            this.speed.z -= game.match.map.gravity;
+
 
             //
             //Predictive collision
@@ -145,12 +167,13 @@ class Character {
                     continue;
                 c = c.character; //Get the character from the bot
                 let side = this.HB.collide(c.HB); //Check for collision
-                console.log(side); 
                 if (side) c.trigger(this, side);
                 if (c.solid) //If the other character is solid
-                    switch (side) { //Move this character to the edge of the other character
+                    switch (side) { //See which side you collided on
                         case 'front':
+                            //Reflect the speed and mom by the map's reflect value
                             this.speed.y *= -game.match.map.collideReflect; this.mom.y *= -game.match.map.collideReflect;
+                            //Move the character to the edge of the other character
                             this.HB.pos.y = c.HB.pos.y + c.HB.volume.y + this.HB.radius;
                             break;
                         case 'rear':
@@ -166,59 +189,54 @@ class Character {
                             this.HB.pos.x = c.HB.pos.x - this.HB.radius;
                             break;
                         default:
-
+                            //break if you didn't collide
                             break;
                     }
             }
             // All blocks
             for (const c of game.match.map.blocks) { //For each block
+                if (this.HB.above(c.HB)) //If you are above the other character
+                    this.floor = c.HB.pos.z + c.HB.volume.z; //Set the floor to the other character's height
                 let side = this.HB.collide(c.HB); //Check for collision
                 if (side) c.trigger(this, side); //Trigger the block's trigger function
-                if (side) {
-                    game.paused = true;
-                    console.log("Before:", side);
-                    console.log(this.speed.z, this.mom.z);
-                }
                 if (c.solid) //If the block is solid
-                    switch (side) {
+                    switch (side) { //see which side you collided on
                         case 'front':
-                            this.speed.y *= -game.match.map.collideReflect;
-                            this.mom.y *= -game.match.map.collideReflect;
+                            //Reflect the speed and mom by the map's reflect value
+                            this.speed.y *= -c.reflection;
+                            this.mom.y *= -c.reflection;
+                            //Move the character to the edge of the other character
                             this.HB.pos.y = c.HB.pos.y + c.HB.volume.y + this.HB.radius;
                             break;
                         case 'rear':
-                            this.speed.y *= -game.match.map.collideReflect;
-                            this.mom.y *= -game.match.map.collideReflect;
+                            this.speed.y *= -c.reflection;
+                            this.mom.y *= -c.reflection;
                             this.HB.pos.y = c.HB.pos.y - this.HB.radius;
                             break;
                         case 'right':
-                            this.speed.x *= -game.match.map.collideReflect;
-                            this.mom.x *= -game.match.map.collideReflect;
+                            this.speed.x *= -c.reflection;
+                            this.mom.x *= -c.reflection;
                             this.HB.pos.x = c.HB.pos.x + c.HB.volume.x + this.HB.radius;
                             break;
                         case 'left':
-                            this.speed.x *= -game.match.map.collideReflect;
-                            this.mom.x *= -game.match.map.collideReflect;
+                            this.speed.x *= -c.reflection;
+                            this.mom.x *= -c.reflection;
                             this.HB.pos.x = c.HB.pos.x - this.HB.radius;
                             break;
                         case 'top':
-                            this.speed.z *= -game.match.map.collideReflect;
-                            this.mom.z *= -game.match.map.collideReflect;
+                            this.speed.z *= -c.reflection;
+                            this.mom.z *= -c.reflection;
                             this.HB.pos.z = c.HB.pos.z + c.HB.volume.z;
                             break;
                         case 'bottom':
-                            this.speed.z *= -game.match.map.collideReflect;
-                            this.mom.z *= -game.match.map.collideReflect;
+                            this.speed.z *= -c.reflection;
+                            this.mom.z *= -c.reflection;
                             this.HB.pos.z = c.HB.pos.z - this.HB.height;
                             break;
                         default:
+                            //break if you didn't collide
                             break;
                     }
-                if (side) {
-                    game.paused = true;
-                    console.log("After", side);
-                    console.log(this.speed.z, this.mom.z);
-                }
             }
 
             //Make the Move
@@ -228,8 +246,9 @@ class Character {
 
             //Ground Collision
             if (-this.speed.z > this.HB.pos.z + game.match.map.floor) {
+                sounds.dam1.play();
                 this.HB.pos.z = 0;
-                this.speed.z *= -0.5
+                // this.speed.z *= -0.5
             }
 
         }
@@ -255,6 +274,45 @@ class Character {
         if (game.player.camera._3D) {
             this.draw3D();
         } else {
+            //
+            // DRAW SHADOW ON BOTTOM
+            //
+            ctx.globalAlpha = 0.4;
+            let shadowShrink = this.HB.radius * Math.min(((this.HB.pos.z - this.floor) / 128), 1)
+            ctx.drawImage(
+                this.shadow.img,
+                game.window.w / 2 - this.HB.radius + shadowShrink,
+                game.window.h / 2 - this.HB.radius + shadowShrink - this.floor,
+                this.HB.radius * 2 - shadowShrink * 2,
+                this.HB.radius * 2 - shadowShrink * 2
+            );
+            ctx.globalAlpha = 1;
+
+            //
+            // Draw SELECTOR RING
+            //
+            if (game.player.interface.drawFriendlyRing) {
+                ctx.strokeStyle = `rgba(${this.color[0]}, ${this.color[1]}, ${this.color[2]}, ${game.player.interface.drawFriendlyRing})`;
+                ctx.lineWidth = 5;
+                ctx.beginPath();
+                ctx.ellipse(
+                    game.window.w / 2 - compareX,
+                    game.window.h / 2 - compareY - this.floor,
+                    this.HB.radius,
+                    this.HB.radius,
+                    0, 0, 2 * Math.PI);
+                ctx.stroke();
+            }
+
+            //
+            // DRAW CHARACTER
+            //
+            ctx.drawImage(
+                this.img,
+                game.window.w / 2 - compareX - this.HB.radius,
+                game.window.h / 2 - compareY - this.HB.height - this.HB.pos.z - sineAnimate(1, 0.1),
+                this.HB.radius * 2, this.HB.height
+            );
             if (game.debug) {
                 ctx.fillStyle = "#FF0000";
                 ctx.fillRect(game.window.w / 2 - compareX - 2, game.window.h / 2 - compareY - 2, 4, 4);
@@ -276,46 +334,19 @@ class Character {
                     this.HB.radius,
                     0, 0, 2 * Math.PI);
                 ctx.stroke();
-            }
-
-            //
-            // DRAW SHADOW ON BOTTOM
-            //
-            ctx.globalAlpha = 0.4;
-            let shadowShrink = this.HB.radius * Math.min((this.HB.pos.z / 128), 1)
-            ctx.drawImage(
-                this.shadow.img,
-                game.window.w / 2 - this.HB.radius + shadowShrink,
-                game.window.h / 2 - this.HB.radius + shadowShrink,
-                this.HB.radius * 2 - shadowShrink * 2,
-                this.HB.radius * 2 - shadowShrink * 2
-            );
-            ctx.globalAlpha = 1;
-
-            //
-            // Draw SELECTOR RING
-            //
-            if (game.player.interface.drawFriendlyRing) {
-                ctx.strokeStyle = `rgba(${this.color[0]}, ${this.color[1]}, ${this.color[2]}, ${game.player.interface.drawFriendlyRing})`;
-                ctx.lineWidth = 5;
+                let newX = this.HB.pos.x + this.speed.x;
+                let newY = this.HB.pos.y + this.speed.y;
+                ctx.strokeStyle = "#FFFFFF"
+                ctx.lineWidth = 2;
                 ctx.beginPath();
-                ctx.ellipse(
-                    game.window.w / 2 - compareX,
-                    game.window.h / 2 - compareY,
-                    this.HB.radius,
-                    this.HB.radius,
-                    0, 0, 2 * Math.PI);
+                ctx.moveTo(game.window.w / 2, game.window.h / 2);
+                compareX = game.player.camera.x - newX;
+                compareY = game.player.camera.y - newY;
+                ctx.lineTo(game.window.w / 2 - compareX, game.window.h / 2 - compareY);
                 ctx.stroke();
             }
-
-            //sineAnimate(1, 0.1) <- subtract this from the y position of the image to hover effect
-            ctx.drawImage(
-                this.img,
-                game.window.w / 2 - compareX - this.HB.radius,
-                game.window.h / 2 - compareY - this.HB.height - this.HB.pos.z,
-                this.HB.radius * 2, this.HB.height
-            );
         }
+
         // This can draw a line to the closest part of a rectangle
         // except it broke at some point when i moved to utils
         // It can still draw to the XY which is good for tubes, but not blocks
@@ -336,40 +367,14 @@ class Character {
         let compareY = game.player.camera.y - this.HB.pos.y;
 
         //
-        // DEBUG: DRAW HITBOX
-        //
-        if (game.debug) {
-            ctx.lineWidth = 2;
-            ctx.fillStyle = "#FF0000";
-            ctx.fillRect(game.window.w / 2 - compareX - 2, game.window.h / 2 - (compareY * game.player.camera.angle) - 2, 4, 4);
-            ctx.strokeStyle = "#FF0000";
-            ctx.beginPath();
-            ctx.ellipse(
-                game.window.w / 2 - compareX,
-                game.window.h / 2 - (compareY * game.player.camera.angle) - this.HB.pos.z,
-                this.HB.radius,
-                this.HB.radius * game.player.camera.angle,
-                0, 0, 2 * Math.PI);
-            ctx.stroke();
-            ctx.beginPath();
-            ctx.ellipse(
-                game.window.w / 2 - compareX,
-                game.window.h / 2 - (compareY * game.player.camera.angle) - (this.HB.height * (1 - game.player.camera.angle)) - this.HB.pos.z,
-                this.HB.radius,
-                this.HB.radius * game.player.camera.angle,
-                0, 0, 2 * Math.PI);
-            ctx.stroke();
-        }
-
-        //
         // DRAW SHADOW ON BOTTOM
         //
         ctx.globalAlpha = 0.4;
-        let shadowShrink = this.HB.radius * Math.min((this.HB.pos.z / 128), 1)
+        let shadowShrink = this.HB.radius * Math.min(((this.HB.pos.z - this.floor) / 128), 1)
         ctx.drawImage(
             this.shadow.img,
             game.window.w / 2 - this.HB.radius + shadowShrink,
-            game.window.h / 2 - this.HB.radius + (this.HB.height * (1 - game.player.camera.angle)) + (shadowShrink * game.player.camera.angle),
+            game.window.h / 2 - this.HB.radius + (this.HB.height * (1 - game.player.camera.angle)) + (shadowShrink * game.player.camera.angle)  - (this.floor * (1 - game.player.camera.angle)),
             (this.HB.radius * 2) - (shadowShrink * 2),
             ((this.HB.radius * 2) - (shadowShrink * 2)) * game.player.camera.angle
         );
@@ -384,7 +389,7 @@ class Character {
             ctx.beginPath();
             ctx.ellipse(
                 game.window.w / 2 - compareX,
-                game.window.h / 2 - (compareY * game.player.camera.angle),
+                game.window.h / 2 - (compareY * game.player.camera.angle) - (this.floor * (1 - game.player.camera.angle)),
                 this.HB.radius,
                 this.HB.radius * game.player.camera.angle,
                 0, 0, 2 * Math.PI);
@@ -395,7 +400,7 @@ class Character {
             ctx.drawImage(
                 this.img,
                 game.window.w / 2 - compareX - this.HB.radius,
-                game.window.h / 2 - (compareY * game.player.camera.angle) - this.HB.height - (this.HB.pos.z * (1 - game.player.camera.angle)),
+                game.window.h / 2 - (compareY * game.player.camera.angle) - this.HB.height - (this.HB.pos.z * (1 - game.player.camera.angle)) - ((sineAnimate(1, 0.1) * (1 - game.player.camera.angle)) * (1 - game.paused)),
                 this.HB.radius * 2,
                 this.HB.height
             );
@@ -403,10 +408,48 @@ class Character {
             ctx.drawImage(
                 this.img,
                 game.window.w / 2 - compareX - this.HB.radius,
-                game.window.h / 2 - (compareY * game.player.camera.angle) - (this.HB.height * (1 - game.player.camera.angle)) - (this.HB.pos.z * (1 - game.player.camera.angle)),
+                game.window.h / 2 - (compareY * game.player.camera.angle) - (this.HB.height * (1 - game.player.camera.angle)) - (this.HB.pos.z * (1 - game.player.camera.angle)) - ((sineAnimate(1, 0.1) * (1 - game.player.camera.angle)) * (1 - game.paused)),
                 this.HB.radius * 2,
                 this.HB.height * (1 - game.player.camera.angle)
             );
+        //
+        // DEBUG: DRAW HITBOX
+        //
+        if (game.debug) {
+            ctx.lineWidth = 2;
+            ctx.fillStyle = "#FF0000";
+            ctx.strokeStyle = "#FF0000";
+            ctx.fillRect(game.window.w / 2 - compareX - 2, game.window.h / 2 - (compareY * game.player.camera.angle) - 2, 4, 4);
+            ctx.beginPath();
+            ctx.ellipse(
+                game.window.w / 2 - compareX,
+                game.window.h / 2 - (compareY * game.player.camera.angle) - (this.HB.pos.z * (1 - game.player.camera.angle)),
+                this.HB.radius,
+                this.HB.radius * game.player.camera.angle,
+                0, 0, 2 * Math.PI);
+            ctx.stroke();
+            ctx.beginPath();
+            ctx.ellipse(
+                game.window.w / 2 - compareX,
+                game.window.h / 2 - (compareY * game.player.camera.angle) - (this.HB.height * (1 - game.player.camera.angle)) - (this.HB.pos.z * (1 - game.player.camera.angle)),
+                this.HB.radius,
+                this.HB.radius * game.player.camera.angle,
+                0, 0, 2 * Math.PI);
+            ctx.stroke();
+            ctx.lineWidth = 4;
+            ctx.strokeStyle = "#FFFFFF";
+            let newX = this.HB.pos.x + this.speed.x;
+            let newY = this.HB.pos.y + this.speed.y;
+            let newZ = this.HB.pos.z + this.speed.z;
+            ctx.lineWidth = 2;
+            ctx.beginPath();
+            ctx.moveTo(game.window.w / 2, game.window.h / 2);
+            compareX = game.player.camera.x - newX;
+            compareY = game.player.camera.y - newY;
+            let compareZ = newZ - this.HB.pos.z;
+            ctx.lineTo(game.window.w / 2 - compareX, game.window.h / 2 - (compareY * game.player.camera.angle) - (this.speed.z * (1 - game.player.camera.angle)));
+            ctx.stroke();
+        }
     }
 
     //Save this code for utils

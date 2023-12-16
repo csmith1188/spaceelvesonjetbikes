@@ -36,15 +36,15 @@ window.onload = function () {
 
     //Player
     game.player = new Player();
-    game.player.character = new Character(allID++, 0, 0, game.player, { nameTag: 'Cpt. Fabius', gfx: 'img/sprites/jetbike', hover: 16, airAccel: new Vect3(0.15, 0.15, 0.15) });
+    game.player.character = new Character(allID++, 0, 0, game.player, { nameTag: 'Cpt. Fabius', gfx: 'img/sprites/jetbike', hover: 16, airAccel: new Vect3(0.15, 0.15, 1) });
     game.player.camera = new Camera({ target: game.player.character });
     game.player.character.HB = new Cylinder(new Vect3((game.match.map.w / 2), (game.match.map.h / 2) + 200, 0), 29, 37);
 
     // makeGame(['blocks']);
-    game.match.map.blocks.push(new Block(allID++, (game.match.map.w / 2) + 32, (game.match.map.h / 2) + 32, 0, 320, 320, 32, { color: [101, 101, 101], colorSide: [201, 201, 201] }))
+    // game.match.map.blocks.push(new Block(allID++, (game.match.map.w / 2) + 32, (game.match.map.h / 2) + 32, 0, 320, 320, 32, { color: [101, 101, 101], colorSide: [201, 201, 201] }))
     // game.match.map.blocks.push(new Block(allID++, (game.match.map.w / 2) - 72, (game.match.map.h / 2) - 36, 0, 32, 128, 128, { color: [101, 101, 101], colorSide: [201, 201, 201] }))
-    game.match.map.blocks.push(new Block(allID++, (game.match.map.w / 2) - 300, (game.match.map.h / 2) - 0, 0, 128, 128, 64, { color: [101, 101, 101], colorSide: [201, 201, 201] }))
-    game.match.map.blocks[game.match.map.blocks.length - 1].HB.pos.z = 100;
+    // game.match.map.blocks.push(new Block(allID++, (game.match.map.w / 2) - 300, (game.match.map.h / 2) - 0, 0, 128, 128, 64, { color: [101, 101, 101], colorSide: [201, 201, 201] }))
+    // game.match.map.blocks[game.match.map.blocks.length - 1].HB.pos.z = 100;
 
     // //wave
     // game.match.map.blocks.push(new Block(
@@ -83,16 +83,10 @@ window.onload = function () {
     //         actor.speed.z += sineAnimate(0.5, 0.05) + 0.5
     //     }.bind(game.match.map.blocks[game.match.map.blocks.length - 1]); //end wave
 
-    // for (let i = 0; i < 100; i++) {
-    //     game.match.map.blocks.push(
-    //         new Block(
-    //             allID++,
-    //             Math.round(Math.random() * game.match.map.w),
-    //             Math.round(Math.random() * game.match.map.h),
-    //             0, 32, 32, 64,
-    //             { color: [101,101,101], colorSide: [201,201,201], nameTag: 'Kevin' }
-    //         ));
-    // }
+    for (let i = 0; i < 10; i++) {
+        game.match.map.blocks.push(
+            new Block(allID++, (game.match.map.w / 2) + 32 + (i*64), (game.match.map.h / 2) + 32, 0, 64, 64, 0 + (i*8), { color: [101, 101, 101], colorSide: [201, 201, 201] }));
+    }
 
     // game.match.bots.push(new Bot()) //Kevin
     // game.match.bots[game.match.bots.length - 1].character = new Character(
@@ -159,6 +153,9 @@ function step() {
         for (const missile of game.match.map.missiles) {
             missile.step();
         }
+
+        ticks++;
+        
     } else {
         game.player.controller.read();
 
@@ -198,7 +195,7 @@ function step() {
 
     //Draw game
     draw();
-    ticks++;
+
 }
 
 /*

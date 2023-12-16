@@ -190,7 +190,7 @@ class Cylinder {
             // Calculate the potential new position of the circle after movement
             let newX = this.pos.x + speed.x;
             let newY = this.pos.y + speed.y;
-            let newZ = this.pos.z + speed.z;
+            let newZ = this.pos.z + speed.z + this.height / 2;
 
             // Find the closest point on the rectangle to the circle
             let closestX = Math.max(Math.min(newX, c.pos.x + c.volume.x), c.pos.x);
@@ -249,6 +249,18 @@ class Cylinder {
         } else {
 
         }
+    }
+
+    /**
+     * Checks if the current object is positioned above a given volume.
+     * @param {Object} c - The volume to check against.
+     * @returns {boolean} - True if the object is above the volume, false otherwise.
+     */
+    above(c) {
+        const xWithinVolume = this.pos.x + this.radius >= c.pos.x && this.pos.x - this.radius <= c.pos.x + c.volume.x;
+        const yWithinVolume = this.pos.y + this.radius >= c.pos.y && this.pos.y - this.radius <= c.pos.y + c.volume.y;
+        const zHigherThanVolume = this.pos.z + this.height / 2 >= c.pos.z + c.volume.z;
+        return xWithinVolume && yWithinVolume && zHigherThanVolume;
     }
 }
 
