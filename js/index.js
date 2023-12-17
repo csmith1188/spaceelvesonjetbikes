@@ -81,7 +81,7 @@ window.onload = function () {
                 actor.speed.z += sineAnimate(0.5, 0.05) + 0.5
         }.bind(game.match.map.blocks[game.match.map.blocks.length - 1]); //end wave
 
-    for (let i = 0; i < 10; i++) {
+    for (let i = 0; i < 2; i++) {
         game.match.bots.push(new Bot()) //Kevin
         game.match.bots[game.match.bots.length - 1].character = new Character(
             allID++,

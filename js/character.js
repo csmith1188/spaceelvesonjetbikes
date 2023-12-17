@@ -15,9 +15,16 @@ class Character {
         this.active = true;
         this.cleanup = true;
         this.team = 0;
+        this.teams = [this.team];
         this.target = null;
 
-        //Position Data
+        /*
+          ___        _ _   _            ___       _
+         | _ \___ __(_) |_(_)___ _ _   |   \ __ _| |_ __ _
+         |  _/ _ (_-< |  _| / _ \ ' \  | |) / _` |  _/ _` |
+         |_| \___/__/_|\__|_\___/_||_| |___/\__,_|\__\__,_|
+
+        */
         this.HB = new Cylinder(new Vect3(spawnx, spawny, 0), 8, 32);
         this.aim = new Vect3(0, 0, 0);
         this.angle = new Vect3(0, 0, 0);
@@ -26,7 +33,13 @@ class Character {
         this.bouyancy = 1;
         this.hover = 0; // 12
 
-        //Physics
+        /*
+          ___ _           _
+         | _ \ |_ _  _ __(_)__ ___
+         |  _/ ' \ || (_-< / _(_-<
+         |_| |_||_\_, /__/_\__/__/
+                  |__/
+        */
         this.speed = new Vect3(0, 0, 0);            // Represents the current speed of the character in the x, y, and z directions.
         this.maxSpeed = new Vect3(8, 8, 12);        // Represents the maximum speed of the character in the x, y, and z directions.
         this.mom = new Vect3(0, 0, 0);              // Represents the momentum of the character in the x, y, and z directions.
@@ -36,14 +49,26 @@ class Character {
         this.solid = true;                          // Represents whether or not the character is solid.   
         this.colliders = [];                        // Represents an array of colliders associated with the character.
 
-        //Stats
+        /*
+          ___ _        _
+         / __| |_ __ _| |_ ___
+         \__ \  _/ _` |  _(_-<
+         |___/\__\__,_|\__/__/
+
+        */
         this.hp = 100;          // Health Points
         this.hp_max = 100;      // Max Health Points
         this.accuracy = 0.1;    // Spread magnitude of weapon
         this.pp = 100;          // Power Points
         this.pp_max = 100;      // Max Power Points
 
-        //Items
+        /*
+          ___ _
+         |_ _| |_ ___ _ __  ___
+          | ||  _/ -_) '  \(_-<
+         |___|\__\___|_|_|_/__/
+
+        */
         this.item = 0;
         this.inventory = [new Pistol(), new Flamer(), new JumpDropper()];
         this.ammo = {
@@ -51,7 +76,13 @@ class Character {
             ballistic: 50
         }
 
-        //Graphics
+        /*
+           ___               _    _
+          / __|_ _ __ _ _ __| |_ (_)__ ___
+         | (_ | '_/ _` | '_ \ ' \| / _(_-<
+          \___|_| \__,_| .__/_||_|_\__/__/
+                       |_|
+        */
         this.img = new Image();
         this.gfx = 'img/sprites/lilguy';
         this.color = [0, 255, 0];
@@ -61,7 +92,13 @@ class Character {
         }
         this.shadow.img.src = 'img/sprites/shadow.png';
 
-        // Options
+        /*
+            ___       _   _
+           / _ \ _ __| |_(_)___ _ _  ___
+          | (_) | '_ \  _| / _ \ ' \(_-<
+           \___/| .__/\__|_\___/_||_/__/
+                |_|
+        */
         if (typeof options === 'object')
             for (var key of Object.keys(options)) {
                 this[key] = options[key];
@@ -89,7 +126,13 @@ class Character {
             //Reset Momentum
             this.mom = new Vect3();
 
-            //Movement
+            /*
+                     _ _        _     _                _
+              __ ___| | |___ __| |_  (_)_ _  _ __ _  _| |_
+             / _/ _ \ | / -_) _|  _| | | ' \| '_ \ || |  _|
+             \__\___/_|_\___\__|\__| |_|_||_| .__/\_,_|\__|
+                                            |_|
+            */
             if (controller.buttons.moveLeft.current) this.mom.x = -1;
             if (controller.buttons.moveRight.current) this.mom.x = 1;
             if (controller.buttons.moveUp.current) this.mom.y = -1;
@@ -111,17 +154,35 @@ class Character {
 
             }
 
-            // Single shot code
+            /*
+                 _             _   _
+              __| |_  ___  ___| |_(_)_ _  __ _
+             (_-< ' \/ _ \/ _ \  _| | ' \/ _` |
+             /__/_||_\___/\___/\__|_|_||_\__, |
+                                         |___/
+            */
             if (controller.buttons.fire.current != controller.buttons.fire.last) {
                 if (controller.buttons.fire.current)
                     this.inventory[this.item].use(this, this.parent.controller.aimX, this.parent.controller.aimY, 0);
             }
 
-            //Max Speed Momentum Cap
+            /*
+              __  __            ___                  _
+             |  \/  |__ ___ __ / __|_ __  ___ ___ __| |
+             | |\/| / _` \ \ / \__ \ '_ \/ -_) -_) _` |
+             |_|  |_\__,_/_\_\ |___/ .__/\___\___\__,_|
+                                   |_|
+            */
             if (Math.abs(this.speed.x) > this.maxSpeed) this.mom.x = 0;
             if (Math.abs(this.speed.y) > this.maxSpeed) this.mom.y = 0;
 
-            //Friction
+            /*
+              ___    _    _   _                         _     _             _              _   _
+             | __| _(_)__| |_(_)___ _ _    __ _ _ _  __| |   /_\  __ __ ___| |___ _ _ __ _| |_(_)___ _ _
+             | _| '_| / _|  _| / _ \ ' \  / _` | ' \/ _` |  / _ \/ _/ _/ -_) / -_) '_/ _` |  _| / _ \ ' \
+             |_||_| |_\__|\__|_\___/_||_| \__,_|_||_\__,_| /_/ \_\__\__\___|_\___|_| \__,_|\__|_\___/_||_|
+
+            */
             if (this.HB.pos.z <= game.match.map.floor) { //Ground
                 //Accelerate Ground
                 this.speed.x += this.mom.x * this.accel.x;
@@ -140,11 +201,25 @@ class Character {
                 this.speed.y *= 1 - game.match.map.friction.air;
             }
             this.speed.z *= 1 - game.match.map.friction.air; //Air friction always applies to falling/rising
+
+            /*
+                 _
+              __| |_ ___ _ __
+             (_-<  _/ _ \ '_ \
+             /__/\__\___/ .__/
+                        |_|
+            */
             if (Math.abs(this.speed.x) < game.match.map.stopZone) this.speed.x = 0; //Stop if you are below the stop speed
             if (Math.abs(this.speed.y) < game.match.map.stopZone) this.speed.y = 0;
             // if (Math.abs(this.speed.z) < game.match.map.stopZone) this.speed.z = 0; //I don't know if this one makes a difference
 
-            //Hover
+            /*
+              _
+             | |_  _____ _____ _ _
+             | ' \/ _ \ V / -_) '_|
+             |_||_\___/\_/\___|_|
+
+            */
             if (this.HB.pos.z < this.hover) { //If you are lower than the hover threshold
                 this.speed.z += Math.max((1 - (this.HB.pos.z / this.hover)) * this.bouyancy, 0) + game.match.map.gravity;
                 //Move up by your bouyancy times the percent between your z and you hover, not negative
@@ -154,18 +229,39 @@ class Character {
                 this.speed.z += Math.max((1 - ((this.HB.pos.z - this.hover) / this.hover)) * this.bouyancy, 0); //Move up by your bouyancy times the percent over the hover, not negative
             }
 
-            //Gravity
+            /*
+                                _ _
+              __ _ _ _ __ ___ _(_) |_ _  _
+             / _` | '_/ _` \ V / |  _| || |
+             \__, |_| \__,_|\_/|_|\__|\_, |
+             |___/                    |__/
+            */
             this.speed.z -= game.match.map.gravity;
 
-            //
-            //Predictive collision
-            //
 
-            //All players
+            /*
+              #####
+             #     #  ####  #      #      #  ####  #  ####  #    #
+             #       #    # #      #      # #      # #    # ##   #
+             #       #    # #      #      #  ####  # #    # # #  #
+             #       #    # #      #      #      # # #    # #  # #
+             #     # #    # #      #      # #    # # #    # #   ##
+              #####   ####  ###### ###### #  ####  #  ####  #    #
+
+            */
+            /*
+               ___     _ _         _
+              / __|  _| (_)_ _  __| |___ _ _
+             | (_| || | | | ' \/ _` / -_) '_|
+              \___\_, |_|_|_||_\__,_\___|_|
+                  |__/
+            */
             for (let c of game.match.bots) {
                 if (c.character === this) //Don't collide with yourself
                     continue;
                 c = c.character; //Get the character from the bot
+                if (this.HB.above(c.HB)) //If you are above the block and the block is not solid
+                    this.floor = c.HB.pos.z + c.HB.height; //Set the floor to the block's height
                 let side = this.HB.collide(c.HB); //Check for collision
                 if (side) c.trigger(this, side);
                 if (c.solid) //If the other character is solid
@@ -174,7 +270,7 @@ class Character {
                             let xDistance = this.HB.pos.x - c.HB.pos.x;
                             let yDistance = this.HB.pos.y - c.HB.pos.y;
                             //get the distance between the two characters
-                            let distance = Math.sqrt(xDistance**2 + yDistance**2);
+                            let distance = Math.sqrt(xDistance ** 2 + yDistance ** 2);
                             if (distance > 0) {
                                 //find the x and y angles between the two characters, normalized to 1
                                 let xAngle = xDistance / distance;
@@ -182,17 +278,41 @@ class Character {
                                 //move the character to the edge of the other character
                                 this.HB.pos.x = c.HB.pos.x + (c.HB.radius + this.HB.radius) * xAngle;
                                 this.HB.pos.y = c.HB.pos.y + (c.HB.radius + this.HB.radius) * yAngle;
+                            } else {
+                                this.HB.pos.x += c.HB.radius + this.HB.radius;
                             }
+                            this.speed.x += c.speed.x * game.match.map.collideReflect; //Reflect the speed and mom by the map's reflect value
+                            this.speed.y += c.speed.y * game.match.map.collideReflect;
+                            c.speed.x -= this.speed.x * game.match.map.collideReflect;
+                            c.speed.y -= this.speed.y * game.match.map.collideReflect;
+                            break;
+                        case 'top': //If you collided on the top
+                            //move the character to the edge of the other character
+                            this.HB.pos.z = c.HB.pos.z + c.HB.height;
+                            break;
+                        case 'bottom': //If you collided on the bottom
+                            //move the character to the edge of the other character
+                            this.HB.pos.z = c.HB.pos.z - this.HB.height;
+                            break;
+                        case 'center': //If you collided on the center
+                            this.HB.pos.x += c.HB.radius + this.HB.radius;
                             break;
                         default:
                             //break if you didn't collide
                             break;
                     }
             }
-            // All blocks
+
+            /*
+              ___ _         _
+             | _ ) |___  __| |__ ___
+             | _ \ / _ \/ _| / /(_-<
+             |___/_\___/\__|_\_\/__/
+
+            */
             for (const c of game.match.map.blocks) { //For each block
-                if (this.HB.above(c.HB) && !c.solid) //If you are above the other character
-                    this.floor = c.HB.pos.z + c.HB.volume.z; //Set the floor to the other character's height
+                if (this.HB.above(c.HB) && !c.solid) //If you are above the block and the block is not solid
+                    this.floor = c.HB.pos.z + c.HB.volume.z; //Set the floor to the block's height
                 let side = this.HB.collide(c.HB); //Check for collision
                 if (side) c.trigger(this, side); //Trigger the block's trigger function
                 if (c.solid) //If the block is solid
@@ -201,7 +321,7 @@ class Character {
                             //Reflect the speed and mom by the map's reflect value
                             this.speed.y *= -c.reflection;
                             this.mom.y *= -c.reflection;
-                            //Move the character to the edge of the other character
+                            //Move the character to the edge of the block
                             this.HB.pos.y = c.HB.pos.y + c.HB.volume.y + this.HB.radius;
                             break;
                         case 'rear':
@@ -235,18 +355,37 @@ class Character {
                     }
             }
 
-            //Make the Move
+            /*
+              __  __      _         _   _          __  __
+             |  \/  |__ _| |_____  | |_| |_  ___  |  \/  |_____ _____
+             | |\/| / _` | / / -_) |  _| ' \/ -_) | |\/| / _ \ V / -_)
+             |_|  |_\__,_|_\_\___|  \__|_||_\___| |_|  |_\___/\_/\___|
+
+            */
             this.HB.pos.x += this.speed.x;
             this.HB.pos.y += this.speed.y;
             this.HB.pos.z += this.speed.z;
 
-            //Ground Collision
+            /*
+               ___                      _    ___     _ _ _    _
+              / __|_ _ ___ _  _ _ _  __| |  / __|___| | (_)__(_)___ _ _
+             | (_ | '_/ _ \ || | ' \/ _` | | (__/ _ \ | | (_-< / _ \ ' \
+              \___|_| \___/\_,_|_||_\__,_|  \___\___/_|_|_/__/_\___/_||_|
+
+            */
             if (-this.speed.z > this.HB.pos.z + game.match.map.floor) {
                 this.HB.pos.z = 0;
                 // this.speed.z *= -0.5
                 // sounds.dam1.play();
             }
 
+            /*
+              ___                  _ _    __              _   _
+             | _ \_  _ _ _    __ _| | |  / _|_  _ _ _  __| |_(_)___ _ _  ___
+             |   / || | ' \  / _` | | | |  _| || | ' \/ _|  _| / _ \ ' \(_-<
+             |_|_\\_,_|_||_| \__,_|_|_| |_|  \_,_|_||_\__|\__|_\___/_||_/__/
+
+            */
             for (const func of this.runFunc) {
                 func();
             }
@@ -265,18 +404,32 @@ class Character {
     */
     draw() {
 
-        //Draw correct graphic
+        /*
+               _    _                        _    _
+          _ __(_)__| |__  __ _ _ _ __ _ _ __| |_ (_)__
+         | '_ \ / _| / / / _` | '_/ _` | '_ \ ' \| / _|
+         | .__/_\__|_\_\ \__, |_| \__,_| .__/_||_|_\__|
+         |_|             |___/         |_|
+        */
         if (this.mom.x < 0) this.img.src = this.leftgfx + '.png'
         if (this.mom.x > 0) this.img.src = this.gfx + '.png'
 
+
         let compareX = game.player.camera.x - this.HB.pos.x;
         let compareY = game.player.camera.y - this.HB.pos.y;
+
+
         if (game.player.camera._3D) {
             this.draw3D();
         } else {
-            //
-            // DRAW SHADOW ON BOTTOM
-            //
+
+            /*
+                 _            _
+              __| |_  __ _ __| |_____ __ __
+             (_-< ' \/ _` / _` / _ \ V  V /
+             /__/_||_\__,_\__,_\___/\_/\_/
+
+            */
             ctx.globalAlpha = 0.4;
             let shadowShrink = this.HB.radius * Math.min(((this.HB.pos.z - this.floor) / 128), 1)
             ctx.drawImage(
@@ -288,25 +441,37 @@ class Character {
             );
             ctx.globalAlpha = 1;
 
-            //
-            // Draw SELECTOR RING
-            //
-            if (game.player.interface.drawFriendlyRing) {
-                ctx.strokeStyle = `rgba(${this.color[0]}, ${this.color[1]}, ${this.color[2]}, ${game.player.interface.drawFriendlyRing})`;
-                ctx.lineWidth = 5;
-                ctx.beginPath();
-                ctx.ellipse(
-                    game.window.w / 2 - compareX,
-                    game.window.h / 2 - compareY - this.floor,
-                    this.HB.radius,
-                    this.HB.radius,
-                    0, 0, 2 * Math.PI);
-                ctx.stroke();
+            /*
+                      _        _                 _
+              ___ ___| |___ __| |_ ___ _ _   _ _(_)_ _  __ _
+             (_-</ -_) / -_) _|  _/ _ \ '_| | '_| | ' \/ _` |
+             /__/\___|_\___\__|\__\___/_|   |_| |_|_||_\__, |
+                                                       |___/
+            */
+            if (this.team == game.player.character.team) {
+                ctx.strokeStyle = `rgba(0,255,0, ${game.player.interface.drawFriendlyRing})`;
+            } else if (game.player.character.teams.includes(this.team)) {
+                ctx.strokeStyle = `rgba(255,255,0, ${game.player.interface.drawNeutralRing})`;
+            } else {
+                ctx.strokeStyle = `rgba(255,0,0, ${game.player.interface.drawEnemyRing})`;
             }
+            ctx.lineWidth = 3;
+            ctx.beginPath();
+            ctx.ellipse(
+                game.window.w / 2 - compareX,
+                game.window.h / 2 - compareY - this.floor,
+                this.HB.radius,
+                this.HB.radius,
+                0, 0, 2 * Math.PI);
+            ctx.stroke();
 
-            //
-            // DRAW CHARACTER
-            //
+            /*
+                 _                     _
+              __| |_  __ _ _ _ __ _ __| |_ ___ _ _
+             / _| ' \/ _` | '_/ _` / _|  _/ -_) '_|
+             \__|_||_\__,_|_| \__,_\__|\__\___|_|
+
+            */
             ctx.drawImage(
                 this.img,
                 game.window.w / 2 - compareX - this.HB.radius,
@@ -347,6 +512,13 @@ class Character {
             }
         }
 
+        /*
+          _                     _     _ _
+         | |_ __ _ _ _ __ _ ___| |_  | (_)_ _  ___
+         |  _/ _` | '_/ _` / -_)  _| | | | ' \/ -_)
+          \__\__,_|_| \__, \___|\__| |_|_|_||_\___|
+                      |___/
+        */
         // This can draw a line to the closest part of a rectangle
         // except it broke at some point when i moved to utils
         // It can still draw to the XY which is good for tubes, but not blocks
@@ -362,39 +534,63 @@ class Character {
         }
     }
 
+
+    /*
+     ######                        #####  ######
+     #     # #####    ##   #    # #     # #     #
+     #     # #    #  #  #  #    #       # #     #
+     #     # #    # #    # #    #  #####  #     #
+     #     # #####  ###### # ## #       # #     #
+     #     # #   #  #    # ##  ## #     # #     #
+     ######  #    # #    # #    #  #####  ######
+    
+    */
     draw3D() {
+
         let compareX = game.player.camera.x - this.HB.pos.x;
         let compareY = game.player.camera.y - this.HB.pos.y;
 
-        //
-        // DRAW SHADOW ON BOTTOM
-        //
+        /*
+             _            _
+          __| |_  __ _ __| |_____ __ __
+         (_-< ' \/ _` / _` / _ \ V  V /
+         /__/_||_\__,_\__,_\___/\_/\_/
+        
+        */
         ctx.globalAlpha = 0.4;
         let shadowShrink = this.HB.radius * Math.min(((this.HB.pos.z - this.floor) / 128), 1)
         ctx.drawImage(
             this.shadow.img,
             game.window.w / 2 - compareX - this.HB.radius + shadowShrink,
-            game.window.h / 2 - (compareY * game.player.camera.angle) - this.HB.radius + (this.HB.height * (1 - game.player.camera.angle)) + (shadowShrink * game.player.camera.angle)  - (this.floor * (1 - game.player.camera.angle)),
+            game.window.h / 2 - (compareY * game.player.camera.angle) - this.HB.radius + (this.HB.height * (1 - game.player.camera.angle)) + (shadowShrink * game.player.camera.angle) - (this.floor * (1 - game.player.camera.angle)),
             (this.HB.radius * 2) - (shadowShrink * 2),
             ((this.HB.radius * 2) - (shadowShrink * 2)) * game.player.camera.angle
         );
         ctx.globalAlpha = 1;
 
-        //
-        // DRAW SELECTOR RING
-        //
-        if (game.player.interface.drawFriendlyRing) {
-            ctx.strokeStyle = `rgba(${this.color[0]}, ${this.color[1]}, ${this.color[2]}, ${game.player.interface.drawFriendlyRing})`;
-            ctx.lineWidth = 5;
-            ctx.beginPath();
-            ctx.ellipse(
-                game.window.w / 2 - compareX,
-                game.window.h / 2 - (compareY * game.player.camera.angle) - (this.floor * (1 - game.player.camera.angle)),
-                this.HB.radius,
-                this.HB.radius * game.player.camera.angle,
-                0, 0, 2 * Math.PI);
-            ctx.stroke();
+        /*
+                  _        _                 _
+          ___ ___| |___ __| |_ ___ _ _   _ _(_)_ _  __ _
+         (_-</ -_) / -_) _|  _/ _ \ '_| | '_| | ' \/ _` |
+         /__/\___|_\___\__|\__\___/_|   |_| |_|_||_\__, |
+                                                   |___/
+        */
+        if (this.team == game.player.character.team) {
+            ctx.strokeStyle = `rgba(0,255,0, ${game.player.interface.drawFriendlyRing})`;
+        } else if (game.player.character.teams.includes(this.team)) {
+            ctx.strokeStyle = `rgba(255,255,0, ${game.player.interface.drawNeutralRing})`;
+        } else {
+            ctx.strokeStyle = `rgba(255,0,0, ${game.player.interface.drawEnemyRing})`;
         }
+        ctx.lineWidth = 3;
+        ctx.beginPath();
+        ctx.ellipse(
+            game.window.w / 2 - compareX,
+            game.window.h / 2 - (compareY * game.player.camera.angle) - (this.floor * (1 - game.player.camera.angle)),
+            this.HB.radius,
+            this.HB.radius * game.player.camera.angle,
+            0, 0, 2 * Math.PI);
+        ctx.stroke();
 
         if (this.faceCamera)
             ctx.drawImage(
@@ -412,9 +608,14 @@ class Character {
                 this.HB.radius * 2,
                 this.HB.height * (1 - game.player.camera.angle)
             );
-        //
-        // DEBUG: DRAW HITBOX
-        //
+
+        /*
+             _     _                _    _ _   _
+          __| |___| |__ _  _ __ _  | |_ (_) |_| |__  _____ __
+         / _` / -_) '_ \ || / _` | | ' \| |  _| '_ \/ _ \ \ /
+         \__,_\___|_.__/\_,_\__, | |_||_|_|\__|_.__/\___/_\_\
+                            |___/
+        */
         if (game.debug) {
             ctx.lineWidth = 2;
             ctx.fillStyle = "#FF0000";
@@ -452,11 +653,17 @@ class Character {
         }
     }
 
-    //Save this code for utils
-    trigger(actor) {
+    /*
 
-        //this mom to their speed
-        //their mom to this speed
+     ##### #####  #  ####   ####  ###### #####
+       #   #    # # #    # #    # #      #    #
+       #   #    # # #      #      #####  #    #
+       #   #####  # #  ### #  ### #      #####
+       #   #   #  # #    # #    # #      #   #
+       #   #    # #  ####   ####  ###### #    #
+
+    */
+    trigger(actor, side) {
 
     }
 

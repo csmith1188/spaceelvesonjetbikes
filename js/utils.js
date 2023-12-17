@@ -236,20 +236,40 @@ class Cylinder {
             // Calculate the potential new position of the circle after movement
             let newX = this.pos.x + speed.x;
             let newY = this.pos.y + speed.y;
-            let newZ = this.pos.z + speed.z + this.height / 2;
+            let newZ = this.pos.z + speed.z;
 
-            // Calculate the distance between centers
-            newX = newX - c.pos.x;
-            newY = newY - c.pos.y;
-            newZ = newZ - c.pos.z;
+            // calculate the distance between the circle's center and the other circle's center
+            let distanceXY = Math.sqrt((newX - c.pos.x) ** 2 + (newY - c.pos.y) ** 2);
 
-            // Find the closest point on the rectangle to the circle
-            let distance = Math.sqrt(newX ** 2 + newY ** 2);
+            if (distanceXY == 0) {
+                return 'center';
+            } else if (distanceXY > this.radius + c.radius) {
+                return false;
+            } else {
+                // z center of this cylinder
+                newZ += this.height / 2;
+                // z center of c cylinder
+                let cZ = c.pos.z + c.height / 2;
+                // calculate z distance
+                let distanceZ = Math.abs(newZ - cZ);
+                // a z collision occurs if the z distance is less than the sum of the z radii
+                distanceXY -= this.radius + c.radius;
+                if (distanceZ <= this.height / 2 + c.height / 2) {
+                    distanceZ = distanceZ - this.height / 2 - c.height / 2;
+                    if (distanceXY < distanceZ) {
+                        if (distanceZ > 0)
+                            return 'bottom';
+                        else
+                            return 'top';
+                    } else if (distanceXY == 0 || distanceZ == 0) {
+                        return 'center';
+                    }
+                    return 'side';
+                } else {
+                    return false;
+                }
 
-            if (distance < this.radius + c.radius) return 'side';
-            else return false;
-
-        } else {
+            }
 
         }
     }

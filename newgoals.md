@@ -1,3 +1,7 @@
+h1 - alligator
+h2 - banner
+h3 - small
+
 <!--
       ::::::::   ::::::::  :::::::::  ::::::::::          ::::::::   ::::::::  ::::    :::  ::::::::  :::::::::: ::::::::: :::::::::::
     :+:    :+: :+:    :+: :+:    :+: :+:                :+:    :+: :+:    :+: :+:+:   :+: :+:    :+: :+:        :+:    :+:    :+:
@@ -24,7 +28,8 @@ Dark elves believe everything is random:
 -->
 
 
-- Cylinder -> Cylinder Collision
+- Enemy ring colors
+- Cylinder -> Cylinder Collision (top)
 - Only draw in camera
 - Give blocks friction for wall jumping rooftop drag
 - Complete speed physics (top speed, actual speed, weight)
