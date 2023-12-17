@@ -28,14 +28,15 @@ Dark elves believe everything is random:
 -->
 
 
-- Enemy ring colors
-- Cylinder -> Cylinder Collision (top)
+- Draw blocks as cylinders
+- Shooting with magazines/ammo
+- Bot Shooting
+- z height too high on ortho view when over tall block
+- z block top vs player bottom bad when block z is raised
 - Only draw in camera
 - Give blocks friction for wall jumping rooftop drag
 - Complete speed physics (top speed, actual speed, weight)
 - Bot chasing / targets / paths
-- Shooting with magazines/ammo
-- Bot Shooting
 - Fix Gamepad
 - Keyboard, Mouse, Touch, Gampead classes
 - Fix Touch radius and add buttons

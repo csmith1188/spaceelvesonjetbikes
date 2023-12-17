@@ -72,8 +72,8 @@ class Character {
         this.item = 0;
         this.inventory = [new Pistol(), new Flamer(), new JumpDropper()];
         this.ammo = {
-            plasma: 50,
-            ballistic: 50
+            plasma: 2,
+            ballistic: 2
         }
 
         /*
@@ -85,7 +85,7 @@ class Character {
         */
         this.img = new Image();
         this.gfx = 'img/sprites/lilguy';
-        this.color = [0, 255, 0];
+        this.color = [255, 0, 0];
         this.faceCamera = true;
         this.shadow = {
             img: new Image()
@@ -162,8 +162,10 @@ class Character {
                                          |___/
             */
             if (controller.buttons.fire.current != controller.buttons.fire.last) {
-                if (controller.buttons.fire.current)
-                    this.inventory[this.item].use(this, this.parent.controller.aimX, this.parent.controller.aimY, 0);
+                if (controller.buttons.fire.current) {
+                    const xMulti = (game.player.camera._3D) ? game.player.camera.angle : 1;
+                    this.inventory[this.item].use(this, this.parent.controller.aimX * xMulti, this.parent.controller.aimY, 0, {color: this.color});
+                }
             }
 
             /*

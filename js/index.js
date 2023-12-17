@@ -40,68 +40,9 @@ window.onload = function () {
     game.player.camera = new Camera({ target: game.player.character });
     game.player.character.HB = new Cylinder(new Vect3((game.match.map.w / 2), (game.match.map.h / 2) + 200, 0), 29, 37);
 
-
-    // game.match.map.blocks.push(new Block(allID++, (game.match.map.w / 2) - 300, (game.match.map.h / 2) - 0, 0, 128, 128, 64, { color: [101, 101, 101], colorSide: [201, 201, 201] }))
-    // game.match.map.blocks[game.match.map.blocks.length - 1].HB.pos.z = 100;
-
-    //wave
-    game.match.map.blocks.push(new Block(
-        allID++,
-        (game.match.map.w / 2) + 100,
-        (game.match.map.h / 2) + 100,
-        0, 32, 32, 16,
-        { color: [50, 50, 255], colorSide: [150, 150, 250], solid: false, opacity: 0.5 }
-    ));
-    game.match.map.blocks[game.match.map.blocks.length - 1].runFunc.push(
-        function () {
-            this.HB.pos.z = sineAnimate(10, 0.05) + 10;
-        }.bind(game.match.map.blocks[game.match.map.blocks.length - 1])
-    );
-    game.match.map.blocks[game.match.map.blocks.length - 1].trigger =
-        function (actor, side) {
-            actor.speed.z += sineAnimate(0.5, 0.05) + 0.5
-        }.bind(game.match.map.blocks[game.match.map.blocks.length - 1]); //end wave
-
-    //wave
-    game.match.map.blocks.push(new Block(
-        allID++,
-        (game.match.map.w / 2) + 100,
-        (game.match.map.h / 2) + 164,
-        0, 32, 32, 16,
-        { color: [50, 50, 255], colorSide: [150, 150, 250], solid: false, opacity: 0.5 }
-    ));
-    game.match.map.blocks[game.match.map.blocks.length - 1].runFunc.push(
-        function () {
-            this.HB.pos.z = sineAnimate(10, 0.05, 60) + 10 + 16;
-        }.bind(game.match.map.blocks[game.match.map.blocks.length - 1])
-    );
-    game.match.map.blocks[game.match.map.blocks.length - 1].trigger =
-        function (actor, side) {
-            if (actor.HB.pos.z >= this.HB.pos.z)
-                actor.speed.z += sineAnimate(0.5, 0.05) + 0.5
-        }.bind(game.match.map.blocks[game.match.map.blocks.length - 1]); //end wave
-
-    for (let i = 0; i < 2; i++) {
-        game.match.bots.push(new Bot()) //Kevin
-        game.match.bots[game.match.bots.length - 1].character = new Character(
-            allID++,
-            (game.match.map.w / 2) + 100,
-            (game.match.map.h / 2) - 100,
-            game.match.bots[game.match.bots.length - 1],
-            // { target: game.player.character, nameTag: 'Jaysin', gfx: 'img/sprites/dark2', team: 1 }
-            {
-                target: game.player.character, nameTag: 'Kevin', team: 1, gfx: 'img/sprites/dark2',
-                hover: 16, airAccel: new Vect3(0.15, 0.15, 1),
-                runFunc: [
-                    function () { }.bind(game.match.bots[game.match.bots.length - 1].character)
-                ]
-            }
-        );
-        game.match.bots[game.match.bots.length - 1].character.HB = new Cylinder(new Vect3((game.match.map.w / 2), (game.match.map.h / 2) + 200, 0), 29, 37);
-    }
+    makeGame();
 
     game.match.map.buildNavMesh();
-
 
     //start game loop
     //Run the step() function every 16ms (60fps)
@@ -259,9 +200,63 @@ function draw() {
 */
 
 function makeGame(type) {
+    game.match.map.blocks.push(new Block(allID++, (game.match.map.w / 2) - 300, (game.match.map.h / 2) - 0, 0, 128, 128, 64, { color: [101, 101, 101], colorSide: [201, 201, 201] }))
+    // game.match.map.blocks[game.match.map.blocks.length - 1].HB.pos.z = 100;
 
-    if (type.includes('aitest')) {
+    //wave
+    game.match.map.blocks.push(new Block(
+        allID++,
+        (game.match.map.w / 2) + 100,
+        (game.match.map.h / 2) + 100,
+        0, 32, 32, 16,
+        { color: [50, 50, 255], colorSide: [150, 150, 250], solid: false, opacity: 0.5 }
+    ));
+    game.match.map.blocks[game.match.map.blocks.length - 1].runFunc.push(
+        function () {
+            this.HB.pos.z = sineAnimate(10, 0.05) + 10;
+        }.bind(game.match.map.blocks[game.match.map.blocks.length - 1])
+    );
+    game.match.map.blocks[game.match.map.blocks.length - 1].trigger =
+        function (actor, side) {
+            actor.speed.z += sineAnimate(0.5, 0.05) + 0.5
+        }.bind(game.match.map.blocks[game.match.map.blocks.length - 1]); //end wave
+
+    //wave
+    game.match.map.blocks.push(new Block(
+        allID++,
+        (game.match.map.w / 2) + 100,
+        (game.match.map.h / 2) + 164,
+        0, 32, 32, 16,
+        { color: [50, 50, 255], colorSide: [150, 150, 250], solid: false, opacity: 0.5 }
+    ));
+    game.match.map.blocks[game.match.map.blocks.length - 1].runFunc.push(
+        function () {
+            this.HB.pos.z = sineAnimate(10, 0.05, 60) + 10 + 16;
+        }.bind(game.match.map.blocks[game.match.map.blocks.length - 1])
+    );
+    game.match.map.blocks[game.match.map.blocks.length - 1].trigger =
+        function (actor, side) {
+            if (actor.HB.pos.z >= this.HB.pos.z)
+                actor.speed.z += sineAnimate(0.5, 0.05) + 0.5
+        }.bind(game.match.map.blocks[game.match.map.blocks.length - 1]); //end wave
+
+    for (let i = 0; i < 1; i++) {
         game.match.bots.push(new Bot()) //Kevin
-        game.match.bots[game.match.bots.length - 1].character = new Character(allID++, (game.match.map.w / 2) + 1000, (game.match.map.h / 2) - 1000, game.match.bots[game.match.bots.length - 1], { target: game.player.character, nameTag: 'Jaysin', gfx: 'img/sprites/dark2', team: 1 });
+        game.match.bots[game.match.bots.length - 1].character = new Character(
+            allID++,
+            (game.match.map.w / 2) + 100,
+            (game.match.map.h / 2) - 100,
+            game.match.bots[game.match.bots.length - 1],
+            // { target: game.player.character, nameTag: 'Jaysin', gfx: 'img/sprites/dark2', team: 1 }
+            {
+                // target: game.player.character,
+                nameTag: 'Kevin', team: 1, gfx: 'img/sprites/dark2', color: [0, 0, 255],
+                hover: 16, airAccel: new Vect3(0.15, 0.15, 1),
+                runFunc: [
+                    function () { }.bind(game.match.bots[game.match.bots.length - 1].character)
+                ]
+            }
+        );
+        game.match.bots[game.match.bots.length - 1].character.HB = new Cylinder(new Vect3((game.match.map.w / 2), (game.match.map.h / 2) + 200, 0), 29, 37);
     }
 }

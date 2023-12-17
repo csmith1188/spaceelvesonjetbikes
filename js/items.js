@@ -19,51 +19,56 @@ class Pistol extends Item {
         this.range = 300;
         this.coolDown = 10;
         this.nextCool = 0;
+        this.ammo = 10;
+        this.ammoMax = 10;
         // Options
         if (typeof options === 'object')
             for (var key of Object.keys(options)) {
                 this[key] = options[key];
             }
     }
-    use(user, xaim, yaim, mode) {
+    use(user, aimX, aimY, mode) {
+        // Check cooldown
         if (ticks > this.nextCool) {
+            // Set next cooldown
             this.nextCool = ticks + this.coolDown;
-            if (user.ammo.pistol > 0) {
-                user.ammo.pistol--;
-                this.shootSFX.play();
-                // if (this.lungeSFX.duration <= 0 || this.lungeSFX.paused)
-                //     this.lungeSFX.play();
-                let aimX = xaim;
-                let aimY = yaim;
+            // Check ammo
+            if (this.ammo > 0) {
+                this.ammo--; // consume a bullet
+                this.shootSFX.play(); // play shoot sound
                 //find the distance from player to mouse with pythagorean theorem
                 let distance = ((aimX ** 2) + (aimY ** 2)) ** 0.5;
                 //Normalize the dimension distance by the real distance (ratio)
-                //Then multiply by the distance of the out circle
-
-                // Use these to shoot directly at crosshair
                 aimX = (aimX / distance);
                 aimY = (aimY / distance);
-
-                let spreadMagnitude = user.accuracy;
-
+                // Add the user's speed and multiply speed BEFORE spread for satisfying flamer
+                let spreadMagnitude = user.accuracy; // Apply spread and user accuracy
+                // Randomize spread
                 let spreadX = (Math.random() * 2 - 1) * spreadMagnitude;
                 let spreadY = (Math.random() * 2 - 1) * spreadMagnitude;
-
+                // Add spread to aim
                 aimX += spreadX;
                 aimY += spreadY;
-
+                // Multiply by this missile's speed
                 aimX *= this.projectileSpeed;
                 aimY *= this.projectileSpeed;
-
-                game.match.map.missiles.push(new Missile(allID++, user.x, user.y, {
-                    color: user.color,
-                    parent: user,
-                    z: user.z,
-                    xspeed: aimX,
-                    yspeed: aimY,
-                    dxspeed: aimX,
-                    dyspeed: aimY,
-                }));
+                // Add missile to map
+                game.match.map.missiles.push(
+                    new Missile(
+                        allID++, // ID
+                        user.HB.pos.x, user.HB.pos.y, user.HB.pos.z, 4, 4, 0, // Position and size
+                        {
+                            speed: new Vect3(aimX, aimY, 0)
+                        }
+                    )
+                );
+            } else {
+                if (user.ammo.ballistic > 0) {
+                    this.ammo = this.ammoMax;   // reload
+                    user.ammo.ballistic--;      // consume a clip from a user
+                } else {
+                    //play empty click sound
+                }
             }
         }
     }

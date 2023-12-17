@@ -15,6 +15,7 @@ class Block {
         this.HB = new Cube(new Vect3(x, y, z), new Vect3(vx, vy, vz))
         this.aim = new Vect3(0, 0, 0);
         this.angle = new Vect3(0, 0, 0);
+        this.speed = new Vect3(0, 0, 0);
 
         // Lifespan
         this.id = id;
@@ -60,11 +61,36 @@ class Block {
     }
 
     step() {
-        for (const func of this.runFunc) {
-            func();
+        /*
+                                          _
+          _ __  _____ _____ _ __  ___ _ _| |_
+         | '  \/ _ \ V / -_) '  \/ -_) ' \  _|
+         |_|_|_\___/\_/\___|_|_|_\___|_||_\__|
+
+        */
+        if (ticks >= this.startDelay && this.livetime != 0) {
+            this.HB.pos.x += this.speed.x;
+            this.HB.pos.y += this.speed.y;
+            this.HB.pos.z += this.speed.z;
+            this.livetime--;
+            for (const func of this.runFunc) {
+                func();
+            }
+        } else if (this.livetime == 0) {
+            this.cleanup = true;
         }
     }
 
+    /*
+     ######
+     #     # #####    ##   #    #
+     #     # #    #  #  #  #    #
+     #     # #    # #    # #    #
+     #     # #####  ###### # ## #
+     #     # #   #  #    # ##  ##
+     ######  #    # #    # #    #
+
+    */
     draw() {
         if (game.player.camera._3D) {
             this.draw3D();
@@ -72,526 +98,242 @@ class Block {
 
             let compareX = game.player.camera.x - this.HB.pos.x;
             let compareY = game.player.camera.y - this.HB.pos.y;
+
+            /*
+                 _                           _ _         _
+              __| |_ _ __ ___ __ __  __ _  _| (_)_ _  __| |___ _ _
+             / _` | '_/ _` \ V  V / / _| || | | | ' \/ _` / -_) '_|
+             \__,_|_| \__,_|\_/\_/  \__|\_, |_|_|_||_\__,_\___|_|
+                                        |__/
+            */
+            if (this.HB instanceof Cylinder) {
+                // Draw shadow
+                ctx.globalAlpha = 0.4;
+                ctx.drawImage(
+                    this.shadow.img,
+                    game.window.w / 2 - compareX,
+                    game.window.h / 2 - compareY,
+                    this.HB.radius,
+                    this.HB.radius
+                );
+                ctx.globalAlpha = 1;
+                if (this.imgFile) {
+                    ctx.drawImage(this.img, game.window.w / 2 - compareX, game.window.h / 2 - compareY - this.HB.pos.z, this.HB.radius, this.HB.radius);
+                } else {
+                    //SIDE
+                    ctx.fillStyle = `rgba(${this.colorSide[0]}, ${this.colorSide[1]}, ${this.colorSide[2]}, ${this.opacity})`;
+                    ctx.beginPath();
+                    ctx.ellipse(
+                        game.window.w / 2 - compareX,
+                        game.window.h / 2 - compareY - this.HB.pos.z - this.HB.height + this.HB.radius,
+                        this.HB.radius,
+                        this.HB.radius,
+                        0, 0, 2 * Math.PI
+                    );
+                    ctx.fill();
+                    ctx.beginPath();
+                    ctx.fillRect(
+                        game.window.w / 2 - compareX - this.HB.radius,
+                        game.window.h / 2 - compareY - this.HB.pos.z - this.HB.radius,
+                        this.HB.radius * 2,
+                        this.HB.height
+                    );
+                    ctx.fill();
+                    //TOP
+                    ctx.fillStyle = `rgba(${this.color[0]}, ${this.color[1]}, ${this.color[2]}, ${this.opacity})`;
+                    ctx.beginPath();
+                    ctx.ellipse(
+                        game.window.w / 2 - compareX,
+                        game.window.h / 2 - compareY - this.HB.height - this.HB.pos.z,
+                        this.HB.radius,
+                        this.HB.radius,
+                        0, 0, 2 * Math.PI
+                    );
+                    ctx.fill();
+
+                }
+            }
+            /*
+                 _                           _
+              __| |_ _ __ ___ __ __  __ _  _| |__  ___
+             / _` | '_/ _` \ V  V / / _| || | '_ \/ -_)
+             \__,_|_| \__,_|\_/\_/  \__|\_,_|_.__/\___|
+
+            */
+            if (this.HB instanceof Cube) {
+                ctx.globalAlpha = 0.4;
+                ctx.drawImage(
+                    this.shadow.img,
+                    game.window.w / 2 - compareX,
+                    game.window.h / 2 - compareY,
+                    this.HB.volume.x,
+                    this.HB.volume.y
+                );
+                ctx.globalAlpha = 1;
+                // Box shadow
+                // ctx.fillStyle = 'rgba(0,0,0,0.2)'
+                // ctx.fillRect(
+                //     game.window.w / 2 - compareX,
+                //     game.window.h / 2 - compareY,
+                //     this.HB.volume.x,
+                //     this.HB.volume.y
+                // );
+                if (this.imgFile) {
+                    ctx.drawImage(this.img, game.window.w / 2 - compareX, game.window.h / 2 - compareY - this.HB.pos.z, this.HB.volume.x, this.HB.volume.y);
+                } else {
+                    //TOP
+                    ctx.fillStyle = `rgba(${this.color[0]}, ${this.color[1]}, ${this.color[2]}, ${this.opacity})`;
+                    ctx.fillRect(
+                        game.window.w / 2 - compareX,
+                        game.window.h / 2 - compareY - this.HB.volume.z - this.HB.pos.z,
+                        this.HB.volume.x,
+                        this.HB.volume.y
+                    );
+                    //SIDE
+                    ctx.fillStyle = `rgba(${this.colorSide[0]}, ${this.colorSide[1]}, ${this.colorSide[2]}, ${this.opacity})`;
+                    ctx.fillRect(
+                        game.window.w / 2 - compareX,
+                        game.window.h / 2 - compareY - this.HB.pos.z - this.HB.volume.z + this.HB.volume.y,
+                        this.HB.volume.x,
+                        this.HB.volume.z
+                    );
+                }
+            }
+        }
+    }
+
+    /*
+     ######                        #####  ######
+     #     # #####    ##   #    # #     # #     #
+     #     # #    #  #  #  #    #       # #     #
+     #     # #    # #    # #    #  #####  #     #
+     #     # #####  ###### # ## #       # #     #
+     #     # #   #  #    # ##  ## #     # #     #
+     ######  #    # #    # #    #  #####  ######
+
+    */
+    draw3D() {
+        let compareX = game.player.camera.x - this.HB.pos.x;
+        let compareY = game.player.camera.y - this.HB.pos.y;
+        /*
+                         _                           _ _         _
+                      __| |_ _ __ ___ __ __  __ _  _| (_)_ _  __| |___ _ _
+                     / _` | '_/ _` \ V  V / / _| || | | | ' \/ _` / -_) '_|
+                     \__,_|_| \__,_|\_/\_/  \__|\_, |_|_|_||_\__,_\___|_|
+                                                |__/
+                    */
+        if (this.HB instanceof Cylinder) {
+            // Draw shadow
             ctx.globalAlpha = 0.4;
             ctx.drawImage(
                 this.shadow.img,
                 game.window.w / 2 - compareX,
                 game.window.h / 2 - compareY,
-                this.HB.volume.x,
-                this.HB.volume.y
+                this.HB.radius,
+                this.HB.radius
             );
             ctx.globalAlpha = 1;
-            // Box shadow
-            // ctx.fillStyle = 'rgba(0,0,0,0.2)'
-            // ctx.fillRect(
-            //     game.window.w / 2 - compareX,
-            //     game.window.h / 2 - compareY,
-            //     this.HB.volume.x,
-            //     this.HB.volume.y
-            // );
             if (this.imgFile) {
-                ctx.drawImage(this.img, game.window.w / 2 - compareX, game.window.h / 2 - compareY - this.HB.pos.z, this.HB.volume.x, this.HB.volume.y);
+                ctx.drawImage(this.img, game.window.w / 2 - compareX, game.window.h / 2 - compareY - this.HB.pos.z, this.HB.radius, this.HB.radius);
             } else {
+                //SIDE
+                ctx.beginPath();
+                ctx.fillStyle = `rgba(${this.colorSide[0]}, ${this.colorSide[1]}, ${this.colorSide[2]}, ${this.opacity})`;
+                ctx.ellipse(
+                    game.window.w / 2 - compareX,
+                    game.window.h / 2 - (compareY * game.player.camera.angle) - (this.HB.pos.z * (1 - game.player.camera.angle)),
+                    this.HB.radius,
+                    this.HB.radius * game.player.camera.angle,
+                    0, 0, 2 * Math.PI
+                );
+                ctx.fill();
+                ctx.beginPath();
+                ctx.fillRect(
+                    game.window.w / 2 - compareX - this.HB.radius,
+                    game.window.h / 2 - (compareY * game.player.camera.angle) - (this.HB.height * (1 - game.player.camera.angle)) - (this.HB.pos.z * (1 - game.player.camera.angle)),
+                    this.HB.radius * 2,
+                    this.HB.height * (1 - game.player.camera.angle)
+                );
+                ctx.fill();
                 //TOP
+                ctx.beginPath();
+                ctx.fillStyle = `rgba(${this.color[0]}, ${this.color[1]}, ${this.color[2]}, ${this.opacity})`;
+                ctx.ellipse(
+                    game.window.w / 2 - compareX,
+                    game.window.h / 2 - (compareY * game.player.camera.angle) - (this.HB.height * (1 - game.player.camera.angle)) - (this.HB.pos.z * (1 - game.player.camera.angle)),
+                    this.HB.radius,
+                    this.HB.radius * game.player.camera.angle,
+                    0, 0, 2 * Math.PI
+                );
+                ctx.fill();
+            }
+        }
+        /*
+             _                           _
+          __| |_ _ __ ___ __ __  __ _  _| |__  ___
+         / _` | '_/ _` \ V  V / / _| || | '_ \/ -_)
+         \__,_|_| \__,_|\_/\_/  \__|\_,_|_.__/\___|
+ 
+        */
+        if (this.HB instanceof Cube) {
+            ctx.globalAlpha = 0.5;
+            ctx.drawImage(
+                this.shadow.img,
+                game.window.w / 2 - compareX,
+                game.window.h / 2 - (compareY * game.player.camera.angle),
+                this.HB.volume.x,
+                this.HB.volume.y * game.player.camera.angle
+            );
+            ctx.globalAlpha = 1;
+            if (this.imgFile) {
+                // ctx.drawImage(this.img, game.window.w / 2 - compareX, game.window.h / 2 - compareY - this.HB.pos.z, this.HB.volume.x, this.HB.volume.y);
+            } else if (this.color) {
                 ctx.fillStyle = `rgba(${this.color[0]}, ${this.color[1]}, ${this.color[2]}, ${this.opacity})`;
                 ctx.fillRect(
                     game.window.w / 2 - compareX,
-                    game.window.h / 2 - compareY - this.HB.volume.z - this.HB.pos.z,
+                    game.window.h / 2 - (compareY * game.player.camera.angle) - (this.HB.volume.z * (1 - game.player.camera.angle)) - (this.HB.pos.z * (1 - game.player.camera.angle)),
                     this.HB.volume.x,
-                    this.HB.volume.y
+                    this.HB.volume.y * game.player.camera.angle
                 );
-                //SIDE
-                ctx.fillStyle = `rgba(${this.colorSide[0]}, ${this.colorSide[1]}, ${this.colorSide[2]}, ${this.opacity})`;
-                ctx.fillRect(
-                    game.window.w / 2 - compareX,
-                    game.window.h / 2 - compareY - this.HB.pos.z - this.HB.volume.z + this.HB.volume.y,
-                    this.HB.volume.x,
-                    this.HB.volume.z
-                );
+                if (this.colorSide) {
+                    ctx.fillStyle = `rgba(${this.colorSide[0]}, ${this.colorSide[1]}, ${this.colorSide[2]}, ${this.opacity})`;
+                    ctx.fillRect(
+                        game.window.w / 2 - compareX,
+                        game.window.h / 2 - (compareY * game.player.camera.angle) - (this.HB.pos.z * (1 - game.player.camera.angle)) - (this.HB.volume.z * (1 - game.player.camera.angle)) + (this.HB.volume.y * game.player.camera.angle),
+                        this.HB.volume.x,
+                        this.HB.volume.z * (1 - game.player.camera.angle)
+                    );
+                }
             }
         }
     }
 
-    draw3D() {
-        let compareX = game.player.camera.x - this.HB.pos.x;
-        let compareY = game.player.camera.y - this.HB.pos.y;
-        // if (
-        //     game.window.h / 2 - (compareY * game.player.camera.angle) - this.HB.pos.z - (this.HB.volume.z * (1 - game.player.camera.angle)) + (this.HB.volume.y * game.player.camera.angle) + this.HB.volume.z * (1 - game.player.camera.angle)
-        //     >
-        //     (game.window.h / 2) * (1 - game.player.camera.angle)
-        // ) {
+    /*
+     #######
+        #    #####  #  ####   ####  ###### #####
+        #    #    # # #    # #    # #      #    #
+        #    #    # # #      #      #####  #    #
+        #    #####  # #  ### #  ### #      #####
+        #    #   #  # #    # #    # #      #   #
+        #    #    # #  ####   ####  ###### #    #
 
-        //     if (
-        //         game.window.h / 2 - (compareY * game.player.camera.angle) - this.HB.pos.z - (this.HB.volume.z * (1 - game.player.camera.angle)) + (this.HB.volume.y * game.player.camera.angle)
-        //         <
-        //         (game.window.h / 2) + ((game.window.h / 2) * (game.player.camera.angle))
-        //     ) {
-                //
-                // DRAW SHADOW ON BOTTOM
-                //
-                
-                ctx.globalAlpha = 0.5;
-                ctx.drawImage(
-                    this.shadow.img,
-                    game.window.w / 2 - compareX,
-                    game.window.h / 2 - (compareY * game.player.camera.angle),
-                    this.HB.volume.x,
-                    this.HB.volume.y * game.player.camera.angle
-                );
-                ctx.globalAlpha = 1;
-                if (this.imgFile) {
-                    // ctx.drawImage(this.img, game.window.w / 2 - compareX, game.window.h / 2 - compareY - this.HB.pos.z, this.HB.volume.x, this.HB.volume.y);
-                } else if (this.color) {
-                    ctx.fillStyle = `rgba(${this.color[0]}, ${this.color[1]}, ${this.color[2]}, ${this.opacity})`;
-                    ctx.fillRect(
-                        game.window.w / 2 - compareX,
-                        game.window.h / 2 - (compareY * game.player.camera.angle) - (this.HB.volume.z * (1 - game.player.camera.angle)) - (this.HB.pos.z * (1 - game.player.camera.angle)),
-                        this.HB.volume.x,
-                        this.HB.volume.y * game.player.camera.angle
-                    );
-                    if (this.colorSide) {
-                        ctx.fillStyle = `rgba(${this.colorSide[0]}, ${this.colorSide[1]}, ${this.colorSide[2]}, ${this.opacity})`;
-                        ctx.fillRect(
-                            game.window.w / 2 - compareX,
-                            game.window.h / 2 - (compareY * game.player.camera.angle) - (this.HB.pos.z * (1 - game.player.camera.angle)) - (this.HB.volume.z * (1 - game.player.camera.angle)) + (this.HB.volume.y * game.player.camera.angle),
-                            this.HB.volume.x,
-                            this.HB.volume.z * (1 - game.player.camera.angle)
-                        );
-                    }
-                }
-        //     }
-        // }
-    }
-
+    */
     trigger(actor, side) {
         return
     }
 
 }
 
-/*
-      ::::::::   ::::::::      :::     :::
-    :+:    :+: :+:    :+:   :+: :+:   :+:
-   +:+        +:+    +:+  +:+   +:+  +:+
-  :#:        +#+    +:+ +#++:++#++: +#+
- +#+   +#+# +#+    +#+ +#+     +#+ +#+
-#+#    #+# #+#    #+# #+#     #+# #+#
-########   ########  ###     ### ##########
-*/
-
-class Goal extends Block {
-    constructor(id, x, y, options) {
-        super(id, x, y, options);
-        this.tags = ['immobile', 'nocollide']; //Made it nocollide so you can enter the space
-        this.activeGoal = false;
-        this.type = 'goal';
-        this.touchSFX = new Audio('sfx/coin_01.wav');
-    }
-
-    collide(colliders, options) {
-        // custom collide code "activates" the powerup
-        for (const c of colliders) {
-            if (c != this) {
-                //Goals collide infinitely upwards
-                if (Math.abs(this.x - c.x) < this.w / 2 + (c.w / 2) && Math.abs(this.y - c.y) < this.h / 2 + (c.h / 2)) {
-                    if (this.activeGoal && !c.bot) {
-                        game.match.goalIndex++;
-                        this.touchSFX.play();
-                    } else
-                        if (this == c.target) {
-                            if (game.match.goals.indexOf(this) + 1 >= game.match.goals.length)
-                                c.target = game.match.goals[0]
-                            else
-                                c.target = game.match.goals[game.match.goals.indexOf(this) + 1]
-                        }
-                }
-            }
-        }
-    }
-}
 
 /*
-    :::       :::     :::     :::     ::: ::::::::::
-   :+:       :+:   :+: :+:   :+:     :+: :+:
-  +:+       +:+  +:+   +:+  +:+     +:+ +:+
- +#+  +:+  +#+ +#++:++#++: +#+     +:+ +#++:++#
-+#+ +#+#+ +#+ +#+     +#+  +#+   +#+  +#+
-#+#+# #+#+#  #+#     #+#   #+#+#+#   #+#
-###   ###   ###     ###     ###     ##########
+      :::::::::   ::::::::  :::     :::   ::: :::::::::  :::        ::::::::   ::::::::  :::    :::
+     :+:    :+: :+:    :+: :+:     :+:   :+: :+:    :+: :+:       :+:    :+: :+:    :+: :+:   :+:
+    +:+    +:+ +:+    +:+ +:+      +:+ +:+  +:+    +:+ +:+       +:+    +:+ +:+        +:+  +:+
+   +#++:++#+  +#+    +:+ +#+       +#++:   +#++:++#+  +#+       +#+    +:+ +#+        +#++:++
+  +#+        +#+    +#+ +#+        +#+    +#+    +#+ +#+       +#+    +#+ +#+        +#+  +#+
+ #+#        #+#    #+# #+#        #+#    #+#    #+# #+#       #+#    #+# #+#    #+# #+#   #+#
+###         ########  ########## ###    #########  ########## ########   ########  ###    ###
 */
-
-class Wave extends Block {
-    constructor(id, x, y, options) {
-        super(id, x, y, options);
-        this.zforce = 1;
-        this.xyforce = 0.05;
-        this.tags = ['immobile', 'nocollide']; //Made it nocollide so you can enter the space
-        if (typeof options === 'object')
-            for (var key of Object.keys(options)) {
-                this[key] = options[key];
-            }
-        this.img.src = this.imgFile;
-        this.startDelay = this.startDelay + ticks
-    }
-
-    collide(colliders, options) {
-        if (this.active && ticks >= this.startDelay) {
-            for (const c of colliders) {
-                if (c != this) {
-                    if (!c.tags.includes('immobile') && Math.abs(this.x - c.x) < this.w / 2 + (c.w / 2) && Math.abs(this.y - c.y) < this.h / 2 + (c.h / 2) && this.z < c.d && c.z < this.d) {
-                        let compareX = c.x - this.x;
-                        let compareY = c.y - this.y;
-                        let xpeak = 1 - Math.abs(compareX) / (this.w / 2);
-                        if (xpeak < 0) xpeak = 0;
-                        let ypeak = 1 - Math.abs(compareY) / (this.h / 2);
-                        if (ypeak < 0) ypeak = 0;
-                        // USE ( comparison != comparison) condition instead
-                        if (this.xspeed != 0 && Math.abs(this.xspeed) >= Math.abs(this.yspeed)) {
-                            // X
-                            //Same direction
-                            if ((c.xspeed >= 0 && this.xspeed >= 0) || (c.xspeed < 0 && this.xspeed < 0))
-                                c.zspeed += Math.abs(this.zforce * xpeak) * Math.abs(c.xspeed)
-                            //Opposite
-                            else if ((c.xspeed >= 0 && this.xspeed < 0) || (c.xspeed < 0 && this.xspeed >= 0))
-                                c.zspeed += this.zforce * xpeak * Math.abs(c.xspeed) * 3
-                        } else if (this.yspeed != 0) {
-                            // Y
-                            //Same direction
-                            if ((c.yspeed >= 0 && this.yspeed >= 0) || (c.yspeed < 0 && this.yspeed < 0))
-                                c.zspeed += Math.abs(this.zforce * ypeak) * Math.abs(c.yspeed)
-                            //Opposite
-                            else if ((c.yspeed >= 0 && this.yspeed < 0) || (c.yspeed < 0 && this.yspeed >= 0))
-                                c.zspeed += Math.abs(this.zforce * ypeak) * Math.abs(c.yspeed) * 3
-
-                        } else {
-                            c.zspeed += Math.abs(this.zforce * ypeak) * ((Math.abs(c.xspeed) + Math.abs(c.yspeed)) / 2)
-                        }
-                        c.xspeed += this.xspeed * this.xyforce * xpeak
-                        c.yspeed += this.yspeed * this.xyforce * xpeak
-                    }
-                }
-            }
-        }
-    }
-
-    draw(options) {
-        if (this.active && ticks >= this.startDelay) {
-            let compareX = game.player.camera.x - this.x;
-            let compareY = game.player.camera.y - this.y;
-            //Get rid of these next two lines if you want an annoying error
-            if (isNaN(compareX)) compareX = 0;
-            if (isNaN(compareY)) compareY = 0;
-
-            if (this.imgFile) {
-                ctx.drawImage(this.img, game.window.w / 2 - compareX - (this.w / 2), game.window.h / 2 - compareY - (this.h / 2) - this.z, this.w, this.h);
-            } else if (this.color) {
-                if (game.debug) {
-                    ctx.fillStyle = "#00FF00";
-                    ctx.fillRect(game.window.w / 2 - compareX - (this.w / 2), game.window.h / 2 - compareY - (this.h / 2), this.w, this.h);
-                    ctx.fillStyle = "#000000";
-                    ctx.fillRect(game.window.w / 2 - compareX - 2, game.window.h / 2 - compareY - 2, 4, 4);
-                } else {
-                    // Create gradient
-                    let grd = ctx.createLinearGradient(game.window.w / 2 - compareX - (this.w / 2), 0, game.window.w / 2 - compareX - (this.w / 2) + this.w, 0);
-                    grd.addColorStop(0, "rgba(0, 0, 255, 0.2)");
-                    grd.addColorStop(0.5, "rgba(255, 255, 255, 0.8)"); //Crest point
-                    grd.addColorStop(1, "rgba(0, 0, 255, 0.2)");
-                    // Fill with gradient
-                    ctx.fillStyle = grd;
-                    ctx.fillRect(game.window.w / 2 - compareX - (this.w / 2), game.window.h / 2 - compareY - (this.h / 2), this.w, this.h);
-
-                }
-            }
-        }
-    }
-}
-
-/*
-      :::::::::  :::::::::: :::::::::  :::::::::  ::::::::::: ::::::::
-     :+:    :+: :+:        :+:    :+: :+:    :+:     :+:    :+:    :+:
-    +:+    +:+ +:+        +:+    +:+ +:+    +:+     +:+    +:+
-   +#+    +:+ +#++:++#   +#++:++#+  +#++:++#:      +#+    +#++:++#++
-  +#+    +#+ +#+        +#+    +#+ +#+    +#+     +#+           +#+
- #+#    #+# #+#        #+#    #+# #+#    #+#     #+#    #+#    #+#
-#########  ########## #########  ###    ### ########### ########
-*/
-
-class Debris extends Block {
-    constructor(id, x, y, options) {
-        super(id, x, y, options);
-        this.tags = ['nocollide', 'immobile', 'debris'];
-        this.cleanup = true;
-        this.blown = false;
-        this.z = 0;
-        this.xspeed = 0;
-        this.yspeed = 0;
-        this.zspeed = 0;
-        this.dxspeed = 0;
-        this.dyspeed = 0;
-        this.hover = 0;
-        this.weight = 0.2;
-        this.terminalVel = 1;
-        this.dying = false;
-        this.livetime = 300;
-        this.gravity = true;
-        this.landable = true;
-        this.wind = true;
-        this.contained = false; //Cannot leave the map boundaries
-        this.jetphys = false; //Can the speed of this be changed?
-        this.speedChange = true; //Can this have its speed changed from dspeed?
-        if (typeof options === 'object')
-            for (var key of Object.keys(options)) {
-                this[key] = options[key];
-            }
-        this.img.src = this.imgFile;
-    }
-
-    collide(colliders, options) {
-        if (this.active && ticks >= this.startDelay) {
-            // can be blown around
-            if (this.blown) {
-                for (const c of colliders) {
-                    if (c != this && c.team != undefined) {
-                        if (Math.abs(this.x - c.x) < this.w / 2 + (c.w / 2) && Math.abs(this.y - c.y) < this.h / 2 + (c.h / 2) && this.z < c.d && c.z < this.d) {
-                            // this.xspeed += c.xspeed * this.weight;
-                            // this.yspeed += c.yspeed * this.weight;
-                            // this.zspeed += c.zspeed * this.weight;
-                        }
-                    }
-                }
-            }
-        }
-    }
-
-}
-
-/*
-      :::::::::      :::     :::        :::
-     :+:    :+:   :+: :+:   :+:        :+:
-    +:+    +:+  +:+   +:+  +:+        +:+
-   +#++:++#+  +#++:++#++: +#+        +#+
-  +#+    +#+ +#+     +#+ +#+        +#+
- #+#    #+# #+#     #+# #+#        #+#
-#########  ###     ### ########## ##########
-*/
-
-// class Ball extends Block {
-//     constructor(id, x, y, options) {
-//         super(id, x, y, options);
-//         this.tags = ['nodamage']; //Made it nocollide so you can enter the space
-//         this.type = 'ball';
-//         this.xspeed = 0;
-//         this.yspeed = 0;
-//         this.zspeed = 0;
-//         this.frictionMulti = 1.005;
-//     }
-
-//     step() {
-//         if (this.active) {
-//             // Friction
-//             this.xspeed *= game.match.map.friction * this.frictionMulti;
-//             this.yspeed *= game.match.map.friction * this.frictionMulti;
-//             if (this.z > 0) this.zspeed -= game.match.map.gravity;
-//             if (this.z < 0) this.zspeed += game.match.map.gravity;
-//             if (Math.abs(this.z) < 4) this.zspeed *= 0.8
-//             if (Math.abs(this.zspeed) < 0.2 && Math.abs(this.z) < 2) {
-//                 this.zspeed = 0;
-//                 this.z = 0;
-//             }
-//             this.zspeed *= game.match.map.gravityFriction * this.frictionMulti;
-//             // Slow down when hitting max speed
-//             if (this.xspeed > game.match.map.maxSpeed) this.xspeed = game.match.map.maxSpeed;
-//             else if (this.xspeed < game.match.map.maxSpeed * -1) this.xspeed = game.match.map.maxSpeed * -1;
-//             if (this.yspeed > game.match.map.maxSpeed) this.yspeed = game.match.map.maxSpeed;
-//             else if (this.yspeed < game.match.map.maxSpeed * -1) this.yspeed = game.match.map.maxSpeed * -1;
-//             // Make the move
-//             this.x += this.xspeed;
-//             this.y += this.yspeed;
-//             // Gravity
-//             this.z += this.zspeed;
-//             if (this.z < this.hover * -1) {
-//                 this.z = this.hover * -1;
-//                 this.zspeed *= -1;
-//                 if (game.debug) game.match.map.blocks.push(new Block(this.x, this.y, { color: '#0000FF', tags: ['immobile', 'nocollide'] }))
-//             }
-
-//             // Check for out of bounds
-//             if (this.x + (this.w / 2) > game.match.map.w) {
-//                 this.x = game.match.map.w - (this.w / 2);
-//                 if (Math.abs(this.xspeed) > game.match.map.collideDamageSpeed) this.hp -= Math.abs(this.xspeed);
-//                 this.xspeed *= -1;
-//             }
-//             if (this.x < (this.w / 2)) {
-//                 this.x = (this.w / 2);
-//                 if (Math.abs(this.xspeed) > game.match.map.collideDamageSpeed) this.hp -= Math.abs(this.xspeed);
-//                 this.xspeed *= -1;
-//             }
-//             if (this.y + (this.h / 2) > game.match.map.h) {
-//                 this.y = game.match.map.h - (this.h / 2);
-//                 if (Math.abs(this.yspeed) > game.match.map.collideDamageSpeed) this.hp -= Math.abs(this.yspeed);
-//                 this.yspeed *= -1;
-//             }
-//             if (this.y < (this.h / 2)) {
-//                 this.y = (this.h / 2);
-//                 if (Math.abs(this.yspeed) > game.match.map.collideDamageSpeed) this.hp -= Math.abs(this.yspeed);
-//                 this.yspeed *= -1;
-//             }
-//         }
-//     }
-// }
-
-/*
-      :::::::::     :::     ::::::::: ::::::::::: ::::::::::: ::::::::  :::    ::: :::            ::: ::::::::::: ::::::::  :::::::::   ::::::::
-     :+:    :+:  :+: :+:   :+:    :+:    :+:         :+:    :+:    :+: :+:    :+: :+:          :+: :+:   :+:    :+:    :+: :+:    :+: :+:    :+:
-    +:+    +:+ +:+   +:+  +:+    +:+    +:+         +:+    +:+        +:+    +:+ +:+         +:+   +:+  +:+    +:+    +:+ +:+    +:+ +:+
-   +#++:++#+ +#++:++#++: +#++:++#:     +#+         +#+    +#+        +#+    +:+ +#+        +#++:++#++: +#+    +#+    +:+ +#++:++#:  +#++:++#++
-  +#+       +#+     +#+ +#+    +#+    +#+         +#+    +#+        +#+    +#+ +#+        +#+     +#+ +#+    +#+    +#+ +#+    +#+        +#+
- #+#       #+#     #+# #+#    #+#    #+#         #+#    #+#    #+# #+#    #+# #+#        #+#     #+# #+#    #+#    #+# #+#    #+# #+#    #+#
-###       ###     ### ###    ###    ###     ########### ########   ########  ########## ###     ### ###     ########  ###    ###  ########
-*/
-class Particulator extends Block {
-    constructor(id, x, y, options) {
-        super(id, x, y, options);
-        this.tags = ['immobile', 'nocollide']; //Made it nocollide so you can enter the space
-
-    }
-
-
-
-}
-
-/*
-      :::::::::      :::      :::::::: ::::::::::: ::::::::          :::::::::     :::     :::::::::   ::::::::
-     :+:    :+:   :+: :+:   :+:    :+:    :+:    :+:    :+:         :+:    :+:  :+: :+:   :+:    :+: :+:    :+:
-    +:+    +:+  +:+   +:+  +:+           +:+    +:+                +:+    +:+ +:+   +:+  +:+    +:+ +:+
-   +#++:++#+  +#++:++#++: +#++:++#++    +#+    +#+                +#++:++#+ +#++:++#++: +#+    +:+ +#++:++#++
-  +#+    +#+ +#+     +#+        +#+    +#+    +#+                +#+       +#+     +#+ +#+    +#+        +#+
- #+#    #+# #+#     #+# #+#    #+#    #+#    #+#    #+#         #+#       #+#     #+# #+#    #+# #+#    #+#
-#########  ###     ###  ######## ########### ########          ###       ###     ### #########   ########
-*/
-
-class JumpPad extends Block {
-    constructor(id, x, y, options) {
-        super(id, x, y, options);
-        this.tags = ['immobile', 'nocollide']; //Made it nocollide so you can enter the space
-        this.jumpBoost = 3;
-        // Options
-        if (typeof options === 'object')
-            for (var key of Object.keys(options)) {
-                this[key] = options[key];
-            }
-    }
-
-    collide(colliders, options) {
-        if (this.active && ticks >= this.startDelay) {
-            // custom collide code "activates" the powerup
-            for (const c of colliders) {
-                if (c != this) {
-                    if (!c.tags.includes('immobile') && Math.abs(this.x - c.x) < this.w / 2 + (c.w / 2) && Math.abs(this.y - c.y) < this.h / 2 + (c.h / 2) && this.z < c.d && c.z < this.d) {
-                        // if (Math.abs(c.z) <= 1)
-                        c.zspeed += this.jumpBoost * ((Math.abs(c.xspeed) + Math.abs(c.yspeed)) / 2)
-                    }
-                }
-            }
-        }
-    }
-}
-
-class SpeedPad extends Block {
-    constructor(id, x, y, options) {
-        super(id, x, y, options);
-        this.tags = ['immobile', 'nocollide']; //Made it nocollide so you can enter the space
-    }
-
-    collide(colliders, options) {
-        // custom collide code "activates" the powerup
-        for (const c of colliders) {
-            if (c != c.team != undefined) {
-                if (!c.tags.includes('immobile') && Math.abs(this.x - c.x) < this.w / 2 + (c.w / 2) && Math.abs(this.y - c.y) < this.h / 2 + (c.h / 2) && this.z < c.d && c.z < this.d) {
-                    c.xspeed *= 1.1
-                    c.yspeed *= 1.1
-                }
-            }
-        }
-    }
-}
-
-class AmmoPickup extends Block {
-    constructor(id, x, y, options) {
-        super(id, x, y, options);
-        this.w = this.h = 32;
-        this.color = '#FF00FF';
-        this.ammoType = 'pistol';
-        this.ammoAmount = 25;
-        this.tags = ['immobile', 'nocollide']; //Made it nocollide so you can enter the space
-        // Options
-        if (typeof options === 'object')
-            for (var key of Object.keys(options)) {
-                this[key] = options[key];
-            }
-    }
-
-    collide(colliders, options) {
-        // custom collide code "activates" the powerup
-        for (const c of colliders) {
-            if (this.active) {
-                if (c != c.team != undefined) {
-                    if (!c.tags.includes('immobile') && Math.abs(this.x - c.x) < this.w / 2 + (c.w / 2) && Math.abs(this.y - c.y) < this.h / 2 + (c.h / 2) && this.z < c.d && c.z < this.d) {
-                        c.ammo[this.ammoType] += this.ammoAmount;
-                        this.active = false;
-                    }
-                }
-            }
-        }
-    }
-}
-
-class HealthBlock extends Block {
-    constructor(id, x, y, options) {
-        super(id, x, y, options);
-        this.tags = ['nocollide', 'immobile'];
-        this.healthCollide = 0;
-        this.powerCollide = 0;
-        if (typeof options === 'object')
-            for (var key of Object.keys(options)) {
-                this[key] = options[key];
-            }
-    }
-
-    collide(colliders, options) {
-        for (const c of colliders) {
-            if (c != this)
-                if (Math.abs(this.x - c.x) < this.w / 2 + (c.w / 2) && Math.abs(this.y - c.y) < this.h / 2 + (c.h / 2) && this.z < c.d && c.z < this.d) { //depth of the block
-                    c.hp += this.healthCollide;
-                    c.power += this.powerCollide;
-                }
-            if (c.hp > c.hp_max) c.hp = c.hp_max;
-            if (c.power > c.power_max) c.power = c.power_max;
-        }
-    }
-}
-
-// class HealthItem extends Block {
-//     constructor(id, x, y, options) {
-//         super(id, x, y, options);
-//         this.tags = ['immobile', 'nocollide']; //Made it nocollide so you can enter the space
-//         this.healing = 50;
-//     }
-//     collide(colliders, options) {
-//         // custom collide code "activates" the powerup
-//         for (const c of colliders) {
-//             if (c != this) {
-//                 if (Math.abs(this.x - c.x) < this.w  / 2 + (c.w /2) && Math.abs(this.y - c.y) < this.h / 2  + (c.h /2) && this.z < c.d && c.z < this.d) {
-//                     if (!c.bot) {
-//                         c.hp += this.healing;
-//                         game.match.map.blocks.splice(arr.findIndex(block => {return block.id === 3;})
-//                     }
-//                 }
-//             }
-//         }
-//     }
-// }
-
 class PolyBlock {
     constructor(id, x, y, options) {
         this.id = id;
@@ -668,76 +410,155 @@ class PolyBlock {
 }
 
 
-
-
-
+/*
+        :::   :::   ::::::::::: ::::::::   :::::::: ::::::::::: :::        ::::::::::
+      :+:+: :+:+:      :+:    :+:    :+: :+:    :+:    :+:     :+:        :+:
+    +:+ +:+:+ +:+     +:+    +:+        +:+           +:+     +:+        +:+
+   +#+  +:+  +#+     +#+    +#++:++#++ +#++:++#++    +#+     +#+        +#++:++#
+  +#+       +#+     +#+           +#+        +#+    +#+     +#+        +#+
+ #+#       #+#     #+#    #+#    #+# #+#    #+#    #+#     #+#        #+#
+###       ### ########### ########   ######## ########### ########## ##########
+*/
 class Missile extends Block {
-    constructor(id, x, y, options) {
-        super(id, x, y, options);
-        this.w = 8;
-        this.h = 8;
-        this.d = 8;
+    constructor(id, x, y, z, vx, vy, vz, options) {
+        super(id, x, y, z, vx, vy, vz, options);
+        this.HB = new Cylinder(new Vect3(x, y, z), vx, vy);
         this.dying = true;
-        this.livetime = 100,
-            this.type = 'missile';
-        this.color = '#FF0000';
-        this.tags = ['nocollide']; //Made it nocollide so you can enter the space
+        this.livetime = 100;
+        this.type = 'missile';
+        this.color = [255, 0, 0];
+        this.colorSide = [255, 128, 0];
         this.touchSFX = new Audio('sfx/hit_01.wav');
         this.damage = 10;
-        this.runFunc = function () {
-            let tempx = (Math.random() * 1) - 0.5;
-            let tempy = (Math.random() * 1) - 0.5;
-            if (ticks % 2 == 0) game.match.map.debris.push(new Debris(allID++, this.x, this.y,
-                {
-                    w: 4,
-                    h: 4,
-                    xspeed: tempx,
-                    yspeed: tempy,
-                    z: this.z,
-                    color: '#dddd00',
-                    livetime: 15,
-                    dying: true,
-                    landable: false
-                }));
-        }
+        this.runFunc = [
+            // Create Debris
+            // function () {
+            //     let tempx = (Math.random() * 1) - 0.5;
+            //     let tempy = (Math.random() * 1) - 0.5;
+            //     if (ticks % 2 == 0) game.match.map.debris.push(new Debris(allID++, this.x, this.y,
+            //         {
+            //             w: 4,
+            //             h: 4,
+            //             xspeed: tempx,
+            //             yspeed: tempy,
+            //             z: this.z,
+            //             color: '#dddd00',
+            //             livetime: 15,
+            //             dying: true,
+            //             landable: false
+            //         }));
+            // }
+        ]
         if (typeof options === 'object')
             for (var key of Object.keys(options)) {
                 this[key] = options[key];
             }
-
     }
 
-    collide(colliders, options) {
+    // collide(colliders, options) {
+    //     if (this.active && ticks >= this.startDelay) {
+    //         // custom collide code "activates" the powerup
+    //         for (const c of colliders) {
+    //             if (c != this && c.team != this.parent.team && !c.tags.includes('nocollide')) {
+    //                 //Goals collide infinitely upwards
+    //                 if (Math.abs(this.x - c.x) < this.w / 2 + (c.w / 2) && Math.abs(this.y - c.y) < this.h / 2 + (c.h / 2)) {
+    //                     c.hp -= this.damage;
+    //                     this.active = false;
+    //                     this.cleanup = true;
+    //                     this.touchSFX.play();
+    //                     for (let parts = 0; parts < 10; parts++) {
+    //                         let tempx = (Math.random() * 4) - 2;
+    //                         let tempy = (Math.random() * 4) - 2;
+    //                         let tempC = Math.ceil(Math.random() * 255);
+    //                         game.match.map.debris.push(new Debris(allID++, this.x, this.y,
+    //                             {
+    //                                 w: 2,
+    //                                 h: 2,
+    //                                 xspeed: tempx,
+    //                                 yspeed: tempy,
+    //                                 z: this.z,
+    //                                 color: '#ff' + tempC.toString(16) + '00',
+    //                                 livetime: 20,
+    //                                 dying: true,
+    //                                 landable: false
+    //                             }));
+    //                     }
+    //                 }
+    //             }
+    //         }
+    //     }
+    // }
+
+    step() {
         if (this.active && ticks >= this.startDelay) {
-            // custom collide code "activates" the powerup
-            for (const c of colliders) {
-                if (c != this && c.team != this.parent.team && !c.tags.includes('nocollide')) {
-                    //Goals collide infinitely upwards
-                    if (Math.abs(this.x - c.x) < this.w / 2 + (c.w / 2) && Math.abs(this.y - c.y) < this.h / 2 + (c.h / 2)) {
-                        c.hp -= this.damage;
-                        this.active = false;
-                        this.cleanup = true;
-                        this.touchSFX.play();
-                        for (let parts = 0; parts < 10; parts++) {
-                            let tempx = (Math.random() * 4) - 2;
-                            let tempy = (Math.random() * 4) - 2;
-                            let tempC = Math.ceil(Math.random() * 255);
-                            game.match.map.debris.push(new Debris(allID++, this.x, this.y,
-                                {
-                                    w: 2,
-                                    h: 2,
-                                    xspeed: tempx,
-                                    yspeed: tempy,
-                                    z: this.z,
-                                    color: '#ff' + tempC.toString(16) + '00',
-                                    livetime: 20,
-                                    dying: true,
-                                    landable: false
-                                }));
-                        }
-                    }
+            if (ticks >= this.startDelay && this.livetime != 0) {
+                // Move
+                this.HB.pos.x += this.speed.x;
+                this.HB.pos.y += this.speed.y;
+                this.HB.pos.z += this.speed.z;
+
+                /*
+                   ___     _ _         _
+                  / __|  _| (_)_ _  __| |___ _ _
+                 | (_| || | | | ' \/ _` / -_) '_|
+                  \___\_, |_|_|_||_\__,_\___|_|
+                      |__/
+                */
+                for (let c of game.match.bots) {
+                    if (c.character === this) //Don't collide with yourself
+                        continue;
+                    c = c.character; //Get the character from the bot
+                    // let side = this.HB.collide(c.HB); //Check for collision
+                    // if (side && c.solid) {
+                    //     c.trigger(this, side);
+                    // }
                 }
+
+                /*
+                  ___ _         _
+                 | _ ) |___  __| |__ ___
+                 | _ \ / _ \/ _| / /(_-<
+                 |___/_\___/\__|_\_\/__/
+     
+                */
+                // for (const c of game.match.map.blocks) { //For each block
+                //     let side = this.HB.collide(c.HB); //Check for collision
+                //     if (side) c.trigger(this, side); //Trigger the block's trigger function
+                //     if (c.solid) //If the block is solid
+                //         switch (side) { //see which side you collided on
+                //             case 'front':
+                //                 //Move the character to the edge of the block
+                //                 this.HB.pos.y = c.HB.pos.y + c.HB.volume.y + this.HB.radius;
+                //                 break;
+                //             case 'rear':
+                //                 this.HB.pos.y = c.HB.pos.y - this.HB.radius;
+                //                 break;
+                //             case 'right':
+                //                 this.HB.pos.x = c.HB.pos.x + c.HB.volume.x + this.HB.radius;
+                //                 break;
+                //             case 'left':
+                //                 this.HB.pos.x = c.HB.pos.x - this.HB.radius;
+                //                 break;
+                //             case 'top':
+                //                 this.HB.pos.z = c.HB.pos.z + c.HB.volume.z;
+                //                 break;
+                //             case 'bottom':
+                //                 this.HB.pos.z = c.HB.pos.z - this.HB.height;
+                //                 break;
+                //             default:
+                //                 //break if you didn't collide
+                //                 break;
+                //         }
+                // }
+
+                for (const func of this.runFunc) {
+                    func();
+                }
+                this.livetime--;
+            } else if (this.livetime == 0) {
+                this.active = false;
             }
         }
     }
+
 }
