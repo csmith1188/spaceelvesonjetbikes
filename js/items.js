@@ -56,9 +56,10 @@ class Pistol extends Item {
                 game.match.map.missiles.push(
                     new Missile(
                         allID++, // ID
-                        user.HB.pos.x, user.HB.pos.y, user.HB.pos.z, 4, 4, 0, // Position and size
+                        user.HB.pos.x, user.HB.pos.y, user.HB.pos.z, 4, 4, 0, user, // Position and size
                         {
-                            speed: new Vect3(aimX, aimY, 0)
+                            speed: new Vect3(aimX, aimY, 0),
+                            color: user.color
                         }
                     )
                 );
@@ -77,59 +78,61 @@ class Pistol extends Item {
 class Flamer extends Item {
     constructor(options) {
         super(options);
-        this.type = 'flamer';
-        this.range = 200;
+        this.type = 'pistol';
         this.shootSFX = new Audio('sfx/hit_02.wav');
         this.projectileSpeed = 10;
+        this.range = 200;
         this.coolDown = 6;
         this.nextCool = 0;
+        this.ammo = 5;
+        this.ammoMax = 5;
         // Options
         if (typeof options === 'object')
             for (var key of Object.keys(options)) {
                 this[key] = options[key];
             }
     }
-
-    use(user, xaim, yaim, mode) {
-        if (user.ammo.flamer > 0) {
-            if (ticks > this.nextCool) {
-                this.nextCool = ticks + this.coolDown;
-                user.ammo.flamer--;
-                this.shootSFX.play();
+    use(user, aimX, aimY, mode) {
+        // Check cooldown
+        if (ticks > this.nextCool) {
+            // Set next cooldown
+            this.nextCool = ticks + this.coolDown;
+            // Check ammo
+            if (this.ammo > 0) {
+                this.ammo--; // consume a bullet
+                this.shootSFX.play(); // play shoot sound
                 for (let i = 0; i < 5; i++) {
-                    // if (this.lungeSFX.duration <= 0 || this.lungeSFX.paused)
-                    //     this.lungeSFX.play();
-                    let aimX = xaim;
-                    let aimY = yaim;
-                    //find the distance from player to mouse with pythagorean theorem
                     let distance = Math.sqrt(aimX ** 2 + aimY ** 2);
-                    //Normalize the dimension distance by the real distance (ratio)
-                    //Then multiply by the distance of the out circle
-
-                    // Add the user's speed and multiply speed BEFORE spread for satisfying flamer
-                    aimX = (aimX / distance) * this.projectileSpeed + user.xspeed;
-                    aimY = (aimY / distance) * this.projectileSpeed + user.yspeed;
+                    aimX = (aimX / distance) * this.projectileSpeed;
+                    aimY = (aimY / distance) * this.projectileSpeed;
 
                     let spreadMagnitude = user.accuracy * 40;
 
                     let spreadX = (Math.random() * 2 - 1) * spreadMagnitude;
                     let spreadY = (Math.random() * 2 - 1) * spreadMagnitude;
 
-                    aimX += spreadX;
-                    aimY += spreadY;
-
-                    game.match.map.missiles.push(new Missile(allID++, user.x, user.y, {
-                        parent: user,
-                        color: user.color,
-                        z: user.z,
-                        xspeed: aimX,
-                        yspeed: aimY,
-                        dxspeed: aimX,
-                        dyspeed: aimY,
-                        livetime: 10,
-                        damage: 3,
-                        wind: true
-                    }));
+                    aimX += spreadX + user.speed.x;
+                    aimY += spreadY + user.speed.y;
+                    // Add missiles to map
+                    game.match.map.missiles.push(
+                        new Missile(
+                            allID++, // ID
+                            user.HB.pos.x, user.HB.pos.y, user.HB.pos.z, 4, 4, 0, user, // Position and size
+                            {
+                                livetime: 10,
+                                speed: new Vect3(aimX, aimY, 0),
+                                color: user.color,
+                                damage: 3
+                            }
+                        )
+                    );
+                }
+            } else {
+                if (user.ammo.ballistic > 0) {
+                    this.ammo = this.ammoMax;   // reload
+                    user.ammo.ballistic--;      // consume a clip from a user
+                } else {
+                    //play empty click sound
                 }
             }
         }

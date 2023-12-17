@@ -244,8 +244,8 @@ function makeGame(type) {
         game.match.bots.push(new Bot()) //Kevin
         game.match.bots[game.match.bots.length - 1].character = new Character(
             allID++,
-            (game.match.map.w / 2) + 100,
-            (game.match.map.h / 2) - 100,
+            (game.match.map.w / 2),
+            (game.match.map.h / 2),
             game.match.bots[game.match.bots.length - 1],
             // { target: game.player.character, nameTag: 'Jaysin', gfx: 'img/sprites/dark2', team: 1 }
             {
@@ -257,6 +257,6 @@ function makeGame(type) {
                 ]
             }
         );
-        game.match.bots[game.match.bots.length - 1].character.HB = new Cylinder(new Vect3((game.match.map.w / 2), (game.match.map.h / 2) + 200, 0), 29, 37);
+        game.match.bots[game.match.bots.length - 1].character.HB = new Cylinder(new Vect3(Math.round(Math.random * game.match.map.w), Math.round(Math.random * game.match.map.h) + 200, 0), 29, 37);
     }
 }

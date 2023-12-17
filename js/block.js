@@ -420,8 +420,9 @@ class PolyBlock {
 ###       ### ########### ########   ######## ########### ########## ##########
 */
 class Missile extends Block {
-    constructor(id, x, y, z, vx, vy, vz, options) {
+    constructor(id, x, y, z, vx, vy, vz, user, options) {
         super(id, x, y, z, vx, vy, vz, options);
+        this.user = user;
         this.HB = new Cylinder(new Vect3(x, y, z), vx, vy);
         this.dying = true;
         this.livetime = 100;
@@ -504,14 +505,18 @@ class Missile extends Block {
                   \___\_, |_|_|_||_\__,_\___|_|
                       |__/
                 */
-                for (let c of game.match.bots) {
-                    if (c.character === this) //Don't collide with yourself
+                for (let c of [game.player, ...game.match.bots]) {
+                    console.log(c.character);
+                    console.log(c.character, this.user);
+                    if (c.character === this.user) //Don't collide with yourself
                         continue;
+                    console.log(c.character, this.user);
                     c = c.character; //Get the character from the bot
-                    // let side = this.HB.collide(c.HB); //Check for collision
-                    // if (side && c.solid) {
-                    //     c.trigger(this, side);
-                    // }
+                    let side = this.HB.collide(c.HB); //Check for collision
+                    if (side && c.solid) {
+                        c.trigger(this, side);
+                        this.active = false;
+                    }
                 }
 
                 /*
