@@ -122,7 +122,8 @@ class Character {
 
     step(controller) {
         if (this.active) {
-            this.pp += 1;
+            if (this.pp < this.pp_max)
+                this.pp += 1;
             this.floor = 0;
 
             //Reset Momentum
@@ -522,6 +523,12 @@ class Character {
                     0, 0, 2 * Math.PI);
                 ctx.stroke();
 
+                /*
+                  _  _          _ _   _      ___
+                 | || |___ __ _| | |_| |_   | _ ) __ _ _ _
+                 | __ / -_) _` | |  _| ' \  | _ \/ _` | '_|
+                 |_||_\___\__,_|_|\__|_||_| |___/\__,_|_|
+                */
                 // draw an arc around the bottom half of the selector ring offest by 10 pixels outside that represents the character's health
                 // draw bar background
                 ctx.strokeStyle = "#000000";
@@ -531,11 +538,12 @@ class Character {
                 ctx.arc(
                     game.window.w / 2 - compareX,
                     game.window.h / 2 - compareY - this.floor,
-                    this.HB.radius + 10,
-                    Math.PI,
-                    Math.PI * 2,
+                    this.HB.radius + 16,
+                    Math.PI * 0.75,
+                    Math.PI * 0.25,
                     true
                 );
+                // draw bar
                 ctx.stroke();
                 ctx.strokeStyle = this.unitColor(true);
                 ctx.lineWidth = 3;
@@ -543,12 +551,48 @@ class Character {
                 ctx.arc(
                     game.window.w / 2 - compareX,
                     game.window.h / 2 - compareY - this.floor,
-                    this.HB.radius + 10,
-                    Math.PI,
-                    Math.PI * (1 - (this.hp / this.hp_max)),
+                    this.HB.radius + 16,
+                    Math.PI * 0.75,
+                    Math.PI * (0.75 - ((this.hp / this.hp_max) * 0.5 )),
                     true
                 );
                 ctx.stroke();
+
+                /*
+                  ___                      ___
+                 | _ \_____ __ _____ _ _  | _ ) __ _ _ _
+                 |  _/ _ \ V  V / -_) '_| | _ \/ _` | '_|
+                 |_| \___/\_/\_/\___|_|   |___/\__,_|_|
+                */
+                //draw an arc around the bottom quarter of the selector ring that displays the character's power
+                //draw bar background
+                ctx.strokeStyle = "#000000";
+                ctx.lineWidth = 5;
+                ctx.beginPath();
+                ctx.arc(
+                    game.window.w / 2 - compareX,
+                    game.window.h / 2 - compareY - this.floor,
+                    this.HB.radius + 8,
+                    Math.PI * 0.75,
+                    Math.PI * 0.25,
+                    true
+                );
+                ctx.stroke();
+                // draw bar
+                ctx.beginPath();
+                ctx.strokeStyle = "#00FFFF";
+                ctx.lineWidth = 3;
+                ctx.beginPath();
+                ctx.arc(
+                    game.window.w / 2 - compareX,
+                    game.window.h / 2 - compareY - this.floor,
+                    this.HB.radius + 8,
+                    Math.PI * 0.75,
+                    Math.PI * (0.75 - ((this.pp / this.pp_max) * 0.5 )),
+                    true
+                );
+                ctx.stroke();
+
 
                 /*
                      _                     _

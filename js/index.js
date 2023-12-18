@@ -257,7 +257,8 @@ function makeGame(type) {
     game.match.map.runFunc.push(
         () => {
             if (game.player.character.active && ticks % 3600 == 0) {
-                game.match.waves++;
+                game.match.waves++; // 1 wave every 60 seconds
+                
                 for (let i = 0; i < Math.floor(ticks / 7200) + 1; i++) {
                     game.match.bots.push(new Bot()) //Kevin / Jae'Sin
                     game.match.bots[game.match.bots.length - 1].character = new Character(
