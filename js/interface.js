@@ -40,45 +40,48 @@ class Interface {
             //Speed bar
 
             //Crosshair
-            if (!game.paused) {
-                //aimX is the mouse coordinates minus the this.player coordinates
-                //likewise with aimY (I calculated this elsewhere)
-                let aimX = this.player.controller.aimX;
-                let aimY = this.player.controller.aimY;
-                //find the distance from this.player to mouse with pythagorean theorem
-                let distance = ((aimX ** 2) + (aimY ** 2)) ** 0.5;
-                //Normalize the dimension distance by the real distance (ratio)
-                //Then multiply by the distance of the out circle
-                aimX = (aimX / distance);
-                aimY = (aimY / distance);
-                // Set the distance for the other images
-                const aimRad = 75;
+            this.drawXhair();
+        }
+    }
 
-                // Calculate the angles for the additional images (+10% and -10%)
-                const angle = Math.atan2(aimY, aimX);
-                const anglePlus10Percent = angle + game.player.character.accuracy;
-                const angleMinus10Percent = angle - game.player.character.accuracy;
+    drawXhair() {
+        // origin, angle, distance, size, spread, color, arc, laser, numXhairs
+        if (!game.paused) {
+            //aimX is the mouse coordinates minus the this.player coordinates
+            //likewise with aimY (I calculated this elsewhere)
+            let aimX = this.player.controller.aimX;
+            let aimY = this.player.controller.aimY;
+            //find the distance from this.player to mouse with pythagorean theorem
+            let distance = ((aimX ** 2) + (aimY ** 2)) ** 0.5;
+            //Normalize the dimension distance by the real distance (ratio)
+            //Then multiply by the distance of the out circle
+            aimX = (aimX / distance);
+            aimY = (aimY / distance);
 
-                // Calculate positions for the additional images
-                const aimXPlus10Percent = Math.cos(anglePlus10Percent) * aimRad;
-                const aimYPlus10Percent = Math.sin(anglePlus10Percent) * aimRad;
+            // Set the distance for the other images
+            const aimRad = 150;
 
-                const aimXMinus10Percent = Math.cos(angleMinus10Percent) * aimRad;
-                const aimYMinus10Percent = Math.sin(angleMinus10Percent) * aimRad;
+            // Calculate the angles for the additional images (+10% and -10%)
+            const angle = Math.atan2(aimY, aimX);
+            const anglePlus10Percent = angle + game.player.character.accuracy;
+            const angleMinus10Percent = angle - game.player.character.accuracy;
 
-                // Draw the original image
-                // ctx.drawImage(this.xhair, (game.window.w / 2) + aimX * aimRad - 8, (game.window.h / 2) + aimY * aimRad - 8 - (this.player.character.HB.height / 2), 16, 16);
+            // Calculate positions for the additional images
+            const aimXPlus10Percent = Math.cos(anglePlus10Percent) * aimRad;
+            const aimYPlus10Percent = Math.sin(anglePlus10Percent) * aimRad;
 
-                // Draw the image at +10%
-                // ctx.drawImage(this.xhair, (game.window.w / 2) + aimXPlus10Percent - 8, (game.window.h / 2) + aimYPlus10Percent - 8 - (this.player.character.HB.height / 2), 16, 16);
+            const aimXMinus10Percent = Math.cos(angleMinus10Percent) * aimRad;
+            const aimYMinus10Percent = Math.sin(angleMinus10Percent) * aimRad;
 
-                // Draw the image at -10%
-                // ctx.drawImage(this.xhair, (game.window.w / 2) + aimXMinus10Percent - 8, (game.window.h / 2) + aimYMinus10Percent - 8 - (this.player.character.HB.height / 2), 16, 16);
+            // Draw the original image
+            ctx.drawImage(this.xhair, (game.window.w / 2) + aimX * aimRad - 8, (game.window.h / 2) + aimY * aimRad - 8 - (this.player.character.HB.height / 2), 16, 16);
+            // Sniper Xhair
+            // ctx.drawImage(this.xhair, (game.window.w / 2) + (aimX * 2) - 16, (game.window.h / 2) + (aimY * 2) - 16, 32, 32);
+            // Draw the image at +10%
+            // ctx.drawImage(this.xhair, (game.window.w / 2) + aimXPlus10Percent - 8, (game.window.h / 2) + aimYPlus10Percent - 8 - (this.player.character.HB.height / 2), 16, 16);
 
-
-                // Sniper Xhair
-                // ctx.drawImage(this.xhair, (game.window.w / 2) + (aimX * 2) - 16, (game.window.h / 2) + (aimY * 2) - 16, 32, 32);
-            }
+            // Draw the image at -10%
+            // ctx.drawImage(this.xhair, (game.window.w / 2) + aimXMinus10Percent - 8, (game.window.h / 2) + aimYMinus10Percent - 8 - (this.player.character.HB.height / 2), 16, 16);
         }
     }
 

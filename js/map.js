@@ -1,8 +1,8 @@
 class Map {
     constructor(options) {
-        this.w = 1024; //7200
-        this.h = 1024; //4800
-        this.tileSize = 32;
+        this.w = 2048; //7200
+        this.h = 2048; //4800
+        this.tileSize = 64; //32
         this.tileSet = [[]]
         this.nodes = [];
 
@@ -108,6 +108,20 @@ class Map {
     }
 
     step() {
+
+        for (const e of this.blocks) {
+            if (e.cleanup && !e.active) {
+                //Remove block
+                this.blocks = this.blocks.filter(function (el) { return el != e; });
+            }
+        }
+
+        for (const e of game.match.bots) {
+            if (e.character.cleanup && !e.character.active) {
+                //Remove bot
+                game.match.bots = game.match.bots.filter(function (el) { return el != e; });
+            }
+        }
 
         for (const e of this.missiles) {
             if (e.cleanup && !e.active) {

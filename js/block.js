@@ -431,6 +431,7 @@ class Missile extends Block {
         this.colorSide = [255, 128, 0];
         this.touchSFX = new Audio('sfx/hit_01.wav');
         this.damage = 10;
+        this.payLoad = () => {};
         this.runFunc = [
             // Create Debris
             // function () {
@@ -506,14 +507,13 @@ class Missile extends Block {
                       |__/
                 */
                 for (let c of [game.player, ...game.match.bots]) {
-                    console.log(c.character);
-                    console.log(c.character, this.user);
                     if (c.character === this.user) //Don't collide with yourself
-                        continue;
-                    console.log(c.character, this.user);
+                        continue;9
                     c = c.character; //Get the character from the bot
                     let side = this.HB.collide(c.HB); //Check for collision
                     if (side && c.solid) {
+                        c.hp -= this.damage;
+                        this.payLoad(this.user, c);
                         c.trigger(this, side);
                         this.active = false;
                     }

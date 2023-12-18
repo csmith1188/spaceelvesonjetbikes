@@ -28,27 +28,41 @@ Dark elves believe everything is random:
 -->
 
 
-- Draw blocks as cylinders
-- Shooting with magazines/ammo
-- Bot Shooting
-- z height too high on ortho view when over tall block
-- z block top vs player bottom bad when block z is raised
 - Only draw in camera
-- Give blocks friction for wall jumping rooftop drag
 - Complete speed physics (top speed, actual speed, weight)
-- Bot chasing / targets / paths
+- Shoot along z rotation in iso view
+- Give blocks friction for wall jumping rooftop drag
 - Fix Gamepad
 - Keyboard, Mouse, Touch, Gampead classes
 - Fix Touch radius and add buttons
 - Waves
+- Bot chasing / targets / paths
 - Racing
+- A* pathing
 - Graphics are block attached to character
 -- Are shadows blocks, too?
 - Animators
 - Emitters
 - Melee Weapons
-- A* pathing
 - Tilemaps
 - Polyblock regions
 - 3D Polyblocks
 - Camera Zoom/Pan/Shake
+- Draw xhair from anywhere
+- Arc Aiming Cone
+
+
+<!--
+      :::::::::  :::    :::  ::::::::   ::::::::
+     :+:    :+: :+:    :+: :+:    :+: :+:    :+:
+    +:+    +:+ +:+    +:+ +:+        +:+
+   +#++:++#+  +#+    +:+ :#:        +#++:++#++
+  +#+    +#+ +#+    +#+ +#+   +#+#        +#+
+ #+#    #+# #+#    #+# #+#    #+# #+#    #+#
+#########   ########   ########   ########
+-->
+
+- z height too high on ortho view when over tall block
+- z block top vs player bottom bad when block z is raised
+- ring height too low in iso view when on block
+- missile cylinder shadow not aligning in iso view

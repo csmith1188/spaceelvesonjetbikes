@@ -250,6 +250,7 @@ function makeGame(type) {
             // { target: game.player.character, nameTag: 'Jaysin', gfx: 'img/sprites/dark2', team: 1 }
             {
                 // target: game.player.character,
+                // target: game.match.bots[game.match.bots.length - 1].character,
                 nameTag: 'Kevin', team: 1, gfx: 'img/sprites/dark2', color: [0, 0, 255],
                 hover: 16, airAccel: new Vect3(0.15, 0.15, 1),
                 runFunc: [

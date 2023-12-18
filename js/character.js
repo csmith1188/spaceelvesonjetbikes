@@ -164,7 +164,14 @@ class Character {
             if (controller.buttons.fire.current != controller.buttons.fire.last) {
                 if (controller.buttons.fire.current) {
                     const xMulti = (game.player.camera._3D) ? game.player.camera.angle : 1;
-                    this.inventory[this.item].use(this, this.parent.controller.aimX * xMulti, this.parent.controller.aimY, 0, {color: this.color});
+                    let aimX = this.parent.controller.aimX * xMulti;
+                    let aimY = this.parent.controller.aimY;
+                    let aimZ = 0;
+                    if (game.player.camera._3D) {
+                        aimZ = aimY * game.player.camera.angle;
+                        aimY = aimY * (1 - game.player.camera.angle);
+                    }
+                    this.inventory[this.item].use(this, aimX * xMulti, aimY, aimZ, 0, { color: this.color });
                 }
             }
 
@@ -392,6 +399,9 @@ class Character {
                 func();
             }
 
+            if (this.hp <= 0) {
+                this.active = false;
+            }
         }
     }
 
@@ -405,137 +415,137 @@ class Character {
     #########  ###    ### ###     ###   ###   ###
     */
     draw() {
-
-        /*
-               _    _                        _    _
-          _ __(_)__| |__  __ _ _ _ __ _ _ __| |_ (_)__
-         | '_ \ / _| / / / _` | '_/ _` | '_ \ ' \| / _|
-         | .__/_\__|_\_\ \__, |_| \__,_| .__/_||_|_\__|
-         |_|             |___/         |_|
-        */
-        if (this.mom.x < 0) this.img.src = this.leftgfx + '.png'
-        if (this.mom.x > 0) this.img.src = this.gfx + '.png'
-
-
-        let compareX = game.player.camera.x - this.HB.pos.x;
-        let compareY = game.player.camera.y - this.HB.pos.y;
-
-
-        if (game.player.camera._3D) {
-            this.draw3D();
-        } else {
-
+        if (this.active) {
             /*
-                 _            _
-              __| |_  __ _ __| |_____ __ __
-             (_-< ' \/ _` / _` / _ \ V  V /
-             /__/_||_\__,_\__,_\___/\_/\_/
-
+                   _    _                        _    _
+              _ __(_)__| |__  __ _ _ _ __ _ _ __| |_ (_)__
+             | '_ \ / _| / / / _` | '_/ _` | '_ \ ' \| / _|
+             | .__/_\__|_\_\ \__, |_| \__,_| .__/_||_|_\__|
+             |_|             |___/         |_|
             */
-            ctx.globalAlpha = 0.4;
-            let shadowShrink = this.HB.radius * Math.min(((this.HB.pos.z - this.floor) / 128), 1)
-            ctx.drawImage(
-                this.shadow.img,
-                game.window.w / 2 - compareX - this.HB.radius + shadowShrink,
-                game.window.h / 2 - compareY - this.HB.radius + shadowShrink - this.floor,
-                this.HB.radius * 2 - shadowShrink * 2,
-                this.HB.radius * 2 - shadowShrink * 2
-            );
-            ctx.globalAlpha = 1;
+            if (this.mom.x < 0) this.img.src = this.leftgfx + '.png'
+            if (this.mom.x > 0) this.img.src = this.gfx + '.png'
 
-            /*
-                      _        _                 _
-              ___ ___| |___ __| |_ ___ _ _   _ _(_)_ _  __ _
-             (_-</ -_) / -_) _|  _/ _ \ '_| | '_| | ' \/ _` |
-             /__/\___|_\___\__|\__\___/_|   |_| |_|_||_\__, |
-                                                       |___/
-            */
-            if (this.team == game.player.character.team) {
-                ctx.strokeStyle = `rgba(0,255,0, ${game.player.interface.drawFriendlyRing})`;
-            } else if (game.player.character.teams.includes(this.team)) {
-                ctx.strokeStyle = `rgba(255,255,0, ${game.player.interface.drawNeutralRing})`;
+
+            let compareX = game.player.camera.x - this.HB.pos.x;
+            let compareY = game.player.camera.y - this.HB.pos.y;
+
+
+            if (game.player.camera._3D) {
+                this.draw3D();
             } else {
-                ctx.strokeStyle = `rgba(255,0,0, ${game.player.interface.drawEnemyRing})`;
+
+                /*
+                     _            _
+                  __| |_  __ _ __| |_____ __ __
+                 (_-< ' \/ _` / _` / _ \ V  V /
+                 /__/_||_\__,_\__,_\___/\_/\_/
+    
+                */
+                ctx.globalAlpha = 0.4;
+                let shadowShrink = this.HB.radius * Math.min(((this.HB.pos.z - this.floor) / 128), 1)
+                ctx.drawImage(
+                    this.shadow.img,
+                    game.window.w / 2 - compareX - this.HB.radius + shadowShrink,
+                    game.window.h / 2 - compareY - this.HB.radius + shadowShrink - this.floor,
+                    this.HB.radius * 2 - shadowShrink * 2,
+                    this.HB.radius * 2 - shadowShrink * 2
+                );
+                ctx.globalAlpha = 1;
+
+                /*
+                          _        _                 _
+                  ___ ___| |___ __| |_ ___ _ _   _ _(_)_ _  __ _
+                 (_-</ -_) / -_) _|  _/ _ \ '_| | '_| | ' \/ _` |
+                 /__/\___|_\___\__|\__\___/_|   |_| |_|_||_\__, |
+                                                           |___/
+                */
+                if (this.team == game.player.character.team) {
+                    ctx.strokeStyle = `rgba(0,255,0, ${game.player.interface.drawFriendlyRing})`;
+                } else if (game.player.character.teams.includes(this.team)) {
+                    ctx.strokeStyle = `rgba(255,255,0, ${game.player.interface.drawNeutralRing})`;
+                } else {
+                    ctx.strokeStyle = `rgba(255,0,0, ${game.player.interface.drawEnemyRing})`;
+                }
+                ctx.lineWidth = 3;
+                ctx.beginPath();
+                ctx.ellipse(
+                    game.window.w / 2 - compareX,
+                    game.window.h / 2 - compareY - this.floor,
+                    this.HB.radius,
+                    this.HB.radius,
+                    0, 0, 2 * Math.PI);
+                ctx.stroke();
+
+                /*
+                     _                     _
+                  __| |_  __ _ _ _ __ _ __| |_ ___ _ _
+                 / _| ' \/ _` | '_/ _` / _|  _/ -_) '_|
+                 \__|_||_\__,_|_| \__,_\__|\__\___|_|
+    
+                */
+                ctx.drawImage(
+                    this.img,
+                    game.window.w / 2 - compareX - this.HB.radius,
+                    game.window.h / 2 - compareY - this.HB.height - this.HB.pos.z - sineAnimate(1, 0.1),
+                    this.HB.radius * 2, this.HB.height
+                );
+                if (game.debug) {
+                    ctx.fillStyle = "#FF0000";
+                    ctx.fillRect(game.window.w / 2 - compareX - 2, game.window.h / 2 - compareY - 2, 4, 4);
+                    ctx.strokeStyle = "#FF0000";
+                    ctx.lineWidth = 2;
+                    ctx.beginPath();
+                    ctx.ellipse(
+                        game.window.w / 2 - compareX,
+                        game.window.h / 2 - compareY - this.HB.pos.z,
+                        this.HB.radius,
+                        this.HB.radius,
+                        0, 0, 2 * Math.PI);
+                    ctx.stroke();
+                    ctx.beginPath();
+                    ctx.ellipse(
+                        game.window.w / 2 - compareX,
+                        game.window.h / 2 - compareY - this.HB.height - this.HB.pos.z,
+                        this.HB.radius,
+                        this.HB.radius,
+                        0, 0, 2 * Math.PI);
+                    ctx.stroke();
+                    let newX = this.HB.pos.x + this.speed.x;
+                    let newY = this.HB.pos.y + this.speed.y;
+                    ctx.strokeStyle = "#FFFFFF"
+                    ctx.lineWidth = 2;
+                    ctx.beginPath();
+                    ctx.moveTo(game.window.w / 2, game.window.h / 2);
+                    compareX = game.player.camera.x - newX;
+                    compareY = game.player.camera.y - newY;
+                    ctx.lineTo(game.window.w / 2 - compareX, game.window.h / 2 - compareY);
+                    ctx.stroke();
+                }
             }
-            ctx.lineWidth = 3;
-            ctx.beginPath();
-            ctx.ellipse(
-                game.window.w / 2 - compareX,
-                game.window.h / 2 - compareY - this.floor,
-                this.HB.radius,
-                this.HB.radius,
-                0, 0, 2 * Math.PI);
-            ctx.stroke();
 
             /*
-                 _                     _
-              __| |_  __ _ _ _ __ _ __| |_ ___ _ _
-             / _| ' \/ _` | '_/ _` / _|  _/ -_) '_|
-             \__|_||_\__,_|_| \__,_\__|\__\___|_|
-
+              _                     _     _ _
+             | |_ __ _ _ _ __ _ ___| |_  | (_)_ _  ___
+             |  _/ _` | '_/ _` / -_)  _| | | | ' \/ -_)
+              \__\__,_|_| \__, \___|\__| |_|_|_||_\___|
+                          |___/
             */
-            ctx.drawImage(
-                this.img,
-                game.window.w / 2 - compareX - this.HB.radius,
-                game.window.h / 2 - compareY - this.HB.height - this.HB.pos.z - sineAnimate(1, 0.1),
-                this.HB.radius * 2, this.HB.height
-            );
-            if (game.debug) {
-                ctx.fillStyle = "#FF0000";
-                ctx.fillRect(game.window.w / 2 - compareX - 2, game.window.h / 2 - compareY - 2, 4, 4);
-                ctx.strokeStyle = "#FF0000";
-                ctx.lineWidth = 2;
-                ctx.beginPath();
-                ctx.ellipse(
-                    game.window.w / 2 - compareX,
-                    game.window.h / 2 - compareY - this.HB.pos.z,
-                    this.HB.radius,
-                    this.HB.radius,
-                    0, 0, 2 * Math.PI);
-                ctx.stroke();
-                ctx.beginPath();
-                ctx.ellipse(
-                    game.window.w / 2 - compareX,
-                    game.window.h / 2 - compareY - this.HB.height - this.HB.pos.z,
-                    this.HB.radius,
-                    this.HB.radius,
-                    0, 0, 2 * Math.PI);
-                ctx.stroke();
-                let newX = this.HB.pos.x + this.speed.x;
-                let newY = this.HB.pos.y + this.speed.y;
-                ctx.strokeStyle = "#FFFFFF"
-                ctx.lineWidth = 2;
-                ctx.beginPath();
-                ctx.moveTo(game.window.w / 2, game.window.h / 2);
-                compareX = game.player.camera.x - newX;
-                compareY = game.player.camera.y - newY;
-                ctx.lineTo(game.window.w / 2 - compareX, game.window.h / 2 - compareY);
-                ctx.stroke();
-            }
-        }
-
-        /*
-          _                     _     _ _
-         | |_ __ _ _ _ __ _ ___| |_  | (_)_ _  ___
-         |  _/ _` | '_/ _` / -_)  _| | | | ' \/ -_)
-          \__\__,_|_| \__, \___|\__| |_|_|_||_\___|
-                      |___/
-        */
-        // This can draw a line to the closest part of a rectangle
-        // except it broke at some point when i moved to utils
-        // It can still draw to the XY which is good for tubes, but not blocks
-        if (this.target) {
-            ctx.strokeStyle = "#FF0000"
-            ctx.lineWidth = 2;
-            ctx.beginPath();
-            ctx.moveTo(game.window.w / 2, game.window.h / 2);
-            compareX = game.player.camera.x - this.target.HB.pos.x; //If you change this to the target.pos
-            compareY = game.player.camera.y - this.target.HB.pos.y; //If you change this to the target.pos
-            ctx.lineTo(game.window.w / 2 - compareX, game.window.h / 2 - compareY);
-            ctx.stroke();
+            // This can draw a line to the closest part of a rectangle
+            // except it broke at some point when i moved to utils
+            // It can still draw to the XY which is good for tubes, but not blocks
+            // if (this.target) {
+            //     ctx.strokeStyle = "#FF0000"
+            //     ctx.lineWidth = 2;
+            //     ctx.beginPath();
+            //     ctx.moveTo(game.window.w / 2, game.window.h / 2);
+            //     compareX = game.player.camera.x - this.target.HB.pos.x; //If you change this to the target.pos
+            //     compareY = game.player.camera.y - this.target.HB.pos.y; //If you change this to the target.pos
+            //     ctx.lineTo(game.window.w / 2 - compareX, game.window.h / 2 - compareY);
+            //     ctx.stroke();
+            // }
         }
     }
-
 
     /*
      ######                        #####  ######

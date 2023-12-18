@@ -97,10 +97,10 @@ class Bot {
 
             //If my target is not active
             if (!this.character.target.active) {
-                this.findTarget();
+                // this.findTarget();
             }
         } else {
-            this.findTarget();
+            // this.findTarget();
         }
     }
 

@@ -18,6 +18,7 @@ class Pistol extends Item {
         this.projectileSpeed = 20;
         this.range = 300;
         this.coolDown = 10;
+        this.reloadTime = 60;
         this.nextCool = 0;
         this.ammo = 10;
         this.ammoMax = 10;
@@ -66,6 +67,7 @@ class Pistol extends Item {
             } else {
                 if (user.ammo.ballistic > 0) {
                     this.ammo = this.ammoMax;   // reload
+                    this.nextCool = ticks + this.reloadTime; // set reload time
                     user.ammo.ballistic--;      // consume a clip from a user
                 } else {
                     //play empty click sound
@@ -83,6 +85,7 @@ class Flamer extends Item {
         this.projectileSpeed = 10;
         this.range = 200;
         this.coolDown = 6;
+        this.reloadTime = 60;
         this.nextCool = 0;
         this.ammo = 5;
         this.ammoMax = 5;
@@ -130,6 +133,7 @@ class Flamer extends Item {
             } else {
                 if (user.ammo.ballistic > 0) {
                     this.ammo = this.ammoMax;   // reload
+                    this.nextCool = ticks + this.reloadTime; // set reload time
                     user.ammo.ballistic--;      // consume a clip from a user
                 } else {
                     //play empty click sound
