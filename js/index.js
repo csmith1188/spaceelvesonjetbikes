@@ -267,25 +267,27 @@ function makeGame(type) {
                     );
                     game.match.bots[game.match.bots.length - 1].character.HB = new Cylinder(new Vect3(Math.round(Math.random() * game.match.map.w), Math.round(Math.random() * game.match.map.h), 0), 29, 37);
                 }
-                for (let i = 0; i < Math.floor(ticks / 14400) + 1; i++) {
-                    // Friendly
-                    game.match.bots.push(new Bot()) //Big ounce / Loh'Ghan
-                    game.match.bots[game.match.bots.length - 1].character = new Character(
-                        allID++,
-                        (game.match.map.w / 2),
-                        (game.match.map.h / 2),
-                        game.match.bots[game.match.bots.length - 1],
-                        {
-                            target: null,
-                            // target: game.match.bots[game.match.bots.length - 1].character,
-                            name: getName(), team: 0, gfx: 'img/sprites/dark1', color: [0, 255, 0],
-                            hover: 16, airAccel: new Vect3(0.15, 0.15, 1),
-                            runFunc: [
-                                function () { }.bind(game.match.bots[game.match.bots.length - 1].character)
-                            ]
-                        }
-                    );
-                    game.match.bots[game.match.bots.length - 1].character.HB = new Cylinder(new Vect3(Math.round(Math.random() * game.match.map.w), Math.round(Math.random() * game.match.map.h), 0), 29, 37);
+                if (ticks % 7200 == 0) {
+                    for (let i = 0; i < Math.floor(ticks / 14400) + 1; i++) {
+                        // Friendly
+                        game.match.bots.push(new Bot()) //Big ounce / Loh'Ghan
+                        game.match.bots[game.match.bots.length - 1].character = new Character(
+                            allID++,
+                            (game.match.map.w / 2),
+                            (game.match.map.h / 2),
+                            game.match.bots[game.match.bots.length - 1],
+                            {
+                                target: null,
+                                // target: game.match.bots[game.match.bots.length - 1].character,
+                                name: getName(), team: 0, gfx: 'img/sprites/dark1', color: [0, 255, 0],
+                                hover: 16, airAccel: new Vect3(0.15, 0.15, 1),
+                                runFunc: [
+                                    function () { }.bind(game.match.bots[game.match.bots.length - 1].character)
+                                ]
+                            }
+                        );
+                        game.match.bots[game.match.bots.length - 1].character.HB = new Cylinder(new Vect3(Math.round(Math.random() * game.match.map.w), Math.round(Math.random() * game.match.map.h), 0), 29, 37);
+                    }
                 }
             }
         }

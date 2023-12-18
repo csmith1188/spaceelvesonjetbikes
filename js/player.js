@@ -73,15 +73,48 @@ class Bot {
                     this.controller.buttons.moveDown.current = this.controller.buttons.moveUp.current = 0; // Reset vertical movement
                 }
             }
+
+            /*
+              __  __                             _
+             |  \/  |__ _ _ _  __ _ __ _ ___    /_\  _ __  _ __  ___
+             | |\/| / _` | ' \/ _` / _` / -_)  / _ \| '  \| '  \/ _ \
+             |_|  |_\__,_|_||_\__,_\__, \___| /_/ \_\_|_|_|_|_|_\___/
+                                   |___/
+            */
             // Switch guns when empty
-            if (this.character.ammo[this.character.inventory[this.character.item].type] <= 0) { // If the current gun is empty
+            let switchCount = 0;
+            while (this.character.ammo[this.character.inventory[this.character.item].type] <= 0) { // If the current gun is empty
+                switchCount++; // Count the number of times we've switched
                 this.character.item++; // Switch to the next gun
                 if (this.character.item >= this.character.inventory.length) this.character.item = 0; // If the next gun is out of range, switch to the first gun
+                if (switchCount >= this.character.inventory.length) {
+                    // If we are out of ammo for every gun, set this character's target to the closest Ammo_ powerup on the map
+                    let closestAmmo = null;
+                    let closestDistance = Infinity;
+                    for (const ammo of game.match.map.blocks) {
+                        if (ammo.type == 'ammo_ballistic' || ammo.type == 'ammo_plasma') {
+                            let compareX = ammo.HB.pos.x - this.character.HB.pos.x;
+                            let compareY = ammo.HB.pos.y - this.character.HB.pos.y;
+                            let distance = Math.sqrt(compareX ** 2 + compareY ** 2); // Pythagoras
+                            if (distance < closestDistance) {
+                                closestDistance = distance;
+                                closestAmmo = ammo;
+                            }
+                        }
+                    }
+                    if (closestAmmo) this.character.target = closestAmmo;
+                    else this.character.target = this.character;
+                    break; // If we've switched to every gun, stop switching) 
+                }
             }
 
             // Attack
             // If the target is within range, attack
-            if (Math.abs(distance) <= this.character.inventory[this.character.item].range && this.character.target.team != this.character.team)
+            if (
+                Math.abs(distance) <= this.character.inventory[this.character.item].range &&
+                this.character.target.team != this.character.team &&
+                this.character.target instanceof Character
+                )
                 this.controller.buttons.fire.current = 1;
             else
                 this.controller.buttons.fire.current = 0;

@@ -576,6 +576,8 @@ class PowerUp extends Block {
     trigger(actor, side) {
         if (actor instanceof Character) {
             this.active = false;
+            // if this actor's target was this powerup, set it to null
+            if (actor.target == this) actor.target = null;
             //run every runFunc
             for (const func of this.runFunc) {
                 func(actor, side);
@@ -588,6 +590,7 @@ class PowerUp extends Block {
 class Ammo_Ballistic extends PowerUp {
     constructor(id, x, y, z, vx, vy, vz, options) {
         super(id, x, y, z, vx, vy, vz, options);
+        this.type = 'ammo_ballistic';
         // this.imgFile = 'img/sprites/ammo_ballistic.png';
         // this.img.src = this.imgFile;
         this.color = [255, 0, 0];
@@ -613,6 +616,7 @@ class Ammo_Ballistic extends PowerUp {
 class Ammo_Plasma extends PowerUp {
     constructor(id, x, y, z, vx, vy, vz, options) {
         super(id, x, y, z, vx, vy, vz, options);
+        this.type = 'ammo_plasma';
         // this.imgFile = 'img/sprites/ammo_plasma.png';
         // this.img.src = this.imgFile;
         this.color = [255, 0, 255];
@@ -638,6 +642,7 @@ class Ammo_Plasma extends PowerUp {
 class HealthPickup extends PowerUp {
     constructor(id, x, y, z, vx, vy, vz, options) {
         super(id, x, y, z, vx, vy, vz, options);
+        this.type = 'health';
         // this.imgFile = 'img/sprites/health.png';
         // this.img.src = this.imgFile;
         this.color = [0, 255, 0];

@@ -13,7 +13,7 @@ class Item {
 class Pistol extends Item {
     constructor(options) {
         super(options);
-        this.type = 'pistol';
+        this.type = 'ballistic';
         this.shootSFX = new Audio('sfx/laser_01.wav');
         this.projectileSpeed = 20;
         this.range = 300;
@@ -88,7 +88,7 @@ class Pistol extends Item {
 class Flamer extends Item {
     constructor(options) {
         super(options);
-        this.type = 'pistol';
+        this.type = 'plasma';
         this.shootSFX = new Audio('sfx/hit_02.wav');
         this.projectileSpeed = 10;
         this.range = 200;

@@ -70,7 +70,7 @@ class Character {
 
         */
         this.item = 0;
-        this.inventory = [new Pistol(), new Flamer(), new JumpDropper()];
+        this.inventory = [new Pistol(), new Flamer()];
         this.ammo = {
             plasma: 2,
             plasmaMax: 5,
