@@ -98,24 +98,22 @@ class Interface {
             this.touchButton.inventory1 = new Rect((game.window.w / 2) - 32, game.window.h - 64, 64, 64);
             this.touchButton.inventory2 = new Rect((game.window.w / 2) - 32, game.window.h - 128, 64, 64);
             this.touchButton.inventory3 = new Rect((game.window.w / 2) - 32, game.window.h - 192, 64, 64);
-                   
         }
     }
 
     drawMatch() {   
         //Draw waves in top right hand corner
         ctx.fillStyle = "#000000";
-        ctx.font = '12px consolas';
+        ctx.font = '16px consolas';
         ctx.fillText(`Wave: ${game.match.waves}`, game.window.w - 100, 50);
         //Draw enemies remaining in top right hand corner
         ctx.fillStyle = "#000000";
-        ctx.font = '12px consolas';
+        ctx.font = '16px consolas';
         ctx.fillText(`Bots: ${game.match.bots.length}`, game.window.w - 100, 70);
         //Draw time until next wave in top right hand corner
         ctx.fillStyle = "#000000";
-        ctx.font = '12px consolas';
+        ctx.font = '16px consolas';
         ctx.fillText(`Next: ${60 - Math.floor((ticks % 3600)/60)}`, game.window.w - 100, 90);
-
     }
 
     drawXhair() {

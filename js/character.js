@@ -630,14 +630,6 @@ class Character {
                     ctx.stroke();
                     let newX = this.HB.pos.x + this.speed.x;
                     let newY = this.HB.pos.y + this.speed.y;
-                    ctx.strokeStyle = "#FFFFFF"
-                    ctx.lineWidth = 2;
-                    ctx.beginPath();
-                    ctx.moveTo(game.window.w / 2, game.window.h / 2);
-                    compareX = game.player.camera.x - newX;
-                    compareY = game.player.camera.y - newY;
-                    ctx.lineTo(game.window.w / 2 - compareX, game.window.h / 2 - compareY);
-                    ctx.stroke();
                 }
 
                 /*
@@ -663,23 +655,24 @@ class Character {
             // This can draw a line to the closest part of a rectangle
             // except it broke at some point when i moved to utils
             // It can still draw to the XY which is good for tubes, but not blocks
-            // if (this.target) {
-            //     ctx.strokeStyle = "#FF0000"
-            //     ctx.lineWidth = 2;
-            //     ctx.beginPath();
-            //     ctx.moveTo(game.window.w / 2, game.window.h / 2);
-            //     compareX = game.player.camera.x - this.target.HB.pos.x; //If you change this to the target.pos
-            //     compareY = game.player.camera.y - this.target.HB.pos.y; //If you change this to the target.pos
-            //     ctx.lineTo(game.window.w / 2 - compareX, game.window.h / 2 - compareY);
-            //     ctx.stroke();
-            // }
+            if (this.target && game.debug) {
+                compareX = game.player.camera.x - this.HB.pos.x; //If you change this to the target.pos
+                compareY = game.player.camera.y - this.HB.pos.y; //If you change this to the target.pos
+                let targetX = game.player.camera.x - this.target.HB.pos.x;
+                let targetY = game.player.camera.y - this.target.HB.pos.y;
+                ctx.strokeStyle = "#FFFFFF"
+                ctx.lineWidth = 2;
+                ctx.beginPath();
+                ctx.moveTo(game.window.w / 2 - targetX, game.window.h / 2 - targetY);
+                ctx.lineTo(game.window.w / 2 - compareX, game.window.h / 2 - compareY);
+                ctx.stroke();
+            }
         } else {
             // draw number of waves to center of screen
             ctx.fillStyle = "#FFFFFF";
             ctx.font = "12px Arial";
             ctx.textAlign = "center";
             ctx.fillText(`Waves: ${game.match.waves}`, game.window.w / 2, game.window.h / 2);
-
         }
     }
 

@@ -30,9 +30,10 @@ Dark elves believe everything is random:
 - Debris from missile
 - missile collision with blocks
 - missile collsion particles
-- Only draw in camera
+- ?? Only draw in camera
 - Complete speed physics (top speed, actual speed, weight)
 - Shoot along z rotation in iso view
+- Bots always shoot at z axis in every view (no hiding on top of blocks)
 - Give blocks friction for wall jumping rooftop drag
 - Fix Gamepad
 - Keyboard, Mouse, Touch, Gampead classes
