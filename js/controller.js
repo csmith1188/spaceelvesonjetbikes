@@ -118,23 +118,15 @@ function getCanvasRelative(e, center) {
     }
 }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+/*
+      ::::::::   ::::::::  ::::    ::: ::::::::::: :::::::::   ::::::::  :::        :::        :::::::::: :::::::::
+    :+:    :+: :+:    :+: :+:+:   :+:     :+:     :+:    :+: :+:    :+: :+:        :+:        :+:        :+:    :+:
+   +:+        +:+    +:+ :+:+:+  +:+     +:+     +:+    +:+ +:+    +:+ +:+        +:+        +:+        +:+    +:+
+  +#+        +#+    +:+ +#+ +:+ +#+     +#+     +#++:++#:  +#+    +:+ +#+        +#+        +#++:++#   +#++:++#:
+ +#+        +#+    +#+ +#+  +#+#+#     +#+     +#+    +#+ +#+    +#+ +#+        +#+        +#+        +#+    +#+
+#+#    #+# #+#    #+# #+#   #+#+#     #+#     #+#    #+# #+#    #+# #+#        #+#        #+#        #+#    #+#
+########   ########  ###    ####     ###     ###    ###  ########  ########## ########## ########## ###    ###
+*/
 class Controller {
     constructor() {
         this.deadzone = 0.2;
@@ -149,7 +141,9 @@ class Controller {
             fire: { current: 0, last: 0 },
             altfire: { current: 0, last: 0 },
             weaponPrevious: { current: 0, last: 0 },
-            weaponNext: { current: 0, last: 0 }
+            weaponNext: { current: 0, last: 0 },
+            start: { current: 0, last: 0 },
+            select: { current: 0, last: 0 }
         }
 
         this.gamePad;
@@ -158,13 +152,32 @@ class Controller {
             event: {},
             left: {
                 pos: new Vect3(150, 150, 75),
+                radius: 75
             },
             right: {
                 pos: new Vect3(150, 150, 75),
+                radius: 75
             }
         };
     }
 
+    /*
+
+     #####  ######   ##   #####
+     #    # #       #  #  #    #
+     #    # #####  #    # #    #
+     #####  #      ###### #    #
+     #   #  #      #    # #    #
+     #    # ###### #    # #####
+
+    */
+   /**========================================================================
+    **                           read
+    *?  Reads the controller input and stores it in the controller object
+    *@param event JavaScript event object  
+    *@param type String of the type of event
+    *@return void
+    *========================================================================**/
     read(event, type) {
 
         // Remember the last state of every command
@@ -173,13 +186,11 @@ class Controller {
         }
 
         /*
-              ::::::::      :::       :::   :::   :::::::::: :::::::::     :::     :::::::::
-            :+:    :+:   :+: :+:    :+:+: :+:+:  :+:        :+:    :+:  :+: :+:   :+:    :+:
-           +:+         +:+   +:+  +:+ +:+:+ +:+ +:+        +:+    +:+ +:+   +:+  +:+    +:+
-          :#:        +#++:++#++: +#+  +:+  +#+ +#++:++#   +#++:++#+ +#++:++#++: +#+    +:+
-         +#+   +#+# +#+     +#+ +#+       +#+ +#+        +#+       +#+     +#+ +#+    +#+
-        #+#    #+# #+#     #+# #+#       #+# #+#        #+#       #+#     #+# #+#    #+#
-        ########  ###     ### ###       ### ########## ###       ###     ### #########
+           ___                              _
+          / __|__ _ _ __  ___ _ __  __ _ __| |
+         | (_ / _` | '  \/ -_) '_ \/ _` / _` |
+          \___\__,_|_|_|_\___| .__/\__,_\__,_|
+                             |_|
         */
         if (this.gamePad != null) {
             let gp = navigator.getGamepads()[this.gamePad];
@@ -215,25 +226,23 @@ class Controller {
 
             // Start button pauses game
             if (gp.buttons[9].pressed) {
-                this.start.current = 1;
-                if (this.start.current != this.start.last) {
+                this.buttons.start.current = 1;
+                if (this.buttons.start.current != this.buttons.start.last) {
                     game.paused = !game.paused;
                 }
-                this.start.last = this.start.current;
+                this.buttons.start.last = this.buttons.start.current;
             }
             else {
-                this.start.current = 0;
-                this.start.last = this.start.current;
+                this.buttons.start.current = 0;
+                this.buttons.start.last = this.buttons.start.current;
             }
         }
         /*
-          ::::::::::: ::::::::  :::    :::  ::::::::  :::    :::
-             :+:    :+:    :+: :+:    :+: :+:    :+: :+:    :+:
-            +:+    +:+    +:+ +:+    +:+ +:+        +:+    +:+
-           +#+    +#+    +:+ +#+    +:+ +#+        +#++:++#++
-          +#+    +#+    +#+ +#+    +#+ +#+        +#+    +#+
-         #+#    #+#    #+# #+#    #+# #+#    #+# #+#    #+#
-        ###     ########   ########   ########  ###    ###
+          _____            _
+         |_   _|__ _  _ __| |_
+           | |/ _ \ || / _| ' \
+           |_|\___/\_,_\__|_||_|
+
         */
         else
             if (this.touch.enabled) {
@@ -245,16 +254,16 @@ class Controller {
                         let touchX = touchCoord.x - this.touch.left.pos.x;
                         let touchY = touchCoord.y - (game.window.h - this.touch.left.pos.y);
                         let distance = Math.sqrt(touchX ** 2 + touchY ** 2);
-                        if (distance < this.touch.left.pos.r * 2) {
+                        if (distance < this.touch.left.radius * 2) {
 
                             touchLeftFound = true;
 
-                            if (distance > this.touch.right.pos.r)
+                            if (distance > this.touch.right.radius)
                                 if (ticks - this.touch.left.lastBoostTouch <= 10)
                                     this.buttons.boost.current = 1;
                             //Normalize, but add a little bonus outside of main ring
-                            touchX /= (distance / this.touch.left.pos.r) * 100;
-                            touchY /= (distance / this.touch.left.pos.r) * 100;
+                            touchX /= (distance / this.touch.left.radius) * 100;
+                            touchY /= (distance / this.touch.left.radius) * 100;
 
                             //Cap the bonus at 1
                             if (touchX > 1) touchX = 1;
@@ -270,10 +279,10 @@ class Controller {
                         touchX = touchCoord.x - (game.window.w - this.touch.right.pos.x);
                         touchY = touchCoord.y - (game.window.h - this.touch.right.pos.y);
                         distance = Math.sqrt(touchX ** 2 + touchY ** 2);
-                        if (distance < this.touch.right.pos.r * 2) {
+                        if (distance < this.touch.right.radius * 2) {
                             touchRightFound = true;
                             //Button was pressed                            
-                            if (distance > this.touch.right.pos.r) this.buttons.fire.current = 1;
+                            if (distance > this.touch.right.radius) this.buttons.fire.current = 1;
                             //Normalize, then change the aim angle
                             touchX /= distance;
                             touchY /= distance;
@@ -297,7 +306,7 @@ class Controller {
                         let touchX = touchCoord.x - this.touch.left.pos.x;
                         let touchY = touchCoord.y - (game.window.h - this.touch.left.pos.y);
                         let distance = Math.sqrt(touchX ** 2 + touchY ** 2);
-                        if ((distance > this.touch.left.pos.r) && (distance < (this.touch.left.pos.r * 2)))
+                        if ((distance > this.touch.left.radius) && (distance < (this.touch.left.radius * 2)))
                             this.touch.left.lastBoostTouch = ticks;
                     }
 
@@ -306,13 +315,11 @@ class Controller {
                 this.touch.eventType = {};
             }
             /*
-                  :::    ::: :::::::::: :::   ::: :::::::::   ::::::::      :::     :::::::::  :::::::::
-                 :+:   :+:  :+:        :+:   :+: :+:    :+: :+:    :+:   :+: :+:   :+:    :+: :+:    :+:
-                +:+  +:+   +:+         +:+ +:+  +:+    +:+ +:+    +:+  +:+   +:+  +:+    +:+ +:+    +:+
-               +#++:++    +#++:++#     +#++:   +#++:++#+  +#+    +:+ +#++:++#++: +#++:++#:  +#+    +:+
-              +#+  +#+   +#+           +#+    +#+    +#+ +#+    +#+ +#+     +#+ +#+    +#+ +#+    +#+
-             #+#   #+#  #+#           #+#    #+#    #+# #+#    #+# #+#     #+# #+#    #+# #+#    #+#
-            ###    ### ##########    ###    #########   ########  ###     ### ###    ### #########
+              _  __         _                      _
+             | |/ /___ _  _| |__  ___  __ _ _ _ __| |
+             | ' </ -_) || | '_ \/ _ \/ _` | '_/ _` |
+             |_|\_\___|\_, |_.__/\___/\__,_|_| \__,_|
+                       |__/
             */
             else {
                 if (this.rightKey) this.buttons.moveRight.current = 1;
@@ -345,15 +352,21 @@ class Controller {
                 else this.buttons.weaponNext.current = 0;
             }
     }
+
     /*
-          :::::::::  :::::::::      :::     :::       :::
-         :+:    :+: :+:    :+:   :+: :+:   :+:       :+:
-        +:+    +:+ +:+    +:+  +:+   +:+  +:+       +:+
-       +#+    +:+ +#++:++#:  +#++:++#++: +#+  +:+  +#+
-      +#+    +#+ +#+    +#+ +#+     +#+ +#+ +#+#+ +#+
-     #+#    #+# #+#    #+# #+#     #+#  #+#+# #+#+#
-    #########  ###    ### ###     ###   ###   ###
+
+     #####  #####    ##   #    #
+     #    # #    #  #  #  #    #
+     #    # #    # #    # #    #
+     #    # #####  ###### # ## #
+     #    # #   #  #    # ##  ##
+     #####  #    # #    # #    #
+
     */
+   /**========================================================================
+    **                           FUNCTION NAME
+    *?  Draws touch controls and visual indicators on the screen
+    *========================================================================**/
     draw() {
         if (this.touch.enabled) {
             ctx.globalAlpha = 0.05;
@@ -365,7 +378,7 @@ class Controller {
             ctx.arc(
                 this.touch.left.pos.x,
                 game.window.h - this.touch.left.pos.y,
-                this.touch.left.pos.r * 2,
+                this.touch.left.radius * 2,
                 0, 2 * Math.PI);
             ctx.closePath();
             ctx.fill()
@@ -374,7 +387,7 @@ class Controller {
             ctx.arc(
                 this.touch.left.pos.x,
                 game.window.h - this.touch.left.pos.y,
-                this.touch.left.pos.r,
+                this.touch.left.radius,
                 0, 2 * Math.PI);
             ctx.closePath();
             ctx.fill()
@@ -384,7 +397,7 @@ class Controller {
             ctx.arc(
                 game.window.w - this.touch.right.pos.x,
                 game.window.h - this.touch.right.pos.y,
-                this.touch.right.pos.r * 2,
+                this.touch.right.radius * 2,
                 0, 2 * Math.PI);
             ctx.closePath();
             ctx.fill()
@@ -393,16 +406,30 @@ class Controller {
             ctx.arc(
                 game.window.w - this.touch.right.pos.x,
                 game.window.h - this.touch.right.pos.y,
-                this.touch.right.pos.r,
+                this.touch.right.radius,
                 0, 2 * Math.PI);
             ctx.closePath();
             ctx.fill()
             ctx.stroke();
             ctx.globalAlpha = 1;
+            document.getElementById('debugger').style.display = 'none';
+        }
+        else {
+            document.getElementById('debugger').style.display = 'block';
         }
     }
 }
 
+
+/*
+      :::::::::  :::    :::   :::   :::     :::   :::  :::   :::
+     :+:    :+: :+:    :+:  :+:+: :+:+:   :+:+: :+:+: :+:   :+:
+    +:+    +:+ +:+    +:+ +:+ +:+:+ +:+ +:+ +:+:+ +:+ +:+ +:+
+   +#+    +:+ +#+    +:+ +#+  +:+  +#+ +#+  +:+  +#+  +#++:
+  +#+    +#+ +#+    +#+ +#+       +#+ +#+       +#+   +#+
+ #+#    #+# #+#    #+# #+#       #+# #+#       #+#   #+#
+#########   ########  ###       ### ###       ###   ###
+*/
 class DummyController extends Controller {
     constructor() {
         super();

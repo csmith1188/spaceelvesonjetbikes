@@ -66,3 +66,4 @@ Dark elves believe everything is random:
 - z block top vs player bottom bad when block z is raised
 - ring height too low in iso view when on block
 - missile cylinder shadow not aligning in iso view
+- choppy gamepad aim

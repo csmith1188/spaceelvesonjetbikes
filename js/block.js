@@ -508,7 +508,7 @@ class Missile extends Block {
                 */
                 for (let c of [game.player, ...game.match.bots]) {
                     if (c.character === this.user) //Don't collide with yourself
-                        continue;9
+                        continue;
                     c = c.character; //Get the character from the bot
                     let side = this.HB.collide(c.HB); //Check for collision
                     if (side && c.solid) {
