@@ -18,6 +18,10 @@ function setupInputs() {
             event.preventDefault();
             game.player.controller.altKey = Number(event.altKey)
         }
+        if (event.key.toLocaleLowerCase() === "1") game.player.character.item = 0;
+        if (event.key.toLocaleLowerCase() === "2") game.player.character.item = 1;
+        // if (event.key.toLocaleLowerCase() === "3") game.player.character.item = 2;
+        // if (event.key.toLocaleLowerCase() === "4") game.player.character.item = 3;
         if (event.key.toLocaleLowerCase() === "w" || event.key === "ArrowUp") game.player.controller.upKey = 1;
         if (event.key.toLocaleLowerCase() === "a" || event.key === "ArrowLeft") game.player.controller.leftKey = 1;
         if (event.key.toLocaleLowerCase() === "s" || event.key === "ArrowDown") game.player.controller.downKey = 1;

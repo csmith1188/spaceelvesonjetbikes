@@ -2,11 +2,7 @@ class Match {
     constructor() {
         this.map;
         this.bots = [];
-        this.goals = [];
-        this.goalIndex = 0;
-        this.laps = [];
-        this.lapStart = 0;
-        this.lapEnd = 0;
+        this.waves = 0;
         this.blocks = []; // Different from map blocks. Think powerups and dropped items
         this.runFuncs = []; // A list of functions to run every step
     }
@@ -18,6 +14,7 @@ class Match {
                 this.npcs = this.npcs.filter(function (el) { return el != e; });
             }
         }
+        
         // Run all runFuncs
         for (const func in this.runFucts) {
             func();

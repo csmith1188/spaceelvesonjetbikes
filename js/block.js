@@ -431,7 +431,8 @@ class Missile extends Block {
         this.colorSide = [255, 128, 0];
         this.touchSFX = new Audio('sfx/hit_01.wav');
         this.damage = 10;
-        this.payLoad = () => {};
+        this.force = 0.15; // How much of this projectile's speed is applied to the target
+        this.payLoad = () => { };
         this.runFunc = [
             // Create Debris
             // function () {
@@ -457,40 +458,6 @@ class Missile extends Block {
             }
     }
 
-    // collide(colliders, options) {
-    //     if (this.active && ticks >= this.startDelay) {
-    //         // custom collide code "activates" the powerup
-    //         for (const c of colliders) {
-    //             if (c != this && c.team != this.parent.team && !c.tags.includes('nocollide')) {
-    //                 //Goals collide infinitely upwards
-    //                 if (Math.abs(this.x - c.x) < this.w / 2 + (c.w / 2) && Math.abs(this.y - c.y) < this.h / 2 + (c.h / 2)) {
-    //                     c.hp -= this.damage;
-    //                     this.active = false;
-    //                     this.cleanup = true;
-    //                     this.touchSFX.play();
-    //                     for (let parts = 0; parts < 10; parts++) {
-    //                         let tempx = (Math.random() * 4) - 2;
-    //                         let tempy = (Math.random() * 4) - 2;
-    //                         let tempC = Math.ceil(Math.random() * 255);
-    //                         game.match.map.debris.push(new Debris(allID++, this.x, this.y,
-    //                             {
-    //                                 w: 2,
-    //                                 h: 2,
-    //                                 xspeed: tempx,
-    //                                 yspeed: tempy,
-    //                                 z: this.z,
-    //                                 color: '#ff' + tempC.toString(16) + '00',
-    //                                 livetime: 20,
-    //                                 dying: true,
-    //                                 landable: false
-    //                             }));
-    //                     }
-    //                 }
-    //             }
-    //         }
-    //     }
-    // }
-
     step() {
         if (this.active && ticks >= this.startDelay) {
             if (ticks >= this.startDelay && this.livetime != 0) {
@@ -511,8 +478,13 @@ class Missile extends Block {
                         continue;
                     c = c.character; //Get the character from the bot
                     let side = this.HB.collide(c.HB); //Check for collision
-                    if (side && c.solid) {
+                    if (side && c.solid && c.team !== this.user.team) {
+                        //play hit2 sound
+                        this.touchSFX.play();
                         c.hp -= this.damage;
+                        c.speed.x += this.speed.x * this.force;
+                        c.speed.y += this.speed.y * this.force;
+                        c.speed.z += this.speed.z * this.force;
                         this.payLoad(this.user, c);
                         c.trigger(this, side);
                         this.active = false;
@@ -526,35 +498,40 @@ class Missile extends Block {
                  |___/_\___/\__|_\_\/__/
      
                 */
-                // for (const c of game.match.map.blocks) { //For each block
-                //     let side = this.HB.collide(c.HB); //Check for collision
-                //     if (side) c.trigger(this, side); //Trigger the block's trigger function
-                //     if (c.solid) //If the block is solid
-                //         switch (side) { //see which side you collided on
-                //             case 'front':
-                //                 //Move the character to the edge of the block
-                //                 this.HB.pos.y = c.HB.pos.y + c.HB.volume.y + this.HB.radius;
-                //                 break;
-                //             case 'rear':
-                //                 this.HB.pos.y = c.HB.pos.y - this.HB.radius;
-                //                 break;
-                //             case 'right':
-                //                 this.HB.pos.x = c.HB.pos.x + c.HB.volume.x + this.HB.radius;
-                //                 break;
-                //             case 'left':
-                //                 this.HB.pos.x = c.HB.pos.x - this.HB.radius;
-                //                 break;
-                //             case 'top':
-                //                 this.HB.pos.z = c.HB.pos.z + c.HB.volume.z;
-                //                 break;
-                //             case 'bottom':
-                //                 this.HB.pos.z = c.HB.pos.z - this.HB.height;
-                //                 break;
-                //             default:
-                //                 //break if you didn't collide
-                //                 break;
-                //         }
-                // }
+                for (const c of game.match.map.blocks) { //For each block
+                    let side = this.HB.collide(c.HB); //Check for collision
+                    if (c.solid && side) { //If the block is solid and you collided
+                        switch (side) { //see which side you collided on
+                            case 'front':
+                                //Move the character to the edge of the block
+                                this.HB.pos.y = c.HB.pos.y + c.HB.volume.y + this.HB.radius;
+                                break;
+                            case 'rear':
+                                this.HB.pos.y = c.HB.pos.y - this.HB.radius;
+                                break;
+                            case 'right':
+                                this.HB.pos.x = c.HB.pos.x + c.HB.volume.x + this.HB.radius;
+                                break;
+                            case 'left':
+                                this.HB.pos.x = c.HB.pos.x - this.HB.radius;
+                                break;
+                            case 'top':
+                                this.HB.pos.z = c.HB.pos.z + c.HB.volume.z;
+                                break;
+                            case 'bottom':
+                                this.HB.pos.z = c.HB.pos.z - this.HB.height;
+                                break;
+                            default:
+                                //break if you didn't collide
+                                break;
+                        }
+                        //play hit sound
+                        this.touchSFX.play();
+                        this.payLoad(this.user, c);
+                        this.active = false;
+                        c.trigger(this, side); //Trigger the block's trigger function
+                    }
+                }
 
                 for (const func of this.runFunc) {
                     func();
@@ -566,4 +543,120 @@ class Missile extends Block {
         }
     }
 
+}
+
+/*
+      :::::::::   ::::::::  :::       ::: :::::::::: :::::::::         :::    ::: :::::::::
+     :+:    :+: :+:    :+: :+:       :+: :+:        :+:    :+:        :+:    :+: :+:    :+:
+    +:+    +:+ +:+    +:+ +:+       +:+ +:+        +:+    +:+        +:+    +:+ +:+    +:+
+   +#++:++#+  +#+    +:+ +#+  +:+  +#+ +#++:++#   +#++:++#:         +#+    +:+ +#++:++#+
+  +#+        +#+    +#+ +#+ +#+#+ +#+ +#+        +#+    +#+        +#+    +#+ +#+
+ #+#        #+#    #+#  #+#+# #+#+#  #+#        #+#    #+#        #+#    #+# #+#
+###         ########    ###   ###   ########## ###    ###         ########  ###
+*/
+
+class PowerUp extends Block {
+    constructor(id, x, y, z, vx, vy, vz, options) {
+        super(id, x, y, z, vx, vy, vz, options);
+        this.HB = new Cube(new Vect3(x, y, z + 16), new Vect3(32, 32, 16));
+        this.type = 'powerup';
+        this.touchSFX = new Audio('sfx/coin_01.wav');
+        this.solid = false;
+        this.runFunc = [
+            (actor, side) => {
+                this.HB.pos.z = sineAnimate(5, 0.05) + 10;
+            }
+        ]
+        if (typeof options === 'object')
+            for (var key of Object.keys(options)) {
+                this[key] = options[key];
+            }
+    }
+
+    trigger(actor, side) {
+        if (actor instanceof Character) {
+            this.active = false;
+            //run every runFunc
+            for (const func of this.runFunc) {
+                func(actor, side);
+            }
+
+        }
+    }
+}
+
+class Ammo_Ballistic extends PowerUp {
+    constructor(id, x, y, z, vx, vy, vz, options) {
+        super(id, x, y, z, vx, vy, vz, options);
+        // this.imgFile = 'img/sprites/ammo_ballistic.png';
+        // this.img.src = this.imgFile;
+        this.color = [255, 0, 0];
+        this.colorSide = [255, 128, 128];
+        //if ballistic ammo is not full
+        this.runFunc.push((actor, side) => {
+            if (actor instanceof Character)
+                if (actor.ammo.ballistic < actor.ammo.ballisticMax) {
+                    actor.ammo.ballistic++; // Add ballistic ammo
+                    // play coin_01 sound
+                    this.touchSFX.play();
+                } else {
+                    this.active = true; // Turn this back on if the player is full ammo
+                }
+        });
+        if (typeof options === 'object')
+            for (var key of Object.keys(options)) {
+                this[key] = options[key];
+            }
+    }
+}
+
+class Ammo_Plasma extends PowerUp {
+    constructor(id, x, y, z, vx, vy, vz, options) {
+        super(id, x, y, z, vx, vy, vz, options);
+        // this.imgFile = 'img/sprites/ammo_plasma.png';
+        // this.img.src = this.imgFile;
+        this.color = [255, 0, 255];
+        this.colorSide = [255, 128, 255];
+        //if plasma ammo is not full
+        this.runFunc.push((actor, side) => {
+            if (actor instanceof Character)
+                if (actor.ammo.plasma < actor.ammo.plasmaMax) {
+                    // play coin_01 sound
+                    this.touchSFX.play();
+                    actor.ammo.plasma++; // Add plasma ammo
+                } else {
+                    this.active = true; // Turn this back on if the player is full ammo
+                }
+        });
+        if (typeof options === 'object')
+            for (var key of Object.keys(options)) {
+                this[key] = options[key];
+            }
+    }
+}
+
+class HealthPickup extends PowerUp {
+    constructor(id, x, y, z, vx, vy, vz, options) {
+        super(id, x, y, z, vx, vy, vz, options);
+        // this.imgFile = 'img/sprites/health.png';
+        // this.img.src = this.imgFile;
+        this.color = [0, 255, 0];
+        this.colorSide = [128, 255, 128];
+        //if health is not full
+        this.runFunc.push((actor, side) => {
+            if (actor instanceof Character)
+                if (actor.hp < actor.hp_max) {
+                    // play coin_01 sound
+                    this.touchSFX.play();
+                    actor.hp = Math.min(actor.hp + 50, actor.hp_max); // Add health
+                }
+                else {
+                    this.active = true; // Turn this back on if the player is full health
+                }
+        });
+        if (typeof options === 'object')
+            for (var key of Object.keys(options)) {
+                this[key] = options[key];
+            }
+    }
 }

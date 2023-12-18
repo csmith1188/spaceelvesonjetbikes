@@ -1,8 +1,8 @@
 class Map {
     constructor(options) {
-        this.w = 2048; //7200
-        this.h = 2048; //4800
-        this.tileSize = 64; //32
+        this.w = 5096; //7200
+        this.h = 5096; //4800
+        this.tileSize = 128; //32
         this.tileSet = [[]]
         this.nodes = [];
 
@@ -28,7 +28,7 @@ class Map {
         this.lightValue = [0, 0, 0, 0.0];
         // this.lightValue = [0, 0, 128, 0.25];
 
-        this.runFuncs = []; // A list of functions to run during the step
+        this.runFunc = []; // A list of functions to run during the step
 
         if (typeof options == 'object')
             for (const setting of Object.keys(options)) {
@@ -130,8 +130,8 @@ class Map {
             }
         }
 
-        // Run all runFuncs
-        for (const func of this.runFuncs) {
+        // Run all runFunc
+        for (const func of this.runFunc) {
             func();
         }
 

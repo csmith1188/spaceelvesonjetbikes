@@ -27,7 +27,9 @@ Dark elves believe everything is random:
 #########   ########          ###        ########### ###    ###  ########     ###
 -->
 
-
+- Debris from missile
+- missile collision with blocks
+- missile collsion particles
 - Only draw in camera
 - Complete speed physics (top speed, actual speed, weight)
 - Shoot along z rotation in iso view
@@ -51,7 +53,6 @@ Dark elves believe everything is random:
 - Draw xhair from anywhere
 - Arc Aiming Cone
 
-
 <!--
       :::::::::  :::    :::  ::::::::   ::::::::
      :+:    :+: :+:    :+: :+:    :+: :+:    :+:
@@ -62,6 +63,8 @@ Dark elves believe everything is random:
 #########   ########   ########   ########
 -->
 
+- bullets always collide on left of block?
+-- fast moving objects penetrate deeper. need raycasting collision
 - z height too high on ortho view when over tall block
 - z block top vs player bottom bad when block z is raised
 - ring height too low in iso view when on block

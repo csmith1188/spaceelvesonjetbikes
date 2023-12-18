@@ -97,10 +97,10 @@ class Bot {
 
             //If my target is not active
             if (!this.character.target.active) {
-                // this.findTarget();
+                this.findTarget();
             }
         } else {
-            // this.findTarget();
+            this.findTarget();
         }
     }
 
@@ -114,8 +114,6 @@ class Bot {
         for (const npc of game.match.bots) {
             if (npc.character.active && npc.character.team != this.character.team) this.character.target = npc.character;
         }
-        // Look for a goal to race through?
-        if (!this.character.target) this.character.target = game.match.goals[0];
         //Try to get back into formation
         if (!this.character.target)
             for (const npc of game.match.bots) {
@@ -143,10 +141,6 @@ class Player extends Bot {
     }
 
     AI() {
-        return
-    }
-
-    findTarget() {
         return
     }
 }

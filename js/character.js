@@ -73,7 +73,9 @@ class Character {
         this.inventory = [new Pistol(), new Flamer(), new JumpDropper()];
         this.ammo = {
             plasma: 2,
-            ballistic: 2
+            plasmaMax: 5,
+            ballistic: 2,
+            ballisticMax: 5
         }
 
         /*
@@ -171,7 +173,7 @@ class Character {
                         aimZ = aimY * game.player.camera.angle;
                         aimY = aimY * (1 - game.player.camera.angle);
                     }
-                    this.inventory[this.item].use(this, aimX * xMulti, aimY, aimZ, 0, { color: this.color });
+                    this.inventory[this.item].use(this, aimX, aimY, aimZ, 0, { color: this.color });
                 }
             }
 
@@ -273,7 +275,7 @@ class Character {
                     this.floor = c.HB.pos.z + c.HB.height; //Set the floor to the block's height
                 let side = this.HB.collide(c.HB); //Check for collision
                 if (side) c.trigger(this, side);
-                if (c.solid) //If the other character is solid
+                if (c.solid && this.team != c.team) //If the other character is solid
                     switch (side) { //See which side you collided on
                         case 'side': //If you collided on the side
                             let xDistance = this.HB.pos.x - c.HB.pos.x;
@@ -376,6 +378,40 @@ class Character {
             this.HB.pos.z += this.speed.z;
 
             /*
+               ___       _          __   ___                   _
+              / _ \ _  _| |_   ___ / _| | _ ) ___ _  _ _ _  __| |___
+             | (_) | || |  _| / _ \  _| | _ \/ _ \ || | ' \/ _` (_-<
+              \___/ \_,_|\__| \___/_|   |___/\___/\_,_|_||_\__,_/__/
+
+            */
+            // If the character is outside of the map boundaries
+            if (this.HB.pos.x < 0) {
+                this.HB.pos.x = 0;
+                // refelct the speed and mom by the map's reflect value
+                this.speed.x *= -game.match.map.collideReflect;
+                this.mom.x *= -game.match.map.collideReflect;
+                // sounds.dam1.play();
+            }
+            if (this.HB.pos.x > game.match.map.w) {
+                this.HB.pos.x = game.match.map.w;
+                this.speed.x *= -game.match.map.collideReflect;
+                this.mom.x *= -game.match.map.collideReflect;
+                // sounds.dam1.play();
+            }
+            if (this.HB.pos.y < 0) {
+                this.HB.pos.y = 0;
+                this.speed.y *= -game.match.map.collideReflect;
+                this.mom.y *= -game.match.map.collideReflect;
+                // sounds.dam1.play();
+            }
+            if (this.HB.pos.y > game.match.map.h) {
+                this.HB.pos.y = game.match.map.h;
+                this.speed.y *= -game.match.map.collideReflect;
+                this.mom.y *= -game.match.map.collideReflect;
+                // sounds.dam1.play();
+            }
+
+            /*
                ___                      _    ___     _ _ _    _
               / __|_ _ ___ _  _ _ _  __| |  / __|___| | (_)__(_)___ _ _
              | (_ | '_/ _ \ || | ' \/ _` | | (__/ _ \ | | (_-< / _ \ ' \
@@ -401,7 +437,22 @@ class Character {
 
             if (this.hp <= 0) {
                 this.active = false;
+                if (this === game.player.character) {
+                    game.paused = true;
+                    // game.player.findTarget();
+                    // game.player.camera.target = game.player.target;
+                }
             }
+        }
+    }
+
+    unitColor(fullOpaque = 0) {
+        if (this.team == game.player.character.team) {
+            return `rgba(0,255,0, ${Math.max(Number(fullOpaque), game.player.interface.drawFriendlyRing)})`;
+        } else if (game.player.character.teams.includes(this.team)) {
+            return `rgba(255,255,0, ${Math.max(Number(fullOpaque), game.player.interface.drawNeutralRing)})`;
+        } else {
+            return `rgba(255,0,0, ${Math.max(Number(fullOpaque), game.player.interface.drawEnemyRing)})`;
         }
     }
 
@@ -460,13 +511,7 @@ class Character {
                  /__/\___|_\___\__|\__\___/_|   |_| |_|_||_\__, |
                                                            |___/
                 */
-                if (this.team == game.player.character.team) {
-                    ctx.strokeStyle = `rgba(0,255,0, ${game.player.interface.drawFriendlyRing})`;
-                } else if (game.player.character.teams.includes(this.team)) {
-                    ctx.strokeStyle = `rgba(255,255,0, ${game.player.interface.drawNeutralRing})`;
-                } else {
-                    ctx.strokeStyle = `rgba(255,0,0, ${game.player.interface.drawEnemyRing})`;
-                }
+                ctx.strokeStyle = this.unitColor();
                 ctx.lineWidth = 3;
                 ctx.beginPath();
                 ctx.ellipse(
@@ -475,6 +520,34 @@ class Character {
                     this.HB.radius,
                     this.HB.radius,
                     0, 0, 2 * Math.PI);
+                ctx.stroke();
+
+                // draw an arc around the bottom half of the selector ring offest by 10 pixels outside that represents the character's health
+                // draw bar background
+                ctx.strokeStyle = "#000000";
+                ctx.lineWidth = 5;
+                ctx.beginPath();
+                ctx.beginPath();
+                ctx.arc(
+                    game.window.w / 2 - compareX,
+                    game.window.h / 2 - compareY - this.floor,
+                    this.HB.radius + 10,
+                    Math.PI,
+                    Math.PI * 2,
+                    true
+                );
+                ctx.stroke();
+                ctx.strokeStyle = this.unitColor(true);
+                ctx.lineWidth = 3;
+                ctx.beginPath();
+                ctx.arc(
+                    game.window.w / 2 - compareX,
+                    game.window.h / 2 - compareY - this.floor,
+                    this.HB.radius + 10,
+                    Math.PI,
+                    Math.PI * (1 - (this.hp / this.hp_max)),
+                    true
+                );
                 ctx.stroke();
 
                 /*
@@ -522,6 +595,12 @@ class Character {
                     ctx.lineTo(game.window.w / 2 - compareX, game.window.h / 2 - compareY);
                     ctx.stroke();
                 }
+                // Draw character's name above their head
+                ctx.fillStyle = "#FFFFFF";
+                ctx.font = "12px Arial";
+                ctx.textAlign = "center";
+                ctx.fillText(this.name, game.window.w / 2 - compareX, game.window.h / 2 - compareY - this.HB.height - this.HB.pos.z - 10);
+
             }
 
             /*
@@ -544,6 +623,13 @@ class Character {
             //     ctx.lineTo(game.window.w / 2 - compareX, game.window.h / 2 - compareY);
             //     ctx.stroke();
             // }
+        } else {
+            // draw number of waves to center of screen
+            ctx.fillStyle = "#FFFFFF";
+            ctx.font = "12px Arial";
+            ctx.textAlign = "center";
+            ctx.fillText(`Waves: ${game.match.waves}`, game.window.w / 2, game.window.h / 2);
+
         }
     }
 
@@ -587,13 +673,7 @@ class Character {
          /__/\___|_\___\__|\__\___/_|   |_| |_|_||_\__, |
                                                    |___/
         */
-        if (this.team == game.player.character.team) {
-            ctx.strokeStyle = `rgba(0,255,0, ${game.player.interface.drawFriendlyRing})`;
-        } else if (game.player.character.teams.includes(this.team)) {
-            ctx.strokeStyle = `rgba(255,255,0, ${game.player.interface.drawNeutralRing})`;
-        } else {
-            ctx.strokeStyle = `rgba(255,0,0, ${game.player.interface.drawEnemyRing})`;
-        }
+        ctx.strokeStyle = this.unitColor();
         ctx.lineWidth = 3;
         ctx.beginPath();
         ctx.ellipse(
@@ -602,6 +682,33 @@ class Character {
             this.HB.radius,
             this.HB.radius * game.player.camera.angle,
             0, 0, 2 * Math.PI);
+        ctx.stroke();
+        // draw an arc around the bottom half of the selector ring offest by 10 pixels outside that represents the character's health, and adjust for camera angle
+        // draw bar background
+        ctx.strokeStyle = "#000000";
+        ctx.lineWidth = 5;
+        ctx.beginPath();
+        ctx.beginPath();
+        ctx.arc(
+            game.window.w / 2 - compareX,
+            game.window.h / 2 - (compareY * game.player.camera.angle) - (this.floor * (1 - game.player.camera.angle)),
+            this.HB.radius + 10,
+            Math.PI,
+            Math.PI * 2,
+            true
+        );
+        ctx.stroke();
+        ctx.strokeStyle = this.unitColor(true);
+        ctx.lineWidth = 3;
+        ctx.beginPath();
+        ctx.arc(
+            game.window.w / 2 - compareX,
+            game.window.h / 2 - (compareY * game.player.camera.angle) - (this.floor * (1 - game.player.camera.angle)),
+            this.HB.radius + 10,
+            Math.PI,
+            Math.PI * (1 - (this.hp / this.hp_max)),
+            true
+        );
         ctx.stroke();
 
         if (this.faceCamera)
@@ -620,6 +727,12 @@ class Character {
                 this.HB.radius * 2,
                 this.HB.height * (1 - game.player.camera.angle)
             );
+
+        // Draw character's name above their head, adjusting for camera angle
+        ctx.fillStyle = "#FFFFFF";
+        ctx.font = "12px Arial";
+        ctx.textAlign = "center";
+        ctx.fillText(this.name, game.window.w / 2 - compareX, game.window.h / 2 - (compareY * game.player.camera.angle) - this.HB.height - (this.HB.pos.z * (1 - game.player.camera.angle)) - 10);
 
         /*
              _     _                _    _ _   _
@@ -679,4 +792,53 @@ class Character {
 
     }
 
+}
+
+function getName() {
+    let names = [
+        "Aegnor",
+        "Beleg",
+        "Celeborn",
+        "Denethor",
+        "Ecthelion",
+        "Jae'Sin",
+        "Loh'Gahn",
+        "Aerendil",
+        "Caladwen",
+        "Eldamar",
+        "Finwe",
+        "Galadriel",
+        "Haldir",
+        "Ithilwen",
+        "Luthien",
+        "Maedhros",
+        "Nimrodel",
+        "Orome",
+        "Oropher",
+        "Quenya",
+        "Silmaril",
+        "Tauriel",
+        "Vanyar",
+        "Yavanna",
+        "Zirakzigil"
+    ];
+    return names[Math.floor(Math.random() * names.length)];
+}
+
+function generateRandomName() {
+    let vowels = ['a', 'e', 'i', 'o', 'u'];
+    let consonants = ['b', 'c', 'd', 'f', 'g', 'h', 'j', 'k', 'l', 'm', 'n', 'p', 'q', 'r', 's', 't', 'v', 'w', 'x', 'y', 'z'];
+
+    let name = '';
+    let length = Math.floor(Math.random() * 10) + 4; // Random length between 2 and 4
+
+    for (let i = 0; i < length; i++) {
+        if (i % 2 === 0) {
+            name += consonants[Math.floor(Math.random() * consonants.length)];
+        } else {
+            name += vowels[Math.floor(Math.random() * vowels.length)];
+        }
+    }
+
+    return name;
 }

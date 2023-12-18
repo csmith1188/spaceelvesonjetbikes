@@ -9,6 +9,11 @@ class Interface {
         this.drawFriendlyRing = 0.5;
         this.drawNeutralRing = 0.5;
         this.drawEnemyRing = 0.5;
+        this.touchButton = {
+            inventory1: {},
+            inventory2: {},
+            inventory3: {}
+        }
     }
 
     drawHUD() {
@@ -31,17 +36,86 @@ class Interface {
             ctx.fillRect(0, (this.player.camera.y / game.match.map.h) * game.window.h - 3, 6, 6);
             ctx.fillRect(game.window.w - 6, (this.player.camera.y / game.match.map.h) * game.window.h - 3, 6, 6);
 
-            //Background
-
-            //Health Bar
-
-            //power bar
-
-            //Speed bar
-
             //Crosshair
             this.drawXhair();
+
+            //Ammo
+            this.drawAmmo();
+
+            //Match info
+            this.drawMatch();
+
         }
+    }
+
+    drawAmmo() {
+        if (this.player.character.active) {
+            let item = this.player.character.inventory[this.player.character.item];
+            ctx.fillStyle = "#000000";
+            ctx.font = '12px consolas';
+            ctx.fillText(item.ammo, 10, 50);
+            // draw the ammo bar
+            ctx.fillStyle = "#000000";
+            ctx.fillRect(10, 60, 100, 10);
+            ctx.fillStyle = "#FF0000";
+            ctx.fillRect(10, 60, (item.ammo / item.ammoMax) * 100, 10);
+            // draw the player's ballistic ammo pips
+            ctx.fillStyle = "#000000";
+            ctx.font = '12px consolas';
+            ctx.fillText(this.player.character.ammo.ballistic, 10, 80);
+            ctx.fillStyle = "#000000";
+            ctx.fillRect(10, 90, 100, 10);
+            ctx.fillStyle = "#FF0000";
+            // for each pip, draw a rectangle
+            for (let i = 0; i < this.player.character.ammo.ballistic; i++) {
+                ctx.fillRect(10 + (i * 20), 90, 18, 8);
+            }
+            // draw the player's plasma ammo pips
+            ctx.fillStyle = "#000000";
+            ctx.font = '12px consolas';
+            ctx.fillText(this.player.character.ammo.plasma, 10, 110);
+            ctx.fillStyle = "#000000";
+            ctx.fillRect(10, 120, 100, 10);
+            ctx.fillStyle = "#FF00FF";
+            // for each pip, draw a rectangle
+            for (let i = 0; i < this.player.character.ammo.plasma; i++) {
+                ctx.fillRect(10 + (i * 20), 120, 18, 8);
+            }
+            // draw the cooldown bar
+            ctx.fillStyle = "#000000";
+            ctx.fillRect(10, 150, 100, 10);
+            ctx.fillStyle = "#0000FF";
+            ctx.fillRect(10, 150, Math.min(Math.max(item.nextCool - ticks, 0) / item.coolDown * 100, 100), 10);
+
+            // draw the player's inventory in a column in the center bottom of the screen
+            // inventory contains pistol, flamer, and dropper
+            // draw each inactive item's icon (64px) then draw the active item's icon over it's inactive icon
+            ctx.drawImage(this.player.character.inventory[0].iconInactive, (game.window.w / 2) - 32, game.window.h - 64, 64, 64);
+            ctx.drawImage(this.player.character.inventory[1].iconInactive, (game.window.w / 2) - 32, game.window.h - 128, 64, 64);
+            // ctx.drawImage(this.player.character.inventory[2].iconInactive, (game.window.w / 2) - 32, game.window.h - 192, 64, 64);
+            ctx.drawImage(this.player.character.inventory[this.player.character.item].icon, (game.window.w / 2) - 32, game.window.h - 64 - 64 * this.player.character.item, 64, 64);
+            // Create a Rect for each item in the inventory and store it in the touchButton object
+            this.touchButton.inventory1 = new Rect((game.window.w / 2) - 32, game.window.h - 64, 64, 64);
+            this.touchButton.inventory2 = new Rect((game.window.w / 2) - 32, game.window.h - 128, 64, 64);
+            this.touchButton.inventory3 = new Rect((game.window.w / 2) - 32, game.window.h - 192, 64, 64);
+                   
+        }
+    }
+
+    drawMatch() {   
+        //Draw waves in top right hand corner
+        ctx.fillStyle = "#000000";
+        ctx.font = '12px consolas';
+        ctx.fillText(`Wave: ${game.match.waves}`, game.window.w - 100, 50);
+        //Draw enemies remaining in top right hand corner
+        ctx.fillStyle = "#000000";
+        ctx.font = '12px consolas';
+        ctx.fillText(`Bots: ${game.match.bots.length}`, game.window.w - 100, 70);
+        //Draw time until next wave in top right hand corner
+        ctx.fillStyle = "#000000";
+        ctx.font = '12px consolas';
+        ctx.fillText(`Next: ${60 - Math.floor((ticks % 3600)/60)}`, game.window.w - 100, 90);
+
     }
 
     drawXhair() {

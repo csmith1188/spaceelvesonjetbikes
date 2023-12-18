@@ -22,13 +22,17 @@ class Pistol extends Item {
         this.nextCool = 0;
         this.ammo = 10;
         this.ammoMax = 10;
+        this.icon = new Image();
+        this.icon.src = 'img/icons/inventory/pistol_active.png';
+        this.iconInactive = new Image();
+        this.iconInactive.src = 'img/icons/inventory/pistol_inactive.png';
         // Options
         if (typeof options === 'object')
             for (var key of Object.keys(options)) {
                 this[key] = options[key];
             }
     }
-    use(user, aimX, aimY, mode) {
+    use(user, aimX, aimY, aimZ, mode) {
         // Check cooldown
         if (ticks > this.nextCool) {
             // Set next cooldown
@@ -42,24 +46,28 @@ class Pistol extends Item {
                 //Normalize the dimension distance by the real distance (ratio)
                 aimX = (aimX / distance);
                 aimY = (aimY / distance);
+                aimZ = (aimZ / distance);
                 // Add the user's speed and multiply speed BEFORE spread for satisfying flamer
                 let spreadMagnitude = user.accuracy; // Apply spread and user accuracy
                 // Randomize spread
                 let spreadX = (Math.random() * 2 - 1) * spreadMagnitude;
                 let spreadY = (Math.random() * 2 - 1) * spreadMagnitude;
+                let spreadZ = (Math.random() * 2 - 1) * spreadMagnitude;
                 // Add spread to aim
                 aimX += spreadX;
                 aimY += spreadY;
+                aimZ += spreadZ;
                 // Multiply by this missile's speed
                 aimX *= this.projectileSpeed;
                 aimY *= this.projectileSpeed;
+                aimZ *= this.projectileSpeed;
                 // Add missile to map
                 game.match.map.missiles.push(
                     new Missile(
                         allID++, // ID
                         user.HB.pos.x, user.HB.pos.y, user.HB.pos.z, 4, 4, 0, user, // Position and size
                         {
-                            speed: new Vect3(aimX, aimY, 0),
+                            speed: new Vect3(aimX, aimY, 0), //aimZ doesn't work
                             color: user.color
                         }
                     )
@@ -89,6 +97,10 @@ class Flamer extends Item {
         this.nextCool = 0;
         this.ammo = 5;
         this.ammoMax = 5;
+        this.icon = new Image();
+        this.icon.src = 'img/icons/inventory/flamer_active.png';
+        this.iconInactive = new Image();
+        this.iconInactive.src = 'img/icons/inventory/flamer_inactive.png';
         // Options
         if (typeof options === 'object')
             for (var key of Object.keys(options)) {
@@ -102,39 +114,39 @@ class Flamer extends Item {
             this.nextCool = ticks + this.coolDown;
             // Check ammo
             if (this.ammo > 0) {
-                this.ammo--; // consume a bullet
+                this.ammo--; // consume a bullet22121
                 this.shootSFX.play(); // play shoot sound
                 for (let i = 0; i < 5; i++) {
                     let distance = Math.sqrt(aimX ** 2 + aimY ** 2);
-                    aimX = (aimX / distance) * this.projectileSpeed;
-                    aimY = (aimY / distance) * this.projectileSpeed;
+                    aimX = (aimX / distance) * (this.projectileSpeed + user.speed.x);
+                    aimY = (aimY / distance) * (this.projectileSpeed + user.speed.y);
 
-                    let spreadMagnitude = user.accuracy * 40;
+                    let spreadMagnitude = user.accuracy * 30;
 
                     let spreadX = (Math.random() * 2 - 1) * spreadMagnitude;
                     let spreadY = (Math.random() * 2 - 1) * spreadMagnitude;
 
-                    aimX += spreadX + user.speed.x;
-                    aimY += spreadY + user.speed.y;
+                    aimX += spreadX;
+                    aimY += spreadY;
                     // Add missiles to map
                     game.match.map.missiles.push(
                         new Missile(
                             allID++, // ID
                             user.HB.pos.x, user.HB.pos.y, user.HB.pos.z, 4, 4, 0, user, // Position and size
                             {
-                                livetime: 10,
+                                livetime: 14,
                                 speed: new Vect3(aimX, aimY, 0),
                                 color: user.color,
-                                damage: 3
+                                damage: 10
                             }
                         )
                     );
                 }
             } else {
-                if (user.ammo.ballistic > 0) {
+                if (user.ammo.plasma > 0) {
                     this.ammo = this.ammoMax;   // reload
                     this.nextCool = ticks + this.reloadTime; // set reload time
-                    user.ammo.ballistic--;      // consume a clip from a user
+                    user.ammo.plasma--;      // consume a clip from a user
                 } else {
                     //play empty click sound
                 }
@@ -152,6 +164,10 @@ class JumpDropper extends Item {
         this.delay = 0;
         this.range = 0;
         this.shootSFX = new Audio('sfx/laser_01.wav');
+        this.icon = new Image();
+        this.icon.src = 'img/icons/inventory/pistol_active.png';
+        this.iconInactive = new Image();
+        this.iconInactive.src = 'img/icons/inventory/pistol_inactive.png';
         // Options
         if (typeof options === 'object')
             for (var key of Object.keys(options)) {
