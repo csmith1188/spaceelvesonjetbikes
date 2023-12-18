@@ -40,6 +40,10 @@ window.onload = function () {
     game.player.camera = new Camera({ target: game.player.character });
     game.player.character.HB = new Cylinder(new Vect3((game.match.map.w / 2), (game.match.map.h / 2) + 200, 0), 29, 37);
 
+    // Start in ISO 3D mode
+    // game.player.camera._3D = true;
+    // game.player.camera.angle = 0.25;
+
     makeGame();
 
     game.match.map.buildNavMesh();
@@ -63,6 +67,7 @@ window.onload = function () {
 */
 
 function step() {
+
     // The next two lines will always max screen
     game.window.h = window.innerHeight;
     game.window.w = window.innerWidth;
@@ -161,23 +166,6 @@ function draw() {
 
     //Draw Map
     game.match.map.draw(game.player.character);
-
-    //Put Bot player characters into a list
-    let npcs = [];
-    for (const npc in game.match.bots) {
-        npcs.push(game.match.bots[npc].character);
-    }
-
-    let renderList =
-        [game.player.character, ...npcs, ...game.match.map.blocks, ...game.match.map.missiles]
-            .sort((a, b) => {
-                if (a.HB.pos.y + a.HB.pos.z < b.HB.pos.y + b.HB.pos.z) return -1;
-                if (a.HB.pos.y + a.HB.pos.z > b.HB.pos.y + b.HB.pos.z) return 1;
-                return 0;
-            });
-    for (const entity of renderList) {
-        entity.draw(game.player.character);
-    }
 
     //Draw Map Lighting
     game.match.map.lighting();

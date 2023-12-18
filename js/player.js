@@ -96,7 +96,7 @@ class Bot {
             // }
 
             //If my target is not active
-            if (!this.character.target.active) {
+            if (!this.character.target.active || this.character.target.team == this.character.team) {
                 this.findTarget();
             }
         } else {

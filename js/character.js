@@ -639,12 +639,18 @@ class Character {
                     ctx.lineTo(game.window.w / 2 - compareX, game.window.h / 2 - compareY);
                     ctx.stroke();
                 }
-                // Draw character's name above their head
-                ctx.fillStyle = "#FFFFFF";
-                ctx.font = "12px Arial";
-                ctx.textAlign = "center";
-                ctx.fillText(this.name, game.window.w / 2 - compareX, game.window.h / 2 - compareY - this.HB.height - this.HB.pos.z - 10);
 
+                /*
+                  _  _
+                 | \| |__ _ _ __  ___
+                 | .` / _` | '  \/ -_)
+                 |_|\_\__,_|_|_|_\___|
+                */
+                // Draw character's name above their head
+                ctx.textAlign = "center";
+                ctx.fillStyle = '#000000';
+                ctx.font = "12px Arial";
+                ctx.fillText(this.name, game.window.w / 2 - compareX, game.window.h / 2 - compareY - this.HB.height - this.HB.pos.z - 10);
             }
 
             /*
