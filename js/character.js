@@ -89,11 +89,9 @@ class Character {
         this.gfx = 'img/sprites/lilguy';
         this.color = [255, 0, 0];
         this.faceCamera = true;
-        this.shadow = {
-            img: new Image()
-        }
-        this.shadow.img.src = 'img/sprites/shadow.png';
-
+        this.shadow = new Image();
+        this.shadow.src = 'img/sprites/shadow.png';
+        this.shadowDraw = true;
         /*
             ___       _   _
            / _ \ _ __| |_(_)___ _ _  ___
@@ -497,7 +495,7 @@ class Character {
                 ctx.globalAlpha = 0.4;
                 let shadowShrink = this.HB.radius * Math.min(((this.HB.pos.z - this.floor) / 128), 1)
                 ctx.drawImage(
-                    this.shadow.img,
+                    this.shadow,
                     game.window.w / 2 - compareX - this.HB.radius + shadowShrink,
                     game.window.h / 2 - compareY - this.HB.radius + shadowShrink - this.floor,
                     this.HB.radius * 2 - shadowShrink * 2,
@@ -670,7 +668,7 @@ class Character {
         } else {
             // draw number of waves to center of screen
             ctx.fillStyle = "#FFFFFF";
-            ctx.font = "12px Arial";
+            ctx.font = "36px Arial";
             ctx.textAlign = "center";
             ctx.fillText(`Waves: ${game.match.waves}`, game.window.w / 2, game.window.h / 2);
         }
@@ -701,7 +699,7 @@ class Character {
         ctx.globalAlpha = 0.4;
         let shadowShrink = this.HB.radius * Math.min(((this.HB.pos.z - this.floor) / 128), 1)
         ctx.drawImage(
-            this.shadow.img,
+            this.shadow,
             game.window.w / 2 - compareX - this.HB.radius + shadowShrink,
             game.window.h / 2 - (compareY * game.player.camera.angle) - this.HB.radius + (this.HB.height * (1 - game.player.camera.angle)) + (shadowShrink * game.player.camera.angle) - (this.floor * (1 - game.player.camera.angle)),
             (this.HB.radius * 2) - (shadowShrink * 2),

@@ -1,3 +1,12 @@
+/*
+      ::::::::::: ::::    ::: ::::::::::: :::::::::: :::::::::  ::::::::::   :::      ::::::::  ::::::::::
+         :+:     :+:+:   :+:     :+:     :+:        :+:    :+: :+:        :+: :+:   :+:    :+: :+:
+        +:+     :+:+:+  +:+     +:+     +:+        +:+    +:+ +:+       +:+   +:+  +:+        +:+
+       +#+     +#+ +:+ +#+     +#+     +#++:++#   +#++:++#:  :#::+::# +#++:++#++: +#+        +#++:++#
+      +#+     +#+  +#+#+#     +#+     +#+        +#+    +#+ +#+      +#+     +#+ +#+        +#+
+     #+#     #+#   #+#+#     #+#     #+#        #+#    #+# #+#      #+#     #+# #+#    #+# #+#
+########### ###    ####     ###     ########## ###    ### ###      ###     ###  ########  ##########
+*/
 class Interface {
     constructor(player) {
         this.player = player;
@@ -16,6 +25,16 @@ class Interface {
         }
     }
 
+    /*
+                                 #     # #     # ######
+     #####  #####    ##   #    # #     # #     # #     #
+     #    # #    #  #  #  #    # #     # #     # #     #
+     #    # #    # #    # #    # ####### #     # #     #
+     #    # #####  ###### # ## # #     # #     # #     #
+     #    # #   #  #    # ##  ## #     # #     # #     #
+     #####  #    # #    # #    # #     #  #####  ######
+
+    */
     drawHUD() {
         if (this.player.character.active) {
 
@@ -36,6 +55,9 @@ class Interface {
             ctx.fillRect(0, (this.player.camera.y / game.match.map.h) * game.window.h - 3, 6, 6);
             ctx.fillRect(game.window.w - 6, (this.player.camera.y / game.match.map.h) * game.window.h - 3, 6, 6);
 
+            //Minimap
+            this.drawMinimap();
+            
             //Crosshair
             this.drawXhair();
 
@@ -45,19 +67,34 @@ class Interface {
             //Match info
             this.drawMatch();
 
+
         }
     }
 
+    /*
+                                    #
+     #####  #####    ##   #    #   # #   #    # #    #  ####
+     #    # #    #  #  #  #    #  #   #  ##  ## ##  ## #    #
+     #    # #    # #    # #    # #     # # ## # # ## # #    #
+     #    # #####  ###### # ## # ####### #    # #    # #    #
+     #    # #   #  #    # ##  ## #     # #    # #    # #    #
+     #####  #    # #    # #    # #     # #    # #    #  ####
+
+    */
     drawAmmo() {
         if (this.player.character.active) {
             let item = this.player.character.inventory[this.player.character.item];
+            // draw the ammo count
             ctx.fillStyle = "#000000";
             ctx.font = '12px consolas';
             ctx.fillText(item.ammo, 10, 50);
             // draw the ammo bar
             ctx.fillStyle = "#000000";
             ctx.fillRect(10, 60, 100, 10);
-            ctx.fillStyle = "#FF0000";
+            // if the ammo is ballistic, draw it red
+            // otherwise, draw it purple
+            if (item.ammoType === "ballistic") ctx.fillStyle = "#FF0000";
+            else ctx.fillStyle = "#FF00FF";
             ctx.fillRect(10, 60, (item.ammo / item.ammoMax) * 100, 10);
             // draw the player's ballistic ammo pips
             ctx.fillStyle = "#000000";
@@ -87,21 +124,42 @@ class Interface {
             ctx.fillStyle = "#0000FF";
             ctx.fillRect(10, 150, Math.min(Math.max(item.nextCool - ticks, 0) / item.coolDown * 100, 100), 10);
 
-            // draw the player's inventory in a column in the center bottom of the screen
-            // inventory contains pistol, flamer, and dropper
-            // draw each inactive item's icon (64px) then draw the active item's icon over it's inactive icon
-            ctx.drawImage(this.player.character.inventory[0].iconInactive, (game.window.w / 2) - 32, game.window.h - 64, 64, 64);
-            ctx.drawImage(this.player.character.inventory[1].iconInactive, (game.window.w / 2) - 32, game.window.h - 128, 64, 64);
-            // ctx.drawImage(this.player.character.inventory[2].iconInactive, (game.window.w / 2) - 32, game.window.h - 192, 64, 64);
-            ctx.drawImage(this.player.character.inventory[this.player.character.item].icon, (game.window.w / 2) - 32, game.window.h - 64 - 64 * this.player.character.item, 64, 64);
+            /*
+              _                 _
+             (_)_ ___ _____ _ _| |_ ___ _ _ _  _
+             | | ' \ V / -_) ' \  _/ _ \ '_| || |
+             |_|_||_\_/\___|_||_\__\___/_|  \_, |
+                                            |__/
+            */
+            ctx.drawImage(this.player.character.inventory[0].iconInactive, (game.window.w / 2) - 128, game.window.h - 64, 64, 64);
+            ctx.drawImage(this.player.character.inventory[1].iconInactive, (game.window.w / 2) + 64, game.window.h - 64, 64, 64);
+            // this switch statement is for drawing the active item
+            switch (this.player.character.item) {
+                case 0:
+                    ctx.drawImage(this.player.character.inventory[0].icon, (game.window.w / 2) - 128, game.window.h - 64, 64, 64);
+                    break;
+                case 1:
+                    ctx.drawImage(this.player.character.inventory[1].icon, (game.window.w / 2) + 64, game.window.h - 64, 64, 64);
+                    break;
+            }
             // Create a Rect for each item in the inventory and store it in the touchButton object
-            this.touchButton.inventory1 = new Rect((game.window.w / 2) - 32, game.window.h - 64, 64, 64);
-            this.touchButton.inventory2 = new Rect((game.window.w / 2) - 32, game.window.h - 128, 64, 64);
-            this.touchButton.inventory3 = new Rect((game.window.w / 2) - 32, game.window.h - 192, 64, 64);
+            this.touchButton.inventory1 = new Rect((game.window.w / 2) - 128, game.window.h - 64, 64, 64);
+            this.touchButton.inventory2 = new Rect((game.window.w / 2) - 64, game.window.h + 64, 64, 64);
+            // this.touchButton.inventory3 = new Rect((game.window.w / 2) - 32, game.window.h - 192, 64, 64);
         }
     }
 
-    drawMatch() {   
+    /*
+                                 #     #
+     #####  #####    ##   #    # ##   ##   ##   #####  ####  #    #
+     #    # #    #  #  #  #    # # # # #  #  #    #   #    # #    #
+     #    # #    # #    # #    # #  #  # #    #   #   #      ######
+     #    # #####  ###### # ## # #     # ######   #   #      #    #
+     #    # #   #  #    # ##  ## #     # #    #   #   #    # #    #
+     #####  #    # #    # #    # #     # #    #   #    ####  #    #
+
+    */
+    drawMatch() {
         //Draw waves in top right hand corner
         ctx.fillStyle = "#000000";
         ctx.font = '16px consolas';
@@ -113,9 +171,19 @@ class Interface {
         //Draw time until next wave in top right hand corner
         ctx.fillStyle = "#000000";
         ctx.font = '16px consolas';
-        ctx.fillText(`Next: ${60 - Math.floor((ticks % 3600)/60)}`, game.window.w - 100, 90);
+        ctx.fillText(`Next: ${60 - Math.floor((ticks % 3600) / 60)}`, game.window.w - 100, 90);
     }
 
+    /*
+                                 #     #
+     #####  #####    ##   #    #  #   #  #    #   ##   # #####
+     #    # #    #  #  #  #    #   # #   #    #  #  #  # #    #
+     #    # #    # #    # #    #    #    ###### #    # # #    #
+     #    # #####  ###### # ## #   # #   #    # ###### # #####
+     #    # #   #  #    # ##  ##  #   #  #    # #    # # #   #
+     #####  #    # #    # #    # #     # #    # #    # # #    #
+
+    */
     drawXhair() {
         // origin, angle, distance, size, spread, color, arc, laser, numXhairs
         if (!game.paused) {
@@ -157,4 +225,60 @@ class Interface {
         }
     }
 
+    /*
+                                 #     #
+     #####  #####    ##   #    # ##   ## # #    # # #    #   ##   #####
+     #    # #    #  #  #  #    # # # # # # ##   # # ##  ##  #  #  #    #
+     #    # #    # #    # #    # #  #  # # # #  # # # ## # #    # #    #
+     #    # #####  ###### # ## # #     # # #  # # # #    # ###### #####
+     #    # #   #  #    # ##  ## #     # # #   ## # #    # #    # #
+     #####  #    # #    # #    # #     # # #    # # #    # #    # #
+
+    */
+    drawMinimap() {
+
+        // draw the minimap circle
+        ctx.fillStyle = "#000000";
+        ctx.globalAlpha = 0.25;
+        ctx.beginPath();
+        ctx.arc(game.window.w / 2, game.window.h - 100, 100, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.strokeStyle = "#00FF00";
+        for (let i = 1; i < 4; i++) {
+            ctx.beginPath();
+            ctx.lineWidth = i;
+            ctx.arc(game.window.w / 2, game.window.h - 100, 34 * i, 0, Math.PI * 2);
+            ctx.stroke();
+        }
+        ctx.globalAlpha = 1;
+        //draw the player
+        ctx.fillStyle = "#00FF00";
+        ctx.beginPath();
+        ctx.arc(game.window.w / 2, game.window.h - 100, 5, 0, Math.PI * 2);
+        ctx.fill();
+        //draw each bot
+        ctx.globalAlpha = 0.5;
+        for (let i = 0; i < game.match.bots.length; i++) {
+            //calculate the distance from the player to the bot
+            let distance = Math.sqrt((game.match.bots[i].character.HB.pos.x - game.player.character.HB.pos.x) ** 2 + (game.match.bots[i].character.HB.pos.y - game.player.character.HB.pos.y) ** 2);
+            //calculate the angle from the player to the bot
+            let angle = Math.atan2(game.match.bots[i].character.HB.pos.y - game.player.character.HB.pos.y, game.match.bots[i].character.HB.pos.x - game.player.character.HB.pos.x);
+            //calculate the bot's position on the minimap
+            console.log(distance, distance / 10, Math.min(distance / 10, 100));
+            let x = (game.window.w / 2) + (Math.cos(angle) * Math.min(distance / 10, 100));
+            let y = (game.window.h - 100) + (Math.sin(angle) * Math.min(distance / 10, 100));
+            //draw the bot
+            if (game.match.bots[i].character.team === game.player.character.team) {
+                ctx.fillStyle = "#00FF00";
+            } else if (game.match.bots[i].character.team === 0) {
+                ctx.fillStyle = "#FFFF00";
+            } else {
+                ctx.fillStyle = "#FF0000";
+            }
+            ctx.beginPath();
+            ctx.arc(x, y, 5, 0, Math.PI * 2);
+            ctx.fill();
+        }
+        ctx.globalAlpha = 1;
+    }
 }

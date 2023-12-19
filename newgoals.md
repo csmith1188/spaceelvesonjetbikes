@@ -27,22 +27,20 @@ Dark elves believe everything is random:
 #########   ########          ###        ########### ###    ###  ########     ###
 -->
 
-- Debris from missile
-- missile collision with blocks
-- missile collsion particles
+- minimap
+- Sound distances
+- Waves
+- A* pathing
+- Gamepad and touch screen buttons
+- Keyboard, Mouse, Touch, Gamepad classes
 - ?? Only draw in camera
-- Complete speed physics (top speed, actual speed, weight)
 - Shoot along z rotation in iso view
 - Bots always shoot at z axis in every view (no hiding on top of blocks)
-- Give blocks friction for wall jumping rooftop drag
-- Fix Gamepad
-- Keyboard, Mouse, Touch, Gampead classes
-- Fix Touch radius and add buttons
-- Waves
 - Bot chasing / targets / paths
 - Racing
-- A* pathing
+- Complete speed physics (top speed, actual speed, weight)
 - Graphics are block attached to character
+- Give blocks friction for wall jumping rooftop drag
 -- Are shadows blocks, too?
 - Animators
 - Emitters

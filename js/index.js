@@ -24,6 +24,7 @@ let fps = 0;
 window.onload = function () {
     canvas = document.getElementById("game-canvas");
     ctx = canvas.getContext("2d");
+    ctx.imageSmoothingEnabled = false;
 
     setupInputs();
 
@@ -101,7 +102,9 @@ function step() {
         for (const missile of game.match.map.missiles) {
             missile.step();
         }
-
+        for (const debris of game.match.map.debris) {
+            debris.step();
+        }
         ticks++;
 
     } else {

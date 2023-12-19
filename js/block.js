@@ -44,10 +44,9 @@ class Block {
         this.colorSide = ''; //The color of the wall of the block
         this.img = new Image();
         this.img.src = this.imgFile;
-        this.shadow = {
-            img: new Image()
-        }
-        this.shadow.img.src = 'img/sprites/shadow.png';
+        this.shadowDraw = false;
+        this.shadow = new Image(),
+            this.shadow.src = 'img/sprites/shadow.png';
 
         this.pattern = false;
 
@@ -77,7 +76,7 @@ class Block {
                 func();
             }
         } else if (this.livetime == 0) {
-            this.cleanup = true;
+            this.active = false;
         }
     }
 
@@ -108,15 +107,17 @@ class Block {
             */
             if (this.HB instanceof Cylinder) {
                 // Draw shadow
-                ctx.globalAlpha = 0.4;
-                ctx.drawImage(
-                    this.shadow.img,
-                    game.window.w / 2 - compareX,
-                    game.window.h / 2 - compareY,
-                    this.HB.radius,
-                    this.HB.radius
-                );
-                ctx.globalAlpha = 1;
+                if (this.shadowDraw) {
+                    ctx.globalAlpha = 0.4;
+                    ctx.drawImage(
+                        this.shadow,
+                        game.window.w / 2 - compareX,
+                        game.window.h / 2 - compareY,
+                        this.HB.radius,
+                        this.HB.radius
+                    );
+                    ctx.globalAlpha = 1;
+                }
                 if (this.imgFile) {
                     ctx.drawImage(this.img, game.window.w / 2 - compareX, game.window.h / 2 - compareY - this.HB.pos.z, this.HB.radius, this.HB.radius);
                 } else {
@@ -161,15 +162,18 @@ class Block {
 
             */
             if (this.HB instanceof Cube) {
-                ctx.globalAlpha = 0.4;
-                ctx.drawImage(
-                    this.shadow.img,
-                    game.window.w / 2 - compareX,
-                    game.window.h / 2 - compareY,
-                    this.HB.volume.x,
-                    this.HB.volume.y
-                );
-                ctx.globalAlpha = 1;
+                // Draw shadow
+                if (this.shadowDraw) {
+                    ctx.globalAlpha = 0.4;
+                    ctx.drawImage(
+                        this.shadow,
+                        game.window.w / 2 - compareX,
+                        game.window.h / 2 - compareY,
+                        this.HB.volume.x,
+                        this.HB.volume.y
+                    );
+                    ctx.globalAlpha = 1;
+                }
                 // Box shadow
                 // ctx.fillStyle = 'rgba(0,0,0,0.2)'
                 // ctx.fillRect(
@@ -224,15 +228,17 @@ class Block {
                     */
         if (this.HB instanceof Cylinder) {
             // Draw shadow
-            ctx.globalAlpha = 0.4;
-            ctx.drawImage(
-                this.shadow.img,
-                game.window.w / 2 - compareX,
-                game.window.h / 2 - compareY,
-                this.HB.radius,
-                this.HB.radius
-            );
-            ctx.globalAlpha = 1;
+            if (this.shadowDraw) {
+                ctx.globalAlpha = 0.4;
+                ctx.drawImage(
+                    this.shadow,
+                    game.window.w / 2 - compareX,
+                    game.window.h / 2 - compareY,
+                    this.HB.radius,
+                    this.HB.radius
+                );
+                ctx.globalAlpha = 1;
+            }
             if (this.imgFile) {
                 ctx.drawImage(this.img, game.window.w / 2 - compareX, game.window.h / 2 - compareY - this.HB.pos.z, this.HB.radius, this.HB.radius);
             } else {
@@ -276,15 +282,18 @@ class Block {
  
         */
         if (this.HB instanceof Cube) {
-            ctx.globalAlpha = 0.5;
-            ctx.drawImage(
-                this.shadow.img,
-                game.window.w / 2 - compareX,
-                game.window.h / 2 - (compareY * game.player.camera.angle),
-                this.HB.volume.x,
-                this.HB.volume.y * game.player.camera.angle
-            );
-            ctx.globalAlpha = 1;
+            // Draw shadow
+            if (this.shadowDraw) {
+                ctx.globalAlpha = 0.4;
+                ctx.drawImage(
+                    this.shadow,
+                    game.window.w / 2 - compareX,
+                    game.window.h / 2 - (compareY * game.player.camera.angle),
+                    this.HB.volume.x,
+                    this.HB.volume.y * game.player.camera.angle
+                );
+                ctx.globalAlpha = 1;
+            }
             if (this.imgFile) {
                 // ctx.drawImage(this.img, game.window.w / 2 - compareX, game.window.h / 2 - compareY - this.HB.pos.z, this.HB.volume.x, this.HB.volume.y);
             } else if (this.color) {
@@ -432,25 +441,30 @@ class Missile extends Block {
         this.touchSFX = new Audio('sfx/hit_01.wav');
         this.damage = 10;
         this.force = 0.15; // How much of this projectile's speed is applied to the target
-        this.payLoad = () => { };
         this.runFunc = [
             // Create Debris
-            // function () {
-            //     let tempx = (Math.random() * 1) - 0.5;
-            //     let tempy = (Math.random() * 1) - 0.5;
-            //     if (ticks % 2 == 0) game.match.map.debris.push(new Debris(allID++, this.x, this.y,
-            //         {
-            //             w: 4,
-            //             h: 4,
-            //             xspeed: tempx,
-            //             yspeed: tempy,
-            //             z: this.z,
-            //             color: '#dddd00',
-            //             livetime: 15,
-            //             dying: true,
-            //             landable: false
-            //         }));
-            // }
+            () => {
+                let tempx = ((Math.random() * 1) - 0.5) * 2;
+                let tempy = ((Math.random() * 1) - 0.5) * 2;
+                let tempz = ((Math.random() * 1) - 0.5) * 2;
+                if (ticks % 2 == 0) game.match.map.debris.push(
+                    new Block(
+                        allID++,
+                        this.HB.pos.x,
+                        this.HB.pos.y,
+                        this.HB.pos.z,
+                        1, 1, 1,
+                        {
+                            speed: new Vect3(tempx, tempy, tempz),
+                            HB: new Cube(new Vect3(this.HB.pos.x, this.HB.pos.y, this.HB.pos.z), new Vect3(2, 2, 2)),
+                            z: this.HB.pos.z,
+                            color: [255, 255, 0],
+                            livetime: 15,
+                            dying: true,
+                            shadowDraw: false,
+                            solid: false
+                        }));
+            }
         ]
         if (typeof options === 'object')
             for (var key of Object.keys(options)) {
@@ -466,6 +480,31 @@ class Missile extends Block {
                 this.HB.pos.y += this.speed.y;
                 this.HB.pos.z += this.speed.z;
 
+                this.hitSplash = () => {
+                    for (let parts = 0; parts < 10; parts++) {
+                        let tempx = (Math.random() * 4) - 2;
+                        let tempy = (Math.random() * 4) - 2;
+                        let tempz = (Math.random() * 4) - 2;
+                        let tempC = Math.ceil(Math.random() * 255);
+                        game.match.map.debris.push(
+                            new Block(
+                                allID++,
+                                this.HB.pos.x,
+                                this.HB.pos.y,
+                                this.HB.pos.z,
+                                1, 1, 1,
+                                {
+                                    speed: new Vect3(tempx, tempy, tempz),
+                                    HB: new Cube(new Vect3(this.HB.pos.x, this.HB.pos.y, this.HB.pos.z), new Vect3(2, 1, 1)),
+                                    z: this.HB.pos.z,
+                                    color: [255, tempC, 0],
+                                    livetime: 20,
+                                    dying: true,
+                                    shadowDraw: false,
+                                    solid: false
+                                }));
+                    }
+                }
                 /*
                    ___     _ _         _
                   / __|  _| (_)_ _  __| |___ _ _
@@ -485,9 +524,9 @@ class Missile extends Block {
                         c.speed.x += this.speed.x * this.force;
                         c.speed.y += this.speed.y * this.force;
                         c.speed.z += this.speed.z * this.force;
-                        this.payLoad(this.user, c);
                         c.trigger(this, side);
                         this.active = false;
+                        this.hitSplash();
                     }
                 }
 
@@ -527,9 +566,9 @@ class Missile extends Block {
                         }
                         //play hit sound
                         this.touchSFX.play();
-                        this.payLoad(this.user, c);
                         this.active = false;
                         c.trigger(this, side); //Trigger the block's trigger function
+                        this.hitSplash();
                     }
                 }
 

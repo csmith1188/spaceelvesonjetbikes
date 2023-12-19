@@ -2,7 +2,7 @@ class Map {
     constructor(options) {
         this.w = 5096; //7200
         this.h = 5096; //4800
-        this.tileSize = 128; //32
+        this.tileSize = 32; //32
         this.tileSet = [[]]
         this.nodes = [];
 
@@ -92,6 +92,13 @@ class Map {
             if (e.cleanup && !e.active) {
                 //Remove missile
                 this.missiles = this.missiles.filter(function (el) { return el != e; });
+            }
+        }
+
+        for (const e of this.debris) {
+            if (e.cleanup && !e.active) {
+                //Remove missile
+                this.debris = this.debris.filter(function (el) { return el != e; });
             }
         }
 
@@ -196,10 +203,10 @@ class Map {
         }
 
         let renderList =
-            [game.player.character, ...npcs, ...game.match.map.blocks, ...game.match.map.missiles]
+            [game.player.character, ...npcs, ...game.match.map.blocks, ...game.match.map.missiles, ...game.match.map.debris]
                 .sort((a, b) => {
-                    if (a.HB.pos.y + a.HB.pos.z < b.HB.pos.y + b.HB.pos.z) return -1;
-                    if (a.HB.pos.y + a.HB.pos.z > b.HB.pos.y + b.HB.pos.z) return 1;
+                    if (a.HB.pos.y < b.HB.pos.y + b.HB.pos.z) return -1;
+                    if (a.HB.pos.y > b.HB.pos.y + b.HB.pos.z) return 1;
                     return 0;
                 });
         for (const entity of renderList) {

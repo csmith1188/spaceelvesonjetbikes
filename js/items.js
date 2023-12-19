@@ -110,11 +110,12 @@ class Flamer extends Item {
     use(user, aimX, aimY, mode) {
         // Check cooldown
         if (ticks > this.nextCool) {
+            user.parent.controller.buttons.fire.last = 0;
             // Set next cooldown
             this.nextCool = ticks + this.coolDown;
             // Check ammo
             if (this.ammo > 0) {
-                this.ammo--; // consume a bullet22121
+                this.ammo--; // consume a bullet
                 this.shootSFX.play(); // play shoot sound
                 for (let i = 0; i < 5; i++) {
                     let distance = Math.sqrt(aimX ** 2 + aimY ** 2);
