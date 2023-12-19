@@ -534,7 +534,8 @@ class Missile extends Block {
                     if (side && c.solid && c.team !== this.user.team) {
                         //play hit2 sound
                         this.touchSFX.play();
-                        c.hp -= this.damage;
+                        if (!c.invulnerable)
+                            c.hp -= this.damage;
                         c.speed.x += this.speed.x * this.force;
                         c.speed.y += this.speed.y * this.force;
                         c.speed.z += this.speed.z * this.force;
@@ -741,9 +742,9 @@ class Buff extends Block {
         this.runFunc = [
             (actor, side) => {
                 if (this.target != null) {
-                this.HB.pos.x = this.target.HB.pos.x + sineAnimate(this.rotateRadius, 0.05) - this.HB.volume.x / 2;
-                this.HB.pos.y = this.target.HB.pos.y + sineAnimate(this.rotateRadius, 0.05, 30);
-                this.HB.pos.z = this.target.HB.pos.z;
+                    this.HB.pos.x = this.target.HB.pos.x + sineAnimate(this.rotateRadius, 0.05) - this.HB.volume.x / 2;
+                    this.HB.pos.y = this.target.HB.pos.y + sineAnimate(this.rotateRadius, 0.05, 30);
+                    this.HB.pos.z = this.target.HB.pos.z;
                 }
             }
         ]

@@ -61,6 +61,7 @@ class Character {
         this.accuracy = 0.1;    // Spread magnitude of weapon
         this.pp = 100;          // Power Points
         this.pp_max = 100;      // Max Power Points
+        this.invulnerable = false;  // Can't take damage
 
         /*
           ___ _

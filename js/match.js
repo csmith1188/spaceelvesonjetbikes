@@ -30,6 +30,20 @@ class Match {
 #+#    #+# #+#     #+# #+#       #+# #+#                 #+#       #+# #+#    #+# #+#    #+# #+#       #+#    #+#
 ########  ###     ### ###       ### ##########          ###       ###  ########  #########  ########## ########
 */
+
+
+
+
+/*
+ #       ####### #     # #######    #     #    #    ######  ######  ### ####### ######
+ #       #     # ##    # #          #  #  #   # #   #     # #     #  #  #     # #     #
+ #       #     # # #   # #          #  #  #  #   #  #     # #     #  #  #     # #     #
+ #       #     # #  #  # #####      #  #  # #     # ######  ######   #  #     # ######
+ #       #     # #   # # #          #  #  # ####### #   #   #   #    #  #     # #   #
+ #       #     # #    ## #          #  #  # #     # #    #  #    #   #  #     # #    #
+ ####### ####### #     # #######     ## ##  #     # #     # #     # ### ####### #     #
+
+*/
 class Match_LoneWarrior extends Match {
     constructor() {
         super();
@@ -43,7 +57,13 @@ class Match_LoneWarrior extends Match {
 
     setup() {
 
-        // if the ticks minus the starticks is less than 240 seconds, write the match name and description to the center of the screen
+        /*
+           ___                  __  __         _       ___
+          / __|__ _ _ __  ___  |  \/  |___  __| |___  | _ ) __ _ _ _  _ _  ___ _ _
+         | (_ / _` | '  \/ -_) | |\/| / _ \/ _` / -_) | _ \/ _` | ' \| ' \/ -_) '_|
+          \___\__,_|_|_|_\___| |_|  |_\___/\__,_\___| |___/\__,_|_||_|_||_\___|_|
+
+        */
         game.player.interface.drawFunc.push(
             function () {
                 if (ticks - this.startTicks < 240) {
@@ -58,6 +78,13 @@ class Match_LoneWarrior extends Match {
             }.bind(this)
         )
 
+        /*
+          ___     _            __                 _      _    _ _ _   _
+         |_ _|_ _| |_ ___ _ _ / _|__ _ __ ___    /_\  __| |__| (_) |_(_)___ _ _  ___
+          | || ' \  _/ -_) '_|  _/ _` / _/ -_)  / _ \/ _` / _` | |  _| / _ \ ' \(_-<
+         |___|_||_\__\___|_| |_| \__,_\__\___| /_/ \_\__,_\__,_|_|\__|_\___/_||_/__/
+
+        */
         game.player.interface.drawFunc.push(
             function () {
                 // loop through all the bots and count enemies
@@ -82,62 +109,50 @@ class Match_LoneWarrior extends Match {
             }.bind(this)
         )
 
-        this.map.blocks.push(new Block(allID++, (this.map.w / 2) - 300, (this.map.h / 2) - 0, 0, 128, 128, 64, { color: [101, 101, 101], colorSide: [201, 201, 201] }))
-        // this.map.blocks[this.map.blocks.length - 1].HB.pos.z = 100;
+        /*
+            _      _    _   ___ _         _
+           /_\  __| |__| | | _ ) |___  __| |__ ___
+          / _ \/ _` / _` | | _ \ / _ \/ _| / /(_-<
+         /_/ \_\__,_\__,_| |___/_\___/\__|_\_\/__/
 
-        this.map.blocks.push(new Block(allID++, (this.map.w / 2), (this.map.h / 2), 0, 10, 10, 128, { color: [101, 101, 101], colorSide: [201, 201, 201] }))
-
-        for (let i = 0; i < 30; i++) {
+        */
+        for (let i = 0; i < 50; i++) {
             let ran = function () { return Math.floor(Math.random() * 4) + 1 }
             this.map.blocks.push(new Block(allID++, Math.round(Math.random() * this.map.w), Math.round(Math.random() * this.map.h), 0, ran() * 32, ran() * 32, ran() * 32, { color: [101, 101, 101], colorSide: [201, 201, 201] }))
         }
 
-        //ammo
+        /*
+          ___
+         | _ \_____ __ _____ _ _ _  _ _ __ ___
+         |  _/ _ \ V  V / -_) '_| || | '_ (_-<
+         |_| \___/\_/\_/\___|_|  \_,_| .__/__/
+                                     |_|
+        */
         for (let i = 0; i < 10; i++) {
             this.map.blocks.push(new Ammo_Ballistic(allID++, Math.round(Math.random() * this.map.w), Math.round(Math.random() * this.map.h), 0, 128, 128, 64))
             this.map.blocks.push(new Ammo_Plasma(allID++, Math.round(Math.random() * this.map.w), Math.round(Math.random() * this.map.h), 0, 128, 128, 64))
             this.map.blocks.push(new HealthPickup(allID++, Math.round(Math.random() * this.map.w), Math.round(Math.random() * this.map.h), 0, 128, 128, 64))
         }
 
-        // //wave
-        // this.map.blocks.push(new Block(
-        //     allID++,
-        //     (this.map.w / 2) + 100,
-        //     (this.map.h / 2) + 100,
-        //     0, 32, 32, 16,
-        //     { color: [50, 50, 255], colorSide: [150, 150, 250], solid: false, opacity: 0.5 }
-        // ));
-        // this.map.blocks[this.map.blocks.length - 1].runFunc.push(
-        //     function () {
-        //         this.HB.pos.z = sineAnimate(10, 0.05) + 10;
-        //     }.bind(this.map.blocks[this.map.blocks.length - 1])
-        // );
-        // this.map.blocks[this.map.blocks.length - 1].trigger =
-        //     function (actor, side) {
-        //         actor.speed.z += sineAnimate(0.5, 0.05) + 0.5
-        //     }.bind(this.map.blocks[this.map.blocks.length - 1]); //end wave
+        /*
+         #     #                    #
+         ##   ##   ##   # #    #    #        ####   ####  #####
+         # # # #  #  #  # ##   #    #       #    # #    # #    #
+         #  #  # #    # # # #  #    #       #    # #    # #    #
+         #     # ###### # #  # #    #       #    # #    # #####
+         #     # #    # # #   ##    #       #    # #    # #
+         #     # #    # # #    #    #######  ####   ####  #
 
-        // //wave
-        // this.map.blocks.push(new Block(
-        //     allID++,
-        //     (this.map.w / 2) + 100,
-        //     (this.map.h / 2) + 164,
-        //     0, 32, 32, 16,
-        //     { color: [50, 50, 255], colorSide: [150, 150, 250], solid: false, opacity: 0.5 }
-        // ));
-        // this.map.blocks[this.map.blocks.length - 1].runFunc.push(
-        //     function () {
-        //         this.HB.pos.z = sineAnimate(10, 0.05, 60) + 10 + 16;
-        //     }.bind(this.map.blocks[this.map.blocks.length - 1])
-        // );
-        // this.map.blocks[this.map.blocks.length - 1].trigger =
-        //     function (actor, side) {
-        //         if (actor.HB.pos.z >= this.HB.pos.z)
-        //             actor.speed.z += sineAnimate(0.5, 0.05) + 0.5
-        //     }.bind(this.map.blocks[this.map.blocks.length - 1]); //end wave
-
+        */
         this.map.runFunc.push(
             () => {
+                /*
+                  ___                _
+                 | __|_ _  ___ _ __ (_)___ ___
+                 | _|| ' \/ -_) '  \| / -_|_-<
+                 |___|_||_\___|_|_|_|_\___/__/
+
+                */
                 if (game.player.character.active && ticks % this.waveTime == 0) {
                     this.waves++; // 1 wave every 60 seconds
 
@@ -165,13 +180,27 @@ class Match_LoneWarrior extends Match {
                                 Math.round(Math.random() * this.map.h),
                                 0),
                             29, 37);
-                        //ammo
+
+                        /*
+                          ___
+                         | _ \_____ __ _____ _ _ _  _ _ __ ___
+                         |  _/ _ \ V  V / -_) '_| || | '_ (_-<
+                         |_| \___/\_/\_/\___|_|  \_,_| .__/__/
+                                                     |_|
+                        */
                         for (let i = 0; i < 5; i++) {
                             this.map.blocks.push(new Ammo_Ballistic(allID++, Math.round(Math.random() * this.map.w), Math.round(Math.random() * this.map.h), 0, 128, 128, 64))
                             this.map.blocks.push(new Ammo_Plasma(allID++, Math.round(Math.random() * this.map.w), Math.round(Math.random() * this.map.h), 0, 128, 128, 64))
                             this.map.blocks.push(new HealthPickup(allID++, Math.round(Math.random() * this.map.w), Math.round(Math.random() * this.map.h), 0, 128, 128, 64))
                         }
                     }
+                    /*
+                      ___    _             _
+                     | __| _(_)___ _ _  __| |___
+                     | _| '_| / -_) ' \/ _` (_-<
+                     |_||_| |_\___|_||_\__,_/__/
+
+                    */
                     if (ticks % this.waveTime * 2 == 0) {
                         let spawns = (this.waves > 1) ? Math.floor(this.waves / 4) : 1;
                         for (let i = 0; i < spawns; i++) {
@@ -200,3 +229,46 @@ class Match_LoneWarrior extends Match {
         )
     }
 }
+
+
+// this.map.blocks.push(new Block(allID++, (this.map.w / 2) - 300, (this.map.h / 2) - 0, 0, 128, 128, 64, { color: [101, 101, 101], colorSide: [201, 201, 201] }))
+// this.map.blocks[this.map.blocks.length - 1].HB.pos.z = 100;
+
+// this.map.blocks.push(new Block(allID++, (this.map.w / 2), (this.map.h / 2), 0, 10, 10, 128, { color: [101, 101, 101], colorSide: [201, 201, 201] }))
+
+// //wave
+// this.map.blocks.push(new Block(
+//     allID++,
+//     (this.map.w / 2) + 100,
+//     (this.map.h / 2) + 100,
+//     0, 32, 32, 16,
+//     { color: [50, 50, 255], colorSide: [150, 150, 250], solid: false, opacity: 0.5 }
+// ));
+// this.map.blocks[this.map.blocks.length - 1].runFunc.push(
+//     function () {
+//         this.HB.pos.z = sineAnimate(10, 0.05) + 10;
+//     }.bind(this.map.blocks[this.map.blocks.length - 1])
+// );
+// this.map.blocks[this.map.blocks.length - 1].trigger =
+//     function (actor, side) {
+//         actor.speed.z += sineAnimate(0.5, 0.05) + 0.5
+//     }.bind(this.map.blocks[this.map.blocks.length - 1]); //end wave
+
+// //wave
+// this.map.blocks.push(new Block(
+//     allID++,
+//     (this.map.w / 2) + 100,
+//     (this.map.h / 2) + 164,
+//     0, 32, 32, 16,
+//     { color: [50, 50, 255], colorSide: [150, 150, 250], solid: false, opacity: 0.5 }
+// ));
+// this.map.blocks[this.map.blocks.length - 1].runFunc.push(
+//     function () {
+//         this.HB.pos.z = sineAnimate(10, 0.05, 60) + 10 + 16;
+//     }.bind(this.map.blocks[this.map.blocks.length - 1])
+// );
+// this.map.blocks[this.map.blocks.length - 1].trigger =
+//     function (actor, side) {
+//         if (actor.HB.pos.z >= this.HB.pos.z)
+//             actor.speed.z += sineAnimate(0.5, 0.05) + 0.5
+//     }.bind(this.map.blocks[this.map.blocks.length - 1]); //end wave

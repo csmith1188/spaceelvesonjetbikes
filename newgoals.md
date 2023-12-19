@@ -27,9 +27,11 @@ Dark elves believe everything is random:
 #########   ########          ###        ########### ###    ###  ########     ###
 -->
 
-- minimap
+- Randomly generate tilemap
+- Draw Tilemaps
+- target on minimap
 - Sound distances
-- Waves
+- Waves and Wind
 - A* pathing
 - Gamepad and touch screen buttons
 - Keyboard, Mouse, Touch, Gamepad classes
@@ -45,7 +47,6 @@ Dark elves believe everything is random:
 - Animators
 - Emitters
 - Melee Weapons
-- Tilemaps
 - Polyblock regions
 - 3D Polyblocks
 - Camera Zoom/Pan/Shake
