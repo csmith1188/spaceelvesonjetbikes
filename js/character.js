@@ -551,7 +551,7 @@ class Character {
                     game.window.h / 2 - compareY - this.floor,
                     this.HB.radius + 16,
                     Math.PI * 0.75,
-                    Math.PI * (0.75 - ((this.hp / this.hp_max) * 0.5 )),
+                    Math.PI * (0.75 - ((this.hp / this.hp_max) * 0.5)),
                     true
                 );
                 ctx.stroke();
@@ -586,7 +586,7 @@ class Character {
                     game.window.h / 2 - compareY - this.floor,
                     this.HB.radius + 8,
                     Math.PI * 0.75,
-                    Math.PI * (0.75 - ((this.pp / this.pp_max) * 0.5 )),
+                    Math.PI * (0.75 - ((this.pp / this.pp_max) * 0.5)),
                     true
                 );
                 ctx.stroke();
@@ -666,11 +666,13 @@ class Character {
                 ctx.stroke();
             }
         } else {
-            // draw number of waves to center of screen
-            ctx.fillStyle = "#FFFFFF";
-            ctx.font = "36px Arial";
-            ctx.textAlign = "center";
-            ctx.fillText(`Waves: ${game.match.waves}`, game.window.w / 2, game.window.h / 2);
+            if (this === game.player.character) {
+                // draw number of waves to center of screen
+                ctx.fillStyle = "#FFFFFF";
+                ctx.font = "36px Arial";
+                ctx.textAlign = "center";
+                ctx.fillText(`Waves: ${game.match.waves}`, game.window.w / 2, game.window.h / 2);
+            }
         }
     }
 

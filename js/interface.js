@@ -82,47 +82,48 @@ class Interface {
 
     */
     drawAmmo() {
+        let ammoBox = new Vect2((game.window.w/2) - 150, game.window.h - 170);
         if (this.player.character.active) {
             let item = this.player.character.inventory[this.player.character.item];
-            // draw the ammo count
+            
+            ctx.textAlign = "left";
+
+            // draw the cooldown bar
             ctx.fillStyle = "#000000";
-            ctx.font = '12px consolas';
-            ctx.fillText(item.ammo, 10, 50);
+            ctx.fillRect(ammoBox.x, ammoBox.y, 10, 100);
+            ctx.fillStyle = "#0000FF";
+            ctx.fillRect(ammoBox.x, ammoBox.y + 100 - (Math.min(Math.max(item.nextCool - ticks, 0) / item.coolDown, 1) * 100), 10, (Math.min(Math.max(item.nextCool - ticks, 0) / item.coolDown, 1) * 100));
+
             // draw the ammo bar
             ctx.fillStyle = "#000000";
-            ctx.fillRect(10, 60, 100, 10);
-            // if the ammo is ballistic, draw it red
-            // otherwise, draw it purple
-            if (item.ammoType === "ballistic") ctx.fillStyle = "#FF0000";
+            ctx.fillRect(ammoBox.x + 20, ammoBox.y, 10, 100);
+            // if the ammo is ballistic, draw it red, otherwise, draw it purple
+            if (item.type == "ballistic") ctx.fillStyle = "#FF0000";
             else ctx.fillStyle = "#FF00FF";
-            ctx.fillRect(10, 60, (item.ammo / item.ammoMax) * 100, 10);
+            ctx.fillRect(ammoBox.x + 20, ammoBox.y + 100 - (item.ammo / item.ammoMax) * 100, 10, (item.ammo / item.ammoMax) * 100);
+
+
             // draw the player's ballistic ammo pips
             ctx.fillStyle = "#000000";
             ctx.font = '12px consolas';
-            ctx.fillText(this.player.character.ammo.ballistic, 10, 80);
             ctx.fillStyle = "#000000";
-            ctx.fillRect(10, 90, 100, 10);
+            ctx.fillRect(ammoBox.x + 270, ammoBox.y, 10, 100);
             ctx.fillStyle = "#FF0000";
             // for each pip, draw a rectangle
-            for (let i = 0; i < this.player.character.ammo.ballistic; i++) {
-                ctx.fillRect(10 + (i * 20), 90, 18, 8);
+            for (let i = this.player.character.ammo.ballistic - 1; i >= 0; i--) {
+                ctx.fillRect(ammoBox.x + 271, ammoBox.y + 101 - ((i+1) * 100 / this.player.character.ammo.plasmaMax), 8, (100 / this.player.character.ammo.plasmaMax) - 2);
             }
+
             // draw the player's plasma ammo pips
             ctx.fillStyle = "#000000";
             ctx.font = '12px consolas';
-            ctx.fillText(this.player.character.ammo.plasma, 10, 110);
             ctx.fillStyle = "#000000";
-            ctx.fillRect(10, 120, 100, 10);
+            ctx.fillRect(ammoBox.x + 290, ammoBox.y, 10, 100);
             ctx.fillStyle = "#FF00FF";
             // for each pip, draw a rectangle
-            for (let i = 0; i < this.player.character.ammo.plasma; i++) {
-                ctx.fillRect(10 + (i * 20), 120, 18, 8);
+            for (let i = this.player.character.ammo.plasma - 1; i >= 0; i--) {
+                ctx.fillRect(ammoBox.x + 291, ammoBox.y + 101 - ((i+1) * 100 / this.player.character.ammo.plasmaMax), 8, (100 / this.player.character.ammo.plasmaMax) - 2);
             }
-            // draw the cooldown bar
-            ctx.fillStyle = "#000000";
-            ctx.fillRect(10, 150, 100, 10);
-            ctx.fillStyle = "#0000FF";
-            ctx.fillRect(10, 150, Math.min(Math.max(item.nextCool - ticks, 0) / item.coolDown * 100, 100), 10);
 
             /*
               _                 _
@@ -131,15 +132,15 @@ class Interface {
              |_|_||_\_/\___|_||_\__\___/_|  \_, |
                                             |__/
             */
-            ctx.drawImage(this.player.character.inventory[0].iconInactive, (game.window.w / 2) - 128, game.window.h - 64, 64, 64);
-            ctx.drawImage(this.player.character.inventory[1].iconInactive, (game.window.w / 2) + 64, game.window.h - 64, 64, 64);
+            ctx.drawImage(this.player.character.inventory[0].iconInactive, (game.window.w / 2) - 150, game.window.h - 64, 64, 64);
+            ctx.drawImage(this.player.character.inventory[1].iconInactive, (game.window.w / 2) + 90, game.window.h - 64, 64, 64);
             // this switch statement is for drawing the active item
             switch (this.player.character.item) {
                 case 0:
-                    ctx.drawImage(this.player.character.inventory[0].icon, (game.window.w / 2) - 128, game.window.h - 64, 64, 64);
+                    ctx.drawImage(this.player.character.inventory[0].icon, (game.window.w / 2) - 150, game.window.h - 64, 64, 64);
                     break;
                 case 1:
-                    ctx.drawImage(this.player.character.inventory[1].icon, (game.window.w / 2) + 64, game.window.h - 64, 64, 64);
+                    ctx.drawImage(this.player.character.inventory[1].icon, (game.window.w / 2) + 90, game.window.h - 64, 64, 64);
                     break;
             }
             // Create a Rect for each item in the inventory and store it in the touchButton object
@@ -160,18 +161,19 @@ class Interface {
 
     */
     drawMatch() {
+        let matchBox = new Vect2((game.window.w / 2) -142, game.window.h - 280);
         //Draw waves in top right hand corner
         ctx.fillStyle = "#000000";
         ctx.font = '16px consolas';
-        ctx.fillText(`Wave: ${game.match.waves}`, game.window.w - 100, 50);
+        ctx.fillText(`Wave: ${game.match.waves}`, matchBox.x, matchBox.y + 50);
         //Draw enemies remaining in top right hand corner
         ctx.fillStyle = "#000000";
         ctx.font = '16px consolas';
-        ctx.fillText(`Bots: ${game.match.bots.length}`, game.window.w - 100, 70);
+        ctx.fillText(`Bots: ${game.match.bots.length}`, matchBox.x, matchBox.y + 70);
         //Draw time until next wave in top right hand corner
         ctx.fillStyle = "#000000";
         ctx.font = '16px consolas';
-        ctx.fillText(`Next: ${60 - Math.floor((ticks % 3600) / 60)}`, game.window.w - 100, 90);
+        ctx.fillText(`Next: ${60 - Math.floor((ticks % 3600) / 60)}`, matchBox.x, matchBox.y + 90);
     }
 
     /*
@@ -279,6 +281,28 @@ class Interface {
             ctx.arc(x, y, 5, 0, Math.PI * 2);
             ctx.fill();
         }
+        
+        /*
+          _  _          _ _   _    _
+         | || |___ __ _| | |_| |_ | |__  __ _ _ _ ___
+         | __ / -_) _` | |  _| ' \| '_ \/ _` | '_(_-<
+         |_||_\___\__,_|_|\__|_||_|_.__/\__,_|_| /__/
+
+        */
+        // Draw this player's health and power as circles around the minimap edge
+        ctx.globalAlpha = 0.75;
+        ctx.lineWidth = 4;
+        // Health
+        ctx.beginPath();
+        ctx.strokeStyle = "#00FF00";
+        ctx.arc(game.window.w / 2, game.window.h - 100, 110, -Math.PI / 2, -Math.PI / 2 + (Math.PI * 2 * (this.player.character.hp / this.player.character.hp_max)));
+        ctx.stroke();
+        // Power
+        ctx.beginPath();
+        ctx.strokeStyle = "#0000FF";
+        ctx.arc(game.window.w / 2, game.window.h - 100, 105, -Math.PI / 2, -Math.PI / 2 + (Math.PI * 2 * (this.player.character.pp / this.player.character.pp_max)));
+        ctx.stroke();
         ctx.globalAlpha = 1;
+
     }
 }
