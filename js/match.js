@@ -44,20 +44,43 @@ class Match_LoneWarrior extends Match {
     setup() {
 
         // if the ticks minus the starticks is less than 240 seconds, write the match name and description to the center of the screen
-        this.map.drawFunc.push(
+        game.player.interface.drawFunc.push(
             function () {
                 if (ticks - this.startTicks < 240) {
                     let alpha = 1 - (ticks - this.startTicks) / 240;
                     ctx.fillStyle = "rgba(255,255,255," + alpha + ")";
                     ctx.font = "30px Arial";
                     ctx.textAlign = "center";
-                    ctx.fillText(this.name, game.window.w / 2, game.window.h / 2 - 30);
+                    ctx.fillText(this.name, game.window.w / 2, game.window.h / 2 - 140);
                     ctx.font = "20px Arial";
-                    ctx.fillText(this.description, game.window.w / 2, game.window.h / 2 + 10);
+                    ctx.fillText(this.description, game.window.w / 2, game.window.h / 2 - 100);
                 }
             }.bind(this)
         )
 
+        game.player.interface.drawFunc.push(
+            function () {
+                // loop through all the bots and count enemies
+                let enemies = 0;
+                for (let i = 0; i < game.match.bots.length; i++) {
+                    if (game.match.bots[i].character.team != game.player.character.team) enemies++;
+                }
+                let matchBox = new Vect2((game.window.w / 2) - 150, game.window.h - 280);
+                ctx.textAlign = "left";
+                //Draw waves in top right hand corner
+                ctx.fillStyle = "#000000";
+                ctx.font = '16px consolas';
+                ctx.fillText(`Wave:  ${game.match.waves}`, matchBox.x, matchBox.y + 50);
+                //Draw enemies remaining in top right hand corner
+                ctx.fillStyle = "#000000";
+                ctx.font = '16px consolas';
+                ctx.fillText(`Enemy: ${enemies}`, matchBox.x, matchBox.y + 70);
+                //Draw time until next wave in top right hand corner
+                ctx.fillStyle = "#000000";
+                ctx.font = '16px consolas';
+                ctx.fillText(`Next: ${Math.floor((game.match.waveTime / 60)) - Math.floor((ticks % game.match.waveTime) / 60)}`, matchBox.x, matchBox.y + 90);
+            }.bind(this)
+        )
 
         this.map.blocks.push(new Block(allID++, (this.map.w / 2) - 300, (this.map.h / 2) - 0, 0, 128, 128, 64, { color: [101, 101, 101], colorSide: [201, 201, 201] }))
         // this.map.blocks[this.map.blocks.length - 1].HB.pos.z = 100;
@@ -116,27 +139,32 @@ class Match_LoneWarrior extends Match {
         this.map.runFunc.push(
             () => {
                 if (game.player.character.active && ticks % this.waveTime == 0) {
-                    game.match.waves++; // 1 wave every 60 seconds
+                    this.waves++; // 1 wave every 60 seconds
 
                     for (let i = 0; i < Math.ceil(this.waves / 2); i++) {
-                        game.match.bots.push(new Bot()) //Kevin / Jae'Sin
-                        game.match.bots[game.match.bots.length - 1].character = new Character(
+                        this.bots.push(new Bot()) //Kevin / Jae'Sin
+                        this.bots[this.bots.length - 1].character = new Character(
                             allID++,
                             (this.map.w / 2),
                             (this.map.h / 2),
-                            game.match.bots[game.match.bots.length - 1],
+                            this.bots[this.bots.length - 1],
                             // { target: game.player.character, name: 'Jaysin', gfx: 'img/sprites/dark2', team: 1 }
                             {
                                 target: game.player.character,
-                                // target: game.match.bots[game.match.bots.length - 1].character,
+                                // target: this.bots[this.bots.length - 1].character,
                                 name: getName(), team: 1, gfx: 'img/sprites/dark2', color: [0, 0, 255],
                                 hover: 16, airAccel: new Vect3(0.15, 0.15, 1),
                                 runFunc: [
-                                    function () { }.bind(game.match.bots[game.match.bots.length - 1].character)
+                                    function () { }.bind(this.bots[this.bots.length - 1].character)
                                 ]
                             }
                         );
-                        game.match.bots[game.match.bots.length - 1].character.HB = new Cylinder(new Vect3(Math.round(Math.random() * this.map.w), Math.round(Math.random() * this.map.h), 0), 29, 37);
+                        this.bots[this.bots.length - 1].character.HB = new Cylinder(
+                            new Vect3(
+                                Math.round(Math.random() * this.map.w),
+                                Math.round(Math.random() * this.map.h),
+                                0),
+                            29, 37);
                         //ammo
                         for (let i = 0; i < 5; i++) {
                             this.map.blocks.push(new Ammo_Ballistic(allID++, Math.round(Math.random() * this.map.w), Math.round(Math.random() * this.map.h), 0, 128, 128, 64))
@@ -148,23 +176,23 @@ class Match_LoneWarrior extends Match {
                         let spawns = (this.waves > 1) ? Math.floor(this.waves / 4) : 1;
                         for (let i = 0; i < spawns; i++) {
                             // Friendly
-                            game.match.bots.push(new Bot()) //Big ounce / Loh'Ghan
-                            game.match.bots[game.match.bots.length - 1].character = new Character(
+                            this.bots.push(new Bot()) //Big ounce / Loh'Ghan
+                            this.bots[this.bots.length - 1].character = new Character(
                                 allID++,
                                 (this.map.w / 2),
                                 (this.map.h / 2),
-                                game.match.bots[game.match.bots.length - 1],
+                                this.bots[this.bots.length - 1],
                                 {
                                     target: null,
-                                    // target: game.match.bots[game.match.bots.length - 1].character,
+                                    // target: this.bots[this.bots.length - 1].character,
                                     name: getName(), team: 0, gfx: 'img/sprites/dark1', color: [0, 255, 0],
                                     hover: 16, airAccel: new Vect3(0.15, 0.15, 1),
                                     runFunc: [
-                                        function () { }.bind(game.match.bots[game.match.bots.length - 1].character)
+                                        function () { }.bind(this.bots[this.bots.length - 1].character)
                                     ]
                                 }
                             );
-                            game.match.bots[game.match.bots.length - 1].character.HB = new Cylinder(new Vect3(Math.round(Math.random() * this.map.w), Math.round(Math.random() * this.map.h), 0), 29, 37);
+                            this.bots[this.bots.length - 1].character.HB = new Cylinder(new Vect3(Math.round(Math.random() * this.map.w), Math.round(Math.random() * this.map.h), 0), 29, 37);
                         }
                     }
                 }

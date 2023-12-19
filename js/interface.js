@@ -23,6 +23,7 @@ class Interface {
             inventory2: {},
             inventory3: {}
         }
+        this.drawFunc = []; // A list of functions to draw during the draw step
     }
 
     /*
@@ -38,15 +39,6 @@ class Interface {
     drawHUD() {
         if (this.player.character.active) {
 
-            let compareX = this.player.camera.x - this.player.character.x;
-            let compareY = this.player.camera.y - this.player.character.y;
-
-            ctx.fillStyle = "#000000";
-            if (game.debug) {
-                ctx.font = '12px consolas';
-                ctx.fillText(fps, 10, 150);
-            }
-
             // Map locators
             ctx.fillStyle = "#FF0000";
             ctx.fillRect((this.player.camera.x / game.match.map.w) * game.window.w - 3, 0, 6, 6);
@@ -57,17 +49,22 @@ class Interface {
 
             //Minimap
             this.drawMinimap();
-            
+
             //Crosshair
             this.drawXhair();
 
             //Ammo
             this.drawAmmo();
 
-            //Match info
-            this.drawMatch();
+            // Run all drawFunc
+            for (const func of this.drawFunc) {
+                func();
+            }
 
             if (game.debug) {
+                ctx.fillStyle = "#000000";
+                ctx.font = '12px consolas';
+                ctx.fillText(fps, 10, 150);
                 document.getElementById("debugger").style.display = "block";
             } else {
                 document.getElementById("debugger").style.display = "none";
@@ -87,10 +84,10 @@ class Interface {
 
     */
     drawAmmo() {
-        let ammoBox = new Vect2((game.window.w/2) - 150, game.window.h - 170);
+        let ammoBox = new Vect2((game.window.w / 2) - 150, game.window.h - 170);
         if (this.player.character.active) {
             let item = this.player.character.inventory[this.player.character.item];
-            
+
             ctx.textAlign = "left";
 
             // draw the cooldown bar
@@ -116,7 +113,7 @@ class Interface {
             ctx.fillStyle = "#FF0000";
             // for each pip, draw a rectangle
             for (let i = this.player.character.ammo.ballistic - 1; i >= 0; i--) {
-                ctx.fillRect(ammoBox.x + 271, ammoBox.y + 101 - ((i+1) * 100 / this.player.character.ammo.plasmaMax), 8, (100 / this.player.character.ammo.plasmaMax) - 2);
+                ctx.fillRect(ammoBox.x + 271, ammoBox.y + 101 - ((i + 1) * 100 / this.player.character.ammo.plasmaMax), 8, (100 / this.player.character.ammo.plasmaMax) - 2);
             }
 
             // draw the player's plasma ammo pips
@@ -127,7 +124,7 @@ class Interface {
             ctx.fillStyle = "#FF00FF";
             // for each pip, draw a rectangle
             for (let i = this.player.character.ammo.plasma - 1; i >= 0; i--) {
-                ctx.fillRect(ammoBox.x + 291, ammoBox.y + 101 - ((i+1) * 100 / this.player.character.ammo.plasmaMax), 8, (100 / this.player.character.ammo.plasmaMax) - 2);
+                ctx.fillRect(ammoBox.x + 291, ammoBox.y + 101 - ((i + 1) * 100 / this.player.character.ammo.plasmaMax), 8, (100 / this.player.character.ammo.plasmaMax) - 2);
             }
 
             /*
@@ -153,32 +150,6 @@ class Interface {
             this.touchButton.inventory2 = new Rect((game.window.w / 2) + 88, game.window.h - 64, 64, 64);
             // this.touchButton.inventory3 = new Rect((game.window.w / 2) - 32, game.window.h - 192, 64, 64);
         }
-    }
-
-    /*
-                                 #     #
-     #####  #####    ##   #    # ##   ##   ##   #####  ####  #    #
-     #    # #    #  #  #  #    # # # # #  #  #    #   #    # #    #
-     #    # #    # #    # #    # #  #  # #    #   #   #      ######
-     #    # #####  ###### # ## # #     # ######   #   #      #    #
-     #    # #   #  #    # ##  ## #     # #    #   #   #    # #    #
-     #####  #    # #    # #    # #     # #    #   #    ####  #    #
-
-    */
-    drawMatch() {
-        let matchBox = new Vect2((game.window.w / 2) -142, game.window.h - 280);
-        //Draw waves in top right hand corner
-        ctx.fillStyle = "#000000";
-        ctx.font = '16px consolas';
-        ctx.fillText(`Wave: ${game.match.waves}`, matchBox.x, matchBox.y + 50);
-        //Draw enemies remaining in top right hand corner
-        ctx.fillStyle = "#000000";
-        ctx.font = '16px consolas';
-        ctx.fillText(`Bots: ${game.match.bots.length}`, matchBox.x, matchBox.y + 70);
-        //Draw time until next wave in top right hand corner
-        ctx.fillStyle = "#000000";
-        ctx.font = '16px consolas';
-        ctx.fillText(`Next: ${Math.floor((game.match.waveTime / 60)) - Math.floor((ticks % game.match.waveTime) / 60)}`, matchBox.x, matchBox.y + 90);
     }
 
     /*
@@ -285,7 +256,7 @@ class Interface {
             ctx.arc(x, y, 5, 0, Math.PI * 2);
             ctx.fill();
         }
-        
+
         /*
           _  _          _ _   _    _
          | || |___ __ _| | |_| |_ | |__  __ _ _ _ ___
@@ -307,6 +278,31 @@ class Interface {
         ctx.arc(game.window.w / 2, game.window.h - 100, 105, -Math.PI / 2, -Math.PI / 2 + (Math.PI * 2 * (this.player.character.pp / this.player.character.pp_max)));
         ctx.stroke();
         ctx.globalAlpha = 1;
+
+        /*
+          ___                  _
+         / __|_ __  ___ ___ __| |
+         \__ \ '_ \/ -_) -_) _` |
+         |___/ .__/\___\___\__,_|
+             |_|
+        */
+        // draw a circle on each upper corner of the minimap
+        // and put the player's character z position in the left circle
+        // and the player's character total speed in the right circle
+        ctx.textAlign = "center";
+        ctx.fillStyle = "#000000";
+        ctx.beginPath();
+        ctx.arc(game.window.w / 2 - 64, game.window.h - 20, 20, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.beginPath();
+        ctx.arc(game.window.w / 2 + 64, game.window.h - 20, 20, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.fillStyle = "#FFFFFF";
+        ctx.font = '16px consolas';
+        ctx.fillText(Math.round(this.player.character.HB.pos.z), game.window.w / 2 - 64, game.window.h - 15);
+        // calculate the player's total speed
+        let speed = Math.sqrt(this.player.character.speed.x ** 2 + this.player.character.speed.y ** 2 + this.player.character.speed.z ** 2);
+        ctx.fillText(Math.round(speed), game.window.w / 2 + 64, game.window.h - 15);
 
     }
 }
