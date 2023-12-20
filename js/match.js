@@ -68,11 +68,19 @@ class Match_LoneWarrior extends Match {
             function () {
                 if (ticks - this.startTicks < 240) {
                     let alpha = 1 - (ticks - this.startTicks) / 240;
+                    //first draw the text in black to create a shadow
+                    ctx.fillStyle = "rgba(0,0,0," + alpha + ")";
+                    ctx.font = "30px Jura";
+                    ctx.textAlign = "center";
+                    ctx.fillText(this.name, game.window.w / 2 + 2, game.window.h / 2 - 138);
+                    ctx.font = "20px Jura";
+                    ctx.fillText(this.description, game.window.w / 2 + 2, game.window.h / 2 - 98);
+                    //then draw the text in white
                     ctx.fillStyle = "rgba(255,255,255," + alpha + ")";
-                    ctx.font = "30px Arial";
+                    ctx.font = "30px Jura";
                     ctx.textAlign = "center";
                     ctx.fillText(this.name, game.window.w / 2, game.window.h / 2 - 140);
-                    ctx.font = "20px Arial";
+                    ctx.font = "20px Jura";
                     ctx.fillText(this.description, game.window.w / 2, game.window.h / 2 - 100);
                 }
             }.bind(this)
@@ -95,16 +103,16 @@ class Match_LoneWarrior extends Match {
                 let matchBox = new Vect2((game.window.w / 2) - 150, game.window.h - 280);
                 ctx.textAlign = "left";
                 //Draw waves in top right hand corner
+                ctx.font = '16px Jura';
+                // first draw the text lines in black to create a shadow
                 ctx.fillStyle = "#000000";
-                ctx.font = '16px consolas';
+                ctx.fillText(`Wave:  ${game.match.waves}`, matchBox.x + 2, matchBox.y + 52);
+                ctx.fillText(`Enemy: ${enemies}`, matchBox.x + 2, matchBox.y + 72);
+                ctx.fillText(`Next: ${Math.floor((game.match.waveTime / 60)) - Math.floor((ticks % game.match.waveTime) / 60)}`, matchBox.x + 2, matchBox.y + 92);
+                // then draw the text lines in white            
+                ctx.fillStyle = "#FFFFFF";
                 ctx.fillText(`Wave:  ${game.match.waves}`, matchBox.x, matchBox.y + 50);
-                //Draw enemies remaining in top right hand corner
-                ctx.fillStyle = "#000000";
-                ctx.font = '16px consolas';
                 ctx.fillText(`Enemy: ${enemies}`, matchBox.x, matchBox.y + 70);
-                //Draw time until next wave in top right hand corner
-                ctx.fillStyle = "#000000";
-                ctx.font = '16px consolas';
                 ctx.fillText(`Next: ${Math.floor((game.match.waveTime / 60)) - Math.floor((ticks % game.match.waveTime) / 60)}`, matchBox.x, matchBox.y + 90);
             }.bind(this)
         )

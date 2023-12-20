@@ -30,6 +30,7 @@ Dark elves believe everything is random:
 - Randomly generate tilemap
 - Draw Tilemaps
 - target on minimap
+- Collision rays (fast objects go through colliders)
 - Sound distances
 - Waves and Wind
 - A* pathing
