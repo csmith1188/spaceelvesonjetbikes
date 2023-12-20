@@ -116,7 +116,7 @@ class Pistol extends Item {
 class Rifle extends Item {
     constructor(options) {
         super(options);
-        this.type = 'ballistic';
+        this.type = 'plasma';
         this.shootSFX = new Audio('sfx/rifle_shoot.wav');
         this.projectileSpeed = 30;
         this.damage = 40;
@@ -127,9 +127,9 @@ class Rifle extends Item {
         this.ammo = 3;
         this.ammoMax = 3;
         this.icon = new Image();
-        this.icon.src = 'img/icons/inventory/rifle_active.png';
+        this.icon.src = 'img/icons/inventory/rifle_active_p.png';
         this.iconInactive = new Image();
-        this.iconInactive.src = 'img/icons/inventory/rifle_inactive.png';
+        this.iconInactive.src = 'img/icons/inventory/rifle_inactive_p.png';
         // Options
         if (typeof options === 'object')
             for (var key of Object.keys(options)) {
