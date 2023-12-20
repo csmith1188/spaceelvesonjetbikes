@@ -168,7 +168,8 @@ class Rifle extends Item {
                             speed: new Vect3(xaim, yaim, 0), //zaim doesn't work
                             color: user.color,
                             damage: this.damage,
-                            livetime: 300
+                            livetime: 300,
+                            touchSFX: new Audio('sfx/hit03.wav')
                         }));
                 // get the last item in the missiles array and push an empty function to the runFunc array
                 game.match.map.missiles[game.match.map.missiles.length - 1].runFunc.push(
@@ -191,7 +192,7 @@ class Rifle extends Item {
                                     livetime: 15,
                                     dying: true,
                                     shadowDraw: false,
-                                    solid: false
+                                    solid: false,
                                 }));
                     }.bind(game.match.map.missiles[game.match.map.missiles.length - 1])
                 );

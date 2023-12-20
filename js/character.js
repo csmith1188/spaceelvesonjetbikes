@@ -93,6 +93,8 @@ class Character {
         this.shadow = new Image();
         this.shadow.src = 'img/sprites/shadow.png';
         this.shadowDraw = true;
+        this.deathSFX = new Audio('sfx/hit05.wav');
+
         /*
             ___       _   _
            / _ \ _ __| |_(_)___ _ _  ___
@@ -437,6 +439,7 @@ class Character {
 
             if (this.hp <= 0) {
                 this.active = false;
+                this.deathSFX.play();
                 if (this === game.player.character) {
                     game.paused = true;
                     // game.player.findTarget();
