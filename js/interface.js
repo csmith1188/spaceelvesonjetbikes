@@ -98,17 +98,18 @@ class Interface {
                 ctx.fillStyle = "#000000";
                 ctx.fillRect(ammoBox.x, ammoBox.y, 10, 100);
                 // draw filled portion of bar
+                let maxTime = (item.reloading) ? item.reloadTime : item.coolDown;
                 ctx.fillStyle = "#0000FF";
                 ctx.fillRect(
                     ammoBox.x, // left of bar
                     ammoBox.y + 100 // bottom of bar
                     - (Math.min( // the smaller value of
-                        Math.max(item.nextCool - ticks, 0) / item.coolDown, // 0 to 1 of cooldown
+                        Math.max(item.nextCool - ticks, 0) / maxTime, // 0 to 1 of cooldown
                         1) // or 1 (if cooldown is greater than 1)
                         * 100), // times the size of the full bar
                     10, // width of bar
                     (Math.min(  // bar is the same height as the distance from top, conviently
-                        Math.max(item.nextCool - ticks, 0) / item.coolDown,
+                        Math.max(item.nextCool - ticks, 0) / maxTime,
                         1)
                         * 100) // times the size of the full bar
                 );
@@ -323,7 +324,7 @@ class Interface {
         ctx.globalAlpha = 0.5;
         for (let i = 0; i < game.match.map.blocks.length; i++) {
             let item = game.match.map.blocks[i];
-            if (item.type == "powerup") {
+            if (item.type == "pickup") {
                 //calculate the distance from the player to the bot
                 let distance = Math.sqrt((item.HB.pos.x - game.player.character.HB.pos.x) ** 2 + (item.HB.pos.y - game.player.character.HB.pos.y) ** 2);
                 if (distance > 2000) continue;

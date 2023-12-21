@@ -72,6 +72,7 @@ class Character {
         */
         this.item = 0;
         this.inventory = [new Pistol()];
+        this.inventory[0].owner = this.parent;
         this.ammo = {
             plasma: 1,
             plasmaMax: 5,
@@ -93,7 +94,7 @@ class Character {
         this.shadow = new Image();
         this.shadow.src = 'img/sprites/shadow.png';
         this.shadowDraw = true;
-        this.deathSFX = new Audio('sfx/hit05.wav');
+        this.deathSFX = sounds.death;
 
         /*
             ___       _   _
@@ -218,6 +219,12 @@ class Character {
                     }
                 }
             }
+
+            // for every item in the inventory, run its step method
+            for (let i = 0; i < this.inventory.length; i++) {
+                this.inventory[i].step('player');
+            }
+
             /*
               __  __            ___                  _
              |  \/  |__ ___ __ / __|_ __  ___ ___ __| |

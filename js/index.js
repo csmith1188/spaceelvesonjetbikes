@@ -97,8 +97,8 @@ function step() {
         for (const block of game.match.map.blocks) {
             block.step();
         }
-        for (const missile of game.match.map.missiles) {
-            missile.step();
+        for (const bullet of game.match.map.bullets) {
+            bullet.step();
         }
         for (const debris of game.match.map.debris) {
             debris.step();

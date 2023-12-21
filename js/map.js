@@ -22,7 +22,7 @@ class Map {
 
         this.blocks = [];
         this.lastBlock = () => { return this.blocks[this.blocks.length - 1]; }
-        this.missiles = [];
+        this.bullets = [];
         this.debris = [];
 
         this.lightValue = [0, 0, 0, 0.0];
@@ -90,16 +90,16 @@ class Map {
             }
         }
 
-        for (const e of this.missiles) {
+        for (const e of this.bullets) {
             if (e.cleanup && !e.active) {
-                //Remove missile
-                this.missiles = this.missiles.filter(function (el) { return el != e; });
+                //Remove bullet
+                this.bullets = this.bullets.filter(function (el) { return el != e; });
             }
         }
 
         for (const e of this.debris) {
             if (e.cleanup && !e.active) {
-                //Remove missile
+                //Remove bullet
                 this.debris = this.debris.filter(function (el) { return el != e; });
             }
         }
@@ -205,7 +205,7 @@ class Map {
         }
 
         let renderList =
-            [game.player.character, ...npcs, ...game.match.map.blocks, ...game.match.map.missiles, ...game.match.map.debris]
+            [game.player.character, ...npcs, ...game.match.map.blocks, ...game.match.map.bullets, ...game.match.map.debris]
                 .sort((a, b) => {
                     if (a.HB.pos.y < b.HB.pos.y + b.HB.pos.z) return -1;
                     if (a.HB.pos.y > b.HB.pos.y + b.HB.pos.z) return 1;

@@ -4,7 +4,7 @@ class Match {
         this.despawnTimer = 3600; // 1 minute
         this.map = new Map();
         this.bots = [];
-        this.blocks = []; // Different from map blocks. Think powerups and dropped items
+        this.blocks = []; // Different from map blocks. Think pickups and dropped items
         this.runFuncs = []; // A list of functions to run every step
     }
 
