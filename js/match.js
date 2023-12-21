@@ -47,11 +47,11 @@ class DebugMap extends Match {
  ####### ####### #     # #######     ## ##  #     # #     # #     # ### ####### #     #
 
 */
-class Match_LoneWarrior extends Match {
+class Match_ForEver extends Match {
     constructor() {
         super();
         this.map = new Map_FieldCity();
-        this.name = "The Lone Warrior";
+        this.name = "Forever";
         this.description = "Survive against the endless waves of enemies.";
         this.waves = 0;
         this.waveTime = 2700; // 1 wave every 45 seconds  
@@ -59,6 +59,10 @@ class Match_LoneWarrior extends Match {
     }
 
     setup() {
+        // Fix in Character classes
+        game.player.character = new Character(allID++, 0, 0, game.player, { name: 'Cpt. Fabius', gfx: 'img/sprites/jetbike', hover: 16, airAccel: new Vect3(0.15, 0.15, 1) });
+        game.player.character.HB = new Cylinder(new Vect3((this.map.w / 2), (this.map.h / 2) + 200, 0), 29, 37);
+        game.player.camera = new Camera({ target: game.player.character });
         /*
            ___                  __  __         _       ___
           / __|__ _ _ __  ___  |  \/  |___  __| |___  | _ ) __ _ _ _  _ _  ___ _ _
@@ -322,10 +326,32 @@ class DebugMatch extends Match {
         this.setup();
     }
     setup = () => {
+        game.player.character = new Character(allID++, 0, 0, game.player, { name: 'Cpt. Fabius', gfx: 'img/sprites/jetbike', hover: 16, airAccel: new Vect3(0.15, 0.15, 1) });
+        game.player.character.HB = new Cylinder(new Vect3((this.map.w / 2), (this.map.h / 2) + 200, 0), 29, 37);
+        game.player.camera = new Camera({ target: game.player.character });
         for (let i = 0; i < 5; i++) {
             this.map.blocks.push(new Ammo_Ballistic(allID++, Math.round(Math.random() * this.map.w), Math.round(Math.random() * this.map.h), 0, 128, 128, 64))
             this.map.blocks.push(new Ammo_Plasma(allID++, Math.round(Math.random() * this.map.w), Math.round(Math.random() * this.map.h), 0, 128, 128, 64))
         }
+        this.map.blocks.push(new WeaponPickup(allID++, (this.map.w / 2) - 100, (this.map.h / 2), 0, 0, 0, 0, { weapon: 'pistol', pickupDelay: 0 }))
+        this.map.blocks.push(new WeaponPickup(allID++, (this.map.w / 2), (this.map.h / 2), 0, 0, 0, 0, { weapon: 'rifle', pickupDelay: 0 }))
+        this.map.blocks.push(new WeaponPickup(allID++, (this.map.w / 2) + 100, (this.map.h / 2), 0, 0, 0, 0, { weapon: 'flamer', pickupDelay: 0 }))
+    }
+}
+
+class Match_ForHonor extends Match {
+    constructor() {
+        super();
+        this.map = new Map_Deathbox();
+        this.name = "For Honor";
+        this.description = "A duel to the death.";
+        this.setup();
+    }
+    setup = () => {
+        game.player.character = new Character(allID++, 0, 0, game.player, { name: 'Cpt. Fabius', gfx: 'img/sprites/jetbike', hover: 16, airAccel: new Vect3(0.15, 0.15, 1) });
+        game.player.character.HB = new Cylinder(new Vect3((this.map.w / 2), (this.map.h / 2) + 200, 0), 29, 37);
+        this.blocks.push(new Block(allID++, (this.map.w / 2), (this.map.h / 2) - 0, 0, 0, 0, 0, { solid: false, visible: false }))
+        game.player.camera = new Camera({ target: this.blocks[this.blocks.length-1] });
         this.map.blocks.push(new WeaponPickup(allID++, (this.map.w / 2) - 100, (this.map.h / 2), 0, 0, 0, 0, { weapon: 'pistol', pickupDelay: 0 }))
         this.map.blocks.push(new WeaponPickup(allID++, (this.map.w / 2), (this.map.h / 2), 0, 0, 0, 0, { weapon: 'rifle', pickupDelay: 0 }))
         this.map.blocks.push(new WeaponPickup(allID++, (this.map.w / 2) + 100, (this.map.h / 2), 0, 0, 0, 0, { weapon: 'flamer', pickupDelay: 0 }))

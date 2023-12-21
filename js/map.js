@@ -336,8 +336,6 @@ class Map_FieldCity extends Map {
     }
 
     setup = () => {
-
-
         /*
             _      _    _   ___ _         _
            /_\  __| |__| | | _ ) |___  __| |__ ___
@@ -346,6 +344,29 @@ class Map_FieldCity extends Map {
         
         */
         for (let i = 0; i < 50; i++) {
+            let ran = function () { return Math.floor(Math.random() * 4) + 1 }
+            this.blocks.push(new Block(allID++, Math.round(Math.random() * this.w), Math.round(Math.random() * this.h), 0, ran() * 32, ran() * 32, ran() * 32, { color: [101, 101, 101], colorSide: [201, 201, 201] }))
+        }
+    }
+}
+
+class Map_Deathbox extends Map {
+    constructor() {
+        super();
+        this.w = 48 * 40;
+        this.h = 48 * 20;
+        this.setup();
+    }
+
+    setup = () => {
+        /*
+            _      _    _   ___ _         _
+           /_\  __| |__| | | _ ) |___  __| |__ ___
+          / _ \/ _` / _` | | _ \ / _ \/ _| / /(_-<
+         /_/ \_\__,_\__,_| |___/_\___/\__|_\_\/__/
+        
+        */
+        for (let i = 0; i < 10; i++) {
             let ran = function () { return Math.floor(Math.random() * 4) + 1 }
             this.blocks.push(new Block(allID++, Math.round(Math.random() * this.w), Math.round(Math.random() * this.h), 0, ran() * 32, ran() * 32, ran() * 32, { color: [101, 101, 101], colorSide: [201, 201, 201] }))
         }
