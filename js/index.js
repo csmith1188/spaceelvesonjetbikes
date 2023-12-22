@@ -10,7 +10,6 @@ let ticks = 0;
 let lastTimestamp = 0;
 let fps = 0;
 
-
 /*
       ::::::::  :::::::::: ::::::::::: :::    ::: :::::::::
     :+:    :+: :+:            :+:     :+:    :+: :+:    :+:
@@ -36,8 +35,8 @@ window.onload = function () {
     game.player = new Player();
     
     // game.match = new DebugMatch();
-    // game.match = new Match_ForEver();
-    game.match = new Match_ForHonor();
+    game.match = new Match_ForEver();
+    // game.match = new Match_ForHonor();
     
     game.match.map.buildNavMesh();
 

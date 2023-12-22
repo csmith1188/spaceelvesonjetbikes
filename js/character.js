@@ -158,6 +158,18 @@ class Character {
                 if (controller.buttons.brake.current) this.mom.z = -1;
 
             }
+            // if the boost button current is not equal to the boost button last
+            // and the boost current is 1
+            if (controller.buttons.boost.current != controller.buttons.boost.last && controller.buttons.boost.current) {
+                // if the player has positive power points (pp)
+                if (this.pp > 60) {
+                        this.pp -= 60;
+                        sounds.boost.play();
+                        this.speed.x += this.mom.x * 8;
+                        this.speed.y += this.mom.y * 8;
+                        this.speed.z += this.mom.z * 8;
+                }
+            }
 
             /*
                  _             _   _
@@ -522,219 +534,210 @@ class Character {
     #########  ###    ### ###     ###   ###   ###
     */
     draw() {
-        if (this.active) {
+
+        /*
+               _    _                        _    _
+          _ __(_)__| |__  __ _ _ _ __ _ _ __| |_ (_)__
+         | '_ \ / _| / / / _` | '_/ _` | '_ \ ' \| / _|
+         | .__/_\__|_\_\ \__, |_| \__,_| .__/_||_|_\__|
+         |_|             |___/         |_|
+        */
+        if (this.mom.x < 0) this.img.src = this.leftgfx + '.png'
+        if (this.mom.x > 0) this.img.src = this.gfx + '.png'
+
+
+        let compareX = game.player.camera.x - this.HB.pos.x;
+        let compareY = game.player.camera.y - this.HB.pos.y;
+
+
+        if (game.player.camera._3D) {
+            this.draw3D();
+        } else {
+
             /*
-                   _    _                        _    _
-              _ __(_)__| |__  __ _ _ _ __ _ _ __| |_ (_)__
-             | '_ \ / _| / / / _` | '_/ _` | '_ \ ' \| / _|
-             | .__/_\__|_\_\ \__, |_| \__,_| .__/_||_|_\__|
-             |_|             |___/         |_|
+                 _            _
+              __| |_  __ _ __| |_____ __ __
+             (_-< ' \/ _` / _` / _ \ V  V /
+             /__/_||_\__,_\__,_\___/\_/\_/
+ 
             */
-            if (this.mom.x < 0) this.img.src = this.leftgfx + '.png'
-            if (this.mom.x > 0) this.img.src = this.gfx + '.png'
+            ctx.globalAlpha = 0.4;
+            let shadowShrink = this.HB.radius * Math.min(((this.HB.pos.z - this.floor) / 128), 1)
+            ctx.drawImage(
+                this.shadow,
+                game.window.w / 2 - compareX - this.HB.radius + shadowShrink,
+                game.window.h / 2 - compareY - this.HB.radius + shadowShrink - this.floor,
+                this.HB.radius * 2 - shadowShrink * 2,
+                this.HB.radius * 2 - shadowShrink * 2
+            );
+            ctx.globalAlpha = 1;
+
+            /*
+                      _        _                 _
+              ___ ___| |___ __| |_ ___ _ _   _ _(_)_ _  __ _
+             (_-</ -_) / -_) _|  _/ _ \ '_| | '_| | ' \/ _` |
+             /__/\___|_\___\__|\__\___/_|   |_| |_|_||_\__, |
+                                                       |___/
+            */
+            ctx.strokeStyle = this.unitColor();
+            ctx.lineWidth = 3;
+            ctx.beginPath();
+            ctx.ellipse(
+                game.window.w / 2 - compareX,
+                game.window.h / 2 - compareY - this.floor,
+                this.HB.radius,
+                this.HB.radius,
+                0, 0, 2 * Math.PI);
+            ctx.stroke();
+
+            /*
+              _  _          _ _   _      ___
+             | || |___ __ _| | |_| |_   | _ ) __ _ _ _
+             | __ / -_) _` | |  _| ' \  | _ \/ _` | '_|
+             |_||_\___\__,_|_|\__|_||_| |___/\__,_|_|
+            */
+            // draw an arc around the bottom half of the selector ring offest by 10 pixels outside that represents the character's health
+            // draw bar background
+            ctx.strokeStyle = "#000000";
+            ctx.lineWidth = 5;
+            ctx.beginPath();
+            ctx.beginPath();
+            ctx.arc(
+                game.window.w / 2 - compareX,
+                game.window.h / 2 - compareY - this.floor,
+                this.HB.radius + 16,
+                Math.PI * 0.75,
+                Math.PI * 0.25,
+                true
+            );
+            // draw bar
+            ctx.stroke();
+            ctx.strokeStyle = this.unitColor(true);
+            ctx.lineWidth = 3;
+            ctx.beginPath();
+            ctx.arc(
+                game.window.w / 2 - compareX,
+                game.window.h / 2 - compareY - this.floor,
+                this.HB.radius + 16,
+                Math.PI * 0.75,
+                Math.PI * (0.75 - ((this.hp / this.hp_max) * 0.5)),
+                true
+            );
+            ctx.stroke();
+
+            /*
+              ___                      ___
+             | _ \_____ __ _____ _ _  | _ ) __ _ _ _
+             |  _/ _ \ V  V / -_) '_| | _ \/ _` | '_|
+             |_| \___/\_/\_/\___|_|   |___/\__,_|_|
+            */
+            //draw an arc around the bottom quarter of the selector ring that displays the character's power
+            //draw bar background
+            ctx.strokeStyle = "#000000";
+            ctx.lineWidth = 5;
+            ctx.beginPath();
+            ctx.arc(
+                game.window.w / 2 - compareX,
+                game.window.h / 2 - compareY - this.floor,
+                this.HB.radius + 8,
+                Math.PI * 0.75,
+                Math.PI * 0.25,
+                true
+            );
+            ctx.stroke();
+            // draw bar
+            ctx.beginPath();
+            ctx.strokeStyle = "#00FFFF";
+            ctx.lineWidth = 3;
+            ctx.beginPath();
+            ctx.arc(
+                game.window.w / 2 - compareX,
+                game.window.h / 2 - compareY - this.floor,
+                this.HB.radius + 8,
+                Math.PI * 0.75,
+                Math.PI * (0.75 - ((this.pp / this.pp_max) * 0.5)),
+                true
+            );
+            ctx.stroke();
 
 
-            let compareX = game.player.camera.x - this.HB.pos.x;
-            let compareY = game.player.camera.y - this.HB.pos.y;
-
-
-            if (game.player.camera._3D) {
-                this.draw3D();
-            } else {
-
-                /*
-                     _            _
-                  __| |_  __ _ __| |_____ __ __
-                 (_-< ' \/ _` / _` / _ \ V  V /
-                 /__/_||_\__,_\__,_\___/\_/\_/
-    
-                */
-                ctx.globalAlpha = 0.4;
-                let shadowShrink = this.HB.radius * Math.min(((this.HB.pos.z - this.floor) / 128), 1)
-                ctx.drawImage(
-                    this.shadow,
-                    game.window.w / 2 - compareX - this.HB.radius + shadowShrink,
-                    game.window.h / 2 - compareY - this.HB.radius + shadowShrink - this.floor,
-                    this.HB.radius * 2 - shadowShrink * 2,
-                    this.HB.radius * 2 - shadowShrink * 2
-                );
-                ctx.globalAlpha = 1;
-
-                /*
-                          _        _                 _
-                  ___ ___| |___ __| |_ ___ _ _   _ _(_)_ _  __ _
-                 (_-</ -_) / -_) _|  _/ _ \ '_| | '_| | ' \/ _` |
-                 /__/\___|_\___\__|\__\___/_|   |_| |_|_||_\__, |
-                                                           |___/
-                */
-                ctx.strokeStyle = this.unitColor();
-                ctx.lineWidth = 3;
+            /*
+                 _                     _
+              __| |_  __ _ _ _ __ _ __| |_ ___ _ _
+             / _| ' \/ _` | '_/ _` / _|  _/ -_) '_|
+             \__|_||_\__,_|_| \__,_\__|\__\___|_|
+ 
+            */
+            ctx.drawImage(
+                this.img,
+                game.window.w / 2 - compareX - this.HB.radius,
+                game.window.h / 2 - compareY - this.HB.height - this.HB.pos.z - sineAnimate(1, 0.1),
+                this.HB.radius * 2, this.HB.height
+            );
+            if (game.debug) {
+                ctx.fillStyle = "#FF0000";
+                ctx.fillRect(game.window.w / 2 - compareX - 2, game.window.h / 2 - compareY - 2, 4, 4);
+                ctx.strokeStyle = "#FF0000";
+                ctx.lineWidth = 2;
                 ctx.beginPath();
                 ctx.ellipse(
                     game.window.w / 2 - compareX,
-                    game.window.h / 2 - compareY - this.floor,
+                    game.window.h / 2 - compareY - this.HB.pos.z,
                     this.HB.radius,
                     this.HB.radius,
                     0, 0, 2 * Math.PI);
                 ctx.stroke();
-
-                /*
-                  _  _          _ _   _      ___
-                 | || |___ __ _| | |_| |_   | _ ) __ _ _ _
-                 | __ / -_) _` | |  _| ' \  | _ \/ _` | '_|
-                 |_||_\___\__,_|_|\__|_||_| |___/\__,_|_|
-                */
-                // draw an arc around the bottom half of the selector ring offest by 10 pixels outside that represents the character's health
-                // draw bar background
-                ctx.strokeStyle = "#000000";
-                ctx.lineWidth = 5;
                 ctx.beginPath();
-                ctx.beginPath();
-                ctx.arc(
+                ctx.ellipse(
                     game.window.w / 2 - compareX,
-                    game.window.h / 2 - compareY - this.floor,
-                    this.HB.radius + 16,
-                    Math.PI * 0.75,
-                    Math.PI * 0.25,
-                    true
-                );
-                // draw bar
+                    game.window.h / 2 - compareY - this.HB.height - this.HB.pos.z,
+                    this.HB.radius,
+                    this.HB.radius,
+                    0, 0, 2 * Math.PI);
                 ctx.stroke();
-                ctx.strokeStyle = this.unitColor(true);
-                ctx.lineWidth = 3;
-                ctx.beginPath();
-                ctx.arc(
-                    game.window.w / 2 - compareX,
-                    game.window.h / 2 - compareY - this.floor,
-                    this.HB.radius + 16,
-                    Math.PI * 0.75,
-                    Math.PI * (0.75 - ((this.hp / this.hp_max) * 0.5)),
-                    true
-                );
-                ctx.stroke();
-
-                /*
-                  ___                      ___
-                 | _ \_____ __ _____ _ _  | _ ) __ _ _ _
-                 |  _/ _ \ V  V / -_) '_| | _ \/ _` | '_|
-                 |_| \___/\_/\_/\___|_|   |___/\__,_|_|
-                */
-                //draw an arc around the bottom quarter of the selector ring that displays the character's power
-                //draw bar background
-                ctx.strokeStyle = "#000000";
-                ctx.lineWidth = 5;
-                ctx.beginPath();
-                ctx.arc(
-                    game.window.w / 2 - compareX,
-                    game.window.h / 2 - compareY - this.floor,
-                    this.HB.radius + 8,
-                    Math.PI * 0.75,
-                    Math.PI * 0.25,
-                    true
-                );
-                ctx.stroke();
-                // draw bar
-                ctx.beginPath();
-                ctx.strokeStyle = "#00FFFF";
-                ctx.lineWidth = 3;
-                ctx.beginPath();
-                ctx.arc(
-                    game.window.w / 2 - compareX,
-                    game.window.h / 2 - compareY - this.floor,
-                    this.HB.radius + 8,
-                    Math.PI * 0.75,
-                    Math.PI * (0.75 - ((this.pp / this.pp_max) * 0.5)),
-                    true
-                );
-                ctx.stroke();
-
-
-                /*
-                     _                     _
-                  __| |_  __ _ _ _ __ _ __| |_ ___ _ _
-                 / _| ' \/ _` | '_/ _` / _|  _/ -_) '_|
-                 \__|_||_\__,_|_| \__,_\__|\__\___|_|
-    
-                */
-                ctx.drawImage(
-                    this.img,
-                    game.window.w / 2 - compareX - this.HB.radius,
-                    game.window.h / 2 - compareY - this.HB.height - this.HB.pos.z - sineAnimate(1, 0.1),
-                    this.HB.radius * 2, this.HB.height
-                );
-                if (game.debug) {
-                    ctx.fillStyle = "#FF0000";
-                    ctx.fillRect(game.window.w / 2 - compareX - 2, game.window.h / 2 - compareY - 2, 4, 4);
-                    ctx.strokeStyle = "#FF0000";
-                    ctx.lineWidth = 2;
-                    ctx.beginPath();
-                    ctx.ellipse(
-                        game.window.w / 2 - compareX,
-                        game.window.h / 2 - compareY - this.HB.pos.z,
-                        this.HB.radius,
-                        this.HB.radius,
-                        0, 0, 2 * Math.PI);
-                    ctx.stroke();
-                    ctx.beginPath();
-                    ctx.ellipse(
-                        game.window.w / 2 - compareX,
-                        game.window.h / 2 - compareY - this.HB.height - this.HB.pos.z,
-                        this.HB.radius,
-                        this.HB.radius,
-                        0, 0, 2 * Math.PI);
-                    ctx.stroke();
-                    let newX = this.HB.pos.x + this.speed.x;
-                    let newY = this.HB.pos.y + this.speed.y;
-                }
-
-                /*
-                  _  _
-                 | \| |__ _ _ __  ___
-                 | .` / _` | '  \/ -_)
-                 |_|\_\__,_|_|_|_\___|
-                */
-                // Draw character's name above their head
-                ctx.textAlign = "center";
-                //first draw the text in black to create a shadow
-                ctx.fillStyle = '#000000';
-                ctx.font = "12px Jura";
-                ctx.fillText(this.name, game.window.w / 2 - compareX + 2, game.window.h / 2 - compareY - this.HB.height - this.HB.pos.z - 8);
-                //then draw the text in white
-                ctx.fillStyle = '#FFFFFF';
-                ctx.font = "12px Jura";
-                ctx.fillText(this.name, game.window.w / 2 - compareX, game.window.h / 2 - compareY - this.HB.height - this.HB.pos.z - 10);
+                let newX = this.HB.pos.x + this.speed.x;
+                let newY = this.HB.pos.y + this.speed.y;
             }
 
             /*
-              _                     _     _ _
-             | |_ __ _ _ _ __ _ ___| |_  | (_)_ _  ___
-             |  _/ _` | '_/ _` / -_)  _| | | | ' \/ -_)
-              \__\__,_|_| \__, \___|\__| |_|_|_||_\___|
-                          |___/
+              _  _
+             | \| |__ _ _ __  ___
+             | .` / _` | '  \/ -_)
+             |_|\_\__,_|_|_|_\___|
             */
-            // This can draw a line to the closest part of a rectangle
-            // except it broke at some point when i moved to utils
-            // It can still draw to the XY which is good for tubes, but not blocks
-            if (this.target && game.debug) {
-                compareX = game.player.camera.x - this.HB.pos.x; //If you change this to the target.pos
-                compareY = game.player.camera.y - this.HB.pos.y; //If you change this to the target.pos
-                let targetX = game.player.camera.x - this.target.HB.pos.x;
-                let targetY = game.player.camera.y - this.target.HB.pos.y;
-                ctx.strokeStyle = "#FFFFFF"
-                ctx.lineWidth = 2;
-                ctx.beginPath();
-                ctx.moveTo(game.window.w / 2 - targetX, game.window.h / 2 - targetY);
-                ctx.lineTo(game.window.w / 2 - compareX, game.window.h / 2 - compareY);
-                ctx.stroke();
-            }
-        } else {
-            if (this === game.player.character) {
-                // draw number of waves to center of screen
-                ctx.fillStyle = "#FFFFFF";
-                ctx.font = "36px Jura";
-                ctx.textAlign = "center";
-                ctx.fillText(`Waves: ${game.match.waves}`, game.window.w / 2, game.window.h / 2);
-            }
+            // Draw character's name above their head
+            ctx.textAlign = "center";
+            //first draw the text in black to create a shadow
+            ctx.fillStyle = '#000000';
+            ctx.font = "12px Jura";
+            ctx.fillText(this.name, game.window.w / 2 - compareX + 2, game.window.h / 2 - compareY - this.HB.height - this.HB.pos.z - 8);
+            //then draw the text in white
+            ctx.fillStyle = '#FFFFFF';
+            ctx.font = "12px Jura";
+            ctx.fillText(this.name, game.window.w / 2 - compareX, game.window.h / 2 - compareY - this.HB.height - this.HB.pos.z - 10);
+        }
+
+        /*
+          _                     _     _ _
+         | |_ __ _ _ _ __ _ ___| |_  | (_)_ _  ___
+         |  _/ _` | '_/ _` / -_)  _| | | | ' \/ -_)
+          \__\__,_|_| \__, \___|\__| |_|_|_||_\___|
+                      |___/
+        */
+        // This can draw a line to the closest part of a rectangle
+        // except it broke at some point when i moved to utils
+        // It can still draw to the XY which is good for tubes, but not blocks
+        if (this.target && game.debug) {
+            compareX = game.player.camera.x - this.HB.pos.x; //If you change this to the target.pos
+            compareY = game.player.camera.y - this.HB.pos.y; //If you change this to the target.pos
+            let targetX = game.player.camera.x - this.target.HB.pos.x;
+            let targetY = game.player.camera.y - this.target.HB.pos.y;
+            ctx.strokeStyle = "#FFFFFF"
+            ctx.lineWidth = 2;
+            ctx.beginPath();
+            ctx.moveTo(game.window.w / 2 - targetX, game.window.h / 2 - targetY);
+            ctx.lineTo(game.window.w / 2 - compareX, game.window.h / 2 - compareY);
+            ctx.stroke();
         }
     }
 

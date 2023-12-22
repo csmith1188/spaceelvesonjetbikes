@@ -68,7 +68,6 @@ function setupInputs() {
     });
 
     window.addEventListener('gamepadconnected', (event) => {
-        console.log(event);
         game.player.controller.gamePad = event.gamepad.index;
         // game.gamepads.push(gp);
 

@@ -22,6 +22,7 @@ class Match {
         }
     }
 }
+
 /*
       ::::::::      :::       :::   :::   ::::::::::            :::   :::    ::::::::  :::::::::  :::::::::: ::::::::
     :+:    :+:   :+: :+:    :+:+: :+:+:  :+:                  :+:+: :+:+:  :+:    :+: :+:    :+: :+:       :+:    :+:
@@ -32,20 +33,14 @@ class Match {
 ########  ###     ### ###       ### ##########          ###       ###  ########  #########  ########## ########
 */
 
-
-class DebugMap extends Match {
-
-}
-
 /*
- #       ####### #     # #######    #     #    #    ######  ######  ### ####### ######
- #       #     # ##    # #          #  #  #   # #   #     # #     #  #  #     # #     #
- #       #     # # #   # #          #  #  #  #   #  #     # #     #  #  #     # #     #
- #       #     # #  #  # #####      #  #  # #     # ######  ######   #  #     # ######
- #       #     # #   # # #          #  #  # ####### #   #   #   #    #  #     # #   #
- #       #     # #    ## #          #  #  # #     # #    #  #    #   #  #     # #    #
- ####### ####### #     # #######     ## ##  #     # #     # #     # ### ####### #     #
-
+ #######
+ #        ####  #####  ###### #    # ###### #####
+ #       #    # #    # #      #    # #      #    #
+ #####   #    # #    # #####  #    # #####  #    #
+ #       #    # #####  #      #    # #      #####
+ #       #    # #   #  #       #  #  #      #   #
+ #        ####  #    # ######   ##   ###### #    #
 */
 class Match_ForEver extends Match {
     constructor() {
@@ -123,6 +118,18 @@ class Match_ForEver extends Match {
             }.bind(this)
         )
 
+        game.player.interface.drawFunc.push(
+            function () {
+                if (!game.player.character.active) {
+                    // draw number of waves to center of screen
+                    ctx.fillStyle = "#FFFFFF";
+                    ctx.font = "36px Jura";
+                    ctx.textAlign = "center";
+                    ctx.fillText(`Waves: ${game.match.waves}`, game.window.w / 2, game.window.h / 2);
+                }
+            }.bind(this)
+        )
+
         /*
           ___
          | _ \_____ __ _____ _ _ _  _ _ __ ___
@@ -196,7 +203,6 @@ class Match_ForEver extends Match {
                                 break;
                         }
                         this.bots[this.bots.length - 1].character.item = Math.round(Math.random());
-
                     }
 
                     /*
@@ -213,7 +219,7 @@ class Match_ForEver extends Match {
                     }
 
                     // Random weapon pickup in the middle of the map
-                    let rand = Math.floor(Math.random() * 3);
+                    let rand = Math.floor(Math.random() * 4);
                     switch (rand) {
                         case 0:
                             this.map.blocks.push(new WeaponPickup(allID++, (this.map.w / 2), (this.map.h / 2), 0, 0, 0, 0, { weapon: 'pistol', pickupDelay: 0, livetime: this.waveTime * 3, dying: true }))
@@ -223,6 +229,9 @@ class Match_ForEver extends Match {
                             break;
                         case 2:
                             this.map.blocks.push(new WeaponPickup(allID++, (this.map.w / 2), (this.map.h / 2), 0, 0, 0, 0, { weapon: 'flamer', pickupDelay: 0, livetime: this.waveTime * 3, dying: true }))
+                            break;
+                        case 3:
+                            this.map.blocks.push(new WeaponPickup(allID++, (this.map.w / 2), (this.map.h / 2), 0, 0, 0, 0, { weapon: 'lance', pickupDelay: 0, livetime: this.waveTime * 3, dying: true }))
                             break;
                     }
 
@@ -254,7 +263,7 @@ class Match_ForEver extends Match {
                                 }
                             );
                             this.bots[this.bots.length - 1].character.HB = new Cylinder(new Vect3(Math.round(Math.random() * this.map.w), Math.round(Math.random() * this.map.h), 0), 29, 37);
-                            let rand = Math.floor(Math.random() * 3);
+                            let rand = Math.floor(Math.random() * 4);
                             switch (rand) {
                                 case 0:
                                     this.bots[this.bots.length - 1].character.inventory.push(new Pistol())
@@ -263,6 +272,9 @@ class Match_ForEver extends Match {
                                     this.bots[this.bots.length - 1].character.inventory.push(new Rifle())
                                     break;
                                 case 2:
+                                    this.bots[this.bots.length - 1].character.inventory.push(new Flamer())
+                                    break;
+                                case 3:
                                     this.bots[this.bots.length - 1].character.inventory.push(new Flamer())
                                     break;
                             }
@@ -330,12 +342,39 @@ class DebugMatch extends Match {
         game.player.character.HB = new Cylinder(new Vect3((this.map.w / 2), (this.map.h / 2) + 200, 0), 29, 37);
         game.player.camera = new Camera({ target: game.player.character });
         for (let i = 0; i < 5; i++) {
-            this.map.blocks.push(new Ammo_Ballistic(allID++, Math.round(Math.random() * this.map.w), Math.round(Math.random() * this.map.h), 0, 128, 128, 64))
-            this.map.blocks.push(new Ammo_Plasma(allID++, Math.round(Math.random() * this.map.w), Math.round(Math.random() * this.map.h), 0, 128, 128, 64))
+            this.map.blocks.push(new Ammo_Ballistic(allID++, Math.round(Math.random() * this.map.w), Math.round(Math.random() * this.map.h), 0, 128, 128, 64));
+            this.map.blocks.push(new Ammo_Plasma(allID++, Math.round(Math.random() * this.map.w), Math.round(Math.random() * this.map.h), 0, 128, 128, 64));
         }
-        this.map.blocks.push(new WeaponPickup(allID++, (this.map.w / 2) - 100, (this.map.h / 2), 0, 0, 0, 0, { weapon: 'pistol', pickupDelay: 0 }))
-        this.map.blocks.push(new WeaponPickup(allID++, (this.map.w / 2), (this.map.h / 2), 0, 0, 0, 0, { weapon: 'rifle', pickupDelay: 0 }))
-        this.map.blocks.push(new WeaponPickup(allID++, (this.map.w / 2) + 100, (this.map.h / 2), 0, 0, 0, 0, { weapon: 'flamer', pickupDelay: 0 }))
+        this.map.blocks.push(new WeaponPickup(allID++, (this.map.w / 2) - 100, (this.map.h / 2), 0, 0, 0, 0, { weapon: 'pistol', pickupDelay: 0 }));
+        this.map.blocks.push(new WeaponPickup(allID++, (this.map.w / 2), (this.map.h / 2), 0, 0, 0, 0, { weapon: 'rifle', pickupDelay: 0 }));
+        this.map.blocks.push(new WeaponPickup(allID++, (this.map.w / 2) + 100, (this.map.h / 2), 0, 0, 0, 0, { weapon: 'flamer', pickupDelay: 0 }));
+        this.map.blocks.push(new WeaponPickup(allID++, (this.map.w / 2) + 200, (this.map.h / 2), 0, 0, 0, 0, { weapon: 'lance', pickupDelay: 0 }));
+
+
+        this.bots.push(new Bot()) //Kevin / Jae'Sin
+        this.bots[this.bots.length - 1].character = new Character(
+            allID++,
+            (this.map.w / 2),
+            (this.map.h / 2),
+            this.bots[this.bots.length - 1],
+            {
+                // target: game.player.character,d
+                // target: this.bots[this.bots.length - 1].character,
+                name: getName(), team: 1, gfx: 'img/sprites/dark2', color: [0, 0, 255],
+                hover: 16, airAccel: new Vect3(0.15, 0.15, 1),
+                active: true,
+                cleanup: false,
+                runFunc: [
+                    function () { }.bind(this.bots[this.bots.length - 1].character)
+                ]
+            }
+        );
+        this.bots[this.bots.length - 1].character.HB = new Cylinder(
+            new Vect3(
+                (this.map.w / 2) - 1000,
+                (this.map.h / 2) - 1000,
+                0),
+            29, 37);
     }
 }
 
@@ -350,10 +389,10 @@ class Match_ForHonor extends Match {
     setup = () => {
         game.player.character = new Character(allID++, 0, 0, game.player, { name: 'Cpt. Fabius', gfx: 'img/sprites/jetbike', hover: 16, airAccel: new Vect3(0.15, 0.15, 1) });
         game.player.character.HB = new Cylinder(new Vect3((this.map.w / 2), (this.map.h / 2) + 200, 0), 29, 37);
-        this.blocks.push(new Block(allID++, (this.map.w / 2), (this.map.h / 2) - 0, 0, 0, 0, 0, { solid: false, visible: false }))
-        game.player.camera = new Camera({ target: this.blocks[this.blocks.length-1] });
-        this.map.blocks.push(new WeaponPickup(allID++, (this.map.w / 2) - 100, (this.map.h / 2), 0, 0, 0, 0, { weapon: 'pistol', pickupDelay: 0 }))
-        this.map.blocks.push(new WeaponPickup(allID++, (this.map.w / 2), (this.map.h / 2), 0, 0, 0, 0, { weapon: 'rifle', pickupDelay: 0 }))
-        this.map.blocks.push(new WeaponPickup(allID++, (this.map.w / 2) + 100, (this.map.h / 2), 0, 0, 0, 0, { weapon: 'flamer', pickupDelay: 0 }))
+        this.blocks.push(new Block(allID++, (this.map.w / 2), (this.map.h / 2) - 0, 0, 0, 0, 0, { solid: false, visible: false }));
+        game.player.camera = new Camera({ target: this.blocks[this.blocks.length - 1] });
+        this.map.blocks.push(new WeaponPickup(allID++, (this.map.w / 2) - 100, (this.map.h / 2), 0, 0, 0, 0, { weapon: 'pistol', pickupDelay: 0 }));
+        this.map.blocks.push(new WeaponPickup(allID++, (this.map.w / 2), (this.map.h / 2), 0, 0, 0, 0, { weapon: 'rifle', pickupDelay: 0 }));
+        this.map.blocks.push(new WeaponPickup(allID++, (this.map.w / 2) + 100, (this.map.h / 2), 0, 0, 0, 0, { weapon: 'flamer', pickupDelay: 0 }));
     }
 }

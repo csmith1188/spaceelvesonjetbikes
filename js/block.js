@@ -600,6 +600,7 @@ class Bullet extends Block {
 
 }
 
+
 /*
       :::::::::   ::::::::  :::       ::: :::::::::: :::::::::         :::    ::: :::::::::
      :+:    :+: :+:    :+: :+:       :+: :+:        :+:    :+:        :+:    :+: :+:    :+:
@@ -797,11 +798,20 @@ class WeaponPickup extends PickUp {
         }
         if (this.weapon == 'flamer') {
             this.item = new Flamer();
-            if (this.ammo == undefined) this.ammo = 5;
-            this.ammoMax = 5;
+            if (this.ammo == undefined) this.ammo = 6;
+            this.ammoMax = 6;
             this.item.ammo = this.ammo;
             if (this.ammo < this.ammoMax) this.imgFile = 'img/sprites/inventory/flamer_inactive.png';
             else this.imgFile = 'img/sprites/inventory/flamer_active.png';
+            this.imgFileSide = 'img/sprites/pickups/ammo_plasma_side.png';
+        }
+        if (this.weapon == 'lance') {
+            this.item = new Lance();
+            if (this.ammo == undefined) this.ammo = 4;
+            this.ammoMax = 4;
+            this.item.ammo = this.ammo;
+            if (this.ammo < this.ammoMax) this.imgFile = 'img/sprites/inventory/lance_inactive.png';
+            else this.imgFile = 'img/sprites/inventory/lance_active.png';
             this.imgFileSide = 'img/sprites/pickups/ammo_plasma_side.png';
         }
         this.img.src = this.imgFile;
