@@ -38,8 +38,13 @@ class Interface {
 
     */
     drawHUD() {
-        if (this.player.character.active) {
+        // Run all drawFunc
+        for (const func of this.drawFunc) {
+            func();
+        }
 
+        // The normal HUD in every game mode
+        if (this.player.character.active) {
             // Map locators
             ctx.fillStyle = "#FF0000";
             ctx.fillRect((this.player.camera.x / game.match.map.w) * game.window.w - 3, 0, 6, 6);
@@ -56,11 +61,6 @@ class Interface {
 
             //Ammo
             this.drawAmmo();
-
-            // Run all drawFunc
-            for (const func of this.drawFunc) {
-                func();
-            }
 
             if (game.debug) {
                 ctx.fillStyle = "#000000";

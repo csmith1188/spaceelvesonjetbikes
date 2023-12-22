@@ -125,10 +125,15 @@ class Match_ForEver extends Match {
                     ctx.fillStyle = "#FFFFFF";
                     ctx.font = "36px Jura";
                     ctx.textAlign = "center";
+                    // first draw the text in black to create a shadow
+                    ctx.fillStyle = "#000000";
+                    ctx.fillText(`Waves: ${game.match.waves}`, game.window.w / 2 + 2, game.window.h / 2 + 2);
+                    ctx.fillStyle = "#FFFFFF";
+                    // then draw the text in white
                     ctx.fillText(`Waves: ${game.match.waves}`, game.window.w / 2, game.window.h / 2);
                 }
             }.bind(this)
-        )
+        );
 
         /*
           ___

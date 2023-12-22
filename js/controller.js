@@ -70,7 +70,6 @@ function setupInputs() {
     window.addEventListener('gamepadconnected', (event) => {
         game.player.controller.gamePad = event.gamepad.index;
         // game.gamepads.push(gp);
-
     });
     window.addEventListener('gamepaddisconnected', (event) => {
         game.player.controller.gamePad = null;
@@ -250,11 +249,11 @@ class Controller {
             else this.buttons.boost.current = 0;
 
             // A button to switch to weapon 0
-            if (gp.buttons[0].pressed) this.buttons.inventory1.current = 1;
-            else this.buttons.inventory1.current = 0;
-            // X button to switch to weapon 1
-            if (gp.buttons[2].pressed) this.buttons.inventory2.current = 1;
+            if (gp.buttons[0].pressed) this.buttons.inventory2.current = 1;
             else this.buttons.inventory2.current = 0;
+            // X button to switch to weapon 1
+            if (gp.buttons[2].pressed) this.buttons.inventory1.current = 1;
+            else this.buttons.inventory1.current = 0;
             // B button to throw
             if (gp.buttons[1].pressed) this.buttons.throw.current = 1;
             else this.buttons.throw.current = 0;
@@ -478,7 +477,6 @@ class Controller {
         }
     }
 }
-
 
 /*
       :::::::::  :::    :::   :::   :::     :::   :::  :::   :::

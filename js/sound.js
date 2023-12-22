@@ -2,7 +2,7 @@ const sounds = {
     'hit_bullet': new Audio('sfx/hit_01.wav'),
     'hit_flamer': new Audio('sfx/exp_03.wav'),
     'hit_rifle': new Audio('sfx/hit03.wav'),
-    'hit_lance': new Audio('sfx/hit_05.wav'),
+    'hit_lance': new Audio('sfx/hit05.wav'),
     'shoot_pistol': new Audio('sfx/laser_01.wav'),
     'shoot_flamer': new Audio('sfx/hit_02.wav'),
     'shoot_rifle': new Audio('sfx/exp05.wav'),
