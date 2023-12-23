@@ -71,7 +71,7 @@ class Character {
 
         */
         this.item = 0;
-        this.inventory = [new Pistol()];
+        this.inventory = [new Sword()];
         this.inventory[0].owner = this.parent;
         this.ammo = {
             plasma: 1,
@@ -922,6 +922,16 @@ class Character {
     }
 
 }
+
+class Jetbike extends Character {
+    constructor(id, spawnx, spawny, parent, options) {
+        super(id, spawnx, spawny, parent, options);
+        this.HB = new Cylinder(new Vect3(spawnx, spawny, 0), 29, 37);
+        this.airAccel = new Vect3(0.15, 0.15, 1);
+        this.hover = 16;
+    }
+}
+
 
 function getName() {
     let names = [

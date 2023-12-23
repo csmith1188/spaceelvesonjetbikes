@@ -7,6 +7,7 @@ const sounds = {
     'shoot_flamer': new Audio('sfx/hit_02.wav'),
     'shoot_rifle': new Audio('sfx/exp05.wav'),
     'shoot_lance': new Audio('sfx/shoot_lance.wav'),
+    'shoot_sword': new Audio('sfx/shoot_sword.wav'),
     'reload_empty': new Audio('sfx/power02.wav'),
     'reload_done': new Audio('sfx/power03.wav'),
     'pickup_ammo': new Audio('sfx/pickup02.wav'),

@@ -819,6 +819,11 @@ class WeaponPickup extends PickUp {
             else this.imgFile = 'img/sprites/inventory/lance_active.png';
             this.imgFileSide = 'img/sprites/pickups/ammo_plasma_side.png';
         }
+        if (this.weapon == 'sword') {
+            this.item = new Sword();
+            this.imgFile = 'img/sprites/inventory/sword_active.png';
+            this.imgFileSide = 'img/sprites/pickups/grey_side.png';
+        }
         this.img.src = this.imgFile;
         this.imgSide.src = this.imgFileSide;
     }
