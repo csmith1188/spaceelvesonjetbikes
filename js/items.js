@@ -43,7 +43,7 @@ class Pistol extends Item {
         this.type = 'ballistic';
         this.name = 'Pluton Pistol';
         this.weapon = 'pistol';
-        this.shootSFX = new Audio('sfx/laser_01.wav');
+        this.shootSFX = sounds.shoot_pistol;
         this.reload_empty = sounds.reload_empty;
         this.reload_done = sounds.reload_done;
         this.projectileSpeed = 20;
@@ -75,6 +75,7 @@ class Pistol extends Item {
                 // Set next cooldown
                 this.nextCool = ticks + this.coolDown;
                 this.ammo--; // consume a bullet
+                this.shootSFX.currentTime = 0;
                 this.shootSFX.play(); // play shoot sound
                 //find the distance from player to mouse with pythagorean theorem
                 let distance = ((aimX ** 2) + (aimY ** 2)) ** 0.5;
@@ -172,6 +173,7 @@ class Rifle extends Item {
                 let yaim = aimY;
                 let zaim = aimZ;
                 this.ammo--; // consume a bullet
+                this.shootSFX.currentTime = 0;
                 this.shootSFX.play(); // play shoot sound
                 //find the distance from player to mouse with pythagorean theorem
                 let distance = ((xaim ** 2) + (yaim ** 2)) ** 0.5;
@@ -284,7 +286,7 @@ class Flamer extends Item {
         this.type = 'plasma';
         this.name = 'Venusian Lotus';
         this.weapon = 'flamer';
-        this.shootSFX = new Audio('sfx/hit_02.wav');
+        this.shootSFX = sounds.shoot_flamer;
         this.reload_empty = sounds.reload_empty;
         this.reload_done = sounds.reload_done;
         this.projectileSpeed = 10;
@@ -316,6 +318,7 @@ class Flamer extends Item {
                 // Set next cooldown
                 this.nextCool = ticks + this.coolDown;
                 this.ammo--; // consume a bullet
+                this.shootSFX.currentTime = 0;
                 this.shootSFX.play(); // play shoot sound
                 for (let i = 0; i < 5; i++) {
 
@@ -384,6 +387,7 @@ class Lance extends Item {
         this.reload_empty = sounds.reload_empty;
         this.reload_done = sounds.reload_done;
         this.boostSpeed = 15;
+        this.hopSpeed = 6;
         this.range = 300;
         this.coolDown = 120;
         this.reloadTime = 60;
@@ -412,6 +416,7 @@ class Lance extends Item {
                 // Set next cooldown
                 this.nextCool = ticks + this.coolDown;
                 this.ammo--; // consume a bullet
+                this.shootSFX.currentTime = 0;
                 this.shootSFX.play(); // play shoot sound
                 //find the distance from player to mouse with pythagorean theorem
                 let distance = ((aimX ** 2) + (aimY ** 2)) ** 0.5;
@@ -419,6 +424,8 @@ class Lance extends Item {
                 aimX = (aimX / distance) * this.boostSpeed;
                 aimY = (aimY / distance) * this.boostSpeed;
                 aimZ = (aimZ / distance) * this.boostSpeed;
+
+                aimZ += this.hopSpeed;
 
                 // add aim to user speed
                 user.speed.x += aimX;

@@ -34,7 +34,17 @@ class Bot {
             
             let distance = Math.sqrt(compareX ** 2 + compareY ** 2); // Pythagoras
 
-            if (distance > this.character.HB.radius * 2) { // If the target is too far away, move towards it
+            let findRange;
+
+            // If that player's character's inventory has at least one item
+            // make findRange the range of the current item in the inventory
+            if (this.character.inventory.length > 0) {
+                findRange = this.character.inventory[this.character.item].range / 2;
+            } else {
+                findRange = this.character.HB.radius * 2;
+            }
+
+            if (distance > findRange) { // If the target is too far away, move towards it
 
                 let dx = compareX / distance; // Normalized vector
                 let dy = compareY / distance;
@@ -112,6 +122,7 @@ class Bot {
              /_/ \_\__|\__\__,_\__|_\_\
 
             */
+
             if (
                 Math.abs(distance) <= this.character.inventory[this.character.item].range &&
                 this.character.target.team != this.character.team &&
@@ -128,15 +139,6 @@ class Bot {
                 this.controller.buttons.jump.current = 0;
                 this.controller.buttons.fire.current = 0;
             }
-
-            // // Formation stuff
-            // if (this.character.target.team !== undefined) {
-            //     if (this.character.target.team == this.character.team) this.character.formationRange = this.character.dformationRange;
-            //     else this.character.formationRange = 0;
-            //     if (this.character.target.lastColNPC)
-            //         if (this.character.target.lastColNPC.team != this.character.team)
-            //             this.character.target = this.character.target.lastColNPC;
-            // }
 
             //If my target is not active
             if (!this.character.target.active || this.character.target.team == this.character.team) {
