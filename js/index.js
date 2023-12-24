@@ -34,8 +34,8 @@ window.onload = function () {
     //Player
     game.player = new Player();
     
-    // game.match = new DebugMatch();
-    game.match = new Match_ForEver();
+    game.match = new DebugMatch();
+    // game.match = new Match_ForEver();
     // game.match = new Match_ForHonor();
     
     game.match.map.buildNavMesh();

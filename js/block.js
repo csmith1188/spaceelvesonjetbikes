@@ -23,7 +23,7 @@ class Block {
         this.active = true; //Are we tracking this in the game?
         this.dying = false; //Is the lifespan counting down?
         this.cleanup = true; //Is this ready to be removed from the game?
-        this.startDelay = 0; //Reset after {options}
+        this.startDelay = 0; //Number of frames to wait before starting
         this.livetime = -1; //Number of frames to live (-1 forever)
         this.repeat = 0;
 
@@ -50,6 +50,7 @@ class Block {
         this.shadowDraw = false;
         this.shadow = new Image();
         this.shadow.src = 'img/sprites/shadow.png';
+        this.drawFunc = [];
         // Options
         if (typeof options === 'object')
             for (var key of Object.keys(options)) {
@@ -127,7 +128,7 @@ class Block {
                     ctx.beginPath();
                     ctx.ellipse(
                         game.window.w / 2 - compareX,
-                        game.window.h / 2 - compareY - this.HB.pos.z - this.HB.height + this.HB.radius,
+                        game.window.h / 2 - compareY - this.HB.pos.z,
                         this.HB.radius,
                         this.HB.radius,
                         0, 0, 2 * Math.PI
@@ -136,7 +137,7 @@ class Block {
                     ctx.beginPath();
                     ctx.fillRect(
                         game.window.w / 2 - compareX - this.HB.radius,
-                        game.window.h / 2 - compareY - this.HB.pos.z - this.HB.radius,
+                        game.window.h / 2 - compareY - this.HB.pos.z - this.HB.height,
                         this.HB.radius * 2,
                         this.HB.height
                     );
@@ -217,6 +218,11 @@ class Block {
                     );
                 }
             }
+        }
+
+        // Draw any custom draw functions
+        for (const func of this.drawFunc) {
+            func();
         }
     }
 
@@ -613,6 +619,16 @@ class Bullet extends Block {
 ###         ########    ###   ###   ########## ###    ###         ########  ###
 */
 
+/*
+ ######
+ #     # #  ####  #    # #    # #####
+ #     # # #    # #   #  #    # #    #
+ ######  # #      ####   #    # #    #
+ #       # #      #  #   #    # #####
+ #       # #    # #   #  #    # #
+ #       #  ####  #    #  ####  #
+
+*/
 class PickUp extends Block {
     constructor(id, x, y, z, vx, vy, vz, options) {
         super(id, x, y, z, vx, vy, vz, options);
@@ -648,6 +664,16 @@ class PickUp extends Block {
     }
 }
 
+/*
+    #                            ######
+   # #   #    # #    #  ####     #     #   ##   #      #      #  ####  ##### #  ####
+  #   #  ##  ## ##  ## #    #    #     #  #  #  #      #      # #        #   # #    #
+ #     # # ## # # ## # #    #    ######  #    # #      #      #  ####    #   # #
+ ####### #    # #    # #    #    #     # ###### #      #      #      #   #   # #
+ #     # #    # #    # #    #    #     # #    # #      #      # #    #   #   # #    #
+ #     # #    # #    #  ####     ######  #    # ###### ###### #  ####    #   #  ####
+
+*/
 class Ammo_Ballistic extends PickUp {
     constructor(id, x, y, z, vx, vy, vz, options) {
         super(id, x, y, z, vx, vy, vz, options);
@@ -678,6 +704,16 @@ class Ammo_Ballistic extends PickUp {
     }
 }
 
+/*
+    #                            ######
+   # #   #    # #    #  ####     #     # #        ##    ####  #    #   ##
+  #   #  ##  ## ##  ## #    #    #     # #       #  #  #      ##  ##  #  #
+ #     # # ## # # ## # #    #    ######  #      #    #  ####  # ## # #    #
+ ####### #    # #    # #    #    #       #      ######      # #    # ######
+ #     # #    # #    # #    #    #       #      #    # #    # #    # #    #
+ #     # #    # #    #  ####     #       ###### #    #  ####  #    # #    #
+
+*/
 class Ammo_Plasma extends PickUp {
     constructor(id, x, y, z, vx, vy, vz, options) {
         super(id, x, y, z, vx, vy, vz, options);
@@ -709,6 +745,16 @@ class Ammo_Plasma extends PickUp {
     }
 }
 
+/*
+ #     #
+ #     # ######   ##   #      ##### #    #
+ #     # #       #  #  #        #   #    #
+ ####### #####  #    # #        #   ######
+ #     # #      ###### #        #   #    #
+ #     # #      #    # #        #   #    #
+ #     # ###### #    # ######   #   #    #
+
+*/
 class HealthPickup extends PickUp {
     constructor(id, x, y, z, vx, vy, vz, options) {
         super(id, x, y, z, vx, vy, vz, options);
@@ -741,7 +787,16 @@ class HealthPickup extends PickUp {
     }
 }
 
+/*
+ #     #
+ #  #  # ######   ##   #####   ####  #    #
+ #  #  # #       #  #  #    # #    # ##   #
+ #  #  # #####  #    # #    # #    # # #  #
+ #  #  # #      ###### #####  #    # #  # #
+ #  #  # #      #    # #      #    # #   ##
+  ## ##  ###### #    # #       ####  #    #
 
+*/
 class WeaponPickup extends PickUp {
     constructor(id, x, y, z, vx, vy, vz, options = {}) {
         super(id, x, y, z, vx, vy, vz, options);
@@ -826,5 +881,99 @@ class WeaponPickup extends PickUp {
         }
         this.img.src = this.imgFile;
         this.imgSide.src = this.imgFileSide;
+    }
+}
+
+/*
+    :::       :::  ::::::::  :::::::::  :::        :::::::::
+   :+:       :+: :+:    :+: :+:    :+: :+:        :+:    :+:
+  +:+       +:+ +:+    +:+ +:+    +:+ +:+        +:+    +:+
+ +#+  +:+  +#+ +#+    +:+ +#++:++#:  +#+        +#+    +:+
++#+ +#+#+ +#+ +#+    +#+ +#+    +#+ +#+        +#+    +#+
+#+#+# #+#+#  #+#    #+# #+#    #+# #+#        #+#    #+#
+###   ###    ########  ###    ### ########## #########
+*/
+
+/*
+ #     #
+ #  #  #   ##   #    # ###### #      ###### #####
+ #  #  #  #  #  #    # #      #      #        #
+ #  #  # #    # #    # #####  #      #####    #
+ #  #  # ###### #    # #      #      #        #
+ #  #  # #    #  #  #  #      #      #        #
+  ## ##  #    #   ##   ###### ###### ######   #
+
+*/
+class Wavelet extends Block {
+    constructor(id, x, y, z, vx, vy, vz, options) {
+        super(id, x, y, z, vx, vy, vz, options);
+        this.HB = new Cylinder(new Vect3(x, y, z), vx, vy);
+        this.push = new Vect3(0.075, 0.075, 0.5);
+        this.intensity = 1;
+        this.frequency = 0.05;
+        this.offset = 0;
+        this.type = 'wavelet';
+        this.color = [150, 150, 255];
+        this.colorSide = [200, 200, 250];
+        this.solid = false;
+        this.opacity = 0.5;
+        this.shadowDraw = false;
+
+        if (typeof options === 'object')
+            for (var key of Object.keys(options)) {
+                this[key] = options[key];
+            }
+
+        this.runFunc = [
+            () => {
+                this.HB.pos.z = sineAnimate(10, this.frequency, this.offset) + 10 + 16;
+            }
+        ]
+    }
+
+    trigger = (actor, side) => {
+        actor.speed.z += sineAnimate(0.5, this.frequency, 60) + 0.5 + this.push.z;
+        // push actor away from the center of this wavelet
+        let angle = Math.atan2(actor.HB.pos.y - this.HB.pos.y, actor.HB.pos.x - this.HB.pos.x);
+        actor.speed.x += Math.cos(angle) * this.push.x;
+        actor.speed.y += Math.sin(angle) * this.push.y;
+
+    }
+}
+
+class Wave extends Block {
+    constructor(id, x, y, z, vx, vy, vz, options) {
+        super(id, x, y, z, vx, vy, vz, options);
+        this.HB = new Cube(new Vect3(x, y, z), new Vect3(vx, vy, vz));
+        this.push = new Vect3(0.05, 0.05, 0.5);
+        this.end = new Vect3(0, 0, 0);
+        this.type = 'wave';
+        this.color = [150, 150, 255];
+        this.colorSide = [200, 200, 250];
+        this.solid = false;
+        this.opacity = 0.4;
+        this.shadowDraw = false;
+        this.runFunc = [
+            () => {
+                this.HB.pos.x += this.speed.x;
+                this.HB.pos.y += this.speed.y;
+                this.HB.pos.z += this.speed.z;
+                // generate wavelets at random positions within this wave
+                if (ticks % 5 == 0) {
+                    // generate sine offset for wavelets
+                    let offset = Math.random() * 60;
+                    game.match.map.blocks.push(new Wavelet(allID++, this.HB.pos.x + (Math.random() * this.HB.volume.x), this.HB.pos.y + (Math.random() * this.HB.volume.y), this.HB.pos.z, 8, 8, 0, { dying: true, livetime: 60, offset: offset }));
+                }
+            }
+        ]
+
+        if (typeof options === 'object')
+            for (var key of Object.keys(options)) {
+                this[key] = options[key];
+            }
+    }
+
+    trigger = (actor, side) => {
+
     }
 }

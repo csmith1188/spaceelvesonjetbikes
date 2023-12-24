@@ -54,9 +54,7 @@ class Match_ForEver extends Match {
     }
 
     setup() {
-        // Fix in Character classes
-        game.player.character = new Character(allID++, 0, 0, game.player, { name: 'Cpt. Fabius', gfx: 'img/sprites/jetbike', hover: 16, airAccel: new Vect3(0.15, 0.15, 1) });
-        game.player.character.HB = new Cylinder(new Vect3((this.map.w / 2), (this.map.h / 2) + 200, 0), 29, 37);
+        game.player.character = new Jetbike(allID++, (this.map.w / 2), (this.map.h / 2), game.player, { name: 'Cpt. Fabius', gfx: 'img/sprites/jetbike' });
         game.player.camera = new Camera({ target: game.player.character });
         /*
            ___                  __  __         _       ___
@@ -94,6 +92,7 @@ class Match_ForEver extends Match {
          |___|_||_\__\___|_| |_| \__,_\__\___| /_/ \_\__,_\__,_|_|\__|_\___/_||_/__/
 
         */
+        // Score
         game.player.interface.drawFunc.push(
             function () {
                 if (game.player.character.active) {
@@ -119,6 +118,7 @@ class Match_ForEver extends Match {
             }.bind(this)
         )
 
+        // Waves when dead
         game.player.interface.drawFunc.push(
             function () {
                 if (!game.player.character.active) {
@@ -148,7 +148,6 @@ class Match_ForEver extends Match {
             this.map.blocks.push(new Ammo_Plasma(allID++, Math.round(Math.random() * this.map.w), Math.round(Math.random() * this.map.h), 0, 128, 128, 64, { livetime: this.waveTime, dying: true }))
             this.map.blocks.push(new HealthPickup(allID++, Math.round(Math.random() * this.map.w), Math.round(Math.random() * this.map.h), 0, 128, 128, 64, { livetime: this.waveTime, dying: true }))
         }
-
 
         /*
          #     #                    #
@@ -296,49 +295,6 @@ class Match_ForEver extends Match {
     }
 }
 
-// this.map.blocks.push(new Block(allID++, (this.map.w / 2) - 300, (this.map.h / 2) - 0, 0, 128, 128, 64, { color: [101, 101, 101], colorSide: [201, 201, 201] }))
-// this.map.blocks[this.map.blocks.length - 1].HB.pos.z = 100;
-
-// this.map.blocks.push(new Block(allID++, (this.map.w / 2), (this.map.h / 2), 0, 10, 10, 128, { color: [101, 101, 101], colorSide: [201, 201, 201] }))
-
-// //wave
-// this.map.blocks.push(new Block(
-//     allID++,
-//     (this.map.w / 2) + 100,
-//     (this.map.h / 2) + 100,
-//     0, 32, 32, 16,
-//     { color: [50, 50, 255], colorSide: [150, 150, 250], solid: false, opacity: 0.5 }
-// ));
-// this.map.blocks[this.map.blocks.length - 1].runFunc.push(
-//     function () {
-//         this.HB.pos.z = sineAnimate(10, 0.05) + 10;
-//     }.bind(this.map.blocks[this.map.blocks.length - 1])
-// );
-// this.map.blocks[this.map.blocks.length - 1].trigger =
-//     function (actor, side) {
-//         actor.speed.z += sineAnimate(0.5, 0.05) + 0.5
-//     }.bind(this.map.blocks[this.map.blocks.length - 1]); //end wave
-
-// //wave
-// this.map.blocks.push(new Block(
-//     allID++,
-//     (this.map.w / 2) + 100,
-//     (this.map.h / 2) + 164,
-//     0, 32, 32, 16,
-//     { color: [50, 50, 255], colorSide: [150, 150, 250], solid: false, opacity: 0.5 }
-// ));
-// this.map.blocks[this.map.blocks.length - 1].runFunc.push(
-//     function () {
-//         this.HB.pos.z = sineAnimate(10, 0.05, 60) + 10 + 16;
-//     }.bind(this.map.blocks[this.map.blocks.length - 1])
-// );
-// this.map.blocks[this.map.blocks.length - 1].trigger =
-//     function (actor, side) {
-//         if (actor.HB.pos.z >= this.HB.pos.z)
-//             actor.speed.z += sineAnimate(0.5, 0.05) + 0.5
-//     }.bind(this.map.blocks[this.map.blocks.length - 1]); //end wave
-
-
 /*
  ######                              #     #
  #     # ###### #####  #    #  ####  ##   ##   ##   #####  ####  #    #
@@ -368,23 +324,25 @@ class DebugMatch extends Match {
         // this.map.blocks.push(new WeaponPickup(allID++, (this.map.w / 2) - 100, (this.map.h / 2), 0, 0, 0, 0, { weapon: 'pistol', pickupDelay: 0 }));
         // this.map.blocks.push(new WeaponPickup(allID++, (this.map.w / 2) + 0, (this.map.h / 2), 0, 0, 0, 0, { weapon: 'rifle', pickupDelay: 0 }));
         // this.map.blocks.push(new WeaponPickup(allID++, (this.map.w / 2) + 100, (this.map.h / 2), 0, 0, 0, 0, { weapon: 'flamer', pickupDelay: 0 }));
-        // this.map.blocks.push(new WeaponPickup(allID++, (this.map.w / 2) + 200, (this.map.h / 2), 0, 0, 0, 0, { weapon: 'lance', pickupDelay: 0 }));
-        this.map.blocks.push(new WeaponPickup(allID++, (this.map.w / 2) + 300, (this.map.h / 2), 0, 0, 0, 0, { weapon: 'sword', pickupDelay: 0 }));
+        this.map.blocks.push(new WeaponPickup(allID++, (this.map.w / 2) + 200, (this.map.h / 2), 0, 0, 0, 0, { weapon: 'lance', pickupDelay: 0 }));
+        // this.map.blocks.push(new WeaponPickup(allID++, (this.map.w / 2) + 300, (this.map.h / 2), 0, 0, 0, 0, { weapon: 'sword', pickupDelay: 0 }));
+        this.map.blocks.push(new Wave(allID++, (this.map.w / 2), (this.map.h / 2), 0, 64, 256, 16, {}));
 
-        this.bots.push(new Bot()) //Kevin / Jae'Sin
-        this.bots[this.bots.length - 1].character = new Jetbike(
-            allID++,
-            (this.map.w / 2) - 1000,
-            (this.map.h / 2) - 1000,
-            this.bots[this.bots.length - 1],
-            {
-                name: getName(), team: 1, gfx: 'img/sprites/dark2', color: [0, 0, 255],
-                active: true,
-                cleanup: false
-            }
-        );
-        // add a pistol to the last bot's character's inventory
-        this.bots[this.bots.length - 1].character.inventory.push(new Pistol())
+        // this.bots.push(new Bot()) //Kevin / Jae'Sin
+        // this.bots[this.bots.length - 1].character = new Jetbike(
+        //     allID++,
+        //     (this.map.w / 2) - 1000,
+        //     (this.map.h / 2) - 1000,
+        //     this.bots[this.bots.length - 1],
+        //     { name: getName(), team: 1, gfx: 'img/sprites/dark2', color: [0, 0, 255] }
+        // );
+        // // add a pistol to the last bot's character's inventory
+        // this.bots[this.bots.length - 1].character.inventory.push(new Lance())
+
+        this.map.blocks.push(new Block(allID++, (this.map.w / 2) - 300, (this.map.h / 2) - 0, 0, 128, 128, 64, { color: [101, 101, 101], colorSide: [201, 201, 201] }))
+        // this.map.blocks[this.map.blocks.length - 1].HB.pos.z = 100;
+
+        // this.map.blocks.push(new Block(allID++, (this.map.w / 2), (this.map.h / 2), 0, 10, 10, 128, { color: [101, 101, 101], colorSide: [201, 201, 201] }))
     }
 }
 

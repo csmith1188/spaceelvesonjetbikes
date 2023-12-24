@@ -149,6 +149,8 @@ class Character {
                 if (controller.buttons.jump.current) {
                     // If the player has positive power points (pp)
                     if (this.pp > 2) {
+                        // sounds.upBoost.currentTime = 0;
+                        // sounds.upBoost.play();
                         // Set the z momentum to 1 (move upwards)
                         this.mom.z = 1;
                         // Decrease the power points by 1
@@ -286,22 +288,6 @@ class Character {
             // if (Math.abs(this.speed.z) < game.match.map.stopZone) this.speed.z = 0; //I don't know if this one makes a difference
 
             /*
-              _
-             | |_  _____ _____ _ _
-             | ' \/ _ \ V / -_) '_|
-             |_||_\___/\_/\___|_|
-
-            */
-            if (this.HB.pos.z < this.hover) { //If you are lower than the hover threshold
-                this.speed.z += Math.max((1 - (this.HB.pos.z / this.hover)) * this.bouyancy, 0) + game.match.map.gravity;
-                //Move up by your bouyancy times the percent between your z and you hover, not negative
-                //Also cancel out gravity
-            }
-            else if (this.HB.pos.z > this.hover) { //If you are higher than the hover threshold
-                this.speed.z += Math.max((1 - ((this.HB.pos.z - this.hover) / this.hover)) * this.bouyancy, 0); //Move up by your bouyancy times the percent over the hover, not negative
-            }
-
-            /*
                                 _ _
               __ _ _ _ __ ___ _(_) |_ _  _
              / _` | '_/ _` \ V / |  _| || |
@@ -332,7 +318,7 @@ class Character {
                 if (c.character === this) //Don't collide with yourself
                     continue;
                 c = c.character; //Get the character from the bot
-                if (this.HB.above(c.HB)) //If you are above the block and the block is not solid
+                if (this.HB.above(c.HB) && c.solid) //If you are above the block and the block is not solid
                     this.floor = c.HB.pos.z + c.HB.height; //Set the floor to the block's height
                 let side = this.HB.collide(c.HB); //Check for collision
                 if (side) c.trigger(this, side);
@@ -383,8 +369,9 @@ class Character {
 
             */
             for (const c of game.match.map.blocks) { //For each block
-                if (this.HB.above(c.HB) && !c.solid) //If you are above the block and the block is not solid
+                if (this.HB.above(c.HB) && c.solid) { //If you are above the block and the block is not solid
                     this.floor = c.HB.pos.z + c.HB.volume.z; //Set the floor to the block's height
+                }
                 let side = this.HB.collide(c.HB); //Check for collision
                 if (side) c.trigger(this, side); //Trigger the block's trigger function
                 if (c.solid && side) { //If the block is solid
@@ -436,6 +423,22 @@ class Character {
                             break;
                     }
                 }
+            }
+
+            /*
+              _
+             | |_  _____ _____ _ _
+             | ' \/ _ \ V / -_) '_|
+             |_||_\___/\_/\___|_|
+
+            */
+             if (this.HB.pos.z < this.hover + this.floor) { //If you are lower than the hover threshold
+                this.speed.z += Math.max((1 - (this.HB.pos.z / this.hover)) * this.bouyancy, 0) + game.match.map.gravity;
+                //Move up by your bouyancy times the percent between your z and you hover, not negative
+                //Also cancel out gravity
+            }
+            else if (this.HB.pos.z > this.hover + this.floor) { //If you are higher than the hover threshold
+                this.speed.z += Math.max((1 - ((this.HB.pos.z - this.hover) / this.hover)) * this.bouyancy, 0); //Move up by your bouyancy times the percent over the hover, not negative
             }
 
             /*

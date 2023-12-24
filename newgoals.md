@@ -27,11 +27,9 @@ Dark elves believe everything is random:
 #########   ########          ###        ########### ###    ###  ########     ###
 -->
 
-- Sword
+- Create more bullet types
 - Inventory Management
 -- X is pickup, A is always Sword, never drop A
-- Randomly generate tilemap
-- Draw Tilemaps
 - target on minimap
 - Collision rays (fast objects go through colliders)
 - Sound distances

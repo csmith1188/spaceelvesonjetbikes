@@ -85,7 +85,7 @@ class Interface {
 
     */
     drawAmmo() {
-        let ammoBox = new Vect2((game.window.w / 2) - 150, game.window.h - 170);
+        let ammoBox = new Vect2((game.window.w / 2) - 130, game.window.h - 170);
         if (this.player.character.active) {
             let item = this.player.character.inventory[this.player.character.item];
 
@@ -96,12 +96,12 @@ class Interface {
             if (item) {
                 // draw background   
                 ctx.fillStyle = "#000000";
-                ctx.fillRect(ammoBox.x, ammoBox.y, 10, 100);
+                ctx.fillRect(ammoBox.x + 20, ammoBox.y, 10, 100);
                 // draw filled portion of bar
                 let maxTime = (item.reloading) ? item.reloadTime : item.coolDown;
                 ctx.fillStyle = "#0000FF";
                 ctx.fillRect(
-                    ammoBox.x, // left of bar
+                    ammoBox.x + 20, // left of bar
                     ammoBox.y + 100 // bottom of bar
                     - (Math.min( // the smaller value of
                         Math.max(item.nextCool - ticks, 0) / maxTime, // 0 to 1 of cooldown
@@ -116,11 +116,11 @@ class Interface {
                 if (item.type == "ballistic" || item.type == "plasma") {
                     // draw the ammo bar
                     ctx.fillStyle = "#000000";
-                    ctx.fillRect(ammoBox.x + 20, ammoBox.y, 10, 100);
+                    ctx.fillRect(ammoBox.x, ammoBox.y, 10, 100);
                     // if the ammo is ballistic, draw it red, otherwise, draw it purple
                     if (item.type == "ballistic") ctx.fillStyle = "#FF0000";
                     else ctx.fillStyle = "#FF00FF";
-                    ctx.fillRect(ammoBox.x + 20, ammoBox.y + 100 - (item.ammo / item.ammoMax) * 100, 10, (item.ammo / item.ammoMax) * 100);
+                    ctx.fillRect(ammoBox.x, ammoBox.y + 100 - (item.ammo / item.ammoMax) * 100, 10, (item.ammo / item.ammoMax) * 100);
                 }
             }
 
@@ -131,11 +131,11 @@ class Interface {
                 ctx.fillStyle = "#000000";
                 ctx.font = '12px Jura';
                 ctx.fillStyle = "#000000";
-                ctx.fillRect(ammoBox.x + 270, ammoBox.y, 10, 100);
+                ctx.fillRect(ammoBox.x + 230, ammoBox.y, 10, 100);
                 ctx.fillStyle = "#FF0000";
                 // for each pip, draw a rectangle
                 for (let i = this.player.character.ammo.ballistic - 1; i >= 0; i--) {
-                    ctx.fillRect(ammoBox.x + 271, ammoBox.y + 101 - ((i + 1) * 100 / this.player.character.ammo.plasmaMax), 8, (100 / this.player.character.ammo.plasmaMax) - 2);
+                    ctx.fillRect(ammoBox.x + 231, ammoBox.y + 101 - ((i + 1) * 100 / this.player.character.ammo.plasmaMax), 8, (100 / this.player.character.ammo.plasmaMax) - 2);
                 }
             }
 
@@ -145,11 +145,11 @@ class Interface {
                 ctx.fillStyle = "#000000";
                 ctx.font = '12px Jura';
                 ctx.fillStyle = "#000000";
-                ctx.fillRect(ammoBox.x + 290, ammoBox.y, 10, 100);
+                ctx.fillRect(ammoBox.x + 250, ammoBox.y, 10, 100);
                 ctx.fillStyle = "#FF00FF";
                 // for each pip, draw a rectangle
                 for (let i = this.player.character.ammo.plasma - 1; i >= 0; i--) {
-                    ctx.fillRect(ammoBox.x + 291, ammoBox.y + 101 - ((i + 1) * 100 / this.player.character.ammo.plasmaMax), 8, (100 / this.player.character.ammo.plasmaMax) - 2);
+                    ctx.fillRect(ammoBox.x + 251, ammoBox.y + 101 - ((i + 1) * 100 / this.player.character.ammo.plasmaMax), 8, (100 / this.player.character.ammo.plasmaMax) - 2);
                 }
             }
 

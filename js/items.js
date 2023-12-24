@@ -467,6 +467,7 @@ class Lance extends Item {
                         let tempz = ((Math.random() * 1) - 0.5) * 10;
                         let tempC1 = Math.ceil(Math.random() * 255);
                         let tempC2 = Math.ceil(Math.random() * 255);
+                        // add a debris block to the map at the player's position with a random speed
                         game.match.map.debris.push(
                             new Block(
                                 allID++,
@@ -605,16 +606,14 @@ class Sword extends Item {
                         }
                     )
                 );
-                // Run this function every frame the bullet is alive
-                game.match.map.bullets[game.match.map.bullets.length - 1].runFunc.push(
+                // Overwrite the runFunc list with this function
+                // TODO: Make a new bullet class for a sword strike
+                game.match.map.bullets[game.match.map.bullets.length - 1].runFunc = [
                     function () {
                         // Match the user's position
                         this.HB.pos.x = this.parent.HB.pos.x + aimX;
                         this.HB.pos.y = this.parent.HB.pos.y + aimY;
                         this.HB.pos.z = this.parent.HB.pos.z + aimZ;
-
-                        // this damage is equal to the true speed of the player
-                        this.damage = Math.sqrt(Math.abs(this.parent.speed.x) ** 2 + Math.abs(this.parent.speed.y) ** 2 + Math.abs(this.parent.speed.z) ** 2);
 
                         // add a debris block to the map at the player's position with a random speed
                         let tempx = ((Math.random() * 1) - 0.5) * 2;
@@ -622,6 +621,10 @@ class Sword extends Item {
                         let tempz = ((Math.random() * 1) - 0.5) * 2;
                         let tempC1 = Math.ceil(Math.random() * 255);
                         let tempC2 = Math.ceil(Math.random() * 255);
+
+                        let compareX = this.HB.pos.x - ((this.parent.HB.pos.x - this.HB.pos.x) / 2);
+                        let compareY = this.HB.pos.y - ((this.parent.HB.pos.y - this.HB.pos.y) / 2);
+
                         game.match.map.debris.push(
                             new Block(
                                 allID++,
@@ -631,7 +634,7 @@ class Sword extends Item {
                                 1, 1, 1,
                                 {
                                     speed: new Vect3(tempx, tempy, tempz),
-                                    HB: new Cube(new Vect3(this.HB.pos.x, this.HB.pos.y, this.HB.pos.z), new Vect3(4, 4, 4)),
+                                    HB: new Cube(new Vect3(compareX, compareY, this.HB.pos.z + this.HB.height), new Vect3(2, 2, 2)),
                                     z: this.HB.pos.z,
                                     color: [tempC1, tempC1, tempC1],
                                     colorSide: [tempC2, tempC2, tempC2],
@@ -641,6 +644,34 @@ class Sword extends Item {
                                     solid: false,
                                 }));
 
+                    }.bind(game.match.map.bullets[game.match.map.bullets.length - 1])
+                ];
+                // Add custom draw function
+                game.match.map.bullets[game.match.map.bullets.length - 1].drawFunc.push(
+                    function () {
+                        // Draw a line from the user to the bullet
+                        ctx.beginPath();
+                        ctx.strokeStyle = 'rgba(200,200,200,1)';
+                        ctx.lineWidth = 5;
+                        // calculate compareX
+                        let compareX = game.player.camera.x - this.parent.HB.pos.x;
+                        let compareY = game.player.camera.y - this.parent.HB.pos.y;
+                        ctx.moveTo(
+                            game.window.w / 2 - compareX,
+                            game.window.h / 2 - compareY - this.parent.HB.pos.z - this.parent.HB.height / 2
+                        );
+                        compareX = this.parent.HB.pos.x - this.HB.pos.x;
+                        compareY = this.parent.HB.pos.y - this.HB.pos.y;
+
+                        let distance = Math.sqrt((compareX ** 2) + (compareY ** 2));
+                        compareX = (compareX / distance) * 60;
+                        compareY = (compareY / distance) * 60;
+
+                        ctx.lineTo(
+                            game.window.w / 2 - compareX,
+                            game.window.h / 2 - compareY - this.parent.HB.pos.z - this.parent.HB.height / 2
+                        );
+                        ctx.stroke();
                     }.bind(game.match.map.bullets[game.match.map.bullets.length - 1])
                 )
                 //Change hitSpash
@@ -661,7 +692,7 @@ class Sword extends Item {
                                     speed: new Vect3(tempx + (this.speed.x * 0.25), tempy + (this.speed.y * 0.25), tempz + (this.speed.z * 0.25)),
                                     HB: new Cube(new Vect3(this.HB.pos.x, this.HB.pos.y, this.HB.pos.z), new Vect3(6, 3, 1)),
                                     z: this.HB.pos.z,
-                                    color: [255, tempC, 0],
+                                    color: [tempC, tempC, tempC],
                                     livetime: 20,
                                     dying: true,
                                     shadowDraw: false,
