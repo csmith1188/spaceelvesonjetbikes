@@ -24,6 +24,7 @@ class Interface {
             inventory3: {}
         }
         this.minimapRadius = 80;
+        this.menus = [new Menu_Pause([], new Rect(0, 0, 170, 170))];
         this.drawFunc = []; // A list of functions to draw during the draw step
     }
 
@@ -61,6 +62,9 @@ class Interface {
 
             //Ammo
             this.drawAmmo();
+
+            //Menu
+            this.drawMenu();
 
             if (game.debug) {
                 ctx.fillStyle = "#000000";
@@ -104,12 +108,12 @@ class Interface {
                     ammoBox.x + 20, // left of bar
                     ammoBox.y + 100 // bottom of bar
                     - (Math.min( // the smaller value of
-                        Math.max(item.nextCool - ticks, 0) / maxTime, // 0 to 1 of cooldown
+                        Math.max(item.nextCool - game.match.ticks, 0) / maxTime, // 0 to 1 of cooldown
                         1) // or 1 (if cooldown is greater than 1)
                         * 100), // times the size of the full bar
                     10, // width of bar
                     (Math.min(  // bar is the same height as the distance from top, conviently
-                        Math.max(item.nextCool - ticks, 0) / maxTime,
+                        Math.max(item.nextCool - game.match.ticks, 0) / maxTime,
                         1)
                         * 100) // times the size of the full bar
                 );
@@ -390,5 +394,114 @@ class Interface {
         ctx.arc(game.window.w / 2 + 64, game.window.h - 20, 20, 0, Math.PI * 2);
         ctx.stroke();
 
+    }
+
+    // Draw the menu
+    drawMenu() {
+        // draw every menu
+        for (const menu of this.menus) {
+            if (menu.visible) {
+                menu.draw();
+            }
+        }
+    }
+}
+
+class Menu {
+    constructor(buttons, shape, options) {
+        this.visible = true;
+        this.type = 'menu';
+        this.shape = shape;
+        this.padding = 10;
+        this.style = 'center_stacked'
+        this.buttons = buttons;
+    }
+
+    draw() {
+        if (this.visible == false) return;
+        if (this.style === 'center_stacked') {
+            this.shape.x = (game.window.w / 2) - (this.shape.w / 2);
+            this.shape.y = (game.window.h / 2) - (this.shape.h / 2);
+        }
+        // stroke a box around the menu
+        ctx.fillStyle = "rgba(0, 0, 0, 0.5)";
+        ctx.fillRect(this.shape.x, this.shape.y, this.shape.w, this.shape.h);
+        ctx.strokeStyle = "#FFFFFF";
+        ctx.lineWidth = 2;
+        ctx.strokeRect(this.shape.x, this.shape.y, this.shape.w, this.shape.h);
+
+        // draw each button
+        for (const button of this.buttons) {
+            button.draw(
+                this.shape.x + this.padding,
+                this.shape.y + this.padding
+            );
+        }
+    }
+
+    step() {
+        // convert from center of screen to top left of screen
+        let x = game.window.w / 2;
+        let y = game.window.h / 2;
+        // get current mouse position
+        x += game.player.controller.aimX;
+        y += game.player.controller.aimY;
+        // check if mouse is inside any button
+        for (const button of this.buttons) {
+            // check if mouse is inside the button
+            if (
+                x >= button.area.x + this.shape.x && x <= button.area.x + this.shape.x + button.area.w &&
+                y >= button.area.y + this.shape.y && y <= button.area.y + this.shape.y + button.area.h
+            ) {
+                button.selected = true;
+                // check if the button is being pressed
+                if (game.player.controller.buttons.fire.current) {
+                    // if so, run the button's function
+                    button.func();
+                }
+            } else {
+                button.selected = false;
+            }
+        }
+    }
+}
+
+class Menu_Button {
+    constructor(area, text, func, options) {
+        this.area = area;
+        this.text = text;
+        this.func = func;
+        this.active = true;
+        this.selected = false;
+    }
+
+    draw(x, y) {
+        ctx.textAlign = "center";
+        ctx.fillStyle = "#000000";
+        ctx.fillRect(this.area.x + x, this.area.y + y, this.area.w, this.area.h);
+        ctx.fillStyle = "#FFFFFF";
+        ctx.font = '16px Jura';
+        // draw text in center of button
+        ctx.fillText(this.text, this.area.x + x + this.area.w / 2, this.area.y + y + this.area.h / 2 + 6);
+        if (this.selected) {
+            ctx.strokeStyle = "#FFFFFF";
+            ctx.lineWidth = 2;
+            ctx.strokeRect(this.area.x + x, this.area.y + y, this.area.w, this.area.h);
+        }
+    }
+}
+
+class Menu_Pause extends Menu {
+    constructor(buttons, shape, options) {
+        super(buttons, shape, options);
+        this.visible = false;
+        this.style = 'center_stacked';
+        this.type = 'pause';
+        this.buttons = [
+            new Menu_Button(new Rect(0, 0, 150, 30), "Debug Game", function () { game.match = new DebugMatch(); game.paused = false; }),
+            new Menu_Button(new Rect(0, 40, 150, 30), "Forever", function () { game.match = new Match_ForEver(); game.paused = false; }),
+            // new Menu_Button(new Rect(0, 80, 150, 30), "Button 3", function () { window.alert("Button 3"); }),
+            new Menu_Button(new Rect(0, 120, 150, 30), "Resume", function () { game.paused = false; })
+        ]
     }
 }

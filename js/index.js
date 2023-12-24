@@ -33,11 +33,12 @@ window.onload = function () {
 
     //Player
     game.player = new Player();
-    
-    game.match = new DebugMatch();
-    // game.match = new Match_ForEver();
+
+    // game.match = new DebugMatch();
+    // game.match = new Start_Screen();
+    game.match = new Match_ForEver();
     // game.match = new Match_ForHonor();
-    
+
     game.match.map.buildNavMesh();
 
     //start game loop
@@ -62,6 +63,9 @@ window.onload = function () {
 
 function step() {
 
+    // Advance the game's master tick counter
+    ticks++;
+
     // The next two lines will always max screen
     game.window.h = window.innerHeight;
     game.window.w = window.innerWidth;
@@ -77,6 +81,14 @@ function step() {
     }
 
     if (!game.paused) {
+
+        // if the player's interface has a menu with the type 'pause', make it invisible
+        for (const menu of game.player.interface.menus) {
+            if (menu.type == 'pause') {
+                menu.visible = false;
+                break;
+            }
+        }
 
         game.match.step();
         game.match.map.step();
@@ -98,11 +110,18 @@ function step() {
         for (const debris of game.match.map.debris) {
             debris.step();
         }
-        ticks++;
+        game.match.ticks++;
 
     } else {
         game.player.controller.read();
-
+        // if the player's interface has a menu with the type 'pause', make it visible
+        for (const menu of game.player.interface.menus) {
+            if (menu.type == 'pause') {
+                menu.visible = true;
+                menu.step(game.player.controller);
+                break;
+            }
+        }
     }
 
     // Move camera to next sensible target when player character is inactive or missing
@@ -171,4 +190,5 @@ function draw() {
 
     //Draw Controller HUD
     game.player.controller.draw();
+    
 }

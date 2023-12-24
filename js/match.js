@@ -2,10 +2,12 @@ class Match {
     constructor() {
         this.startTicks = ticks;
         this.despawnTimer = 3600; // 1 minute
+        this.ticks = 0;
         this.map = new Map();
         this.bots = [];
         this.blocks = []; // Different from map blocks. Think pickups and dropped items
         this.runFuncs = []; // A list of functions to run every step
+        game.player.interface.drawFunc = []; // clear other interface draw functions
     }
 
     step() {
@@ -54,7 +56,7 @@ class Match_ForEver extends Match {
     }
 
     setup() {
-        game.player.character = new Jetbike(allID++, (this.map.w / 2), (this.map.h / 2), game.player, { name: 'Cpt. Fabius', gfx: 'img/sprites/jetbike' });
+        game.player.character = new Jetbike(allID++, (this.map.w / 2), (this.map.h / 2) + 200, game.player, { name: 'Cpt. Fabius', gfx: 'img/sprites/jetbike' });
         game.player.camera = new Camera({ target: game.player.character });
         /*
            ___                  __  __         _       ___
@@ -65,8 +67,8 @@ class Match_ForEver extends Match {
         */
         game.player.interface.drawFunc.push(
             function () {
-                if (ticks - this.startTicks < 240) {
-                    let alpha = 1 - (ticks - this.startTicks) / 240;
+                if (game.match.ticks - this.startTicks < 240) {
+                    let alpha = 1 - (game.match.ticks - this.startTicks) / 240;
                     //first draw the text in black to create a shadow
                     ctx.fillStyle = "rgba(0,0,0," + alpha + ")";
                     ctx.font = "30px Jura";
@@ -108,12 +110,12 @@ class Match_ForEver extends Match {
                     ctx.fillStyle = "#000000";
                     ctx.fillText(`Wave:  ${game.match.waves}`, matchBox.x + 2, matchBox.y + 52);
                     ctx.fillText(`Enemy: ${enemies}`, matchBox.x + 2, matchBox.y + 72);
-                    ctx.fillText(`Next: ${Math.floor((game.match.waveTime / 60)) - Math.floor((ticks % game.match.waveTime) / 60)}`, matchBox.x + 2, matchBox.y + 92);
+                    ctx.fillText(`Next: ${Math.floor((game.match.waveTime / 60)) - Math.floor((game.match.ticks % game.match.waveTime) / 60)}`, matchBox.x + 2, matchBox.y + 92);
                     // then draw the text lines in white            
                     ctx.fillStyle = "#FFFFFF";
                     ctx.fillText(`Wave:  ${game.match.waves}`, matchBox.x, matchBox.y + 50);
                     ctx.fillText(`Enemy: ${enemies}`, matchBox.x, matchBox.y + 70);
-                    ctx.fillText(`Next: ${Math.floor((game.match.waveTime / 60)) - Math.floor((ticks % game.match.waveTime) / 60)}`, matchBox.x, matchBox.y + 90);
+                    ctx.fillText(`Next: ${Math.floor((game.match.waveTime / 60)) - Math.floor((game.match.ticks % game.match.waveTime) / 60)}`, matchBox.x, matchBox.y + 90);
                 }
             }.bind(this)
         )
@@ -168,7 +170,7 @@ class Match_ForEver extends Match {
                  |___|_||_\___|_|_|_|_\___/__/
 
                 */
-                if (game.player.character.active && ticks % this.waveTime == 0) {
+                if (game.player.character.active && game.match.ticks % this.waveTime == 0) {
                     this.waves++; // 1 wave every 60 seconds
 
                     for (let i = 0; i < Math.ceil(this.waves / 2); i++) {
@@ -250,7 +252,7 @@ class Match_ForEver extends Match {
                      |_||_| |_\___|_||_\__,_/__/
 
                     */
-                    if (ticks % this.waveTime * 2 == 0) {
+                    if (game.match.ticks % this.waveTime * 2 == 0) {
                         let spawns = (this.waves > 1) ? Math.floor(this.waves / 4) : 1;
                         for (let i = 0; i < spawns; i++) {
                             // Friendly
@@ -314,19 +316,14 @@ class DebugMatch extends Match {
         this.setup();
     }
     setup = () => {
-        game.player.character = new Character(allID++, 0, 0, game.player, { name: 'Cpt. Fabius', gfx: 'img/sprites/jetbike', hover: 16, airAccel: new Vect3(0.15, 0.15, 1) });
-        game.player.character.HB = new Cylinder(new Vect3((this.map.w / 2), (this.map.h / 2) + 200, 0), 29, 37);
+        game.player.character = new Jetbike(allID++, (this.map.w / 2), (this.map.h / 2), game.player, { name: 'Cpt. Fabius', gfx: 'img/sprites/jetbike', hover: 16, airAccel: new Vect3(0.15, 0.15, 1) });
+        // game.player.character.HB = new Cylinder(new Vect3((this.map.w / 2), (this.map.h / 2) + 200, 0), 29, 37);
         game.player.camera = new Camera({ target: game.player.character });
         for (let i = 0; i < 5; i++) {
             this.map.blocks.push(new Ammo_Ballistic(allID++, Math.round(Math.random() * this.map.w), Math.round(Math.random() * this.map.h), 0, 128, 128, 64));
             this.map.blocks.push(new Ammo_Plasma(allID++, Math.round(Math.random() * this.map.w), Math.round(Math.random() * this.map.h), 0, 128, 128, 64));
         }
-        // this.map.blocks.push(new WeaponPickup(allID++, (this.map.w / 2) - 100, (this.map.h / 2), 0, 0, 0, 0, { weapon: 'pistol', pickupDelay: 0 }));
-        // this.map.blocks.push(new WeaponPickup(allID++, (this.map.w / 2) + 0, (this.map.h / 2), 0, 0, 0, 0, { weapon: 'rifle', pickupDelay: 0 }));
-        // this.map.blocks.push(new WeaponPickup(allID++, (this.map.w / 2) + 100, (this.map.h / 2), 0, 0, 0, 0, { weapon: 'flamer', pickupDelay: 0 }));
         this.map.blocks.push(new WeaponPickup(allID++, (this.map.w / 2) + 200, (this.map.h / 2), 0, 0, 0, 0, { weapon: 'lance', pickupDelay: 0 }));
-        // this.map.blocks.push(new WeaponPickup(allID++, (this.map.w / 2) + 300, (this.map.h / 2), 0, 0, 0, 0, { weapon: 'sword', pickupDelay: 0 }));
-        this.map.blocks.push(new Wave(allID++, (this.map.w / 2), (this.map.h / 2), 0, 64, 256, 16, {}));
 
         // this.bots.push(new Bot()) //Kevin / Jae'Sin
         // this.bots[this.bots.length - 1].character = new Jetbike(
@@ -366,12 +363,48 @@ class Match_ForHonor extends Match {
         this.setup();
     }
     setup = () => {
-        game.player.character = new Character(allID++, 0, 0, game.player, { name: 'Cpt. Fabius', gfx: 'img/sprites/jetbike', hover: 16, airAccel: new Vect3(0.15, 0.15, 1) });
-        game.player.character.HB = new Cylinder(new Vect3((this.map.w / 2), (this.map.h / 2) + 200, 0), 29, 37);
+        game.player.character = new Jetbike(allID++, (this.map.w / 2), (this.map.h / 2) + 200, game.player, { name: 'Cpt. Fabius', gfx: 'img/sprites/jetbike', hover: 16, airAccel: new Vect3(0.15, 0.15, 1) });
         this.blocks.push(new Block(allID++, (this.map.w / 2), (this.map.h / 2) - 0, 0, 0, 0, 0, { solid: false, visible: false }));
         game.player.camera = new Camera({ target: this.blocks[this.blocks.length - 1] });
         this.map.blocks.push(new WeaponPickup(allID++, (this.map.w / 2) - 100, (this.map.h / 2), 0, 0, 0, 0, { weapon: 'pistol', pickupDelay: 0 }));
         this.map.blocks.push(new WeaponPickup(allID++, (this.map.w / 2), (this.map.h / 2), 0, 0, 0, 0, { weapon: 'rifle', pickupDelay: 0 }));
         this.map.blocks.push(new WeaponPickup(allID++, (this.map.w / 2) + 100, (this.map.h / 2), 0, 0, 0, 0, { weapon: 'flamer', pickupDelay: 0 }));
+    }
+}
+
+class Start_Screen extends Match {
+    constructor() {
+        super();
+        this.map = new Map_Deathbox();
+        this.name = "Start Screen";
+        this.description = "The start screen.";
+        this.setup();
+    }
+
+    setup = () => {
+        game.player.character.active = false;
+        this.map.blocks.push(new Block(allID++, (this.map.w / 2) - 0, (this.map.h / 2) + 100, 0, 0, 0, 0, { color: [101, 101, 101], colorSide: [201, 201, 201] }))
+        game.player.camera = new Camera({ target: this.map.blocks[this.map.blocks.length - 1] });
+        // loop twice
+        for (let i = 0; i < 2; i++) {
+            this.bots.push(new Bot()) //Kevin / Jae'Sin
+            this.bots[this.bots.length - 1].character = new Jetbike(
+                allID++,
+                Math.random() * (this.map.w / 2),
+                Math.random() * (this.map.h / 2),
+                this.bots[this.bots.length - 1],
+                { name: getName(), team: 1, gfx: 'img/sprites/dark2', color: [0, 0, 255] }
+            );
+            this.bots[this.bots.length - 1].character.inventory.push(new Pistol());
+            this.bots.push(new Bot()) //Kevin / Jae'Sin
+            this.bots[this.bots.length - 1].character = new Jetbike(
+                allID++,
+                Math.random() * (this.map.w / 2),
+                Math.random() * (this.map.h / 2),
+                this.bots[this.bots.length - 1],
+                { name: getName(), team: 0, gfx: 'img/sprites/dark1', color: [0, 0, 255] }
+            );
+            this.bots[this.bots.length - 1].character.inventory.push(new Pistol());
+        }
     }
 }

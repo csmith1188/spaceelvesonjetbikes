@@ -432,7 +432,7 @@ class Character {
              |_||_\___/\_/\___|_|
 
             */
-             if (this.HB.pos.z < this.hover + this.floor) { //If you are lower than the hover threshold
+            if (this.HB.pos.z < this.hover + this.floor) { //If you are lower than the hover threshold
                 this.speed.z += Math.max((1 - (this.HB.pos.z / this.hover)) * this.bouyancy, 0) + game.match.map.gravity;
                 //Move up by your bouyancy times the percent between your z and you hover, not negative
                 //Also cancel out gravity
@@ -500,8 +500,10 @@ class Character {
             if (-this.speed.z > this.HB.pos.z + game.match.map.floor) {
                 this.HB.pos.z = 0;
                 // this.speed.z *= -0.5
-                // sounds.groundhit.currentTime = 0;
-                sounds.groundhit.play();
+                if (this.hover > 0) {
+                    // sounds.groundhit.currentTime = 0;
+                    sounds.groundhit.play();
+                }
             }
 
             /*
