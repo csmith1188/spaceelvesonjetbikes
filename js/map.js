@@ -24,6 +24,8 @@ class Map {
         this.bullets = [];
         this.debris = [];
 
+        this.buildNavMesh();
+
         this.lightValue = [0, 0, 24, 0.15];
 
         this.runFunc = []; // A list of functions to run during the step

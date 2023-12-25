@@ -45,7 +45,7 @@ function setupInputs() {
         if (event.key.toLocaleLowerCase() === "s" || event.key === "ArrowDown") game.player.controller.downKey = 1;
         if (event.key.toLocaleLowerCase() === "d" || event.key === "ArrowRight") game.player.controller.rightKey = 1;
         if (event.key.toLocaleLowerCase() === " ") game.player.controller.spaceKey = 1;
-        if (event.key === "Escape" || event.key === "Escape") game.match.paused = !game.match.paused;
+        if (event.key === "Escape" || event.key === "Escape") game.paused = !game.paused;
     });
     /*
       _  __         _   _

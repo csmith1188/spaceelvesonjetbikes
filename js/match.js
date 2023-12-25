@@ -1,6 +1,6 @@
 class Match {
     constructor() {
-        this.startTicks = ticks;
+        this.startTicks = game.ticks;
         this.despawnTimer = 3600; // 1 minute
         this.ticks = 0;
         this.paused = false;
@@ -13,23 +13,24 @@ class Match {
 
     step() {
         if (!this.paused) {
+            
             game.player.character.step(game.player.controller);
-
+            
             //Put Bot player characters into a list
             let npcs = [];
             for (const npc in this.bots) {
                 npcs.push(this.bots[npc].character);
             }
-
+            
             for (const bot of this.bots) {
                 bot.AI();
                 bot.character.step(bot.controller);
             }
-
+            
             for (const block of this.map.blocks) {
                 block.step();
             }
-
+            
             for (const bullet of this.map.bullets) {
                 bullet.step();
             }
@@ -37,20 +38,23 @@ class Match {
             for (const debris of this.map.debris) {
                 debris.step();
             }
-
+            
             game.match.map.step();
-
+            
             for (const e of this.bots) {
                 if (e.cleanup && !e.active) {
                     //Remove npcs
                     this.npcs = this.npcs.filter(function (el) { return el != e; });
                 }
             }
-
+            
             // Run all runFuncs
             for (const func in this.runFucts) {
                 func();
             }
+
+            this.ticks++;
+            
         }
 
         // for every menu in the player's interface
@@ -352,6 +356,7 @@ class DebugMatch extends Match {
         this.setup();
     }
     setup = () => {
+        game.debug = true;
         game.player.character = new Jetbike(allID++, (this.map.w / 2), (this.map.h / 2), game.player, { name: 'Cpt. Fabius', gfx: 'img/sprites/jetbike', hover: 16, airAccel: new Vect3(0.15, 0.15, 1) });
         // game.player.character.HB = new Cylinder(new Vect3((this.map.w / 2), (this.map.h / 2) + 200, 0), 29, 37);
         game.player.camera = new Camera({ target: game.player.character });

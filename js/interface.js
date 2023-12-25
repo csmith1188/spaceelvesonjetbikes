@@ -24,7 +24,7 @@ class Interface {
             inventory3: {}
         }
         this.minimapRadius = 80;
-        this.menus = [new Menu_Pause([], new Rect(0, 0, 170, 170))];
+        this.menus = [];
         this.drawFunc = []; // A list of functions to draw during the draw step
     }
 
@@ -69,7 +69,7 @@ class Interface {
             if (game.debug) {
                 ctx.fillStyle = "#000000";
                 ctx.font = '12px Jura';
-                ctx.fillText(fps, 10, 150);
+                ctx.fillText(game.fps, 10, 150);
                 document.getElementById("debugger").style.display = "block";
             } else {
                 document.getElementById("debugger").style.display = "none";
@@ -194,7 +194,7 @@ class Interface {
     */
     drawXhair() {
         // origin, angle, distance, size, spread, color, arc, laser, numXhairs
-        if (!game.match.paused) {
+        if (!game.match.paused && !game.paused) {
             let compareX = game.player.camera.x - this.player.character.HB.pos.x;
             let compareY = game.player.camera.y - this.player.character.HB.pos.y;
             //aimX is the mouse coordinates minus the this.player coordinates
@@ -417,28 +417,6 @@ class Menu {
         this.buttons = buttons;
     }
 
-    draw() {
-        if (this.visible == false) return;
-        if (this.style === 'center_stacked') {
-            this.shape.x = (game.window.w / 2) - (this.shape.w / 2);
-            this.shape.y = (game.window.h / 2) - (this.shape.h / 2);
-        }
-        // stroke a box around the menu
-        ctx.fillStyle = "rgba(0, 0, 0, 0.5)";
-        ctx.fillRect(this.shape.x, this.shape.y, this.shape.w, this.shape.h);
-        ctx.strokeStyle = "#FFFFFF";
-        ctx.lineWidth = 2;
-        ctx.strokeRect(this.shape.x, this.shape.y, this.shape.w, this.shape.h);
-
-        // draw each button
-        for (const button of this.buttons) {
-            button.draw(
-                this.shape.x + this.padding,
-                this.shape.y + this.padding
-            );
-        }
-    }
-
     step() {
         // convert from center of screen to top left of screen
         let x = game.window.w / 2;
@@ -462,6 +440,28 @@ class Menu {
             } else {
                 button.selected = false;
             }
+        }
+    }
+
+    draw() {
+        if (this.visible == false) return;
+        if (this.style === 'center_stacked') {
+            this.shape.x = (game.window.w / 2) - (this.shape.w / 2);
+            this.shape.y = (game.window.h / 2) - (this.shape.h / 2);
+        }
+        // stroke a box around the menu
+        ctx.fillStyle = "rgba(0, 0, 0, 0.5)";
+        ctx.fillRect(this.shape.x, this.shape.y, this.shape.w, this.shape.h);
+        ctx.strokeStyle = "#FFFFFF";
+        ctx.lineWidth = 2;
+        ctx.strokeRect(this.shape.x, this.shape.y, this.shape.w, this.shape.h);
+
+        // draw each button
+        for (const button of this.buttons) {
+            button.draw(
+                this.shape.x + this.padding,
+                this.shape.y + this.padding
+            );
         }
     }
 }
@@ -500,28 +500,7 @@ class Menu_Pause extends Menu {
             new Menu_Button(new Rect(0, 0, 150, 30), "Debug Game", function () { game.match = new DebugMatch(); game.paused = false; }),
             new Menu_Button(new Rect(0, 40, 150, 30), "Forever", function () { game.match = new Match_ForEver(); game.paused = false; }),
             // new Menu_Button(new Rect(0, 80, 150, 30), "Button 3", function () { window.alert("Button 3"); }),
-            new Menu_Button(new Rect(0, 120, 150, 30), "Resume", function () { game.match.paused = false; })
+            new Menu_Button(new Rect(0, 120, 150, 30), "Resume", function () { game.paused = false; })
         ]
-    }
-
-    draw() {
-        if (game.match.paused) {
-            if (this.visible == false) return;
-            this.shape.x = (game.window.w / 2) - (this.shape.w / 2);
-            this.shape.y = (game.window.h / 2) - (this.shape.h / 2);
-            // stroke a box around the menu
-            ctx.fillStyle = "rgba(0, 0, 0, 0.5)";
-            ctx.fillRect(this.shape.x, this.shape.y, this.shape.w, this.shape.h);
-            ctx.strokeStyle = "#FFFFFF";
-            ctx.lineWidth = 2;
-            ctx.strokeRect(this.shape.x, this.shape.y, this.shape.w, this.shape.h);
-            // draw each button
-            for (const button of this.buttons) {
-                button.draw(
-                    this.shape.x + this.padding,
-                    this.shape.y + this.padding
-                );
-            }
-        }
     }
 }
