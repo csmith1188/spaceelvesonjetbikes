@@ -1,6 +1,7 @@
 class Bot {
     constructor(options) {
         this.type = 'bot';
+        this.name = 'Bot';
         this.character = new Character(allID++, 0, 0, this);
         this.controller = new DummyController();
         this.best = {
@@ -221,8 +222,9 @@ class Player extends Bot {
     constructor(options) {
         super(options);
         this.type = 'player';
+        this.name = 'Player 1'
         this.character = new Character(allID++, 0, 0, this);
-        this.controller = new Controller();
+        this.controller = new Controller(this);
         this.camera = new Camera({ target: this.character });;
         this.interface = new Interface(this);
         // Options

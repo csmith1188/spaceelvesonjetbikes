@@ -9,15 +9,13 @@ window.onload = function () {
     ctx = canvas.getContext("2d");
     ctx.imageSmoothingEnabled = false;
 
-    setupInputs();
-
     //Game
     game = new Game();
 
     // game.match = new DebugMatch();
     // game.match = new Start_Screen();
-    game.match = new Match_ForEver();
-    // game.match = new Match_ForHonor();
+    // game.match = new Match_ForEver();
+    game.match = new Match_ForHonor();
 
 
     //start game loop

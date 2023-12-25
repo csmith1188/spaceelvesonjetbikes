@@ -8,131 +8,16 @@
 ########### ###    #### ###         ########      ###     ########
 */
 
-// Collect all input data and send it to the controller for better handling
-function setupInputs() {
-    
-    /*
-      _    _    _          __                                     _
-     | |  (_)__| |_   ___ / _|  __ _ __ _ _ __  ___ _ __  __ _ __| |___
-     | |__| (_-<  _| / _ \  _| / _` / _` | '  \/ -_) '_ \/ _` / _` (_-<
-     |____|_/__/\__| \___/_|   \__, \__,_|_|_|_\___| .__/\__,_\__,_/__/
-                               |___/               |_|
-    */
 
-    /*
-      _  __         ___
-     | |/ /___ _  _|   \ _____ __ ___ _  ___
-     | ' </ -_) || | |) / _ \ V  V / ' \(_-<
-     |_|\_\___|\_, |___/\___/\_/\_/|_||_/__/
-               |__/
-    */
-    document.addEventListener("keydown", function (event) {
-        game.player.controller.touch.enabled = false;
-        if (event.shiftKey) {
-            game.player.controller.shiftKey = Number(event.shiftKey)
-        }
-        if (event.altKey) {
-            event.preventDefault();
-            game.player.controller.altKey = Number(event.altKey)
-        }
-        if (event.key.toLocaleLowerCase() === "q") game.player.controller.inventory1Key = 1;
-        if (event.key.toLocaleLowerCase() === "e") game.player.controller.inventory2Key = 1;
-        if (event.key.toLocaleLowerCase() === "f") game.player.controller.throwKey = 1;
-        // if (event.key.toLocaleLowerCase() === "3") game.player.character.item = 2;
-        // if (event.key.toLocaleLowerCase() === "4") game.player.character.item = 3;
-        if (event.key.toLocaleLowerCase() === "w" || event.key === "ArrowUp") game.player.controller.upKey = 1;
-        if (event.key.toLocaleLowerCase() === "a" || event.key === "ArrowLeft") game.player.controller.leftKey = 1;
-        if (event.key.toLocaleLowerCase() === "s" || event.key === "ArrowDown") game.player.controller.downKey = 1;
-        if (event.key.toLocaleLowerCase() === "d" || event.key === "ArrowRight") game.player.controller.rightKey = 1;
-        if (event.key.toLocaleLowerCase() === " ") game.player.controller.spaceKey = 1;
-        if (event.key === "Escape" || event.key === "Escape") game.paused = !game.paused;
-    });
-    /*
-      _  __         _   _
-     | |/ /___ _  _| | | |_ __ ___
-     | ' </ -_) || | |_| | '_ (_-<
-     |_|\_\___|\_, |\___/| .__/__/
-               |__/      |_|
-    */
-    document.addEventListener("keyup", function (event) {
-        game.player.controller.shiftKey = Number(event.shiftKey)
-        game.player.controller.altKey = Number(event.altKey)
-        if (event.key.toLocaleLowerCase() === "q") game.player.controller.inventory1Key = 0;
-        if (event.key.toLocaleLowerCase() === "e") game.player.controller.inventory2Key = 0;
-        if (event.key.toLocaleLowerCase() === "f") game.player.controller.throwKey = 0;
-        if (event.key.toLocaleLowerCase() === "w" || event.key === "ArrowUp") game.player.controller.upKey = 0;
-        if (event.key.toLocaleLowerCase() === "a" || event.key === "ArrowLeft") game.player.controller.leftKey = 0;
-        if (event.key.toLocaleLowerCase() === "s" || event.key === "ArrowDown") game.player.controller.downKey = 0;
-        if (event.key.toLocaleLowerCase() === "d" || event.key === "ArrowRight") game.player.controller.rightKey = 0;
-        if (event.key.toLocaleLowerCase() === " ") game.player.controller.spaceKey = 0;
-    });
+let lastDevice = null;
 
-    window.addEventListener('gamepadconnected', (event) => {
-        game.player.controller.gamePad = event.gamepad.index;
-        // game.gamepads.push(gp);
-    });
-    window.addEventListener('gamepaddisconnected', (event) => {
-        game.player.controller.gamePad = null;
-    });
-    window.addEventListener('touchstart', (event) => {
-        event.preventDefault();
-        event.stopImmediatePropagation();
-        game.player.controller.touch.enabled = true;
-        game.player.controller.touch.event = event;
-        game.player.controller.touch.eventType = 'start';
-
-    }, { passive: false });
-
-    window.addEventListener('touchmove', (event) => {
-        event.preventDefault();
-        event.stopImmediatePropagation();
-        game.player.controller.touch.event = event;
-        game.player.controller.touch.eventType = 'move';
-    }, { passive: false });
-
-    window.addEventListener('touchend', (event) => {
-        event.preventDefault();
-        event.stopImmediatePropagation();
-        game.player.controller.touch.event = event;
-        game.player.controller.touch.eventType = 'end';
-    }, { passive: false });
-
-    window.addEventListener('touchcancel', (event) => {
-        event.preventDefault();
-        event.stopImmediatePropagation();
-        getTouch(event);
-    }, { passive: false });
-    window.addEventListener("mousedown", (event) => {
-        let coords = getCanvasRelative(event, false); // from top-left
-        game.player.controller.fireX = coords.x;
-        game.player.controller.fireY = coords.y;
-        coords = getCanvasRelative(event, true); // relative to center
-        game.player.controller.rclickX = coords.x;
-        game.player.controller.rclickY = coords.y;
-        // Get which mousebutton they clicked
-        if (event.button == 0)
-            game.player.controller.clickButton = 1
-        else if (event.button == 2)
-            game.player.controller.rclickButton = 1
-    });
-    window.addEventListener("mouseup", (event) => {
-        if (event.button == 0)
-            game.player.controller.clickButton = 0;
-        else if (event.button == 2)
-            game.player.controller.rclickButton = 0;
-    });
-    window.addEventListener("wheel", (event) => {
-        game.player.controller.wheelUp = (event.wheelDelta > 0) * 1;
-        game.player.controller.wheelDown = (event.wheelDelta < 0) * 1;
-    });
-    window.addEventListener('mousemove', (event) => {
-        let coords = getCanvasRelative(event, true);
-        game.player.controller.aimX = coords.x
-        game.player.controller.aimY = coords.y
-    });
-    window.addEventListener("contextmenu", e => e.preventDefault());
+function getLastDevice() {
+    document.addEventListener("keydown", (event) => { lastDevice = "keyboard";});
+    window.addEventListener('gamepadconnected', (event) => { lastDevice = event.gamepad.index });
+    window.addEventListener('touchstart', (event) => { lastDevice = "touch"; });
 }
 
+// Collect all input data and send it to the controller for better handling
 function getCanvasRelative(e, center = true) {
     bx = canvas.getBoundingClientRect();
     if (center === true) {
@@ -160,7 +45,9 @@ function getCanvasRelative(e, center = true) {
 ########   ########  ###    ####     ###     ###    ###  ########  ########## ########## ########## ###    ###
 */
 class Controller {
-    constructor() {
+    constructor(owner) {
+        this.owner = owner;
+        this.type = "controller";
         this.deadzone = 0.2;
         this.buttons = {
             moveRight: { current: 0, last: 0 },
@@ -179,54 +66,196 @@ class Controller {
             inventory1: { current: 0, last: 0 },
             inventory2: { current: 0, last: 0 },
             throw: { current: 0, last: 0 }
-        }
-
-        this.gamePad;
-        this.touch = {
-            enabled: false,
-            event: {},
-            left: {
-                pos: new Vect3(150, 150, 75),
-                radius: 75
-            },
-            right: {
-                pos: new Vect3(150, 150, 75),
-                radius: 75
-            }
         };
+        this.setupInputs();
     }
 
-    /*
+    setupInputs() {
 
-     #####  ######   ##   #####
-     #    # #       #  #  #    #
-     #    # #####  #    # #    #
-     #####  #      ###### #    #
-     #   #  #      #    # #    #
-     #    # ###### #    # #####
+    }
 
-    */
-    /**========================================================================
-     **                           read
-     *?  Reads the controller input and stores it in the controller object
-     *@param event JavaScript event object  
-     *@param type String of the type of event
-     *@return void
-     *========================================================================**/
-    read(event, type) {
+    read() {
 
+    }
+
+    draw() {
+
+    }
+}
+
+/*
+      :::    ::: :::::::::: :::   ::: :::::::::   ::::::::      :::     :::::::::  :::::::::
+     :+:   :+:  :+:        :+:   :+: :+:    :+: :+:    :+:   :+: :+:   :+:    :+: :+:    :+:
+    +:+  +:+   +:+         +:+ +:+  +:+    +:+ +:+    +:+  +:+   +:+  +:+    +:+ +:+    +:+
+   +#++:++    +#++:++#     +#++:   +#++:++#+  +#+    +:+ +#++:++#++: +#++:++#:  +#+    +:+
+  +#+  +#+   +#+           +#+    +#+    +#+ +#+    +#+ +#+     +#+ +#+    +#+ +#+    +#+
+ #+#   #+#  #+#           #+#    #+#    #+# #+#    #+# #+#     #+# #+#    #+# #+#    #+#
+###    ### ##########    ###    #########   ########  ###     ### ###    ### #########
+*/
+class Keyboard extends Controller {
+    constructor(owner) {
+        super(owner);
+        this.type = "keyboard";
+    }
+
+    setupInputs() {
+        /*
+          _  __         ___
+         | |/ /___ _  _|   \ _____ __ ___ _  ___
+         | ' </ -_) || | |) / _ \ V  V / ' \(_-<
+         |_|\_\___|\_, |___/\___/\_/\_/|_||_/__/
+                   |__/
+        */
+        document.addEventListener("keydown", function (event) {
+            if (event.shiftKey) {
+                this.shiftKey = Number(event.shiftKey)
+            }
+            if (event.altKey) {
+                event.preventDefault();
+                this.altKey = Number(event.altKey)
+            }
+            if (event.key.toLocaleLowerCase() === "q") this.inventory1Key = 1;
+            if (event.key.toLocaleLowerCase() === "e") this.inventory2Key = 1;
+            if (event.key.toLocaleLowerCase() === "f") this.throwKey = 1;
+            // if (event.key.toLocaleLowerCase() === "3") game.player.character.item = 2;
+            // if (event.key.toLocaleLowerCase() === "4") game.player.character.item = 3;
+            if (event.key.toLocaleLowerCase() === "w" || event.key === "ArrowUp") this.upKey = 1;
+            if (event.key.toLocaleLowerCase() === "a" || event.key === "ArrowLeft") this.leftKey = 1;
+            if (event.key.toLocaleLowerCase() === "s" || event.key === "ArrowDown") this.downKey = 1;
+            if (event.key.toLocaleLowerCase() === "d" || event.key === "ArrowRight") this.rightKey = 1;
+            if (event.key.toLocaleLowerCase() === " ") this.spaceKey = 1;
+            if (event.key === "Escape" || event.key === "Escape")
+                game.paused = !game.paused;
+
+        }.bind(this));
+        /*
+          _  __         _   _
+         | |/ /___ _  _| | | |_ __ ___
+         | ' </ -_) || | |_| | '_ (_-<
+         |_|\_\___|\_, |\___/| .__/__/
+                   |__/      |_|
+        */
+        document.addEventListener("keyup", function (event) {
+            this.shiftKey = Number(event.shiftKey)
+            this.altKey = Number(event.altKey)
+            if (event.key.toLocaleLowerCase() === "q") this.inventory1Key = 0;
+            if (event.key.toLocaleLowerCase() === "e") this.inventory2Key = 0;
+            if (event.key.toLocaleLowerCase() === "f") this.throwKey = 0;
+            if (event.key.toLocaleLowerCase() === "w" || event.key === "ArrowUp") this.upKey = 0;
+            if (event.key.toLocaleLowerCase() === "a" || event.key === "ArrowLeft") this.leftKey = 0;
+            if (event.key.toLocaleLowerCase() === "s" || event.key === "ArrowDown") this.downKey = 0;
+            if (event.key.toLocaleLowerCase() === "d" || event.key === "ArrowRight") this.rightKey = 0;
+            if (event.key.toLocaleLowerCase() === " ") this.spaceKey = 0;
+        }.bind(this));
+
+        /*
+          __  __
+         |  \/  |___ _  _ ___ ___
+         | |\/| / _ \ || (_-</ -_)
+         |_|  |_\___/\_,_/__/\___|
+
+        */
+        window.addEventListener("mousedown", function (event) {
+            let coords = getCanvasRelative(event, false); // from top-left
+            this.fireX = coords.x;
+            this.fireY = coords.y;
+            coords = getCanvasRelative(event, true); // relative to center
+            this.rclickX = coords.x;
+            this.rclickY = coords.y;
+            // Get which mousebutton they clicked
+            if (event.button == 0)
+                this.clickButton = 1
+            else if (event.button == 2)
+                this.rclickButton = 1
+        }.bind(this));
+        window.addEventListener("mouseup", function (event) {
+            if (event.button == 0)
+                this.clickButton = 0;
+            else if (event.button == 2)
+                this.rclickButton = 0;
+        }.bind(this));
+        window.addEventListener("wheel", function (event) {
+            this.wheelUp = (event.wheelDelta > 0) * 1;
+            this.wheelDown = (event.wheelDelta < 0) * 1;
+        }.bind(this));
+        window.addEventListener('mousemove', function (event) {
+            let coords = getCanvasRelative(event, true);
+            this.aimX = coords.x
+            this.aimY = coords.y
+        }.bind(this));
+        window.addEventListener("contextmenu", e => e.preventDefault());
+    }
+
+    read() {
         // Remember the last state of every command
         for (const button in this.buttons) {
             this.buttons[button].last = this.buttons[button].current;
         }
+        // Because buttons can get cleared at other points, we need to check for them here at the same time as other inputs
+        if (this.rightKey) this.buttons.moveRight.current = 1;
+        else this.buttons.moveRight.current = 0;
+        if (this.leftKey) this.buttons.moveLeft.current = 1;
+        else this.buttons.moveLeft.current = 0;
+        if (this.downKey) this.buttons.moveDown.current = 1;
+        else this.buttons.moveDown.current = 0;
+        if (this.upKey) this.buttons.moveUp.current = 1;
+        else this.buttons.moveUp.current = 0;
+        if (this.spaceKey) this.buttons.jump.current = 1;
+        else this.buttons.jump.current = 0;
+        if (this.shiftKey) this.buttons.brake.current = 1;
+        else this.buttons.brake.current = 0;
+        if (this.altKey) this.buttons.boost.current = 1;
+        else this.buttons.boost.current = 0;
+        if (this.clickButton) this.buttons.fire.current = 1;
+        else this.buttons.fire.current = 0;
+        if (this.rclickButton) this.buttons.altfire.current = 1;
+        else this.buttons.altfire.current = 0;
+        if (this.inventory1Key) this.buttons.inventory1.current = 1;
+        else this.buttons.inventory1.current = 0;
+        if (this.inventory2Key) this.buttons.inventory2.current = 1;
+        else this.buttons.inventory2.current = 0;
+        if (this.throwKey) this.buttons.throw.current = 1;
+        else this.buttons.throw.current = 0;
+        if (this.wheelUp) {
+            this.buttons.weaponPrevious.current = this.wheelUp;
+            this.wheelUp = 0;
+        }
+        else this.buttons.weaponPrevious.current = 0;
+        if (this.wheelDown) {
+            this.buttons.weaponNext.current = this.wheelDown;
+            this.wheelDown = 0;
+        }
+        else this.buttons.weaponNext.current = 0;
+    }
+}
 
-        /*
-           ___                              _
-          / __|__ _ _ __  ___ _ __  __ _ __| |
-         | (_ / _` | '  \/ -_) '_ \/ _` / _` |
-          \___\__,_|_|_|_\___| .__/\__,_\__,_|
-                             |_|
-        */
+/*
+      ::::::::      :::       :::   :::   :::::::::: :::::::::     :::     :::::::::
+    :+:    :+:   :+: :+:    :+:+: :+:+:  :+:        :+:    :+:  :+: :+:   :+:    :+:
+   +:+         +:+   +:+  +:+ +:+:+ +:+ +:+        +:+    +:+ +:+   +:+  +:+    +:+
+  :#:        +#++:++#++: +#+  +:+  +#+ +#++:++#   +#++:++#+ +#++:++#++: +#+    +:+
+ +#+   +#+# +#+     +#+ +#+       +#+ +#+        +#+       +#+     +#+ +#+    +#+
+#+#    #+# #+#     #+# #+#       #+# #+#        #+#       #+#     #+# #+#    #+#
+########  ###     ### ###       ### ########## ###       ###     ### #########
+*/
+class GamePad extends Controller {
+    constructor(owner, gamePadIndex) {
+        super(owner);
+        this.type = "gamepad";
+        this.gamePad = gamePadIndex;
+    }
+
+    setupInputs() {
+        window.addEventListener('gamepaddisconnected', (event) => {
+            game.player.controller.gamePad = null;
+        });
+    }
+
+    read() {
+        // Remember the last state of every command
+        for (const button in this.buttons) {
+            this.buttons[button].last = this.buttons[button].current;
+        }
         if (this.gamePad != null) {
             let gp = navigator.getGamepads()[this.gamePad];
             // Get AXES
@@ -289,147 +318,156 @@ class Controller {
                 game.player.camera.angle = 1;
             }
         }
-        /*
-          _____            _
-         |_   _|__ _  _ __| |_
-           | |/ _ \ || / _| ' \
-           |_|\___/\_,_\__|_||_|
-
-        */
-        else
-            if (this.touch.enabled) {
-                if (this.touch.event.target == canvas) {
-                    let touchLeftFound = false;
-                    let touchRightFound = false;
-                    for (const touch of this.touch.event.targetTouches) {
-                        let touchCoord = getCanvasRelative(touch);
-                        // Check for touchbutton inventory 1 Rect collidepoint
-                        if (game.player.interface.touchButton.inventory1.collidePoint(touchCoord.x, touchCoord.y))
-                            game.player.character.item = 0;
-                        if (game.player.interface.touchButton.inventory2.collidePoint(touchCoord.x, touchCoord.y))
-                            game.player.character.item = 1;
-                        // Check for left touch
-                        let touchX = touchCoord.x - this.touch.left.pos.x;
-                        let touchY = touchCoord.y - (game.window.h - this.touch.left.pos.y);
-                        let distance = Math.sqrt(touchX ** 2 + touchY ** 2);
-                        if (distance < this.touch.left.radius * 2) {
-
-                            touchLeftFound = true;
-
-                            if (distance > this.touch.right.radius)
-                                if (game.match.ticks - this.touch.left.lastBoostTouch <= 10)
-                                    this.buttons.boost.current = 1;
-                            //Normalize, but add a little bonus outside of main ring
-                            touchX /= (distance / this.touch.left.radius) * 100;
-                            touchY /= (distance / this.touch.left.radius) * 100;
-
-                            //Cap the bonus at 1
-                            if (touchX > 1) touchX = 1;
-                            if (touchX > 1) touchX = 1;
-
-                            //Attach to movement functions
-                            if (touchX < 0) this.buttons.moveLeft.current = Math.abs(touchX);
-                            if (touchX > 0) this.buttons.moveRight.current = Math.abs(touchX);
-                            if (touchY < 0) this.buttons.moveUp.current = Math.abs(touchY);
-                            if (touchY > 0) this.buttons.moveDown.current = Math.abs(touchY);
-
-                        }
-                        // Check for right touch
-                        touchX = touchCoord.x - (game.window.w - this.touch.right.pos.x);
-                        touchY = touchCoord.y - (game.window.h - this.touch.right.pos.y);
-                        distance = Math.sqrt(touchX ** 2 + touchY ** 2);
-                        if (distance < this.touch.right.radius * 2) {
-                            touchRightFound = true;
-                            //Button was pressed                            
-                            if (distance > this.touch.right.radius) this.buttons.fire.current = 1;
-                            //Normalize, then change the aim angle
-                            touchX /= distance;
-                            touchY /= distance;
-                            this.aimX = touchX;
-                            this.aimY = touchY;
-
-                        }
-                    }
-                    if (!touchLeftFound) {
-                        this.buttons.moveLeft.current = 0;
-                        this.buttons.moveRight.current = 0;
-                        this.buttons.moveUp.current = 0;
-                        this.buttons.moveDown.current = 0;
-                    }
-                }
-                if (this.touch.eventType == 'end') {
-                    this.buttons.fire.current = 0;
-                    this.buttons.boost.current = 0;
-                    for (const touch of this.touch.event.changedTouches) {
-                        let touchCoord = getCanvasRelative(touch);
-                        let touchX = touchCoord.x - this.touch.left.pos.x;
-                        let touchY = touchCoord.y - (game.window.h - this.touch.left.pos.y);
-                        let distance = Math.sqrt(touchX ** 2 + touchY ** 2);
-                        if ((distance > this.touch.left.radius) && (distance < (this.touch.left.radius * 2)))
-                            this.touch.left.lastBoostTouch = game.match.ticks;
-                    }
-
-                }
-                this.touch.event = {};
-                this.touch.eventType = {};
-            }
-            /*
-              _  __         _                      _
-             | |/ /___ _  _| |__  ___  __ _ _ _ __| |
-             | ' </ -_) || | '_ \/ _ \/ _` | '_/ _` |
-             |_|\_\___|\_, |_.__/\___/\__,_|_| \__,_|
-                       |__/
-            */
-            else {
-                // Because buttons can get cleared at other points, we need to check for them here at the same time as other inputs
-                if (this.rightKey) this.buttons.moveRight.current = 1;
-                else this.buttons.moveRight.current = 0;
-                if (this.leftKey) this.buttons.moveLeft.current = 1;
-                else this.buttons.moveLeft.current = 0;
-                if (this.downKey) this.buttons.moveDown.current = 1;
-                else this.buttons.moveDown.current = 0;
-                if (this.upKey) this.buttons.moveUp.current = 1;
-                else this.buttons.moveUp.current = 0;
-                if (this.spaceKey) this.buttons.jump.current = 1;
-                else this.buttons.jump.current = 0;
-                if (this.shiftKey) this.buttons.brake.current = 1;
-                else this.buttons.brake.current = 0;
-                if (this.altKey) this.buttons.boost.current = 1;
-                else this.buttons.boost.current = 0;
-                if (this.clickButton) this.buttons.fire.current = 1;
-                else this.buttons.fire.current = 0;
-                if (this.rclickButton) this.buttons.altfire.current = 1;
-                else this.buttons.altfire.current = 0;
-                if (this.inventory1Key) this.buttons.inventory1.current = 1;
-                else this.buttons.inventory1.current = 0;
-                if (this.inventory2Key) this.buttons.inventory2.current = 1;
-                else this.buttons.inventory2.current = 0;
-                if (this.throwKey) this.buttons.throw.current = 1;
-                else this.buttons.throw.current = 0;
-                if (this.wheelUp) {
-                    this.buttons.weaponPrevious.current = this.wheelUp;
-                    this.wheelUp = 0;
-                }
-                else this.buttons.weaponPrevious.current = 0;
-                if (this.wheelDown) {
-                    this.buttons.weaponNext.current = this.wheelDown;
-                    this.wheelDown = 0;
-                }
-                else this.buttons.weaponNext.current = 0;
-            }
     }
 
-    /*
-
-     #####  #####    ##   #    #
-     #    # #    #  #  #  #    #
-     #    # #    # #    # #    #
-     #    # #####  ###### # ## #
-     #    # #   #  #    # ##  ##
-     #####  #    # #    # #    #
-
-    */
     draw() {
+        super.draw();
+    }
+}
+
+/*
+  ::::::::::: ::::::::  :::    :::  ::::::::  :::    ::: :::::::::     :::     :::::::::
+     :+:    :+:    :+: :+:    :+: :+:    :+: :+:    :+: :+:    :+:  :+: :+:   :+:    :+:
+    +:+    +:+    +:+ +:+    +:+ +:+        +:+    +:+ +:+    +:+ +:+   +:+  +:+    +:+
+   +#+    +#+    +:+ +#+    +:+ +#+        +#++:++#++ +#++:++#+ +#++:++#++: +#+    +:+
+  +#+    +#+    +#+ +#+    +#+ +#+        +#+    +#+ +#+       +#+     +#+ +#+    +#+
+ #+#    #+#    #+# #+#    #+# #+#    #+# #+#    #+# #+#       #+#     #+# #+#    #+#
+###     ########   ########   ########  ###    ### ###       ###     ### #########
+*/
+class Touch extends Controller {
+    constructor(owner) {
+        super(owner);
+        this.type = "touch";
+        this.touch = {
+            enabled: true,
+            event: {},
+            left: {
+                pos: new Vect3(150, 150, 75),
+                radius: 75
+            },
+            right: {
+                pos: new Vect3(150, 150, 75),
+                radius: 75
+            }
+        };
+    }
+
+    setupInput() {
+        window.addEventListener('touchstart', (event) => {
+            event.preventDefault();
+            event.stopImmediatePropagation();
+            game.player.controller.touch.enabled = true;
+            game.player.controller.touch.event = event;
+            game.player.controller.touch.eventType = 'start';
+
+        }, { passive: false });
+
+        window.addEventListener('touchmove', (event) => {
+            event.preventDefault();
+            event.stopImmediatePropagation();
+            game.player.controller.touch.event = event;
+            game.player.controller.touch.eventType = 'move';
+        }, { passive: false });
+
+        window.addEventListener('touchend', (event) => {
+            event.preventDefault();
+            event.stopImmediatePropagation();
+            game.player.controller.touch.event = event;
+            game.player.controller.touch.eventType = 'end';
+        }, { passive: false });
+
+        window.addEventListener('touchcancel', (event) => {
+            event.preventDefault();
+            event.stopImmediatePropagation();
+            getTouch(event);
+        }, { passive: false });
+    }
+
+    read() {
+        // Remember the last state of every command
+        for (const button in this.buttons) {
+            this.buttons[button].last = this.buttons[button].current;
+        }
+        if (this.touch.enabled) {
+            if (this.touch.event.target == canvas) {
+                let touchLeftFound = false;
+                let touchRightFound = false;
+                for (const touch of this.touch.event.targetTouches) {
+                    let touchCoord = getCanvasRelative(touch);
+                    // Check for touchbutton inventory 1 Rect collidepoint
+                    if (game.player.interface.touchButton.inventory1.collidePoint(touchCoord.x, touchCoord.y))
+                        game.player.character.item = 0;
+                    if (game.player.interface.touchButton.inventory2.collidePoint(touchCoord.x, touchCoord.y))
+                        game.player.character.item = 1;
+                    // Check for left touch
+                    let touchX = touchCoord.x - this.touch.left.pos.x;
+                    let touchY = touchCoord.y - (game.window.h - this.touch.left.pos.y);
+                    let distance = Math.sqrt(touchX ** 2 + touchY ** 2);
+                    if (distance < this.touch.left.radius * 2) {
+
+                        touchLeftFound = true;
+
+                        if (distance > this.touch.right.radius)
+                            if (game.match.ticks - this.touch.left.lastBoostTouch <= 10)
+                                this.buttons.boost.current = 1;
+                        //Normalize, but add a little bonus outside of main ring
+                        touchX /= (distance / this.touch.left.radius) * 100;
+                        touchY /= (distance / this.touch.left.radius) * 100;
+
+                        //Cap the bonus at 1
+                        if (touchX > 1) touchX = 1;
+                        if (touchX > 1) touchX = 1;
+
+                        //Attach to movement functions
+                        if (touchX < 0) this.buttons.moveLeft.current = Math.abs(touchX);
+                        if (touchX > 0) this.buttons.moveRight.current = Math.abs(touchX);
+                        if (touchY < 0) this.buttons.moveUp.current = Math.abs(touchY);
+                        if (touchY > 0) this.buttons.moveDown.current = Math.abs(touchY);
+
+                    }
+                    // Check for right touch
+                    touchX = touchCoord.x - (game.window.w - this.touch.right.pos.x);
+                    touchY = touchCoord.y - (game.window.h - this.touch.right.pos.y);
+                    distance = Math.sqrt(touchX ** 2 + touchY ** 2);
+                    if (distance < this.touch.right.radius * 2) {
+                        touchRightFound = true;
+                        //Button was pressed                            
+                        if (distance > this.touch.right.radius) this.buttons.fire.current = 1;
+                        //Normalize, then change the aim angle
+                        touchX /= distance;
+                        touchY /= distance;
+                        this.aimX = touchX;
+                        this.aimY = touchY;
+
+                    }
+                }
+                if (!touchLeftFound) {
+                    this.buttons.moveLeft.current = 0;
+                    this.buttons.moveRight.current = 0;
+                    this.buttons.moveUp.current = 0;
+                    this.buttons.moveDown.current = 0;
+                }
+            }
+            if (this.touch.eventType == 'end') {
+                this.buttons.fire.current = 0;
+                this.buttons.boost.current = 0;
+                for (const touch of this.touch.event.changedTouches) {
+                    let touchCoord = getCanvasRelative(touch);
+                    let touchX = touchCoord.x - this.touch.left.pos.x;
+                    let touchY = touchCoord.y - (game.window.h - this.touch.left.pos.y);
+                    let distance = Math.sqrt(touchX ** 2 + touchY ** 2);
+                    if ((distance > this.touch.left.radius) && (distance < (this.touch.left.radius * 2)))
+                        this.touch.left.lastBoostTouch = game.match.ticks;
+                }
+
+            }
+            this.touch.event = {};
+            this.touch.eventType = {};
+        }
+    }
+
+    draw() {
+        super.draw();
         if (this.touch.enabled) {
             ctx.globalAlpha = 0.05;
             ctx.lineWidth = 8;
@@ -488,9 +526,11 @@ class Controller {
 #########   ########  ###       ### ###       ###   ###
 */
 class DummyController extends Controller {
-    constructor() {
-        super();
+    constructor(owner) {
+        super(owner);
+        this.type = "dummy";
     }
+    setupInputs() { return }
     read() { return }
     draw() { return }
 }

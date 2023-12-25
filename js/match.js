@@ -13,53 +13,53 @@ class Match {
 
     step() {
         if (!this.paused) {
-            
+
             game.player.character.step(game.player.controller);
-            
+
             //Put Bot player characters into a list
             let npcs = [];
             for (const npc in this.bots) {
                 npcs.push(this.bots[npc].character);
             }
-            
+
             for (const bot of this.bots) {
                 bot.AI();
                 bot.character.step(bot.controller);
             }
-            
+
             for (const block of this.map.blocks) {
                 block.step();
             }
-            
+
             for (const bullet of this.map.bullets) {
                 bullet.step();
             }
-            
+
             for (const debris of this.map.debris) {
                 debris.step();
             }
-            
+
             game.match.map.step();
-            
+
             for (const e of this.bots) {
                 if (e.cleanup && !e.active) {
                     //Remove npcs
                     this.npcs = this.npcs.filter(function (el) { return el != e; });
                 }
             }
-            
+
             // Run all runFuncs
             for (const func in this.runFucts) {
                 func();
             }
 
             this.ticks++;
-            
+
         }
 
         // for every menu in the player's interface
         for (const menu in game.player.interface.menus) {
-                game.player.interface.menus[menu].step();
+            game.player.interface.menus[menu].step();
         }
 
     }
@@ -405,6 +405,15 @@ class Match_ForHonor extends Match {
     }
     setup = () => {
         game.player.character = new Jetbike(allID++, (this.map.w / 2), (this.map.h / 2) + 200, game.player, { name: 'Cpt. Fabius', gfx: 'img/sprites/jetbike', hover: 16, airAccel: new Vect3(0.15, 0.15, 1) });
+        this.bots.push(new Player()) //Kevin / Jae'Sin
+        this.bots[this.bots.length - 1].character = new Jetbike(
+            allID++,
+            (this.map.w / 2) - 1000,
+            (this.map.h / 2) - 1000,
+            this.bots[this.bots.length - 1],
+            { name: getName(), team: 1, gfx: 'img/sprites/dark2', color: [0, 0, 255] }
+        );
+        this.bots[this.bots.length - 1].controller = new Controller();
         this.blocks.push(new Block(allID++, (this.map.w / 2), (this.map.h / 2) - 0, 0, 0, 0, 0, { solid: false, visible: false }));
         game.player.camera = new Camera({ target: this.blocks[this.blocks.length - 1] });
         this.map.blocks.push(new WeaponPickup(allID++, (this.map.w / 2) - 100, (this.map.h / 2), 0, 0, 0, 0, { weapon: 'pistol', pickupDelay: 0 }));

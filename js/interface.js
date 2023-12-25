@@ -400,7 +400,7 @@ class Interface {
     drawMenu() {
         // draw every menu
         for (const menu of this.menus) {
-                menu.draw();
+            menu.draw();
         }
     }
 }
@@ -415,6 +415,10 @@ class Menu {
         this.text = '';
         this.style = 'center_stacked'
         this.buttons = buttons;
+        if (typeof options === 'object')
+            for (var key of Object.keys(options)) {
+                this[key] = options[key];
+            }
     }
 
     step() {
@@ -502,5 +506,21 @@ class Menu_Pause extends Menu {
             // new Menu_Button(new Rect(0, 80, 150, 30), "Button 3", function () { window.alert("Button 3"); }),
             new Menu_Button(new Rect(0, 120, 150, 30), "Resume", function () { game.paused = false; })
         ]
+    }
+}
+
+class Menu_Awaiting extends Menu {
+    constructor(buttons, shape, options) {
+        super(buttons, shape, options);
+        this.style = 'center_stacked';
+        this.type = 'pause';
+        this.buttons = []
+    }
+    draw(text) {
+        super.draw();
+        ctx.textAlign = "center";
+        ctx.fillStyle = "#FFFFFF";
+        ctx.font = '16px Jura';
+        ctx.fillText(text, this.shape.x + this.shape.w / 2, this.shape.y + this.shape.h / 2 + 6);
     }
 }

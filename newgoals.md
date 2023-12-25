@@ -28,6 +28,7 @@ Dark elves believe everything is random:
 -->
 
 - Input controller matching
+- ISO draw
 - Finish menus from controllers
 - Create more bullet types
 - Inventory Management
