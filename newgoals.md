@@ -27,6 +27,8 @@ Dark elves believe everything is random:
 #########   ########          ###        ########### ###    ###  ########     ###
 -->
 
+- Input controller matching
+- Finish menus from controllers
 - Create more bullet types
 - Inventory Management
 -- X is pickup, A is always Sword, never drop A

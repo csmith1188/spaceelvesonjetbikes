@@ -47,6 +47,7 @@ class Block {
         this.img.src = this.imgFile;
         this.imgSide = new Image();
         this.imgSide.src = this.imgFileSide;
+        this.drawStyle = 'tile'; // 'tile' or 'stretch'
         this.shadowDraw = false;
         this.shadow = new Image();
         this.shadow.src = 'img/sprites/shadow.png';
@@ -185,20 +186,44 @@ class Block {
                 //     this.HB.volume.y
                 // );
                 if (this.imgFile) {
-                    ctx.drawImage(
-                        this.img,
-                        game.window.w / 2 - compareX,
-                        game.window.h / 2 - compareY - this.HB.volume.z - this.HB.pos.z,
-                        this.HB.volume.x,
-                        this.HB.volume.y
-                    );
-                    ctx.drawImage(
-                        this.imgSide,
-                        game.window.w / 2 - compareX,
-                        game.window.h / 2 - compareY - this.HB.pos.z - this.HB.volume.z + this.HB.volume.y,
-                        this.HB.volume.x,
-                        this.HB.volume.z
-                    );
+                    if (this.drawStyle == 'stretch') {
+                        ctx.drawImage(
+                            this.img,
+                            game.window.w / 2 - compareX,
+                            game.window.h / 2 - compareY - this.HB.volume.z - this.HB.pos.z,
+                            this.HB.volume.x,
+                            this.HB.volume.y
+                        );
+                        ctx.drawImage(
+                            this.imgSide,
+                            game.window.w / 2 - compareX,
+                            game.window.h / 2 - compareY - this.HB.pos.z - this.HB.volume.z + this.HB.volume.y,
+                            this.HB.volume.x,
+                            this.HB.volume.z
+                        );
+                    } else if (this.drawStyle == 'tile') {
+                        let texture = new Image();
+                        texture.src = this.imgFile;
+                        let pattern = ctx.createPattern(texture, 'repeat');
+                        ctx.fillStyle = pattern;
+
+                        // Translate the context by the top-left corner of the rectangle
+                        ctx.translate(game.window.w / 2 - compareX, game.window.h / 2 - compareY - this.HB.volume.z - this.HB.pos.z);
+
+                        // Now fill the rectangle, but with the origin at (0, 0)
+                        ctx.fillRect(0, 0, this.HB.volume.x, this.HB.volume.y);
+
+                        // Translate the context back
+                        ctx.translate(-(game.window.w / 2 - compareX), -(game.window.h / 2 - compareY - this.HB.volume.z - this.HB.pos.z));
+
+                        texture = new Image();
+                        texture.src = this.imgFileSide;
+                        pattern = ctx.createPattern(texture, 'repeat');
+                        ctx.fillStyle = pattern;
+                        ctx.translate(game.window.w / 2 - compareX, game.window.h / 2 - compareY - this.HB.pos.z - this.HB.volume.z + this.HB.volume.y);
+                        ctx.fillRect(0, 0, this.HB.volume.x, this.HB.volume.z);
+                        ctx.translate(-(game.window.w / 2 - compareX), -(game.window.h / 2 - compareY - this.HB.pos.z - this.HB.volume.z + this.HB.volume.y));
+                    }
                 } else {
                     //TOP
                     ctx.fillStyle = `rgba(${this.color[0]}, ${this.color[1]}, ${this.color[2]}, ${this.opacity})`;
