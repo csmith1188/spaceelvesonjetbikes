@@ -3,6 +3,7 @@ class Match {
         this.startTicks = ticks;
         this.despawnTimer = 3600; // 1 minute
         this.ticks = 0;
+        this.paused = false;
         this.map = new Map();
         this.bots = [];
         this.blocks = []; // Different from map blocks. Think pickups and dropped items
@@ -11,17 +12,52 @@ class Match {
     }
 
     step() {
-        for (const e of this.bots) {
-            if (e.cleanup && !e.active) {
-                //Remove npcs
-                this.npcs = this.npcs.filter(function (el) { return el != e; });
+        if (!this.paused) {
+            game.player.character.step(game.player.controller);
+
+            //Put Bot player characters into a list
+            let npcs = [];
+            for (const npc in this.bots) {
+                npcs.push(this.bots[npc].character);
+            }
+
+            for (const bot of this.bots) {
+                bot.AI();
+                bot.character.step(bot.controller);
+            }
+
+            for (const block of this.map.blocks) {
+                block.step();
+            }
+
+            for (const bullet of this.map.bullets) {
+                bullet.step();
+            }
+            
+            for (const debris of this.map.debris) {
+                debris.step();
+            }
+
+            game.match.map.step();
+
+            for (const e of this.bots) {
+                if (e.cleanup && !e.active) {
+                    //Remove npcs
+                    this.npcs = this.npcs.filter(function (el) { return el != e; });
+                }
+            }
+
+            // Run all runFuncs
+            for (const func in this.runFucts) {
+                func();
             }
         }
 
-        // Run all runFuncs
-        for (const func in this.runFucts) {
-            func();
+        // for every menu in the player's interface
+        for (const menu in game.player.interface.menus) {
+                game.player.interface.menus[menu].step();
         }
+
     }
 }
 

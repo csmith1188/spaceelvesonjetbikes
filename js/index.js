@@ -34,9 +34,9 @@ window.onload = function () {
     //Player
     game.player = new Player();
 
-    // game.match = new DebugMatch();
+    game.match = new DebugMatch();
     // game.match = new Start_Screen();
-    game.match = new Match_ForEver();
+    // game.match = new Match_ForEver();
     // game.match = new Match_ForHonor();
 
     game.match.map.buildNavMesh();
@@ -74,54 +74,16 @@ function step() {
     canvas.width = game.window.w;
     canvas.height = game.window.h;
 
-    //Put Bot player characters into a list
-    let npcs = [];
-    for (const npc in game.match.bots) {
-        npcs.push(game.match.bots[npc].character);
-    }
-
     if (!game.paused) {
 
-        // if the player's interface has a menu with the type 'pause', make it invisible
-        for (const menu of game.player.interface.menus) {
-            if (menu.type == 'pause') {
-                menu.visible = false;
-                break;
-            }
-        }
+        game.player.controller.read();
 
         game.match.step();
-        game.match.map.step();
 
-        //Do all steps and movement
-        game.player.controller.read();
-        game.player.character.step(game.player.controller);
-
-        for (const bot of game.match.bots) {
-            bot.AI();
-            bot.character.step(bot.controller);
-        }
-        for (const block of game.match.map.blocks) {
-            block.step();
-        }
-        for (const bullet of game.match.map.bullets) {
-            bullet.step();
-        }
-        for (const debris of game.match.map.debris) {
-            debris.step();
-        }
         game.match.ticks++;
 
     } else {
         game.player.controller.read();
-        // if the player's interface has a menu with the type 'pause', make it visible
-        for (const menu of game.player.interface.menus) {
-            if (menu.type == 'pause') {
-                menu.visible = true;
-                menu.step(game.player.controller);
-                break;
-            }
-        }
     }
 
     // Move camera to next sensible target when player character is inactive or missing
@@ -190,5 +152,5 @@ function draw() {
 
     //Draw Controller HUD
     game.player.controller.draw();
-    
+
 }
