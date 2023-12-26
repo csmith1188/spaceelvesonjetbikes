@@ -409,7 +409,7 @@ class Touch extends Controller {
             let touchLeftFound = false;
             let touchRightFound = false;
             for (const touch of this.touch.event.targetTouches) {
-                let touchCoord = getCanvasRelative(touch);
+                let touchCoord = getCanvasRelative(touch, false);
                 // Check for touchbutton inventory 1 Rect collidepoint
                 if (game.player.interface.touchButton.inventory1.collidePoint(touchCoord.x, touchCoord.y))
                     game.player.character.item = 0;

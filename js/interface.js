@@ -180,6 +180,8 @@ class Interface {
                         break;
                 }
             }
+            this.touchButton.inventory1 = new Rect((game.window.w / 2) - 150, game.window.h - 64, 64, 64);
+            this.touchButton.inventory2 = new Rect((game.window.w / 2) + 90, game.window.h - 64, 64, 64);
         }
     }
 
