@@ -12,7 +12,9 @@
 let lastDevice = null;
 
 function getLastDevice() {
-    document.addEventListener("keydown", (event) => { lastDevice = "keyboard";});
+    document.addEventListener("keyup", (event) => {
+        lastDevice = "keyboard";
+    });
     window.addEventListener('gamepadconnected', (event) => { lastDevice = event.gamepad.index });
     window.addEventListener('touchstart', (event) => { lastDevice = "touch"; });
 }
@@ -48,7 +50,6 @@ class Controller {
     constructor(owner) {
         this.owner = owner;
         this.type = "controller";
-        this.deadzone = 0.2;
         this.buttons = {
             moveRight: { current: 0, last: 0 },
             moveLeft: { current: 0, last: 0 },
@@ -65,7 +66,11 @@ class Controller {
             select: { current: 0, last: 0 },
             inventory1: { current: 0, last: 0 },
             inventory2: { current: 0, last: 0 },
-            throw: { current: 0, last: 0 }
+            throw: { current: 0, last: 0 },
+            selectRight: { current: 0, last: 0 },
+            selectLeft: { current: 0, last: 0 },
+            selectUp: { current: 0, last: 0 },
+            selectDown: { current: 0, last: 0 }
         };
         this.setupInputs();
     }
@@ -75,7 +80,10 @@ class Controller {
     }
 
     read() {
-
+        // Remember the last state of every command
+        for (const button in this.buttons) {
+            this.buttons[button].last = this.buttons[button].current;
+        }
     }
 
     draw() {
@@ -187,10 +195,7 @@ class Keyboard extends Controller {
     }
 
     read() {
-        // Remember the last state of every command
-        for (const button in this.buttons) {
-            this.buttons[button].last = this.buttons[button].current;
-        }
+        super.read();
         // Because buttons can get cleared at other points, we need to check for them here at the same time as other inputs
         if (this.rightKey) this.buttons.moveRight.current = 1;
         else this.buttons.moveRight.current = 0;
@@ -243,6 +248,8 @@ class GamePad extends Controller {
         super(owner);
         this.type = "gamepad";
         this.gamePad = gamePadIndex;
+        this.deadzone = 0.2;
+        this.selectzone = 0.8;
     }
 
     setupInputs() {
@@ -252,21 +259,34 @@ class GamePad extends Controller {
     }
 
     read() {
-        // Remember the last state of every command
-        for (const button in this.buttons) {
-            this.buttons[button].last = this.buttons[button].current;
-        }
+        super.read();
         if (this.gamePad != null) {
             let gp = navigator.getGamepads()[this.gamePad];
             // Get AXES
+            // Move Right
             if (gp.axes[0] > this.deadzone) this.buttons.moveRight.current = gp.axes[0];
             else this.buttons.moveRight.current = 0;
+            // Select Right
+            if (gp.axes[0] > this.selectzone) this.buttons.selectRight.current = gp.axes[0];
+            else this.buttons.selectRight.current = 0;
+            // Move Left
             if (gp.axes[0] < this.deadzone * -1) this.buttons.moveLeft.current = gp.axes[0] * -1;
             else this.buttons.moveLeft.current = 0;
+            // Select Left
+            if (gp.axes[0] < this.selectzone * -1) this.buttons.selectLeft.current = gp.axes[0] * -1;
+            else this.buttons.selectLeft.current = 0;
+            // Move Down
             if (gp.axes[1] > this.deadzone) this.buttons.moveDown.current = gp.axes[1];
             else this.buttons.moveDown.current = 0;
+            // Select Down
+            if (gp.axes[1] > this.selectzone) this.buttons.selectDown.current = gp.axes[1];
+            else this.buttons.selectDown.current = 0;
+            // Move Up
             if (gp.axes[1] < this.deadzone * -1) this.buttons.moveUp.current = gp.axes[1] * -1;
             else this.buttons.moveUp.current = 0;
+            // Select Up
+            if (gp.axes[1] < this.selectzone * -1) this.buttons.selectUp.current = gp.axes[1] * -1;
+            else this.buttons.selectUp.current = 0;
             // If either axis of stick 2 is outside of deadzone
             if (Math.abs(gp.axes[2]) >= this.deadzone || Math.abs(gp.axes[3]) >= this.deadzone) {
                 game.player.controller.aimX = gp.axes[2] * 100;
@@ -352,7 +372,7 @@ class Touch extends Controller {
         };
     }
 
-    setupInput() {
+    setupInputs() {
         window.addEventListener('touchstart', (event) => {
             event.preventDefault();
             event.stopImmediatePropagation();
@@ -384,86 +404,81 @@ class Touch extends Controller {
     }
 
     read() {
-        // Remember the last state of every command
-        for (const button in this.buttons) {
-            this.buttons[button].last = this.buttons[button].current;
-        }
-        if (this.touch.enabled) {
-            if (this.touch.event.target == canvas) {
-                let touchLeftFound = false;
-                let touchRightFound = false;
-                for (const touch of this.touch.event.targetTouches) {
-                    let touchCoord = getCanvasRelative(touch);
-                    // Check for touchbutton inventory 1 Rect collidepoint
-                    if (game.player.interface.touchButton.inventory1.collidePoint(touchCoord.x, touchCoord.y))
-                        game.player.character.item = 0;
-                    if (game.player.interface.touchButton.inventory2.collidePoint(touchCoord.x, touchCoord.y))
-                        game.player.character.item = 1;
-                    // Check for left touch
-                    let touchX = touchCoord.x - this.touch.left.pos.x;
-                    let touchY = touchCoord.y - (game.window.h - this.touch.left.pos.y);
-                    let distance = Math.sqrt(touchX ** 2 + touchY ** 2);
-                    if (distance < this.touch.left.radius * 2) {
+        super.read();
+        if (this.touch.event.target == canvas) {
+            let touchLeftFound = false;
+            let touchRightFound = false;
+            for (const touch of this.touch.event.targetTouches) {
+                let touchCoord = getCanvasRelative(touch);
+                // Check for touchbutton inventory 1 Rect collidepoint
+                if (game.player.interface.touchButton.inventory1.collidePoint(touchCoord.x, touchCoord.y))
+                    game.player.character.item = 0;
+                if (game.player.interface.touchButton.inventory2.collidePoint(touchCoord.x, touchCoord.y))
+                    game.player.character.item = 1;
+                // Check for left touch
+                let touchX = touchCoord.x - this.touch.left.pos.x;
+                let touchY = touchCoord.y - (game.window.h - this.touch.left.pos.y);
+                let distance = Math.sqrt(touchX ** 2 + touchY ** 2);
+                if (distance < this.touch.left.radius * 2) {
 
-                        touchLeftFound = true;
+                    touchLeftFound = true;
 
-                        if (distance > this.touch.right.radius)
-                            if (game.match.ticks - this.touch.left.lastBoostTouch <= 10)
-                                this.buttons.boost.current = 1;
-                        //Normalize, but add a little bonus outside of main ring
-                        touchX /= (distance / this.touch.left.radius) * 100;
-                        touchY /= (distance / this.touch.left.radius) * 100;
+                    if (distance > this.touch.right.radius)
+                        if (game.match.ticks - this.touch.left.lastBoostTouch <= 10)
+                            this.buttons.boost.current = 1;
+                    //Normalize, but add a little bonus outside of main ring
+                    touchX /= (distance / this.touch.left.radius) * 100;
+                    touchY /= (distance / this.touch.left.radius) * 100;
 
-                        //Cap the bonus at 1
-                        if (touchX > 1) touchX = 1;
-                        if (touchX > 1) touchX = 1;
+                    //Cap the bonus at 1
+                    if (touchX > 1) touchX = 1;
+                    if (touchX > 1) touchX = 1;
 
-                        //Attach to movement functions
-                        if (touchX < 0) this.buttons.moveLeft.current = Math.abs(touchX);
-                        if (touchX > 0) this.buttons.moveRight.current = Math.abs(touchX);
-                        if (touchY < 0) this.buttons.moveUp.current = Math.abs(touchY);
-                        if (touchY > 0) this.buttons.moveDown.current = Math.abs(touchY);
+                    //Attach to movement functions
+                    if (touchX < 0) this.buttons.moveLeft.current = Math.abs(touchX);
+                    if (touchX > 0) this.buttons.moveRight.current = Math.abs(touchX);
+                    if (touchY < 0) this.buttons.moveUp.current = Math.abs(touchY);
+                    if (touchY > 0) this.buttons.moveDown.current = Math.abs(touchY);
 
-                    }
-                    // Check for right touch
-                    touchX = touchCoord.x - (game.window.w - this.touch.right.pos.x);
-                    touchY = touchCoord.y - (game.window.h - this.touch.right.pos.y);
-                    distance = Math.sqrt(touchX ** 2 + touchY ** 2);
-                    if (distance < this.touch.right.radius * 2) {
-                        touchRightFound = true;
-                        //Button was pressed                            
-                        if (distance > this.touch.right.radius) this.buttons.fire.current = 1;
-                        //Normalize, then change the aim angle
-                        touchX /= distance;
-                        touchY /= distance;
-                        this.aimX = touchX;
-                        this.aimY = touchY;
-
-                    }
                 }
-                if (!touchLeftFound) {
-                    this.buttons.moveLeft.current = 0;
-                    this.buttons.moveRight.current = 0;
-                    this.buttons.moveUp.current = 0;
-                    this.buttons.moveDown.current = 0;
+                // Check for right touch
+                touchX = touchCoord.x - (game.window.w - this.touch.right.pos.x);
+                touchY = touchCoord.y - (game.window.h - this.touch.right.pos.y);
+                distance = Math.sqrt(touchX ** 2 + touchY ** 2);
+                if (distance < this.touch.right.radius * 2) {
+                    touchRightFound = true;
+                    //Button was pressed                            
+                    if (distance > this.touch.right.radius) this.buttons.fire.current = 1;
+                    //Normalize, then change the aim angle
+                    touchX /= distance;
+                    touchY /= distance;
+                    this.aimX = touchX;
+                    this.aimY = touchY;
+
                 }
             }
-            if (this.touch.eventType == 'end') {
-                this.buttons.fire.current = 0;
-                this.buttons.boost.current = 0;
-                for (const touch of this.touch.event.changedTouches) {
-                    let touchCoord = getCanvasRelative(touch);
-                    let touchX = touchCoord.x - this.touch.left.pos.x;
-                    let touchY = touchCoord.y - (game.window.h - this.touch.left.pos.y);
-                    let distance = Math.sqrt(touchX ** 2 + touchY ** 2);
-                    if ((distance > this.touch.left.radius) && (distance < (this.touch.left.radius * 2)))
-                        this.touch.left.lastBoostTouch = game.match.ticks;
-                }
-
+            if (!touchLeftFound) {
+                this.buttons.moveLeft.current = 0;
+                this.buttons.moveRight.current = 0;
+                this.buttons.moveUp.current = 0;
+                this.buttons.moveDown.current = 0;
             }
-            this.touch.event = {};
-            this.touch.eventType = {};
         }
+        if (this.touch.eventType == 'end') {
+            this.buttons.fire.current = 0;
+            this.buttons.boost.current = 0;
+            for (const touch of this.touch.event.changedTouches) {
+                let touchCoord = getCanvasRelative(touch);
+                let touchX = touchCoord.x - this.touch.left.pos.x;
+                let touchY = touchCoord.y - (game.window.h - this.touch.left.pos.y);
+                let distance = Math.sqrt(touchX ** 2 + touchY ** 2);
+                if ((distance > this.touch.left.radius) && (distance < (this.touch.left.radius * 2)))
+                    this.touch.left.lastBoostTouch = game.match.ticks;
+            }
+
+        }
+        this.touch.event = {};
+        this.touch.eventType = {};
     }
 
     draw() {

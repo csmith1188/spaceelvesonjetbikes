@@ -95,6 +95,7 @@ class Character {
         this.shadow.src = 'img/sprites/shadow.png';
         this.shadowDraw = true;
         this.deathSFX = sounds.death;
+        this.muted = false;
 
         /*
             ___       _   _
@@ -150,7 +151,7 @@ class Character {
                     // If the player has positive power points (pp)
                     if (this.pp > 2) {
                         // sounds.upBoost.currentTime = 0;
-                        // sounds.upBoost.play();
+                        // if (!this.muted) sounds.upBoost.play();
                         // Set the z momentum to 1 (move upwards)
                         this.mom.z = 1;
                         // Decrease the power points by 1
@@ -167,7 +168,7 @@ class Character {
                 if (this.pp > 60) {
                     this.pp -= 60;
                     sounds.boost.currentTime = 0;
-                    sounds.boost.play();
+                    if (!this.muted) sounds.boost.play();
                     this.speed.x += this.mom.x * 8;
                     this.speed.y += this.mom.y * 8;
                     this.speed.z += this.mom.z * 8;
@@ -377,7 +378,7 @@ class Character {
                 if (c.solid && side) { //If the block is solid
                     if (this == game.player.character) { // Only play for the player until sound ranges are implemented
                         // sounds.wallhit.currentTime = 0;
-                        sounds.wallhit.play();
+                        if (!this.muted) sounds.wallhit.play();
                     }
                     switch (side) { //see which side you collided on
                         case 'front':
@@ -466,28 +467,28 @@ class Character {
                 this.speed.x *= -game.match.map.collideReflect;
                 this.mom.x *= -game.match.map.collideReflect;
                 // sounds.wallhit.currentTime = 0;
-                sounds.wallhit.play();
+                if (!this.muted) sounds.wallhit.play();
             }
             if (this.HB.pos.x > game.match.map.w) {
                 this.HB.pos.x = game.match.map.w;
                 this.speed.x *= -game.match.map.collideReflect;
                 this.mom.x *= -game.match.map.collideReflect;
                 // sounds.wallhit.currentTime = 0;
-                sounds.wallhit.play();
+                if (!this.muted) sounds.wallhit.play();
             }
             if (this.HB.pos.y < 0) {
                 this.HB.pos.y = 0;
                 this.speed.y *= -game.match.map.collideReflect;
                 this.mom.y *= -game.match.map.collideReflect;
                 // sounds.wallhit.currentTime = 0;
-                sounds.wallhit.play();
+                if (!this.muted) sounds.wallhit.play();
             }
             if (this.HB.pos.y > game.match.map.h) {
                 this.HB.pos.y = game.match.map.h;
                 this.speed.y *= -game.match.map.collideReflect;
                 this.mom.y *= -game.match.map.collideReflect;
                 // sounds.wallhit.currentTime = 0;
-                sounds.wallhit.play();
+                if (!this.muted) sounds.wallhit.play();
             }
 
             /*
@@ -502,7 +503,7 @@ class Character {
                 // this.speed.z *= -0.5
                 if (this.hover > 0) {
                     // sounds.groundhit.currentTime = 0;
-                    sounds.groundhit.play();
+                    if (!this.muted) sounds.groundhit.play();
                 }
             }
 

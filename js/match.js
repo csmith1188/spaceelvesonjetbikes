@@ -414,6 +414,7 @@ class Match_ForHonor extends Match {
             { name: getName(), team: 1, gfx: 'img/sprites/dark2', color: [0, 0, 255] }
         );
         this.bots[this.bots.length - 1].controller = new Controller();
+        this.bots[this.bots.length - 1].name = 'Player 2'; 
         this.blocks.push(new Block(allID++, (this.map.w / 2), (this.map.h / 2) - 0, 0, 0, 0, 0, { solid: false, visible: false }));
         game.player.camera = new Camera({ target: this.blocks[this.blocks.length - 1] });
         this.map.blocks.push(new WeaponPickup(allID++, (this.map.w / 2) - 100, (this.map.h / 2), 0, 0, 0, 0, { weapon: 'pistol', pickupDelay: 0 }));

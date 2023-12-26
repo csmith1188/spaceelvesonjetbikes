@@ -21,9 +21,10 @@ class Interface {
         this.touchButton = {
             inventory1: {},
             inventory2: {},
-            inventory3: {}
+            pause: {}
         }
         this.minimapRadius = 80;
+        this.menuIndex = -1;
         this.menus = [];
         this.drawFunc = []; // A list of functions to draw during the draw step
     }
@@ -422,18 +423,34 @@ class Menu {
     }
 
     step() {
-        // convert from center of screen to top left of screen
-        let x = game.window.w / 2;
-        let y = game.window.h / 2;
-        // get current mouse position
-        x += game.player.controller.aimX;
-        y += game.player.controller.aimY;
+        let x, y;
+        // if the player's controller is keyboard
+        if (game.player.controller.type == 'keyboard' || game.player.controller.type == 'touch') {
+            // convert from center of screen to top left of screen
+            x = game.window.w / 2;
+            y = game.window.h / 2;
+            // get current mouse position
+            x += game.player.controller.aimX;
+            y += game.player.controller.aimY;
+            game.player.interface.menuIndex = -1;
+            console.log(x, y);
+        } else if (game.player.controller.type == 'gamepad') {
+            if (game.player.controller.buttons.selectUp.current && !game.player.controller.buttons.selectUp.last) {
+                game.player.interface.menuIndex--;
+                if (game.player.interface.menuIndex < 0) game.player.interface.menuIndex = this.buttons.length - 1;
+            }
+            if (game.player.controller.buttons.selectDown.current && !game.player.controller.buttons.selectDown.last) {
+                game.player.interface.menuIndex++;
+                if (game.player.interface.menuIndex >= this.buttons.length) game.player.interface.menuIndex = 0;
+            }
+        }
         // check if mouse is inside any button
         for (const button of this.buttons) {
             // check if mouse is inside the button
             if (
                 x >= button.area.x + this.shape.x && x <= button.area.x + this.shape.x + button.area.w &&
-                y >= button.area.y + this.shape.y && y <= button.area.y + this.shape.y + button.area.h
+                y >= button.area.y + this.shape.y && y <= button.area.y + this.shape.y + button.area.h ||
+                game.player.interface.menuIndex == this.buttons.indexOf(button)
             ) {
                 button.selected = true;
                 // check if the button is being pressed

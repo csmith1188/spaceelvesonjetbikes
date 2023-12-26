@@ -3,8 +3,6 @@ class Game {
         this.window = {
             w: 900,
             h: 600,
-            dw: 900,
-            dh: 600,
             cx: this.w / 2,
             cy: this.h / 2,
         }
@@ -13,7 +11,7 @@ class Game {
         this.debug = false;
         this.allID = 0;
         this.pauseMenu = new Menu_Pause([], new Rect(0, 0, 170, 170));
-        this.awaitingInputMenu = new Menu_Awaiting([], new Rect(0, 0, 250, 50));
+        this.awaitingInputMenu = new Menu_Awaiting([], new Rect(0, 0, 350, 50));
         this.player = new Player();
         this.ticks = 0;
         this.lastTimestamp = 0;
@@ -43,34 +41,20 @@ class Game {
         canvas.width = this.window.w;
         canvas.height = this.window.h;
 
-        for (const bot of [this.player, ...this.match.bots]) {
-            if (bot.controller.type == "controller") {
-                this.awaitingInput = true;
-                if (lastDevice !== null) {
-                    console.log(lastDevice);
-                    // if the lastDevice was keyboard, touch, pad or something else
-                    if (lastDevice == "keyboard") {
-                        bot.controller = new Keyboard(bot);
-                    } else if (lastDevice == "touch") {
-                        bot.controller = new Touch(bot);
-                    } else {
-                        bot.controller = new GamePad(bot, lastDevice);
-                    }
-                    this.awaitingInput = false;
-                }
+        this.checkInput();
+
+        if (!this.paused && !this.awaitingInput) { // If the game is not paused or awaiting input
+            for (const bot of [this.player, ...this.match.bots]) {
+                bot.controller.read(); // Read the input from every player and bot
             }
-        }
 
-        if (!this.paused && !this.awaitingInput) {
-            this.player.controller.read();
+            this.match.step(); // Then step the match
 
-            this.match.step();
-
-        } else if (this.awaitingInput) {
-            this.awaitingInputMenu.step();
+        } else if (this.awaitingInput) { // If the game is awaiting input
+            this.awaitingInputMenu.step(); // Show the input menu
         } else {
-            this.player.controller.read();
-            this.pauseMenu.step();
+            this.player.controller.read(); // Read the input from the main player
+            this.pauseMenu.step(); // Show the pause menu
         }
 
         // Move camera to next sensible target when player character is inactive or missing
@@ -121,8 +105,7 @@ class Game {
 
     draw() {
         if (this.awaitingInput) {
-
-            this.awaitingInputMenu.draw("Awaiting Controller Input...");
+            this.awaitingInputMenu.draw("Awaiting Controller Input...\n" + this.awaitingInput);
         } else {
 
             //Draw Map
@@ -144,4 +127,29 @@ class Game {
 
     }
 
+    checkInput() {
+        for (const bot of [this.player, ...this.match.bots]) {
+            if (bot.controller.type == "controller") {
+                this.awaitingInput = bot.name;
+                if (lastDevice !== null) {
+                    for (const other of [this.player, ...this.match.bots]) {
+                        if (other.controller.type == lastDevice) {
+                            return;
+                        }
+                    }
+                    // if the lastDevice was keyboard, touch, pad or something else
+                    if (lastDevice == "keyboard") {
+                        bot.controller = new Keyboard(bot);
+                    } else if (lastDevice == "touch") {
+                        bot.controller = new Touch(bot);
+                    } else {
+                        bot.controller = new GamePad(bot, lastDevice);
+                    }
+                    lastDevice = null;
+                    this.awaitingInput = false;
+                }
+                break;
+            }
+        }
+    }
 }
