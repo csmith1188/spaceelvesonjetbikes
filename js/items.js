@@ -174,7 +174,7 @@ class Rifle extends Item {
                 let zaim = aimZ;
                 this.ammo--; // consume a bullet
                 this.shootSFX.currentTime = 0;
-                if (!this.owner.character.muted) this.shootSFX.play(); // play shoot sound
+                if (!user.muted) this.shootSFX.play(); // play shoot sound
                 //find the distance from player to mouse with pythagorean theorem
                 let distance = ((xaim ** 2) + (yaim ** 2)) ** 0.5;
                 //Normalize the dimension distance by the real distance (ratio)
@@ -324,7 +324,8 @@ class Flamer extends Item {
                 this.nextCool = game.match.ticks + this.coolDown;
                 this.ammo--; // consume a bullet
                 this.shootSFX.currentTime = 0;
-                if (!this.owner.character.muted) this.shootSFX.play(); // play shoot sound
+                // if (!user.muted) this.shootSFX.play(); // play shoot sound
+                this.shootSFX.play(); // play shoot sound
                 for (let i = 0; i < 5; i++) {
 
                     // There's a serious bug here.
@@ -422,7 +423,7 @@ class Lance extends Item {
                 this.nextCool = game.match.ticks + this.coolDown;
                 this.ammo--; // consume a bullet
                 this.shootSFX.currentTime = 0;
-                if (!this.owner.character.muted) this.shootSFX.play(); // play shoot sound
+                if (!user.muted) this.shootSFX.play(); // play shoot sound
                 //find the distance from player to mouse with pythagorean theorem
                 let distance = ((aimX ** 2) + (aimY ** 2)) ** 0.5;
                 //Normalize the dimension distance by the real distance (ratio)
@@ -585,7 +586,7 @@ class Sword extends Item {
                 // Set next cooldown
                 this.nextCool = game.match.ticks + this.coolDown;
                 this.shootSFX.currentTime = 0;
-                if (!this.owner.character.muted) this.shootSFX.play(); // play shoot sound
+                if (!user.muted) this.shootSFX.play(); // play shoot sound
                 //find the distance from player to mouse with pythagorean theorem
                 let distance = ((aimX ** 2) + (aimY ** 2)) ** 0.5;
                 //Normalize the dimension distance by the real distance (ratio)
