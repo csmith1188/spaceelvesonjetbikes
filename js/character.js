@@ -528,11 +528,6 @@ class Character {
                         this.HB.pos.y,
                         30, 0, 0, 0,
                         { weapon: this.inventory[this.item].weapon, ammo: this.inventory[this.item].ammo, livetime: game.match.despawnTimer, dying: true, speed: new Vect3(this.speed.x, this.speed.y, 20) }))
-                if (this === game.player.character) {
-                    game.match.paused = true;
-                    // game.player.findTarget();
-                    // game.player.camera.target = game.player.target;
-                }
             }
         }
     }

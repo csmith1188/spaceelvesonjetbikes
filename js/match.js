@@ -174,6 +174,35 @@ class Match_ForEver extends Match {
                     ctx.fillStyle = "#FFFFFF";
                     // then draw the text in white
                     ctx.fillText(`Waves: ${game.match.waves}`, game.window.w / 2, game.window.h / 2);
+                    // draw restart prompt
+                    let promptButton;
+                    switch (game.player.controller.type) {
+                        case 'keyboard':
+                            promptButton = 'Q';
+                            break;
+                        case 'touch':
+                            promptButton = 'Weapon';
+                            break;
+                        case 'gamepad':
+                            promptButton = 'X';
+                            break;
+                        default:
+                            promptButton = 'Weapon';
+                            break;
+                    }
+                    ctx.font = "20px Jura";
+                    ctx.textAlign = "center";
+                    // first draw the text in black to create a shadow
+                    ctx.fillStyle = "#000000";
+                    ctx.fillText(`Press [ ${promptButton} ] to restart`, game.window.w / 2 + 2, game.window.h / 2 + 42);
+                    ctx.fillStyle = "#FFFFFF";
+                    // then draw the text in white
+                    ctx.fillText(`Press [ ${promptButton} ] to restart`, game.window.w / 2, game.window.h / 2 + 40);
+                    if (game.player.controller.type == 'touch') {
+                        let img = new Image();
+                        img.src = 'img/sprites/inventory/sword_inactive.png';
+                        ctx.drawImage(img, (game.window.w / 2) - 150, game.window.h - 64, 64, 64);
+                    }
                 }
             }.bind(this)
         );
@@ -203,16 +232,16 @@ class Match_ForEver extends Match {
         */
         this.map.runFunc.push(
             () => {
-                /*
-                  ___                _
-                 | __|_ _  ___ _ __ (_)___ ___
-                 | _|| ' \/ -_) '  \| / -_|_-<
-                 |___|_||_\___|_|_|_|_\___/__/
-
-                */
                 if (game.player.character.active && game.match.ticks % this.waveTime == 0) {
                     this.waves++; // 1 wave every 60 seconds
-
+                    
+                    /*
+                      ___                _
+                     | __|_ _  ___ _ __ (_)___ ___
+                     | _|| ' \/ -_) '  \| / -_|_-<
+                     |___|_||_\___|_|_|_|_\___/__/
+    
+                    */
                     for (let i = 0; i < Math.ceil(this.waves / 2); i++) {
                         this.bots.push(new Bot()) //Kevin / Jae'Sin
                         this.bots[this.bots.length - 1].character = new Character(
@@ -332,6 +361,11 @@ class Match_ForEver extends Match {
                         }
                     }
                 }
+
+                if (!game.player.character.active) {
+                    if (game.player.controller.buttons.inventory1.current )
+                        game.match = new Match_ForEver();
+                }
             }
         )
     }
@@ -414,9 +448,9 @@ class Match_ForHonor extends Match {
             { name: getName(), team: 1, gfx: 'img/sprites/dark2', color: [0, 0, 255] }
         );
         this.bots[this.bots.length - 1].controller = new Controller();
-        this.bots[this.bots.length - 1].name = 'Player 2'; 
+        this.bots[this.bots.length - 1].name = 'Player 2';
         this.blocks.push(new Block(allID++, (this.map.w / 2), (this.map.h / 2) - 0, 0, 0, 0, 0, { solid: false, visible: false }));
-        game.player.camera.target =this.blocks[this.blocks.length - 1];
+        game.player.camera.target = this.blocks[this.blocks.length - 1];
         this.map.blocks.push(new WeaponPickup(allID++, (this.map.w / 2) - 100, (this.map.h / 2), 0, 0, 0, 0, { weapon: 'pistol', pickupDelay: 0 }));
         this.map.blocks.push(new WeaponPickup(allID++, (this.map.w / 2), (this.map.h / 2), 0, 0, 0, 0, { weapon: 'rifle', pickupDelay: 0 }));
         this.map.blocks.push(new WeaponPickup(allID++, (this.map.w / 2) + 100, (this.map.h / 2), 0, 0, 0, 0, { weapon: 'flamer', pickupDelay: 0 }));
