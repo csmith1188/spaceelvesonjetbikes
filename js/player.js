@@ -225,7 +225,7 @@ class Player extends Bot {
         this.name = 'Player 1'
         this.character = new Character(allID++, 0, 0, this);
         this.controller = new Controller(this);
-        this.camera = new Camera({ target: this.character });;
+        this.camera = new Camera(this, { target: this.character });
         this.interface = new Interface(this);
         // Options
         if (typeof options === 'object')

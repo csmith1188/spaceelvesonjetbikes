@@ -57,28 +57,7 @@ class Game {
             this.pauseMenu.step(); // Show the pause menu
         }
 
-        // Move camera to next sensible target when player character is inactive or missing
-        if (!this.player.character.active) {
-            if (this.player.character.lastColNPC)
-                if (this.player.character.lastColNPC.active)
-                    this.player.camera.target = this.player.character.lastColNPC
-                else
-                    for (const npc of npcs) {
-                        if (npc.active && npc.team == this.player.character.team)
-                            this.player.camera.target = npc
-                    }
-            if (!this.player.camera.target)
-                for (const npc of npcs) {
-                    if (npc.active)
-                        this.player.camera.target = npc
-                }
-        }
-
-        //Update Camera Position
-        if (this.player.camera.target) {
-            this.player.camera.x = this.player.camera.target.HB.pos.x;
-            this.player.camera.y = this.player.camera.target.HB.pos.y;
-        }
+        this.player.camera.update(); // Update the camera
 
         //Performance Check
         const currentTimestamp = performance.now();

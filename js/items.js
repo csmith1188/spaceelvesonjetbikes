@@ -76,7 +76,7 @@ class Pistol extends Item {
                 this.nextCool = game.match.ticks + this.coolDown;
                 this.ammo--; // consume a bullet
                 this.shootSFX.currentTime = 0;
-                if (!this.owner.muted) this.shootSFX.play(); // play shoot sound
+                if (!user.muted) this.shootSFX.play(); // play shoot sound
                 //find the distance from player to mouse with pythagorean theorem
                 let distance = ((aimX ** 2) + (aimY ** 2)) ** 0.5;
                 //Normalize the dimension distance by the real distance (ratio)
@@ -254,6 +254,11 @@ class Rifle extends Item {
                 user.speed.x -= (aimX / distance) * 10;
                 user.speed.y -= (aimY / distance) * 10;
                 user.speed.z -= (aimZ / distance) * 10;
+
+                // Shake the camera
+                if (user.parent.camera) {
+                    user.parent.camera.shakeTime = 10;
+                }
 
             } else {
                 if (this.owner instanceof Player)

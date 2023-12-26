@@ -575,6 +575,10 @@ class Bullet extends Block {
                         c.trigger(this, side);
                         this.active = false;
                         this.hitSplash();
+                        // if the c's parent has a camera, shake it
+                        if (c.parent.camera) {
+                            c.parent.camera.shakeTime = 10;
+                        }
                     }
                 }
 
