@@ -166,7 +166,6 @@ class Bot {
                     }
                 }
             } else {
-                console.log('Target is self');
                 this.controller.resetButtons();
             }
         } else {
@@ -194,13 +193,13 @@ class Bot {
         this.character.target = closestPlayer;
 
         // Look for pickups
-        if (this.character.target === null && this.character.hp < 25)
+        if (this.character.target === null && this.character.hp < 75)
             this.character.target = this.findClosestBlockByType(['health']);
         if (this.character.target === null && this.character.inventory.length < 2)
             this.character.target = this.findClosestBlockByType(['weapon']);
-        if (this.character.target === null && this.character.ammo['ammo_ballistic'] < 5)
+        if (this.character.target === null && this.character.ammo.ballistic < 5)
             this.character.target = this.findClosestBlockByType(['ammo_ballistic']);
-        if (this.character.target === null && this.character.ammo['ammo_plasma'] < 5)
+        if (this.character.target === null && this.character.ammo.plasma < 5)
             this.character.target = this.findClosestBlockByType(['ammo_plasma']);
 
         //Try to get back into formation

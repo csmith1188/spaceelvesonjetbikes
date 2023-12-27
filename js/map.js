@@ -250,29 +250,6 @@ class Map {
         ctx.fillStyle = `rgba(${this.lightValue[0]}, ${this.lightValue[1]}, ${this.lightValue[2]}, ${this.lightValue[3]})`
         ctx.fillRect(0, 0, game.window.w, game.window.h);
         // ctx.globalCompositeOperation = "source-over";
-
-        // // Create a radial gradient for the light
-        // let gradient = ctx.createRadialGradient(
-        //     game.player.character.HB.pos.x + game.player.character.HB.volume.x / 2, // x-coordinate of gradient's start circle
-        //     game.player.character.HB.pos.y + game.player.character.HB.volume.y / 2, // y-coordinate of gradient's start circle
-        //     0, // radius of the start circle
-        //     game.player.character.HB.pos.x + game.player.character.HB.volume.x / 2, // x-coordinate of gradient's end circle
-        //     game.player.character.HB.pos.y + game.player.character.HB.volume.y / 2, // y-coordinate of gradient's end circle
-        //     100 // radius of the end circle
-        // );
-        // gradient.addColorStop(0, 'rgba(255, 255, 255, 1)');
-        // gradient.addColorStop(1, 'rgba(255, 255, 255, 0)');
-
-        // // Set the global composite operation to 'lighter'
-        // ctx.globalCompositeOperation = 'lighter';
-
-        // // Draw the light
-        // ctx.fillStyle = gradient;
-        // ctx.fillRect(0, 0, canvas.width, canvas.height);
-
-        // // Reset the global composite operation
-        // ctx.globalCompositeOperation = 'source-over';
-
     }
 
 }

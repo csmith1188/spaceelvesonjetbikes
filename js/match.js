@@ -370,6 +370,13 @@ class Match_ForEver extends Match {
 
                 */
                 if (!game.player.character.active) {
+                    if (game.match.bots.length) {
+                        // loop through all the bots and mute their characters
+                        for (let i = 0; i < game.match.bots.length; i++) {
+                            game.match.bots[i].character.muted = true;
+                        }
+                        game.player.camera.target = game.match.bots[0].character; // set camera to first bot
+                    }
                     if (game.player.controller.buttons.inventory1.current)
                         game.match = new Match_ForEver();
                 }
