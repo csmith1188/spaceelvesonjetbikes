@@ -7,7 +7,7 @@ class Match {
         this.map = new Map();
         this.bots = [];
         this.blocks = []; // Different from map blocks. Think pickups and dropped items
-        this.runFuncs = []; // A list of functions to run every step
+        this.runFunc = []; // A list of functions to run every step
         game.player.interface.drawFunc = []; // clear other interface draw functions
     }
 
@@ -48,8 +48,8 @@ class Match {
                 }
             }
 
-            // Run all runFuncs
-            for (const func in this.runFucts) {
+            // Run all runFunc
+            for (const func of this.runFunc) {
                 func();
             }
 
@@ -163,7 +163,7 @@ class Match_ForEver extends Match {
         // Waves when dead
         game.player.interface.drawFunc.push(
             function () {
-                if (!game.player.character.active) {
+                if (!game.player.character.active && !game.paused) {
                     // draw number of waves to center of screen
                     ctx.fillStyle = "#FFFFFF";
                     ctx.font = "36px Jura";
@@ -230,11 +230,11 @@ class Match_ForEver extends Match {
          #     # #    # # #    #    #######  ####   ####  #
 
         */
-        this.map.runFunc.push(
+        this.runFunc.push(
             () => {
                 if (game.player.character.active && game.match.ticks % this.waveTime == 0) {
                     this.waves++; // 1 wave every 60 seconds
-                    
+
                     /*
                       ___                _
                      | __|_ _  ___ _ __ (_)___ ___
@@ -362,8 +362,15 @@ class Match_ForEver extends Match {
                     }
                 }
 
+                /*
+                  ___        _            _     __  __      _      _
+                 | _ \___ __| |_ __ _ _ _| |_  |  \/  |__ _| |_ __| |_
+                 |   / -_|_-<  _/ _` | '_|  _| | |\/| / _` |  _/ _| ' \
+                 |_|_\___/__/\__\__,_|_|  \__| |_|  |_\__,_|\__\__|_||_|
+
+                */
                 if (!game.player.character.active) {
-                    if (game.player.controller.buttons.inventory1.current )
+                    if (game.player.controller.buttons.inventory1.current)
                         game.match = new Match_ForEver();
                 }
             }

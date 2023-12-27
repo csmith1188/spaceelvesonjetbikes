@@ -434,9 +434,11 @@ class Touch extends Controller {
                 this.lastTouch = touchCoord;
                 // Check for touchbutton inventory 1 Rect collidepoint
                 if (game.player.interface.touchButton.inventory1.collidePoint(touchCoord.x, touchCoord.y))
-                    game.player.character.item = 0;
+                    this.buttons.inventory1.current = 1;
+                else this.buttons.inventory1.current = 0;
                 if (game.player.interface.touchButton.inventory2.collidePoint(touchCoord.x, touchCoord.y))
-                    game.player.character.item = 1;
+                    this.buttons.inventory2.current = 1;
+                else this.buttons.inventory2.current = 0;
                 if (game.player.interface.touchButton.pause.collidePoint(touchCoord.x, touchCoord.y) && this.touch.eventType != 'move')
                     game.paused = !game.paused;
                 // Check for left touch
@@ -517,61 +519,64 @@ class Touch extends Controller {
     */
     draw() {
         super.draw();
-        ctx.globalAlpha = 0.05;
-        ctx.lineWidth = 8;
-        ctx.strokeStyle = "#FFFFFF";
-        ctx.fillStyle = "#000000";
-        /*
-          _         __ _     _               _
-         | |   ___ / _| |_  | |_ ___ _  _ __| |_
-         | |__/ -_)  _|  _| |  _/ _ \ || / _| ' \
-         |____\___|_|  \__|  \__\___/\_,_\__|_||_|
 
-        */
-        ctx.beginPath();
-        ctx.arc(
-            this.touch.left.pos.x,
-            game.window.h - this.touch.left.pos.y,
-            this.touch.left.radius * 2,
-            0, 2 * Math.PI);
-        ctx.closePath();
-        ctx.fill()
-        ctx.stroke();
-        ctx.beginPath();
-        ctx.arc(
-            this.touch.left.pos.x,
-            game.window.h - this.touch.left.pos.y,
-            this.touch.left.radius,
-            0, 2 * Math.PI);
-        ctx.closePath();
-        ctx.fill()
-        ctx.stroke();
-        /*
-          ___ _      _   _     _               _
-         | _ (_)__ _| |_| |_  | |_ ___ _  _ __| |_
-         |   / / _` | ' \  _| |  _/ _ \ || / _| ' \
-         |_|_\_\__, |_||_\__|  \__\___/\_,_\__|_||_|
-               |___/
-        */
-        ctx.beginPath();
-        ctx.arc(
-            game.window.w - this.touch.right.pos.x,
-            game.window.h - this.touch.right.pos.y,
-            this.touch.right.radius * 2,
-            0, 2 * Math.PI);
-        ctx.closePath();
-        ctx.fill()
-        ctx.stroke();
-        ctx.beginPath();
-        ctx.arc(
-            game.window.w - this.touch.right.pos.x,
-            game.window.h - this.touch.right.pos.y,
-            this.touch.right.radius,
-            0, 2 * Math.PI);
-        ctx.closePath();
-        ctx.fill()
-        ctx.stroke();
-        ctx.globalAlpha = 1;
+        if (!game.paused && this.owner.character.active) {
+            ctx.globalAlpha = 0.05;
+            ctx.lineWidth = 8;
+            ctx.strokeStyle = "#FFFFFF";
+            ctx.fillStyle = "#000000";
+            /*
+              _         __ _     _               _
+             | |   ___ / _| |_  | |_ ___ _  _ __| |_
+             | |__/ -_)  _|  _| |  _/ _ \ || / _| ' \
+             |____\___|_|  \__|  \__\___/\_,_\__|_||_|
+    
+            */
+            ctx.beginPath();
+            ctx.arc(
+                this.touch.left.pos.x,
+                game.window.h - this.touch.left.pos.y,
+                this.touch.left.radius * 2,
+                0, 2 * Math.PI);
+            ctx.closePath();
+            ctx.fill()
+            ctx.stroke();
+            ctx.beginPath();
+            ctx.arc(
+                this.touch.left.pos.x,
+                game.window.h - this.touch.left.pos.y,
+                this.touch.left.radius,
+                0, 2 * Math.PI);
+            ctx.closePath();
+            ctx.fill()
+            ctx.stroke();
+            /*
+              ___ _      _   _     _               _
+             | _ (_)__ _| |_| |_  | |_ ___ _  _ __| |_
+             |   / / _` | ' \  _| |  _/ _ \ || / _| ' \
+             |_|_\_\__, |_||_\__|  \__\___/\_,_\__|_||_|
+                   |___/
+            */
+            ctx.beginPath();
+            ctx.arc(
+                game.window.w - this.touch.right.pos.x,
+                game.window.h - this.touch.right.pos.y,
+                this.touch.right.radius * 2,
+                0, 2 * Math.PI);
+            ctx.closePath();
+            ctx.fill()
+            ctx.stroke();
+            ctx.beginPath();
+            ctx.arc(
+                game.window.w - this.touch.right.pos.x,
+                game.window.h - this.touch.right.pos.y,
+                this.touch.right.radius,
+                0, 2 * Math.PI);
+            ctx.closePath();
+            ctx.fill()
+            ctx.stroke();
+            ctx.globalAlpha = 1;
+        }
 
         /*
           ___
