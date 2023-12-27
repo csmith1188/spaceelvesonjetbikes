@@ -27,9 +27,8 @@ Dark elves believe everything is random:
 #########   ########          ###        ########### ###    ###  ########     ###
 -->
 
-- Input controller matching
-- ISO draw
 - Finish menus from controllers
+- ISO draw
 - Create more bullet types
 - Inventory Management
 -- X is pickup, A is always Sword, never drop A
@@ -40,7 +39,6 @@ Dark elves believe everything is random:
 - Waves and Wind
 - A* pathing
 - Gamepad and touch screen buttons
-- Keyboard, Mouse, Touch, Gamepad classes
 - ?? Only draw in camera
 - Shoot along z rotation in iso view
 - Bots always shoot at z axis in every view (no hiding on top of blocks)

@@ -427,7 +427,7 @@ class Menu {
     step() {
         let x, y;
         // if the player's controller is keyboard
-        if (game.player.controller.type == 'keyboard' || game.player.controller.type == 'touch') {
+        if (game.player.controller.type == 'keyboard') {
             // convert from center of screen to top left of screen
             x = game.window.w / 2;
             y = game.window.h / 2;
@@ -435,7 +435,11 @@ class Menu {
             x += game.player.controller.aimX;
             y += game.player.controller.aimY;
             game.player.interface.menuIndex = -1;
-            console.log(x, y);
+        } else if (game.player.controller.type == 'touch') {
+            // convert from center of screen to top left of screen
+            x = game.player.controller.lastTouch.x;
+            y = game.player.controller.lastTouch.y;
+            game.player.interface.menuIndex = -1;
         } else if (game.player.controller.type == 'gamepad') {
             if (game.player.controller.buttons.selectUp.current && !game.player.controller.buttons.selectUp.last) {
                 game.player.interface.menuIndex--;
@@ -456,7 +460,7 @@ class Menu {
             ) {
                 button.selected = true;
                 // check if the button is being pressed
-                if (game.player.controller.buttons.fire.current) {
+                if (game.player.controller.buttons.fire.current || game.player.controller.type == 'touch') {
                     // if so, run the button's function
                     button.func();
                 }

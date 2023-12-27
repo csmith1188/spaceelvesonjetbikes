@@ -370,8 +370,19 @@ class Touch extends Controller {
                 radius: 75
             }
         };
+        this.lastTouch = null;
     }
 
+    /*
+      #####
+     #     # ###### ##### #    # #####
+     #       #        #   #    # #    #
+      #####  #####    #   #    # #    #
+           # #        #   #    # #####
+     #     # #        #   #    # #
+      #####  ######   #    ####  #
+
+    */
     setupInputs() {
         window.addEventListener('touchstart', (event) => {
             event.preventDefault();
@@ -403,6 +414,16 @@ class Touch extends Controller {
         }, { passive: false });
     }
 
+    /*
+     ######
+     #     # ######   ##   #####
+     #     # #       #  #  #    #
+     ######  #####  #    # #    #
+     #   #   #      ###### #    #
+     #    #  #      #    # #    #
+     #     # ###### #    # #####
+
+    */
     read() {
         super.read();
         if (this.touch.event.target == canvas) {
@@ -410,11 +431,14 @@ class Touch extends Controller {
             let touchRightFound = false;
             for (const touch of this.touch.event.targetTouches) {
                 let touchCoord = getCanvasRelative(touch, false);
+                this.lastTouch = touchCoord;
                 // Check for touchbutton inventory 1 Rect collidepoint
                 if (game.player.interface.touchButton.inventory1.collidePoint(touchCoord.x, touchCoord.y))
                     game.player.character.item = 0;
                 if (game.player.interface.touchButton.inventory2.collidePoint(touchCoord.x, touchCoord.y))
                     game.player.character.item = 1;
+                if (game.player.interface.touchButton.pause.collidePoint(touchCoord.x, touchCoord.y) && this.touch.eventType != 'move')
+                    game.paused = !game.paused;
                 // Check for left touch
                 let touchX = touchCoord.x - this.touch.left.pos.x;
                 let touchY = touchCoord.y - (game.window.h - this.touch.left.pos.y);
@@ -481,53 +505,93 @@ class Touch extends Controller {
         this.touch.eventType = {};
     }
 
+    /*
+     ######
+     #     # #####    ##   #    #
+     #     # #    #  #  #  #    #
+     #     # #    # #    # #    #
+     #     # #####  ###### # ## #
+     #     # #   #  #    # ##  ##
+     ######  #    # #    # #    #
+
+    */
     draw() {
         super.draw();
-        if (this.touch.enabled) {
-            ctx.globalAlpha = 0.05;
-            ctx.lineWidth = 8;
-            ctx.strokeStyle = "#FFFFFF";
-            ctx.fillStyle = "#000000";
-            // Left touch
-            ctx.beginPath();
-            ctx.arc(
-                this.touch.left.pos.x,
-                game.window.h - this.touch.left.pos.y,
-                this.touch.left.radius * 2,
-                0, 2 * Math.PI);
-            ctx.closePath();
-            ctx.fill()
-            ctx.stroke();
-            ctx.beginPath();
-            ctx.arc(
-                this.touch.left.pos.x,
-                game.window.h - this.touch.left.pos.y,
-                this.touch.left.radius,
-                0, 2 * Math.PI);
-            ctx.closePath();
-            ctx.fill()
-            ctx.stroke();
-            // Right touch
-            ctx.beginPath();
-            ctx.arc(
-                game.window.w - this.touch.right.pos.x,
-                game.window.h - this.touch.right.pos.y,
-                this.touch.right.radius * 2,
-                0, 2 * Math.PI);
-            ctx.closePath();
-            ctx.fill()
-            ctx.stroke();
-            ctx.beginPath();
-            ctx.arc(
-                game.window.w - this.touch.right.pos.x,
-                game.window.h - this.touch.right.pos.y,
-                this.touch.right.radius,
-                0, 2 * Math.PI);
-            ctx.closePath();
-            ctx.fill()
-            ctx.stroke();
-            ctx.globalAlpha = 1;
-        }
+        ctx.globalAlpha = 0.05;
+        ctx.lineWidth = 8;
+        ctx.strokeStyle = "#FFFFFF";
+        ctx.fillStyle = "#000000";
+        /*
+          _         __ _     _               _
+         | |   ___ / _| |_  | |_ ___ _  _ __| |_
+         | |__/ -_)  _|  _| |  _/ _ \ || / _| ' \
+         |____\___|_|  \__|  \__\___/\_,_\__|_||_|
+
+        */
+        ctx.beginPath();
+        ctx.arc(
+            this.touch.left.pos.x,
+            game.window.h - this.touch.left.pos.y,
+            this.touch.left.radius * 2,
+            0, 2 * Math.PI);
+        ctx.closePath();
+        ctx.fill()
+        ctx.stroke();
+        ctx.beginPath();
+        ctx.arc(
+            this.touch.left.pos.x,
+            game.window.h - this.touch.left.pos.y,
+            this.touch.left.radius,
+            0, 2 * Math.PI);
+        ctx.closePath();
+        ctx.fill()
+        ctx.stroke();
+        /*
+          ___ _      _   _     _               _
+         | _ (_)__ _| |_| |_  | |_ ___ _  _ __| |_
+         |   / / _` | ' \  _| |  _/ _ \ || / _| ' \
+         |_|_\_\__, |_||_\__|  \__\___/\_,_\__|_||_|
+               |___/
+        */
+        ctx.beginPath();
+        ctx.arc(
+            game.window.w - this.touch.right.pos.x,
+            game.window.h - this.touch.right.pos.y,
+            this.touch.right.radius * 2,
+            0, 2 * Math.PI);
+        ctx.closePath();
+        ctx.fill()
+        ctx.stroke();
+        ctx.beginPath();
+        ctx.arc(
+            game.window.w - this.touch.right.pos.x,
+            game.window.h - this.touch.right.pos.y,
+            this.touch.right.radius,
+            0, 2 * Math.PI);
+        ctx.closePath();
+        ctx.fill()
+        ctx.stroke();
+        ctx.globalAlpha = 1;
+
+        /*
+          ___
+         | _ \__ _ _  _ ___ ___
+         |  _/ _` | || (_-</ -_)
+         |_| \__,_|\_,_/__/\___|
+        */
+        // draw a rectangle  in the top right corner for the pause button
+        ctx.fillStyle = "rgba(255,255,255,0.5)";
+        ctx.fillRect(game.window.w - 55, 5, 50, 50);
+        // white outline
+        ctx.strokeStyle = "#FFFFFF";
+        ctx.lineWidth = 2;
+        ctx.strokeRect(game.window.w - 55, 5, 50, 50);
+        // draw a pause icon
+        ctx.fillStyle = "#000000";
+        ctx.fillRect(game.window.w - 45, 15, 10, 30);
+        ctx.fillRect(game.window.w - 25, 15, 10, 30);
+
+        game.player.interface.touchButton.pause = new Rect(game.window.w - 55, 5, 50, 50);
     }
 }
 
