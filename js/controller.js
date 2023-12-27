@@ -86,6 +86,31 @@ class Controller {
         }
     }
 
+    resetButtons() {
+        this.buttons = {
+            moveRight: { current: 0, last: 0 },
+            moveLeft: { current: 0, last: 0 },
+            moveDown: { current: 0, last: 0 },
+            moveUp: { current: 0, last: 0 },
+            jump: { current: 0, last: 0 },
+            brake: { current: 0, last: 0 },
+            boost: { current: 0, last: 0 },
+            fire: { current: 0, last: 0 },
+            altfire: { current: 0, last: 0 },
+            weaponPrevious: { current: 0, last: 0 },
+            weaponNext: { current: 0, last: 0 },
+            start: { current: 0, last: 0 },
+            select: { current: 0, last: 0 },
+            inventory1: { current: 0, last: 0 },
+            inventory2: { current: 0, last: 0 },
+            throw: { current: 0, last: 0 },
+            selectRight: { current: 0, last: 0 },
+            selectLeft: { current: 0, last: 0 },
+            selectUp: { current: 0, last: 0 },
+            selectDown: { current: 0, last: 0 }
+        };
+    }
+
     draw() {
 
     }
