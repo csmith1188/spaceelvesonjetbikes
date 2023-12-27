@@ -114,6 +114,10 @@ class Controller {
     draw() {
 
     }
+
+    rumble() {
+
+    }
 }
 
 /*
@@ -367,6 +371,21 @@ class GamePad extends Controller {
 
     draw() {
         super.draw();
+    }
+
+    rumble(duration, weak, strong) {
+        if (this.gamePad != null) {
+            let gp = navigator.getGamepads()[this.gamePad];
+            if (gp && gp.vibrationActuator) {
+                // Start a vibration effect
+                gp.vibrationActuator.playEffect("dual-rumble", {
+                    startDelay: 0,
+                    duration: duration,
+                    weakMagnitude: weak,
+                    strongMagnitude: strong
+                });
+            }
+        }
     }
 }
 

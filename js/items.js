@@ -108,6 +108,9 @@ class Pistol extends Item {
                         }
                     )
                 );
+
+                if (user.parent.controller.type == 'gamepad') user.parent.controller.rumble(100, 0.5, 0);
+
             } else {
                 if (this.owner instanceof Player)
                     this.reload_empty.play();
@@ -256,9 +259,8 @@ class Rifle extends Item {
                 user.speed.z -= (aimZ / distance) * 10;
 
                 // Shake the camera
-                if (user.parent.camera) {
-                    user.parent.camera.shakeTime = 10;
-                }
+                if (user.parent.camera) user.parent.camera.shakeTime = 10;
+                if (user.parent.controller.type == 'gamepad') user.parent.controller.rumble(100, 0, 1.0);
 
             } else {
                 if (this.owner instanceof Player)
@@ -358,6 +360,9 @@ class Flamer extends Item {
                         )
                     );
                 }
+
+                if (user.parent.controller.type == 'gamepad') user.parent.controller.rumble(100, 0, 0.5);
+
             } else {
                 if (this.owner instanceof Player)
                     this.reload_empty.play();
@@ -522,6 +527,9 @@ class Lance extends Item {
                     }
                 }.bind(game.match.map.bullets[game.match.map.bullets.length - 1])
                 game.match.map.bullets[game.match.map.bullets.length - 1].HB.radius = user.HB.radius + 10;
+
+                // If the user has a gamepad, rumble
+                if (user.parent.controller.type == 'gamepad') user.parent.controller.rumble(100, 1.0, 0);
 
 
             } else {

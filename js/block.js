@@ -576,9 +576,10 @@ class Bullet extends Block {
                         this.active = false;
                         this.hitSplash();
                         // if the c's parent has a camera, shake it
-                        if (c.parent.camera) {
-                            c.parent.camera.shakeTime = 10;
-                        }
+                        if (c.parent.camera) c.parent.camera.shakeTime = 10;
+                        // if the c's controller has a rumble, rumble it
+                        if (c.parent.controller.type == 'gamepad') c.parent.controller.rumble(100, 1.0, 1.0);
+                            
                     }
                 }
 

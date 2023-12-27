@@ -1,6 +1,5 @@
 class Match {
     constructor() {
-        this.startTicks = game.ticks;
         this.despawnTimer = 3600; // 1 minute
         this.ticks = 0;
         this.paused = false;
@@ -107,8 +106,8 @@ class Match_ForEver extends Match {
         */
         game.player.interface.drawFunc.push(
             function () {
-                if (game.match.ticks - this.startTicks < 240) {
-                    let alpha = 1 - (game.match.ticks - this.startTicks) / 240;
+                if (game.match.ticks < 240) {
+                    let alpha = 1 - (game.match.ticks) / 240;
                     //first draw the text in black to create a shadow
                     ctx.fillStyle = "rgba(0,0,0," + alpha + ")";
                     ctx.font = "30px Jura";
