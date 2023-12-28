@@ -208,13 +208,19 @@ class Character {
             // Weapon switching
             if (controller.buttons.inventory1.current != controller.buttons.inventory1.last)
                 if (controller.buttons.inventory1.current)
-                    if (this.inventory.length > 0)
+                    if (this.inventory.length > 0) {
                         this.item = 0;
+                        if (this.parent.interface)
+                            this.parent.interface.itemChangeTicks = game.match.ticks + 180;
+                    }
 
             if (controller.buttons.inventory2.current != controller.buttons.inventory2.last)
                 if (controller.buttons.inventory2.current)
-                    if (this.inventory.length > 1)
+                    if (this.inventory.length > 1) {
                         this.item = 1;
+                        if (this.parent.interface)
+                            this.parent.interface.itemChangeTicks = game.match.ticks + 180;
+                    }
 
             if (controller.buttons.throw.current != controller.buttons.throw.last) {
                 if (controller.buttons.throw.current) {
@@ -222,16 +228,17 @@ class Character {
                         // make a pickup
                         game.match.map.blocks.push(new WeaponPickup(
                             allID++,
-                            this.HB.pos.x,
-                            this.HB.pos.y,
-                            30, 0, 0, 0,
-                            { weapon: this.inventory[this.item].weapon, ammo: this.inventory[this.item].ammo, livetime: game.match.despawnTimer, dying: true, speed: new Vect3(this.speed.x, this.speed.y, 20) }))
+                            new Vect3(this.HB.pos.x, this.HB.pos.y, this.HB.pos.z + this.HB.height / 2),
+                            new Vect3(0, 0, 0),
+                            { weapon: this.inventory[this.item].weapon, ammo: this.inventory[this.item].ammo, livetime: game.match.despawnTimer, dying: true, speed: new Vect3(this.speed.x, this.speed.y, this.speed.z + 20) }))
                         // remove the item from the inventory
                         this.inventory.splice(this.item, 1)[0];
                         // while the length of the inventory is less than  the item slot plus one, reduce the item slot by one
                         while (this.inventory.length <= this.item && this.item > 0) {
                             this.item--;
                         }
+                        if (this.parent.interface)
+                            this.parent.interface.itemChangeTicks = game.match.ticks + 180;
                     }
                 }
             }

@@ -41,7 +41,7 @@ class Pistol extends Item {
     constructor(options) {
         super(options);
         this.type = 'ballistic';
-        this.name = 'Pluton Pistol';
+        this.name = 'Plutonian Pistol';
         this.weapon = 'pistol';
         this.shootSFX = sounds.shoot_pistol;
         this.reload_empty = sounds.reload_empty;
@@ -52,8 +52,8 @@ class Pistol extends Item {
         this.reloadTime = 60;
         this.nextCool = 0;
         this.reloading = false;
-        this.ammo = 10;
-        this.ammoMax = 10;
+        this.ammo = 12;
+        this.ammoMax = 12;
         this.icon = new Image();
         this.icon.src = 'img/sprites/inventory/pistol_active.png';
         this.iconInactive = new Image();
@@ -138,7 +138,7 @@ class Rifle extends Item {
     constructor(options) {
         super(options);
         this.type = 'ballistic';
-        this.name = 'Mercury Rifle';
+        this.name = 'Mercurian Rifle';
         this.weapon = 'rifle';
         this.shootSFX = new Audio('sfx/rifle_shoot.wav');
         this.reload_empty = sounds.reload_empty;
@@ -557,7 +557,7 @@ class Sword extends Item {
         this.reload_empty = sounds.reload_empty;
         this.reload_done = sounds.reload_done;
         this.ppCost = 40;
-        this.range = 100;
+        this.range = 150;
         this.coolDown = 10;
         this.reloadTime = 0;
         this.nextCool = 0;
@@ -656,23 +656,26 @@ class Sword extends Item {
                         ctx.beginPath();
                         ctx.strokeStyle = 'rgba(200,200,200,1)';
                         ctx.lineWidth = 5;
-                        // calculate compareX
+                        // find where the user is on the camera
                         let compareX = game.player.camera.x - this.parent.HB.pos.x;
                         let compareY = game.player.camera.y - this.parent.HB.pos.y;
                         ctx.moveTo(
                             game.window.w / 2 - compareX,
                             game.window.h / 2 - compareY - this.parent.HB.pos.z - this.parent.HB.height / 2
                         );
-                        compareX = this.parent.HB.pos.x - this.HB.pos.x;
-                        compareY = this.parent.HB.pos.y - this.HB.pos.y;
-
-                        let distance = Math.sqrt((compareX ** 2) + (compareY ** 2));
-                        compareX = (compareX / distance) * 60;
-                        compareY = (compareY / distance) * 60;
-
+                        // find where the bullet is on the camera
+                        let targetX = game.player.camera.x - this.HB.pos.x;
+                        let targetY = game.player.camera.y - this.HB.pos.y;
+                        // Compare the user and bullet to find angle
+                        targetX = compareX - targetX;
+                        targetY = compareY - targetY;
+                        let distance = Math.sqrt((targetX ** 2) + (targetY ** 2));
+                        targetX = (targetX / distance) * -60;
+                        targetY = (targetY / distance) * -60;
+                        // Draw line from user to target
                         ctx.lineTo(
-                            game.window.w / 2 - compareX,
-                            game.window.h / 2 - compareY - this.parent.HB.pos.z - this.parent.HB.height / 2
+                            game.window.w / 2 - compareX - targetX,
+                            game.window.h / 2 - compareY - targetY - this.parent.HB.pos.z - this.parent.HB.height / 2
                         );
                         ctx.stroke();
                     }.bind(game.match.map.bullets[game.match.map.bullets.length - 1])

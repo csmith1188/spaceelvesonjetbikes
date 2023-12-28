@@ -114,9 +114,21 @@ class Match_ForEver extends Match {
                                      |_|
         */
         for (let i = 0; i < 10; i++) {
-            this.map.blocks.push(new Ammo_Ballistic(allID++, Math.round(Math.random() * this.map.w), Math.round(Math.random() * this.map.h), 0, 128, 128, 64, { livetime: this.waveTime, dying: true }))
-            this.map.blocks.push(new Ammo_Plasma(allID++, Math.round(Math.random() * this.map.w), Math.round(Math.random() * this.map.h), 0, 128, 128, 64, { livetime: this.waveTime, dying: true }))
-            this.map.blocks.push(new HealthPickup(allID++, Math.round(Math.random() * this.map.w), Math.round(Math.random() * this.map.h), 0, 128, 128, 64, { livetime: this.waveTime, dying: true }))
+            this.map.blocks.push(new Ammo_Ballistic(
+                allID++,
+                new Vect3(Math.round(Math.random() * this.map.w), Math.round(Math.random() * this.map.h), 0),
+                new Vect3(128, 128, 64),
+                { livetime: this.waveTime, dying: true }))
+            this.map.blocks.push(new Ammo_Plasma(
+                allID++,
+                new Vect3(Math.round(Math.random() * this.map.w), Math.round(Math.random() * this.map.h), 0),
+                new Vect3(128, 128, 64),
+                { livetime: this.waveTime, dying: true }))
+            this.map.blocks.push(new HealthPickup(
+                allID++,
+                new Vect3(Math.round(Math.random() * this.map.w), Math.round(Math.random() * this.map.h), 0),
+                new Vect3(128, 128, 64),
+                { livetime: this.waveTime, dying: true }))
         }
 
     }
@@ -178,25 +190,53 @@ class Match_ForEver extends Match {
                                          |_|
             */
             for (let i = 0; i < 5; i++) {
-                this.map.blocks.push(new Ammo_Ballistic(allID++, Math.round(Math.random() * this.map.w), Math.round(Math.random() * this.map.h), 0, 128, 128, 64, { livetime: this.waveTime * 3, dying: true }))
-                this.map.blocks.push(new Ammo_Plasma(allID++, Math.round(Math.random() * this.map.w), Math.round(Math.random() * this.map.h), 0, 128, 128, 64, { livetime: this.waveTime * 3, dying: true }))
-                this.map.blocks.push(new HealthPickup(allID++, Math.round(Math.random() * this.map.w), Math.round(Math.random() * this.map.h), 0, 128, 128, 64, { livetime: this.waveTime * 3, dying: true }))
+                this.map.blocks.push(new Ammo_Ballistic(
+                    allID++,
+                    new Vect3(Math.round(Math.random() * this.map.w), Math.round(Math.random() * this.map.h), 0),
+                    new Vect3(128, 128, 64),
+                    { livetime: this.waveTime * 3, dying: true }))
+                this.map.blocks.push(new Ammo_Plasma(
+                    allID++,
+                    new Vect3(Math.round(Math.random() * this.map.w), Math.round(Math.random() * this.map.h), 0),
+                    new Vect3(128, 128, 64),
+                    { livetime: this.waveTime * 3, dying: true }))
+                this.map.blocks.push(new HealthPickup(
+                    allID++,
+                    new Vect3(Math.round(Math.random() * this.map.w), Math.round(Math.random() * this.map.h), 0),
+                    new Vect3(128, 128, 64),
+                    { livetime: this.waveTime * 3, dying: true }))
             }
 
             // Random weapon pickup in the middle of the map
             let rand = Math.floor(Math.random() * 4);
             switch (rand) {
                 case 0:
-                    this.map.blocks.push(new WeaponPickup(allID++, (this.map.w / 2), (this.map.h / 2), 0, 0, 0, 0, { weapon: 'pistol', pickupDelay: 0, livetime: this.waveTime * 3, dying: true }))
+                    this.map.blocks.push(new WeaponPickup(
+                        allID++,
+                        new Vect3((this.map.w / 2), (this.map.h / 2), 0),
+                        new Vect3(0, 0, 0),
+                        { weapon: 'pistol', pickupDelay: 0, livetime: this.waveTime * 3, dying: true }))
                     break;
                 case 1:
-                    this.map.blocks.push(new WeaponPickup(allID++, (this.map.w / 2), (this.map.h / 2), 0, 0, 0, 0, { weapon: 'rifle', pickupDelay: 0, livetime: this.waveTime * 3, dying: true }))
+                    this.map.blocks.push(new WeaponPickup(
+                        allID++,
+                        new Vect3((this.map.w / 2), (this.map.h / 2), 0),
+                        new Vect3(0, 0, 0),
+                        { weapon: 'rifle', pickupDelay: 0, livetime: this.waveTime * 3, dying: true }))
                     break;
                 case 2:
-                    this.map.blocks.push(new WeaponPickup(allID++, (this.map.w / 2), (this.map.h / 2), 0, 0, 0, 0, { weapon: 'flamer', pickupDelay: 0, livetime: this.waveTime * 3, dying: true }))
+                    this.map.blocks.push(new WeaponPickup(
+                        allID++,
+                        new Vect3((this.map.w / 2), (this.map.h / 2), 0),
+                        new Vect3(0, 0, 0),
+                        { weapon: 'flamer', pickupDelay: 0, livetime: this.waveTime * 3, dying: true }))
                     break;
                 case 3:
-                    this.map.blocks.push(new WeaponPickup(allID++, (this.map.w / 2), (this.map.h / 2), 0, 0, 0, 0, { weapon: 'lance', pickupDelay: 0, livetime: this.waveTime * 3, dying: true }))
+                    this.map.blocks.push(new WeaponPickup(
+                        allID++,
+                        new Vect3((this.map.w / 2), (this.map.h / 2), 0),
+                        new Vect3(0, 0, 0),
+                        { weapon: 'lance', pickupDelay: 0, livetime: this.waveTime * 3, dying: true }))
                     break;
             }
 
@@ -214,8 +254,7 @@ class Match_ForEver extends Match {
                     this.bots.push(new Bot()) //Big ounce / Loh'Ghan
                     this.bots[this.bots.length - 1].character = new Character(
                         allID++,
-                        (this.map.w / 2),
-                        (this.map.h / 2),
+                        new Vect3( (this.map.w / 2), (this.map.h / 2) ),
                         this.bots[this.bots.length - 1],
                         {
                             target: null,
@@ -394,28 +433,37 @@ class DebugMatch extends Match {
 
     setup = () => {
         game.debug = true;
+
         game.player.character = new Jetbike(
             allID++,
-            (this.map.w / 2), (this.map.h / 2),
+            new Vect3( (this.map.w / 2), (this.map.h / 2), 0 ),
             game.player,
             { name: 'Cpt. Fabius', gfx: 'img/sprites/jetbike' });
-        // game.player.character.HB = new Cylinder(new Vect3((this.map.w / 2), (this.map.h / 2) + 200, 0), 29, 37);
         game.player.camera.target = game.player.character;
         for (let i = 0; i < 5; i++) {
-            this.map.blocks.push(new Ammo_Ballistic(allID++, Math.round(Math.random() * this.map.w), Math.round(Math.random() * this.map.h), 0, 128, 128, 64));
-            this.map.blocks.push(new Ammo_Plasma(allID++, Math.round(Math.random() * this.map.w), Math.round(Math.random() * this.map.h), 0, 128, 128, 64));
+            this.map.blocks.push(new Ammo_Ballistic(
+                allID++,
+                new Vect3(Math.round(Math.random() * this.map.w), Math.round(Math.random() * this.map.h), 0),
+                new Vect3(128, 128, 64)));
+            this.map.blocks.push(new Ammo_Plasma(
+                allID++,
+                new Vect3(Math.round(Math.random() * this.map.w), Math.round(Math.random() * this.map.h), 0),
+                new Vect3(128, 128, 64)));
         }
-        this.map.blocks.push(new WeaponPickup(allID++, (this.map.w / 2) + 200, (this.map.h / 2), 0, 0, 0, 0, { weapon: 'rifle', pickupDelay: 0 }));
-
-        this.bots.push(new Bot()) //Kevin / Jae'Sin
-        this.bots[this.bots.length - 1].character = new Jetbike(
+        this.map.blocks.push(new WeaponPickup(
             allID++,
-            new Vect3((this.map.w / 2) - 1000, (this.map.h / 2) - 1000, 0),
-            this.bots[this.bots.length - 1],
-            { name: getName(), team: 1, gfx: 'img/sprites/dark2', color: [0, 0, 255] }
-        );
-        // add a pistol to the last bot's character's inventory
-        this.bots[this.bots.length - 1].character.inventory.push(new Pistol())
+            new Vect3((this.map.w / 2) + 200, (this.map.h / 2), 0),
+            new Vect3(0, 0, 0, { weapon: 'rifle', pickupDelay: 0 })));
+
+        // this.bots.push(new Bot()) //Kevin / Jae'Sin
+        // this.bots[this.bots.length - 1].character = new Jetbike(
+        //     allID++,
+        //     new Vect3((this.map.w / 2) - 1000, (this.map.h / 2) - 1000, 0),
+        //     this.bots[this.bots.length - 1],
+        //     { name: getName(), team: 1, gfx: 'img/sprites/dark2', color: [0, 0, 255] }
+        // );
+        // // add a pistol to the last bot's character's inventory
+        // this.bots[this.bots.length - 1].character.inventory.push(new Pistol())
 
         this.map.blocks.push(new Block(
             allID++,
@@ -460,11 +508,27 @@ class Match_ForHonor extends Match {
         );
         this.bots[this.bots.length - 1].controller = new Controller();
         this.bots[this.bots.length - 1].name = 'Player 2';
-        this.blocks.push(new Block(allID++, (this.map.w / 2), (this.map.h / 2) - 0, 0, 0, 0, 0, { solid: false, visible: false }));
+        this.blocks.push(new Block(
+            allID++,
+            new Vect3((this.map.w / 2), (this.map.h / 2) - 0, 0),
+            new Vect3(0, 0, 0),
+            { solid: false, visible: false }));
         game.player.camera.target = this.blocks[this.blocks.length - 1];
-        this.map.blocks.push(new WeaponPickup(allID++, (this.map.w / 2) - 100, (this.map.h / 2), 0, 0, 0, 0, { weapon: 'pistol', pickupDelay: 0 }));
-        this.map.blocks.push(new WeaponPickup(allID++, (this.map.w / 2), (this.map.h / 2), 0, 0, 0, 0, { weapon: 'rifle', pickupDelay: 0 }));
-        this.map.blocks.push(new WeaponPickup(allID++, (this.map.w / 2) + 100, (this.map.h / 2), 0, 0, 0, 0, { weapon: 'flamer', pickupDelay: 0 }));
+        this.map.blocks.push(new WeaponPickup(
+            allID++,
+            new Vect3((this.map.w / 2) - 100, (this.map.h / 2), 0),
+            new Vect3(0, 0, 0),
+            { weapon: 'pistol', pickupDelay: 0 }));
+        this.map.blocks.push(new WeaponPickup(
+            allID++,
+            new Vect3((this.map.w / 2), (this.map.h / 2), 0),
+            new Vect3(0, 0, 0),
+            { weapon: 'rifle', pickupDelay: 0 }));
+        this.map.blocks.push(new WeaponPickup(
+            allID++,
+            new Vect3((this.map.w / 2) + 100, (this.map.h / 2), 0),
+            new Vect3(0, 0, 0),
+            { weapon: 'flamer', pickupDelay: 0 }));
     }
 }
 

@@ -11,8 +11,8 @@ window.onload = function () {
 
     game = new Game();
 
-    // game.match = new DebugMatch();
-    game.match = new Start_Screen();
+    game.match = new DebugMatch();
+    // game.match = new Start_Screen();
     // game.match = new Match_ForEver();
     // game.match = new Match_ForHonor();
 

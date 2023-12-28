@@ -182,6 +182,20 @@ class Interface {
             }
             this.touchButton.inventory1 = new Rect((game.window.w / 2) - 150, game.window.h - 64, 64, 64);
             this.touchButton.inventory2 = new Rect((game.window.w / 2) + 90, game.window.h - 64, 64, 64);
+            if (this.itemChangeTicks > game.match.ticks && this.player.character.inventory[this.player.character.item]) {
+                // globalAlpha is percentage of time left
+                ctx.globalAlpha = (this.itemChangeTicks - game.match.ticks) / 180;
+                // center the text
+                ctx.textAlign = "center";
+                // draw black shadow first
+                ctx.fillStyle = "#000000";
+                ctx.font = '16px Jura';
+                ctx.fillText(this.player.character.inventory[this.player.character.item].name, (game.window.w / 2) + 1, game.window.h -59);
+                // then draw white text
+                ctx.fillStyle = "#FFFFFF";
+                ctx.fillText(this.player.character.inventory[this.player.character.item].name, (game.window.w / 2), game.window.h - 60);
+            }
+            ctx.globalAlpha = 1;
         }
     }
 

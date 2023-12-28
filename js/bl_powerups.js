@@ -229,8 +229,8 @@ class WeaponPickup extends PickUp {
 
         if (this.weapon == 'pistol') {
             this.item = new Pistol();
-            if (this.ammo == undefined) this.ammo = 10;
-            this.ammoMax = 10;
+            if (this.ammo == undefined) this.ammo = 12;
+            this.ammoMax = 12;
             this.item.ammo = this.ammo;
             if (this.ammo < this.ammoMax) this.imgFile = 'img/sprites/inventory/pistol_inactive.png';
             else this.imgFile = 'img/sprites/inventory/pistol_active.png';
