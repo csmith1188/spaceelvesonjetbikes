@@ -163,7 +163,6 @@ class Character {
             }
             // if the boost button current is not equal to the boost button last
             // and the boost current is 1
-            console.log(controller.buttons.boost);
             if (controller.buttons.boost.current != controller.buttons.boost.last && controller.buttons.boost.current) {
                 // if the player has positive power points (pp)
                 if (this.pp > 60) {

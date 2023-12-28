@@ -208,11 +208,11 @@ class Keyboard extends Controller {
         */
         window.addEventListener("mousedown", function (event) {
             let coords = getCanvasRelative(event, false); // from top-left
-            this.fireX = coords.x;
-            this.fireY = coords.y;
-            coords = getCanvasRelative(event, false); // relative to center
-            this.rclickX = coords.x;
-            this.rclickY = coords.y;
+            this.realX = coords.x;
+            this.realY = coords.y;
+            coords = getCanvasRelative(event, true); // from top-left
+            this.centerX = coords.x;
+            this.centerY = coords.y;
             coords = getCanvasRelative(event, this.owner.character.HB);
             this.aimX = coords.x
             this.aimY = coords.y
@@ -233,7 +233,13 @@ class Keyboard extends Controller {
             this.wheelDown = (event.wheelDelta < 0) * 1;
         }.bind(this));
         window.addEventListener('mousemove', function (event) {
-            let coords = getCanvasRelative(event, this.owner.character.HB);
+            let coords = getCanvasRelative(event, false); // from top-left
+            this.realX = coords.x;
+            this.realY = coords.y;
+            coords = getCanvasRelative(event, true); // from top-left
+            this.centerX = coords.x;
+            this.centerY = coords.y;
+            coords = getCanvasRelative(event, this.owner.character.HB);
             this.aimX = coords.x
             this.aimY = coords.y
         }.bind(this));
@@ -493,15 +499,18 @@ class Touch extends Controller {
             for (const touch of this.touch.event.targetTouches) {
                 let touchCoord = getCanvasRelative(touch, false);
                 this.lastTouch = touchCoord;
-                // Check for touchbutton inventory 1 Rect collidepoint
-                if (game.player.interface.touchButton.inventory1.collidePoint(touchCoord.x, touchCoord.y))
-                    this.buttons.inventory1.current = 1;
-                else this.buttons.inventory1.current = 0;
-                if (game.player.interface.touchButton.inventory2.collidePoint(touchCoord.x, touchCoord.y))
-                    this.buttons.inventory2.current = 1;
-                else this.buttons.inventory2.current = 0;
+
+                if (game.player.interface.touchButton.inventory1)
+                    if (game.player.interface.touchButton.inventory1.collidePoint(touchCoord.x, touchCoord.y))
+                        this.buttons.inventory1.current = 1;
+                    else this.buttons.inventory1.current = 0;
+                if (game.player.interface.touchButton.inventory2)
+                    if (game.player.interface.touchButton.inventory2.collidePoint(touchCoord.x, touchCoord.y))
+                        this.buttons.inventory2.current = 1;
+                    else this.buttons.inventory2.current = 0;
                 if (game.player.interface.touchButton.pause.collidePoint(touchCoord.x, touchCoord.y) && this.touch.eventType != 'move')
                     game.paused = !game.paused;
+
                 // Check for left touch
                 let touchX = touchCoord.x - this.touch.left.pos.x;
                 let touchY = touchCoord.y - (game.window.h - this.touch.left.pos.y);
