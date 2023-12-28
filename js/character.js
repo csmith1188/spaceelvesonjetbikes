@@ -8,7 +8,7 @@
 ########  ###    ### ###     ### ###    ### ###     ###  ########     ###     ########## ###    ###
 */
 class Character {
-    constructor(id, spawnx, spawny, parent, options) {
+    constructor(id, spawnVect, parent, options) {
         this.id = id;
         this.name = '';
         this.parent = parent;
@@ -25,7 +25,7 @@ class Character {
          |_| \___/__/_|\__|_\___/_||_| |___/\__,_|\__\__,_|
 
         */
-        this.HB = new Cylinder(new Vect3(spawnx, spawny, 0), 8, 32);
+        this.HB = new Cylinder(new Vect3(spawnVect.x, spawnVect.y, spawnVect.z), 8, 32);
         this.aim = new Vect3(0, 0, 0);
         this.angle = new Vect3(0, 0, 0);
         this.floor = 0;
@@ -924,16 +924,34 @@ class Character {
 
 }
 
+
+/*
+     ::::::::::: :::::::::: ::::::::::: ::::::::: ::::::::::: :::    ::: ::::::::::
+        :+:     :+:            :+:     :+:    :+:    :+:     :+:   :+:  :+:
+       +:+     +:+            +:+     +:+    +:+    +:+     +:+  +:+   +:+
+      +#+     +#++:++#       +#+     +#++:++#+     +#+     +#++:++    +#++:++#
+     +#+     +#+            +#+     +#+    +#+    +#+     +#+  +#+   +#+
+#+# #+#     #+#            #+#     #+#    #+#    #+#     #+#   #+#  #+#
+#####      ##########     ###     ######### ########### ###    ### ##########
+*/
 class Jetbike extends Character {
-    constructor(id, spawnx, spawny, parent, options) {
-        super(id, spawnx, spawny, parent, options);
-        this.HB = new Cylinder(new Vect3(spawnx, spawny, 0), 29, 37);
+    constructor(id, spawnVect, parent, options) {
+        super(id, spawnVect, parent, options);
+        this.HB = new Cylinder(new Vect3(spawnVect.x, spawnVect.y, spawnVect.z), 29, 37);
         this.airAccel = new Vect3(0.15, 0.15, 1);
         this.hover = 16;
     }
 }
 
-
+/*
+      ::::    :::     :::       :::   :::   :::::::::: ::::::::
+     :+:+:   :+:   :+: :+:    :+:+: :+:+:  :+:       :+:    :+:
+    :+:+:+  +:+  +:+   +:+  +:+ +:+:+ +:+ +:+       +:+
+   +#+ +:+ +#+ +#++:++#++: +#+  +:+  +#+ +#++:++#  +#++:++#++
+  +#+  +#+#+# +#+     +#+ +#+       +#+ +#+              +#+
+ #+#   #+#+# #+#     #+# #+#       #+# #+#       #+#    #+#
+###    #### ###     ### ###       ### ########## ########
+*/
 function getName() {
     let names = [
         "Hae'din",

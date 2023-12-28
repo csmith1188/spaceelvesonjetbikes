@@ -101,7 +101,7 @@ class Pistol extends Item {
                 game.match.map.bullets.push(
                     new Bullet(
                         allID++, // ID
-                        user.HB.pos.x, user.HB.pos.y, user.HB.pos.z, 4, 4, 0, user, // Position and size
+                        new Vect3(user.HB.pos.x, user.HB.pos.y, user.HB.pos.z), new Vect3(4, 4, 0), user, // Position and size
                         {
                             speed: new Vect3(aimX, aimY, 0), //aimZ doesn't work
                             color: user.color
@@ -193,7 +193,7 @@ class Rifle extends Item {
                 game.match.map.bullets.push(
                     new Bullet(
                         allID++, // ID
-                        user.HB.pos.x, user.HB.pos.y, user.HB.pos.z, 4, 4, 0, user, // Position and size
+                        new Vect3(user.HB.pos.x, user.HB.pos.y, user.HB.pos.z), new Vect3(4, 4, 0), user, // Position and size
                         {
                             speed: new Vect3(xaim, yaim, 0), //zaim doesn't work
                             color: user.color,
@@ -210,10 +210,8 @@ class Rifle extends Item {
                         game.match.map.debris.push(
                             new Block(
                                 allID++,
-                                this.HB.pos.x,
-                                this.HB.pos.y,
-                                this.HB.pos.z,
-                                1, 1, 1,
+                                new Vect3(this.HB.pos.x, this.HB.pos.y, this.HB.pos.z),
+                                new Vect3(1, 1, 1),
                                 {
                                     speed: new Vect3(tempx, tempy, tempz),
                                     HB: new Cube(new Vect3(this.HB.pos.x, this.HB.pos.y, this.HB.pos.z), new Vect3(4, 4, 4)),
@@ -236,10 +234,8 @@ class Rifle extends Item {
                         game.match.map.debris.push(
                             new Block(
                                 allID++,
-                                this.HB.pos.x,
-                                this.HB.pos.y,
-                                this.HB.pos.z,
-                                1, 1, 1,
+                                new Vect3(this.HB.pos.x, this.HB.pos.y, this.HB.pos.z),
+                                new Vect3(1, 1, 1),
                                 {
                                     speed: new Vect3(tempx + (this.speed.x * 0.25), tempy + (this.speed.y * 0.25), tempz + (this.speed.z * 0.25)),
                                     HB: new Cube(new Vect3(this.HB.pos.x, this.HB.pos.y, this.HB.pos.z), new Vect3(6, 3, 1)),
@@ -349,7 +345,7 @@ class Flamer extends Item {
                     game.match.map.bullets.push(
                         new Bullet(
                             allID++, // ID
-                            user.HB.pos.x, user.HB.pos.y, user.HB.pos.z, 4, 4, 0, user, // Position and size
+                            new Vect3(user.HB.pos.x, user.HB.pos.y, user.HB.pos.z), new Vect3(4, 4, 0), user, // Position and size
                             {
                                 livetime: 16,
                                 speed: new Vect3(aimX, aimY, 0),
@@ -447,7 +443,7 @@ class Lance extends Item {
                 game.match.map.bullets.push(
                     new Bullet(
                         allID++, // ID
-                        user.HB.pos.x, user.HB.pos.y, user.HB.pos.z, 4, 4, 0, user, // Position and size
+                        new Vect3(user.HB.pos.x, user.HB.pos.y, user.HB.pos.z), new Vect3(4, 4, 0), user, // Position and size
                         {
                             speed: new Vect3(aimX, aimY, 0),
                             parent: user,
@@ -482,10 +478,8 @@ class Lance extends Item {
                         game.match.map.debris.push(
                             new Block(
                                 allID++,
-                                this.HB.pos.x,
-                                this.HB.pos.y,
-                                this.HB.pos.z,
-                                1, 1, 1,
+                                new Vect3(this.HB.pos.x, this.HB.pos.y, this.HB.pos.z),
+                                new Vect3(1, 1, 1),
                                 {
                                     speed: new Vect3(tempx, tempy, tempz),
                                     HB: new Cube(new Vect3(this.HB.pos.x, this.HB.pos.y, this.HB.pos.z), new Vect3(4, 4, 4)),
@@ -510,10 +504,8 @@ class Lance extends Item {
                         game.match.map.debris.push(
                             new Block(
                                 allID++,
-                                this.HB.pos.x,
-                                this.HB.pos.y,
-                                this.HB.pos.z,
-                                1, 1, 1,
+                                new Vect3(this.HB.pos.x, this.HB.pos.y, this.HB.pos.z),
+                                new Vect3(1, 1, 1),
                                 {
                                     speed: new Vect3(tempx + (this.speed.x * 0.25), tempy + (this.speed.y * 0.25), tempz + (this.speed.z * 0.25)),
                                     HB: new Cube(new Vect3(this.HB.pos.x, this.HB.pos.y, this.HB.pos.z), new Vect3(6, 3, 1)),
@@ -606,7 +598,7 @@ class Sword extends Item {
                 game.match.map.bullets.push(
                     new Bullet(
                         allID++, // ID
-                        user.HB.pos.x, user.HB.pos.y, user.HB.pos.z, 4, 4, 0, user, // Position and size
+                        new Vect3(user.HB.pos.x, user.HB.pos.y, user.HB.pos.z), new Vect3(4, 4, 0), user, // Position and size
                         {
                             speed: new Vect3(aimX, aimY, 0),
                             parent: user,
@@ -624,7 +616,6 @@ class Sword extends Item {
                 // TODO: Make a new bullet class for a sword strike
                 game.match.map.bullets[game.match.map.bullets.length - 1].runFunc = [
                     function () {
-                        // Match the user's position
                         this.HB.pos.x = this.parent.HB.pos.x + aimX;
                         this.HB.pos.y = this.parent.HB.pos.y + aimY;
                         this.HB.pos.z = this.parent.HB.pos.z + aimZ;
@@ -642,10 +633,8 @@ class Sword extends Item {
                         game.match.map.debris.push(
                             new Block(
                                 allID++,
-                                this.HB.pos.x,
-                                this.HB.pos.y,
-                                this.HB.pos.z,
-                                1, 1, 1,
+                                new Vect3(this.HB.pos.x, this.HB.pos.y, this.HB.pos.z),
+                                new Vect3(1, 1, 1),
                                 {
                                     speed: new Vect3(tempx, tempy, tempz),
                                     HB: new Cube(new Vect3(compareX, compareY, this.HB.pos.z + this.HB.height), new Vect3(2, 2, 2)),
@@ -698,10 +687,8 @@ class Sword extends Item {
                         game.match.map.debris.push(
                             new Block(
                                 allID++,
-                                this.HB.pos.x,
-                                this.HB.pos.y,
-                                this.HB.pos.z,
-                                1, 1, 1,
+                                new Vect3(this.HB.pos.x, this.HB.pos.y, this.HB.pos.z),
+                                new Vect3(1, 1, 1),
                                 {
                                     speed: new Vect3(tempx + (this.speed.x * 0.25), tempy + (this.speed.y * 0.25), tempz + (this.speed.z * 0.25)),
                                     HB: new Cube(new Vect3(this.HB.pos.x, this.HB.pos.y, this.HB.pos.z), new Vect3(6, 3, 1)),

@@ -308,7 +308,11 @@ class Map_FieldCity extends Map {
         */
         for (let i = 0; i < 50; i++) {
             let ran = function () { return Math.floor(Math.random() * 3) + 1 }
-            this.blocks.push(new Block(allID++, Math.round(Math.random() * this.w), Math.round(Math.random() * this.h), 0, ran() * 48, ran() * 48, ran() * 48, { imgFile: 'img/tiles/wall_top.png', imgFileSide: 'img/tiles/wall_side.png' }))
+            this.blocks.push(new Block(
+                allID++,
+                new Vect3(Math.round(Math.random() * this.w), Math.round(Math.random() * this.h), 0),
+                new Vect3(ran() * 48, ran() * 48, ran() * 48),
+                { imgFile: 'img/tiles/wall_top.png', imgFileSide: 'img/tiles/wall_side.png' }))
         }
     }
 }
@@ -331,7 +335,11 @@ class Map_Deathbox extends Map {
         */
         for (let i = 0; i < 10; i++) {
             let ran = function () { return Math.floor(Math.random() * 4) + 1 }
-            this.blocks.push(new Block(allID++, Math.round(Math.random() * this.w), Math.round(Math.random() * this.h), 0, ran() * 32, ran() * 32, ran() * 32, { color: [101, 101, 101], colorSide: [201, 201, 201] }))
+            this.blocks.push(new Block(
+                allID++,
+                new Vect3(Math.round(Math.random() * this.w), Math.round(Math.random() * this.h), 0),
+                new Vect3(ran() * 48, ran() * 48, ran() * 48),
+                { imgFile: 'img/tiles/wall_top.png', imgFileSide: 'img/tiles/wall_side.png' }))
         }
     }
 }

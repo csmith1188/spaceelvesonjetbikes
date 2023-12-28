@@ -2,7 +2,7 @@ class Bot {
     constructor(options) {
         this.type = 'bot';
         this.name = 'Bot';
-        this.character = new Character(allID++, 0, 0, this);
+        this.character = new Character(allID++, new Vect3(0,0,0), this);
         this.controller = new DummyController();
         this.best = {
             air: 0,
@@ -236,7 +236,7 @@ class Player extends Bot {
         super(options);
         this.type = 'player';
         this.name = 'Player 1'
-        this.character = new Character(allID++, 0, 0, this);
+        this.character = new Character(allID++, new Vect3(0,0,0), this);
         this.controller = new Controller(this);
         this.camera = new Camera(this, { target: this.character });
         this.interface = new Interface(this);

@@ -12,14 +12,12 @@ window.onload = function () {
     game = new Game();
 
     // game.match = new DebugMatch();
-    // game.match = new Start_Screen();
-    game.match = new Match_ForEver();
+    game.match = new Start_Screen();
+    // game.match = new Match_ForEver();
     // game.match = new Match_ForHonor();
 
     //Run the step() function every 16ms (60fps)
     setInterval(game.step.bind(game), 16);
-
-    game.draw();
 }
 
 

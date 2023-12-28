@@ -99,7 +99,11 @@ class Match_ForEver extends Match {
     }
 
     setup() {
-        game.player.character = new Jetbike(allID++, (this.map.w / 2), (this.map.h / 2) + 200, game.player, { name: 'Cpt. Fabius', gfx: 'img/sprites/jetbike' });
+        game.player.character = new Jetbike(
+            allID++,
+            new Vect3((this.map.w / 2), (this.map.h / 2) + 200),
+            game.player,
+            { name: 'Cpt. Fabius', gfx: 'img/sprites/jetbike' });
         game.player.camera.target = game.player.character
 
         /*
@@ -117,18 +121,15 @@ class Match_ForEver extends Match {
 
     }
 
+    /*
+      __  __      _        _
+     |  \/  |__ _(_)_ _   | |   ___  ___ _ __
+     | |\/| / _` | | ' \  | |__/ _ \/ _ \ '_ \
+     |_|  |_\__,_|_|_||_| |____\___/\___/ .__/
+                                        |_|
+    */
     step() {
         super.step();
-        /*
-         #     #                    #
-         ##   ##   ##   # #    #    #        ####   ####  #####
-         # # # #  #  #  # ##   #    #       #    # #    # #    #
-         #  #  # #    # # # #  #    #       #    # #    # #    #
-         #     # ###### # #  # #    #       #    # #    # #####
-         #     # #    # # #   ##    #       #    # #    # #
-         #     # #    # # #    #    #######  ####   ####  #
-    
-        */
         if (game.player.character.active && game.match.ticks % this.waveTime == 0) {
             this.waves++; // 1 wave every 60 seconds
 
@@ -141,28 +142,16 @@ class Match_ForEver extends Match {
             */
             for (let i = 0; i < Math.ceil(this.waves / 2); i++) {
                 this.bots.push(new Bot()) //Kevin / Jae'Sin
-                this.bots[this.bots.length - 1].character = new Character(
+                this.bots[this.bots.length - 1].character = new Jetbike(
                     allID++,
-                    (this.map.w / 2),
-                    (this.map.h / 2),
+                    new Vect3(this.map.w / 2, this.map.h / 2),
                     this.bots[this.bots.length - 1],
-                    // { target: game.player.character, name: 'Jaysin', gfx: 'img/sprites/dark2', team: 1 }
                     {
                         target: game.player.character,
                         // target: this.bots[this.bots.length - 1].character,
                         name: getName(), team: 1, gfx: 'img/sprites/dark2', color: [0, 0, 255],
-                        hover: 16, airAccel: new Vect3(0.15, 0.15, 1),
-                        runFunc: [
-                            function () { }.bind(this.bots[this.bots.length - 1].character)
-                        ]
                     }
                 );
-                this.bots[this.bots.length - 1].character.HB = new Cylinder(
-                    new Vect3(
-                        Math.round(Math.random() * this.map.w),
-                        Math.round(Math.random() * this.map.h),
-                        0),
-                    29, 37);
                 let rand = Math.floor(Math.random() * 4);
                 switch (rand) {
                     case 0:
@@ -402,10 +391,14 @@ class DebugMatch extends Match {
         this.description = "A match for debugging purposes.";
         this.setup();
     }
-    
+
     setup = () => {
         game.debug = true;
-        game.player.character = new Jetbike(allID++, (this.map.w / 2), (this.map.h / 2), game.player, { name: 'Cpt. Fabius', gfx: 'img/sprites/jetbike', hover: 16, airAccel: new Vect3(0.15, 0.15, 1) });
+        game.player.character = new Jetbike(
+            allID++,
+            (this.map.w / 2), (this.map.h / 2),
+            game.player,
+            { name: 'Cpt. Fabius', gfx: 'img/sprites/jetbike' });
         // game.player.character.HB = new Cylinder(new Vect3((this.map.w / 2), (this.map.h / 2) + 200, 0), 29, 37);
         game.player.camera.target = game.player.character;
         for (let i = 0; i < 5; i++) {
@@ -417,18 +410,19 @@ class DebugMatch extends Match {
         this.bots.push(new Bot()) //Kevin / Jae'Sin
         this.bots[this.bots.length - 1].character = new Jetbike(
             allID++,
-            (this.map.w / 2) - 1000,
-            (this.map.h / 2) - 1000,
+            new Vect3((this.map.w / 2) - 1000, (this.map.h / 2) - 1000, 0),
             this.bots[this.bots.length - 1],
             { name: getName(), team: 1, gfx: 'img/sprites/dark2', color: [0, 0, 255] }
         );
         // add a pistol to the last bot's character's inventory
         this.bots[this.bots.length - 1].character.inventory.push(new Pistol())
 
-        this.map.blocks.push(new Block(allID++, (this.map.w / 2) - 300, (this.map.h / 2) - 0, 0, 128, 128, 64, { color: [101, 101, 101], colorSide: [201, 201, 201] }))
+        this.map.blocks.push(new Block(
+            allID++,
+            new Vect3((this.map.w / 2) - 300, (this.map.h / 2) - 0, 0),
+            new Vect3(128, 128, 64),
+            { color: [101, 101, 101], colorSide: [201, 201, 201] }))
         // this.map.blocks[this.map.blocks.length - 1].HB.pos.z = 100;
-
-        // this.map.blocks.push(new Block(allID++, (this.map.w / 2), (this.map.h / 2), 0, 10, 10, 128, { color: [101, 101, 101], colorSide: [201, 201, 201] }))
     }
 }
 
@@ -452,12 +446,15 @@ class Match_ForHonor extends Match {
         this.setup();
     }
     setup = () => {
-        game.player.character = new Jetbike(allID++, (this.map.w / 2), (this.map.h / 2) + 200, game.player, { name: 'Cpt. Fabius', gfx: 'img/sprites/jetbike', hover: 16, airAccel: new Vect3(0.15, 0.15, 1) });
+        game.player.character = new Jetbike(
+            allID++,
+            new Vect3((this.map.w / 2), (this.map.h / 2) + 200, 0),
+            game.player,
+            { name: 'Cpt. Fabius', gfx: 'img/sprites/jetbike' });
         this.bots.push(new Player()) //Kevin / Jae'Sin
         this.bots[this.bots.length - 1].character = new Jetbike(
             allID++,
-            (this.map.w / 2) - 1000,
-            (this.map.h / 2) - 1000,
+            new Vect3((this.map.w / 2) - 1000, (this.map.h / 2) - 1000, 0),
             this.bots[this.bots.length - 1],
             { name: getName(), team: 1, gfx: 'img/sprites/dark2', color: [0, 0, 255] }
         );
@@ -471,6 +468,16 @@ class Match_ForHonor extends Match {
     }
 }
 
+/*
+  #####                                #####
+ #     # #####   ##   #####  #####    #     #  ####  #####  ###### ###### #    #
+ #         #    #  #  #    #   #      #       #    # #    # #      #      ##   #
+  #####    #   #    # #    #   #       #####  #      #    # #####  #####  # #  #
+       #   #   ###### #####    #            # #      #####  #      #      #  # #
+ #     #   #   #    # #   #    #      #     # #    # #   #  #      #      #   ##
+  #####    #   #    # #    #   #       #####   ####  #    # ###### ###### #    #
+
+*/
 class Start_Screen extends Match {
     constructor() {
         super();
@@ -482,28 +489,30 @@ class Start_Screen extends Match {
 
     setup = () => {
         game.player.character.active = false;
-        this.map.blocks.push(new Block(allID++, (this.map.w / 2) - 0, (this.map.h / 2) + 100, 0, 0, 0, 0, { color: [101, 101, 101], colorSide: [201, 201, 201] }))
+        this.map.blocks.push(new Block(
+            allID++,
+            new Vect3((this.map.w / 2) - 0, (this.map.h / 2) + 100, 0),
+            new Vect3(0, 0, 0),
+            { color: [101, 101, 101], colorSide: [201, 201, 201] }))
         game.player.camera.target = this.map.blocks[this.map.blocks.length - 1];
         // loop twice
         for (let i = 0; i < 2; i++) {
             this.bots.push(new Bot()) //Kevin / Jae'Sin
             this.bots[this.bots.length - 1].character = new Jetbike(
                 allID++,
-                Math.random() * (this.map.w / 2),
-                Math.random() * (this.map.h / 2),
+                new Vect3(Math.random() * this.map.w, Math.random() * this.map.h),
                 this.bots[this.bots.length - 1],
                 { name: getName(), team: 1, gfx: 'img/sprites/dark2', color: [0, 0, 255] }
             );
-            this.bots[this.bots.length - 1].character.inventory.push(new Pistol());
+            // this.bots[this.bots.length - 1].character.inventory.push(new Pistol());
             this.bots.push(new Bot()) //Kevin / Jae'Sin
             this.bots[this.bots.length - 1].character = new Jetbike(
                 allID++,
-                Math.random() * (this.map.w / 2),
-                Math.random() * (this.map.h / 2),
+                new Vect3(Math.random() * this.map.w, Math.random() * this.map.h),
                 this.bots[this.bots.length - 1],
                 { name: getName(), team: 0, gfx: 'img/sprites/dark1', color: [0, 0, 255] }
             );
-            this.bots[this.bots.length - 1].character.inventory.push(new Pistol());
+            // this.bots[this.bots.length - 1].character.inventory.push(new Pistol());
         }
     }
 }
