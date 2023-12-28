@@ -154,8 +154,8 @@ class Menu_Pause extends Menu {
         this.style = 'center_stacked';
         this.type = 'pause';
         this.buttons = [
-            new Menu_Button(new Rect(0, 0, 150, 30), "Debug Game", function () { game.match = new DebugMatch(); game.paused = false; }),
-            new Menu_Button(new Rect(0, 40, 150, 30), "Forever", function () { game.match = new Match_ForEver(); game.paused = false; }),
+            new Menu_Button(new Rect(0, 0, 150, 30), "Restart Match", function () { game.match.reset(); game.match.setup(); game.paused = false; }),
+            new Menu_Button(new Rect(0, 40, 150, 30), "Quit to Menu", function () { game.match = new Start_Screen(); game.paused = false; }),
             // new Menu_Button(new Rect(0, 80, 150, 30), "Button 3", function () { window.alert("Button 3"); }),
             new Menu_Button(new Rect(0, 120, 150, 30), "Resume", function () { game.paused = false; })
         ]
@@ -212,7 +212,7 @@ class Menu_Main extends Menu {
             new Menu_Button(new Rect(0, 0, 150, 30), "For Speed", function () { /* game.match = new Match_ForSpeed(); */ game.menu = null; game.paused = false; }),
             new Menu_Button(new Rect(0, 40, 150, 30), "For Honor", function () { game.match = new Match_ForHonor(); game.menu = null; game.paused = false; }),
             new Menu_Button(new Rect(0, 80, 150, 30), "For Ever", function () { game.match = new Match_ForEver(); game.menu = null; game.paused = false; }),
-            new Menu_Button(new Rect(0, 120, 150, 30), "debugmode", function () { game.match = new DebugMatch(); game.menu = null; game.paused = false; }),
+            // new Menu_Button(new Rect(0, 120, 150, 30), "debugmode", function () { game.match = new DebugMatch(); game.menu = null; game.paused = false; }),
             new Menu_Button(new Rect(0, 160, 150, 30), "Exit", function () { window.close(); })
         ]
     }

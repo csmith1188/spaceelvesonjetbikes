@@ -1,6 +1,9 @@
 class Match {
     constructor() {
-        this.despawnTimer = 3600; // 1 minute
+        this.reset();
+    }
+
+    reset() {
         this.ticks = -1;
         this.paused = false;
         this.map = new Map();
@@ -8,6 +11,10 @@ class Match {
         this.blocks = []; // Different from map blocks. Think pickups and dropped items
         this.runFunc = []; // A list of functions to run every step
         game.player.interface.drawFunc = []; // clear other interface draw functions
+    }
+
+    setup() {
+
     }
 
     step() {
@@ -81,13 +88,17 @@ class Match {
 class Start_Screen extends Match {
     constructor() {
         super();
-        this.map = new Map_Deathbox();
-        this.name = "Start Screen";
-        this.description = "The start screen.";
         this.setup();
     }
 
-    setup = () => {
+    reset() {
+        super.reset();
+        this.map = new Map_Deathbox();
+        this.name = "Game Menu";
+        this.description = "";
+    }
+
+    setup() {
         game.player.character.active = false;
         this.map.blocks.push(new Block(
             allID++,
@@ -255,12 +266,16 @@ class DebugMatch extends Match {
 class Match_ForHonor extends Match {
     constructor() {
         super();
+        this.setup();
+    }
+
+    reset() {
+        super.reset();
         this.map = new Map_Deathbox();
         this.name = "For Honor";
         this.description = "A duel to the death.";
-        this.setup();
     }
-    setup = () => {
+    setup() {
         game.player.character = new Jetbike(
             allID++,
             new Vect3((this.map.w / 2), (this.map.h / 2) + 200, 0),
@@ -311,12 +326,16 @@ class Match_ForHonor extends Match {
 class Match_ForEver extends Match {
     constructor() {
         super();
+        this.setup();
+    }
+
+    reset() {
+        super.reset();
         this.map = new Map_FieldCity();
         this.name = "Forever";
         this.description = "Survive against the endless waves of enemies.";
         this.waves = 0;
         this.waveTime = 2700; // 1 wave every 45 seconds  
-        this.setup();
     }
 
     setup() {
@@ -523,8 +542,11 @@ class Match_ForEver extends Match {
                 }
                 game.player.camera.target = game.match.bots[0].character; // set camera to first bot
             }
-            if (game.player.controller.buttons.inventory1.current)
-                game.match = new Match_ForEver();
+            if (game.player.controller.buttons.inventory1.current) {
+                game.match.reset();
+                game.match.setup();
+            }
+            
         }
     }
 
