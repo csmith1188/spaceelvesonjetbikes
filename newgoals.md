@@ -27,7 +27,11 @@ Dark elves believe everything is random:
 #########   ########          ###        ########### ###    ###  ########     ###
 -->
 
-- Finish menus from controllers
+- For Honor
+-- sword animation
+-- crosshair and aimx/y
+- A* pathing
+- Gamepad and touch screen buttons
 - ISO draw
 - Create more bullet types
 - Inventory Management
@@ -37,23 +41,20 @@ Dark elves believe everything is random:
 - Sound distances
 -- Web Audio API
 - Waves and Wind
-- A* pathing
-- Gamepad and touch screen buttons
-- ?? Only draw in camera
 - Shoot along z rotation in iso view
 - Bots always shoot at z axis in every view (no hiding on top of blocks)
-- Bot chasing / targets / paths
 - Racing
 - Complete speed physics (top speed, actual speed, weight)
 - Graphics are block attached to character
-- Give blocks friction for wall jumping rooftop drag
 -- Are shadows blocks, too?
+- Give blocks friction for wall jumping rooftop drag
+-- Fix floor slam on top of block bug
 - Animators
 - Emitters
 - Melee Weapons
 - Polyblock regions
 - 3D Polyblocks
-- Camera Zoom/Pan/Shake
+- Camera Zoom/Pan
 - Draw xhair from anywhere
 - Arc Aiming Cone
 

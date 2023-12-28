@@ -93,6 +93,9 @@ class Game {
             //Draw Map Lighting
             this.match.map.lighting();
 
+            //Draw Match
+            this.match.draw();
+
             //Draw HUD
             this.player.interface.drawHUD();
 
