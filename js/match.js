@@ -1,7 +1,7 @@
 class Match {
     constructor() {
         this.despawnTimer = 3600; // 1 minute
-        this.ticks = 0;
+        this.ticks = -1;
         this.paused = false;
         this.map = new Map();
         this.bots = [];
@@ -129,7 +129,7 @@ class Match_ForEver extends Match {
          #     # #    # # #    #    #######  ####   ####  #
     
         */
-        if ((game.player.character.active && game.match.ticks % this.waveTime == 0) || game.match.ticks == 1) {
+        if (game.player.character.active && game.match.ticks % this.waveTime == 0) {
             this.waves++; // 1 wave every 60 seconds
 
             /*
