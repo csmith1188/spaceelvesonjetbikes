@@ -53,7 +53,7 @@ class Game {
         if (this.awaitingInput) {
             this.menus.awaitingInput.step(); // Show the input menu
         }
-
+        
         // If the game is paused
         else if (this.paused) {
             this.menus.pause.step(); // Show the pause menu
@@ -66,7 +66,7 @@ class Game {
                 this.menu.step(); // Show the main menu
             }
 
-            for (const bot of [this.player, ...this.match.bots]) {
+            for (const bot of this.match.bots) {
                 bot.controller.read(); // Read the input from every player and bot
             }
 
