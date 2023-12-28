@@ -8,10 +8,14 @@ class Game {
         }
         this.paused = false;
         this.awaitingInput = false;
+        this.menu = null;
         this.debug = false;
         this.allID = 0;
-        this.pauseMenu = new Menu_Pause([], new Rect(0, 0, 170, 170));
-        this.awaitingInputMenu = new Menu_Awaiting([], new Rect(0, 0, 350, 50));
+        this.menus = {
+            pause: new Menu_Pause([], new Rect(0, 0, 170, 170)),
+            awaitingInput: new Menu_Awaiting([], new Rect(0, 0, 350, 50)),
+            main: new Menu_Main([], new Rect(0, 50, 170, 210))
+        }
         this.player = new Player();
         this.ticks = 0;
         this.lastTimestamp = 0;
@@ -43,18 +47,30 @@ class Game {
 
         this.checkInput();
 
-        if (!this.paused && !this.awaitingInput) { // If the game is not paused or awaiting input
+        this.player.controller.read(); // Read the input from the main player
+        
+        // If the game is waiting for a controller to press a button
+        if (this.awaitingInput) {
+            this.menus.awaitingInput.step(); // Show the input menu
+        }
+
+        // If the game is paused
+        else if (this.paused) {
+            this.menus.pause.step(); // Show the pause menu
+        }
+        
+        // If the game is not paused and all controllers have been assigned, play the match
+        else {
+
+            if (this.menu) { 
+                this.menu.step(); // Show the main menu
+            }
+
             for (const bot of [this.player, ...this.match.bots]) {
                 bot.controller.read(); // Read the input from every player and bot
             }
 
             this.match.step(); // Then step the match
-
-        } else if (this.awaitingInput) { // If the game is awaiting input
-            this.awaitingInputMenu.step(); // Show the input menu
-        } else {
-            this.player.controller.read(); // Read the input from the main player
-            this.pauseMenu.step(); // Show the pause menu
         }
 
         this.player.camera.update(); // Update the camera
@@ -84,7 +100,7 @@ class Game {
 
     draw() {
         if (this.awaitingInput) {
-            this.awaitingInputMenu.draw("Awaiting Controller Input...\n" + this.awaitingInput);
+            this.menus.awaitingInput.draw("Awaiting Controller Input...\n" + this.awaitingInput);
         } else {
 
             //Draw Map
@@ -101,10 +117,13 @@ class Game {
 
             //Draw Controller HUD
             this.player.controller.draw();
+
+            if (this.menu)
+                this.menu.draw();
         }
 
         if (this.paused)
-            this.pauseMenu.draw();
+            this.menus.pause.draw();
 
 
     }

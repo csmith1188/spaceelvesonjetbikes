@@ -15,8 +15,10 @@ class Item {
                 this[key] = options[key];
             }
     }
+
     use(user, xaim, yaim, mode) {
     }
+
     step() {
         if (game.match.ticks == this.nextCool) {
             if (this.reloading) {
@@ -113,7 +115,8 @@ class Pistol extends Item {
 
             } else {
                 if (this.owner instanceof Player)
-                    this.reload_empty.play();
+                    if (!user.muted)
+                        this.reload_empty.play();
                 if (user.ammo[this.type] > 0 && !this.reloading) {
                     this.reloading = true;    // set reloading to true
                     this.ammo = this.ammoMax;   // reload
@@ -260,14 +263,16 @@ class Rifle extends Item {
 
             } else {
                 if (this.owner instanceof Player)
-                    this.reload_empty.play();
+                    if (!user.muted)
+                        this.reload_empty.play();
                 if (user.ammo[this.type] > 0 && !this.reloading) {
                     this.reloading = true;    // set reloading to true
                     this.ammo = this.ammoMax;   // reload
                     this.nextCool = game.match.ticks + this.reloadTime; // set reload time
                     user.ammo[this.type]--;      // consume a clip from a user
                     if (this.owner instanceof Player)
-                        this.reload_empty.play();
+                        if (!user.muted)
+                            this.reload_empty.play();
                 }
             }
         }
@@ -323,7 +328,8 @@ class Flamer extends Item {
                 this.ammo--; // consume a bullet
                 this.shootSFX.currentTime = 0;
                 // if (!user.muted) this.shootSFX.play(); // play shoot sound
-                this.shootSFX.play(); // play shoot sound
+                if (!user.muted)
+                    this.shootSFX.play(); // play shoot sound
                 for (let i = 0; i < 5; i++) {
 
                     // There's a serious bug here.
@@ -361,14 +367,16 @@ class Flamer extends Item {
 
             } else {
                 if (this.owner instanceof Player)
-                    this.reload_empty.play();
+                    if (!user.muted)
+                        this.reload_empty.play();
                 if (user.ammo[this.type] > 0 && !this.reloading) {
                     this.reloading = true;    // set reloading to true
                     this.ammo = this.ammoMax;   // reload
                     this.nextCool = game.match.ticks + this.reloadTime; // set reload time
                     user.ammo[this.type]--;      // consume a clip from a user
                     if (this.owner instanceof Player)
-                        this.reload_empty.play();
+                        if (!user.muted)
+                            this.reload_empty.play();
                 }
             }
         }
@@ -526,7 +534,8 @@ class Lance extends Item {
 
             } else {
                 if (this.owner instanceof Player)
-                    this.reload_empty.play();
+                    if (!user.muted)
+                        this.reload_empty.play();
                 if (user.ammo[this.type] > 0 && !this.reloading) {
                     this.reloading = true;    // set reloading to true
                     this.ammo = this.ammoMax;   // reload
@@ -709,7 +718,8 @@ class Sword extends Item {
 
             } else {
                 if (this.owner instanceof Player)
-                    this.reload_empty.play();
+                    if (!user.muted)
+                        this.reload_empty.play();
                 if (user.ammo[this.type] > 0 && !this.reloading) {
                     this.reloading = true;    // set reloading to true
                     this.ammo = this.ammoMax;   // reload

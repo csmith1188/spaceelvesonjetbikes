@@ -79,7 +79,8 @@ class Ammo_Ballistic extends PickUp {
                     actor.ammo.ballistic++; // Add ballistic ammo
                     // Play pickup sound
                     this.touchSFX.currentTime = 0;
-                    this.touchSFX.play();
+                    if (!actor.muted)
+                        this.touchSFX.play();
                 } else {
                     this.active = true; // Turn this back on if the player is full ammo
                 }
@@ -119,7 +120,8 @@ class Ammo_Plasma extends PickUp {
                 if (actor.ammo.plasma < actor.ammo.plasmaMax) {
                     // Play pickup sound
                     this.touchSFX.currentTime = 0;
-                    this.touchSFX.play();
+                    if (!actor.muted)
+                        this.touchSFX.play();
                     actor.ammo.plasma++; // Add plasma ammo
                 } else {
                     this.active = true; // Turn this back on if the player is full ammo
@@ -160,7 +162,8 @@ class HealthPickup extends PickUp {
                 if (actor.hp < actor.hp_max) {
                     // Play pickup sound
                     this.touchSFX.currentTime = 0;
-                    this.touchSFX.play();
+                    if (!actor.muted)
+                        this.touchSFX.play();
                     actor.hp = Math.min(actor.hp + 50, actor.hp_max); // Add health
                 }
                 else {
@@ -200,7 +203,8 @@ class WeaponPickup extends PickUp {
             if (this.pickupDelay < game.match.ticks) {
                 if (actor instanceof Character) {
                     if (actor.inventory.length < 2) {
-                        this.touchSFX.play();
+                        if (!actor.muted)
+                            this.touchSFX.play();
                         if (actor.parent instanceof Player)
                             this.item.owner = actor.parent;
                         actor.inventory.push(this.item); // Add to inventory

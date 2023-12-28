@@ -221,7 +221,6 @@ class Keyboard extends Controller {
                 this.clickButton = 1
             else if (event.button == 2)
                 this.rclickButton = 1
-            console.log(this.aimX, this.aimY);
         }.bind(this));
         window.addEventListener("mouseup", function (event) {
             if (event.button == 0)

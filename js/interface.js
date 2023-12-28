@@ -68,9 +68,9 @@ class Interface {
             this.drawMenu();
 
             if (game.debug) {
-                ctx.fillStyle = "#000000";
+                ctx.fillStyle = "#FFFFFF";
                 ctx.font = '12px Jura';
-                ctx.fillText(game.fps, 10, 150);
+                ctx.fillText(game.fps, 100, 150);
                 document.getElementById("debugger").style.display = "block";
             } else {
                 document.getElementById("debugger").style.display = "none";
@@ -190,7 +190,7 @@ class Interface {
                 // draw black shadow first
                 ctx.fillStyle = "#000000";
                 ctx.font = '16px Jura';
-                ctx.fillText(this.player.character.inventory[this.player.character.item].name, (game.window.w / 2) + 1, game.window.h -59);
+                ctx.fillText(this.player.character.inventory[this.player.character.item].name, (game.window.w / 2) + 1, game.window.h - 59);
                 // then draw white text
                 ctx.fillStyle = "#FFFFFF";
                 ctx.fillText(this.player.character.inventory[this.player.character.item].name, (game.window.w / 2), game.window.h - 60);
@@ -449,9 +449,14 @@ class Menu {
             y += game.player.controller.aimY;
             game.player.interface.menuIndex = -1;
         } else if (game.player.controller.type == 'touch') {
+            if (game.player.controller.lastTouch) {
+                x = game.player.controller.lastTouch.x;
+                y = game.player.controller.lastTouch.y;
+            } else {
+                x = 0;
+                y = 0;
+            }
             // convert from center of screen to top left of screen
-            x = game.player.controller.lastTouch.x;
-            y = game.player.controller.lastTouch.y;
             game.player.interface.menuIndex = -1;
         } else if (game.player.controller.type == 'gamepad') {
             if (game.player.controller.buttons.selectUp.current && !game.player.controller.buttons.selectUp.last) {
@@ -485,22 +490,23 @@ class Menu {
 
     draw() {
         if (this.visible == false) return;
+        let offsetx, offsety;
         if (this.style === 'center_stacked') {
-            this.shape.x = (game.window.w / 2) - (this.shape.w / 2);
-            this.shape.y = (game.window.h / 2) - (this.shape.h / 2);
+            offsetx = (game.window.w / 2) - (this.shape.w / 2) + this.shape.x;
+            offsety = (game.window.h / 2) - (this.shape.h / 2) + this.shape.y;
         }
         // stroke a box around the menu
         ctx.fillStyle = "rgba(0, 0, 0, 0.5)";
-        ctx.fillRect(this.shape.x, this.shape.y, this.shape.w, this.shape.h);
+        ctx.fillRect(offsetx, offsety, this.shape.w, this.shape.h);
         ctx.strokeStyle = "#FFFFFF";
         ctx.lineWidth = 2;
-        ctx.strokeRect(this.shape.x, this.shape.y, this.shape.w, this.shape.h);
+        ctx.strokeRect(offsetx, offsety, this.shape.w, this.shape.h);
 
         // draw each button
         for (const button of this.buttons) {
             button.draw(
-                this.shape.x + this.padding,
-                this.shape.y + this.padding
+                offsetx + this.padding,
+                offsety + this.padding
             );
         }
     }
@@ -554,9 +560,29 @@ class Menu_Awaiting extends Menu {
     }
     draw(text) {
         super.draw();
+        let offsetx, offsety;
+        if (this.style === 'center_stacked') {
+            offsetx = (game.window.w / 2) - (this.shape.w / 2) - this.shape.x;
+            offsety = (game.window.h / 2) - (this.shape.h / 2) - this.shape.y;
+        }
         ctx.textAlign = "center";
         ctx.fillStyle = "#FFFFFF";
         ctx.font = '16px Jura';
-        ctx.fillText(text, this.shape.x + this.shape.w / 2, this.shape.y + this.shape.h / 2 + 6);
+        ctx.fillText(text, offsetx + this.shape.w / 2, offsety + this.shape.h / 2 + 6);
+    }
+}
+
+class Menu_Main extends Menu {
+    constructor(buttons, shape, options) {
+        super(buttons, shape, options);
+        this.style = 'center_stacked';
+        this.type = 'pause';
+        this.buttons = [
+            new Menu_Button(new Rect(0, 0, 150, 30), "For Speed", function () { /* game.match = new Match_ForSpeed(); */ game.menu = null; game.paused = false; }),
+            new Menu_Button(new Rect(0, 40, 150, 30), "For Honor", function () { game.match = new Match_ForHonor(); game.menu = null; game.paused = false; }),
+            new Menu_Button(new Rect(0, 80, 150, 30), "For Ever", function () { game.match = new Match_ForEver(); game.menu = null; game.paused = false; }),
+            new Menu_Button(new Rect(0, 120, 150, 30), "debugmode", function () { game.match = new DebugMatch(); game.menu = null; game.paused = false; }),
+            new Menu_Button(new Rect(0, 160, 150, 30), "Exit", function () { window.close(); })
+        ]
     }
 }
