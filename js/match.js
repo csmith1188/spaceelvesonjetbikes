@@ -499,15 +499,15 @@ class Match_ForHonor extends Match {
             new Vect3((this.map.w / 2), (this.map.h / 2) + 200, 0),
             game.player,
             { name: 'Cpt. Fabius', gfx: 'img/sprites/jetbike' });
-        this.bots.push(new Player()) //Kevin / Jae'Sin
-        this.bots[this.bots.length - 1].character = new Jetbike(
-            allID++,
-            new Vect3((this.map.w / 2) - 1000, (this.map.h / 2) - 1000, 0),
-            this.bots[this.bots.length - 1],
-            { name: getName(), team: 1, gfx: 'img/sprites/dark2', color: [0, 0, 255] }
-        );
-        this.bots[this.bots.length - 1].controller = new Controller();
-        this.bots[this.bots.length - 1].name = 'Player 2';
+        // this.bots.push(new Player()) //Kevin / Jae'Sin
+        // this.bots[this.bots.length - 1].character = new Jetbike(
+        //     allID++,
+        //     new Vect3((this.map.w / 2) - 1000, (this.map.h / 2) - 1000, 0),
+        //     this.bots[this.bots.length - 1],
+        //     { name: getName(), team: 1, gfx: 'img/sprites/dark2', color: [0, 0, 255] }
+        // );
+        // this.bots[this.bots.length - 1].controller = new Controller();
+        // this.bots[this.bots.length - 1].name = 'Player 2';
         this.blocks.push(new Block(
             allID++,
             new Vect3((this.map.w / 2), (this.map.h / 2) - 0, 0),

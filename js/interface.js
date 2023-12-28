@@ -214,10 +214,9 @@ class Interface {
         if (!game.match.paused && !game.paused) {
             let compareX = game.player.camera.x - this.player.character.HB.pos.x;
             let compareY = game.player.camera.y - this.player.character.HB.pos.y;
-            //aimX is the mouse coordinates minus the this.player coordinates
-            //likewise with aimY (I calculated this elsewhere)
-            let aimX = compareX + this.player.controller.aimX;
-            let aimY = compareY + this.player.controller.aimY;
+            // Calculate a relative aimX without changing the original aimX
+            let aimX = this.player.controller.aimX;
+            let aimY = this.player.controller.aimY;
             //find the distance from this.player to mouse with pythagorean theorem
             let distance = ((aimX ** 2) + (aimY ** 2)) ** 0.5;
             //Normalize the dimension distance by the real distance (ratio)

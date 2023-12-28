@@ -28,6 +28,20 @@ function getCanvasRelative(e, center = true) {
             y: e.clientY - (bx.height / 2),
             bx: bx
         };
+    } else if (center) {
+        if (center instanceof Vect3) {
+            center = { x: center.x, y: center.y, z: center.z };
+        }
+        else {
+            center = center.center();
+            center.x = game.player.camera.x - center.x;
+            center.y = game.player.camera.y - center.y;
+        }
+        return {
+            x: e.clientX + center.x - (bx.width / 2),
+            y: e.clientY + center.y - (bx.height / 2),
+            bx: bx
+        };
     } else {
         return {
             x: e.clientX - bx.left,
@@ -196,14 +210,18 @@ class Keyboard extends Controller {
             let coords = getCanvasRelative(event, false); // from top-left
             this.fireX = coords.x;
             this.fireY = coords.y;
-            coords = getCanvasRelative(event, true); // relative to center
+            coords = getCanvasRelative(event, false); // relative to center
             this.rclickX = coords.x;
             this.rclickY = coords.y;
+            coords = getCanvasRelative(event, this.owner.character.HB);
+            this.aimX = coords.x
+            this.aimY = coords.y
             // Get which mousebutton they clicked
             if (event.button == 0)
                 this.clickButton = 1
             else if (event.button == 2)
                 this.rclickButton = 1
+            console.log(this.aimX, this.aimY);
         }.bind(this));
         window.addEventListener("mouseup", function (event) {
             if (event.button == 0)
@@ -216,7 +234,7 @@ class Keyboard extends Controller {
             this.wheelDown = (event.wheelDelta < 0) * 1;
         }.bind(this));
         window.addEventListener('mousemove', function (event) {
-            let coords = getCanvasRelative(event, true);
+            let coords = getCanvasRelative(event, this.owner.character.HB);
             this.aimX = coords.x
             this.aimY = coords.y
         }.bind(this));

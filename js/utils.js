@@ -189,6 +189,10 @@ class Cylinder {
         this.height = height;
     }
 
+    center() {
+        return new Vect3(this.pos.x, this.pos.y, this.pos.z + this.height / 2);
+    }
+
     /**
      * Checks if the cylinder collides with another shape.
      * @param {Rect|Cube} c - The shape to check collision with.

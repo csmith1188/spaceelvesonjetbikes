@@ -28,11 +28,10 @@ Dark elves believe everything is random:
 -->
 
 - For Honor
--- sword animation
 -- crosshair and aimx/y
+- ISO draw
 - A* pathing
 - Gamepad and touch screen buttons
-- ISO draw
 - Create more bullet types
 - Inventory Management
 -- X is pickup, A is always Sword, never drop A
