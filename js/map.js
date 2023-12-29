@@ -1,8 +1,9 @@
 class Map {
     constructor(options) {
         this.tileSet = new Tileset({ generate: true });
-        this.w = this.tileSet.tileSize * this.tileSet.grid[0].length; //7200
-        this.h = this.tileSet.tileSize * this.tileSet.grid.length; //4800
+        this.tileSize = 48;
+        this.w = this.tileSize * this.tileSet.grid[0].length; //7200
+        this.h = this.tileSize * this.tileSet.grid.length; //4800
         this.nodes = [];
 
         this.friction = {
@@ -23,8 +24,6 @@ class Map {
         this.lastBlock = () => { return this.blocks[this.blocks.length - 1]; }
         this.bullets = [];
         this.debris = [];
-
-        this.buildNavMesh();
 
         this.lightValue = [0, 0, 24, 0.15];
 
@@ -51,7 +50,7 @@ class Map {
     buildNavMesh() {
         for (let x = 0; x < this.w / this.tileSize; x++) {
             for (let y = 0; y < this.h / this.tileSize; y++) {
-                this.nodes.push(new Node(x * this.tileSize, y * this.tileSize))
+                this.nodes.push(new Node(x * this.tileSize, y * this.tileSize), this.tileSize, this.tileSize);
                 for (const block of game.match.map.blocks) {
                     if (this.nodes[this.nodes.length - 1].pos.collideCube(block.HB)) {
                         this.nodes[this.nodes.length - 1].pass = false;
@@ -262,7 +261,7 @@ class Map {
 ###    ####  ########  #########  ##########
 */
 class Node {
-    constructor(x, y, w = game.match.map.tileSize, h = game.match.map.tileSize) {
+    constructor(x, y, w, h) {
         this.pos = new Rect(x, y, w, h)
         this.pass = true;
     }
@@ -322,11 +321,11 @@ class Map_Deathbox extends Map {
         super();
         this.setup();
     }
-    
+
     setup() {
         this.w = 48 * 40; // 1872
         this.h = 48 * 22; // 1056
-        this.tileSet = new Tileset({ size: {x: 40, y: 22}, generate: true });
+        this.tileSet = new Tileset({ size: { x: 40, y: 22 }, generate: true });
         /*
             _      _    _   ___ _         _
            /_\  __| |__| | | _ ) |___  __| |__ ___
@@ -334,16 +333,83 @@ class Map_Deathbox extends Map {
          /_/ \_\__,_\__,_| |___/_\___/\__|_\_\/__/
         
         */
-        for (let i = 0; i < 10; i++) {
-            let ran1 = function () { return Math.floor(Math.random() * 3) + 1 }
-            let ran2 = function () { return Math.floor(Math.random() * 3) + 1 }
-            let ran3 = function () { return Math.floor(Math.random() * 3) + 1 }
-            this.blocks.push(new Block(
-                allID++,
-                new Vect3(Math.round(Math.random() * this.w), Math.round(Math.random() * this.h), 0),
-                new Vect3(ran1() * 48, ran2() * 48, ran3() * 48),
-                { imgFile: 'img/tiles/wall_top.png', imgFileSide: 'img/tiles/wall_side.png' }))
-        }
+        // for (let i = 0; i < 10; i++) {
+        //     let ran1 = function () { return Math.floor(Math.random() * 3) + 1 }
+        //     let ran2 = function () { return Math.floor(Math.random() * 3) + 1 }
+        //     let ran3 = function () { return Math.floor(Math.random() * 3) + 1 }
+        //     this.blocks.push(new Block(
+        //         allID++,
+        //         new Vect3(Math.round(Math.random() * this.w), Math.round(Math.random() * this.h), 0),
+        //         new Vect3(ran1() * 48, ran2() * 48, ran3() * 48),
+        //         { imgFile: 'img/tiles/wall_top.png', imgFileSide: 'img/tiles/wall_side.png' }))
+        // }
+
+        let mapCX = this.w / 2;
+        let mapCY = this.h / 2;
+
+        let opts = { imgFile: 'img/tiles/wall_top.png', imgFileSide: 'img/tiles/wall_side.png' }
+
+        this.blocks.push(new Block(
+            allID++,
+            new Vect3(mapCX - 700, mapCY + 30, 0),
+            new Vect3(this.tileSize, 200, 128),
+            opts))
+        this.blocks.push(new Block(
+            allID++,
+            new Vect3(mapCX + 700, mapCY - 230, 0),
+            new Vect3(this.tileSize, 200, 128),
+            opts))
+        // horizontal wall in top left quadrant of map
+        this.blocks.push(new Block(
+            allID++,
+            new Vect3(mapCX - 500, mapCY - 230, 0),
+            new Vect3(500, this.tileSize, 128),
+            opts));
+        // horizontal wall in bottom right quadrant of map
+        this.blocks.push(new Block(
+            allID++,
+            new Vect3(mapCX, mapCY + 230, 0),
+            new Vect3(500, this.tileSize, 128),
+            opts));
+        // square short wall in bottom left quadrant of map
+        this.blocks.push(new Block(
+            allID++,
+            new Vect3(mapCX - 400, mapCY + 230, 0),
+            new Vect3(this.tileSize * 2, this.tileSize * 2, this.tileSize),
+            opts));
+        // square short wall in top right quadrant of map
+        this.blocks.push(new Block(
+            allID++,
+            new Vect3(mapCX + 400 - (this.tileSize * 2), mapCY - 230 - (this.tileSize), 0),
+            new Vect3(this.tileSize * 2, this.tileSize * 2, this.tileSize),
+            opts));
+        // push into the blocks array a block across the bottom of the map
+        this.blocks.push(new Block(
+            allID++,
+            new Vect3(0, this.h, 0),
+            new Vect3(this.w, this.tileSize, this.tileSize),
+            opts))
+        // push into the blocks array a block across the top of the map
+        this.blocks.push(new Block(
+            allID++,
+            new Vect3(0, -this.tileSize, 0),
+            new Vect3(this.w, this.tileSize, this.tileSize),
+            opts))
+        // push into the blocks array a block across the left of the map
+        this.blocks.push(new Block(
+            allID++,
+            new Vect3(0, 0, 0),
+            new Vect3(this.tileSize, this.h, this.tileSize),
+            opts))
+        // push into the blocks array a block across the right of the map
+        this.blocks.push(new Block(
+            allID++,
+            new Vect3(this.w - this.tileSize, 0, 0),
+            new Vect3(this.tileSize, this.h, this.tileSize),
+            opts))
+
+        // this.buildNavMesh();
+
     }
 }
 
@@ -389,7 +455,6 @@ class Tileset {
             const cols = this.grid[y].length
             for (let x = 0; x < cols; x++) {
                 let compareX = game.player.camera.x - (x * this.tileSize);
-                // console.log(compareX, compareY);
                 //If the tile is within the camera's viewable radius and the horizon
                 // TODO: horizon count doesn't actually line up with the horizon. sky overdraws it
                 let horizonCalc = 0;
@@ -416,8 +481,8 @@ class Tileset {
                             this.tileSize,
                             this.tileSize
                         );
-                    }
                 }
+            }
         }
         // console.log("Drew a total of " + count + " tiles");
     }

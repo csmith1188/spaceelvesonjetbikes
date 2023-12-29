@@ -229,8 +229,8 @@ class Character {
                         game.match.map.blocks.push(new WeaponPickup(
                             allID++,
                             new Vect3(this.HB.pos.x, this.HB.pos.y, this.HB.pos.z + this.HB.height / 2),
-                            new Vect3(0, 0, 0),
-                            { weapon: this.inventory[this.item].weapon, ammo: this.inventory[this.item].ammo, livetime: game.match.despawnTimer, dying: true, speed: new Vect3(this.speed.x, this.speed.y, this.speed.z + 20) }))
+                            new Vect3(this.speed.x, this.speed.y, this.speed.z + 20),
+                            { weapon: this.inventory[this.item].weapon, ammo: this.inventory[this.item].ammo, livetime: game.match.despawnTimer, dying: true } ));
                         // remove the item from the inventory
                         this.inventory.splice(this.item, 1)[0];
                         // while the length of the inventory is less than  the item slot plus one, reduce the item slot by one
@@ -532,10 +532,9 @@ class Character {
                 if (this.inventory[this.item])
                     game.match.map.blocks.push(new WeaponPickup(
                         allID++,
-                        this.HB.pos.x,
-                        this.HB.pos.y,
-                        30, 0, 0, 0,
-                        { weapon: this.inventory[this.item].weapon, ammo: this.inventory[this.item].ammo, livetime: game.match.despawnTimer, dying: true, speed: new Vect3(this.speed.x, this.speed.y, 20) }))
+                        new Vect3(this.HB.pos.x, this.HB.pos.y, this.HB.pos.z + this.HB.height / 2),
+                        new Vect3(this.speed.x, this.speed.y, this.speed.z + 20),
+                        { weapon: this.inventory[this.item].weapon, ammo: this.inventory[this.item].ammo, livetime: game.match.despawnTimer, dying: true }))
             }
         }
     }

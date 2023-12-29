@@ -277,6 +277,7 @@ class Match_ForHonor extends Match {
         this.description = "A duel to the death.";
         this.spmp = 'ss';
     }
+
     setup() {
         // Add player 1
         game.player.character = new Jetbike(
@@ -286,7 +287,7 @@ class Match_ForHonor extends Match {
             { name: 'Cpt. Fabius', gfx: 'img/sprites/jetbike' });
 
         // Add player 2
-        this.bots.push(new Bot()) //Kevin / Jae'Sin
+        this.bots.push(new Player()) //Kevin / Jae'Sin
         this.bots[this.bots.length - 1].character = new Jetbike(
             allID++,
             new Vect3((this.map.w / 2) + 800, (this.map.h / 2), 0),
@@ -306,22 +307,71 @@ class Match_ForHonor extends Match {
         // Attach the camera to the block
         game.player.camera.target = this.blocks[this.blocks.length - 1];
 
-        // add weapons to the center of the map
-        this.map.blocks.push(new WeaponPickup(
+        // Add health pickups to each side fothe map
+        this.map.blocks.push(new HealthPickup(
             allID++,
-            new Vect3((this.map.w / 2) - 100, (this.map.h / 2), 0),
-            new Vect3(0, 0, 0),
-            { weapon: 'pistol', pickupDelay: 0 }));
+            new Vect3((this.map.w / 2) - 800, (this.map.h / 2) + 96, 0),
+            new Vect3(128, 128, 64)));
+        this.map.blocks.push(new HealthPickup(
+            allID++,
+            new Vect3((this.map.w / 2) + 800, (this.map.h / 2) - 96, 0),
+            new Vect3(128, 128, 64)));
+        // add both ammo pickups to top and bottom of map
+        this.map.blocks.push(new Ammo_Ballistic(
+            allID++,
+            new Vect3((this.map.w / 2) - 500, (this.map.h / 2) - 400, 0),
+            new Vect3(128, 128, 64)));
+        this.map.blocks.push(new Ammo_Plasma(
+            allID++,
+            new Vect3((this.map.w / 2) + 472, (this.map.h / 2) + 400, 0),
+            new Vect3(128, 128, 64)));
+        this.map.blocks.push(new Ammo_Ballistic(
+            allID++,
+            new Vect3((this.map.w / 2) + 378, (this.map.h / 2) + 400, 0),
+            new Vect3(128, 128, 64)));
+        this.map.blocks.push(new Ammo_Plasma(
+            allID++,
+            new Vect3((this.map.w / 2) - 408, (this.map.h / 2) - 400, 0),
+            new Vect3(128, 128, 64)));
+
+
+        // add weapons to the center of the map
         this.map.blocks.push(new WeaponPickup(
             allID++,
             new Vect3((this.map.w / 2), (this.map.h / 2), 0),
             new Vect3(0, 0, 0),
-            { weapon: 'rifle', pickupDelay: 0 }));
+            { weapon: 'pistol', pickupDelay: 0, startDelay: 0 }));
         this.map.blocks.push(new WeaponPickup(
             allID++,
-            new Vect3((this.map.w / 2) + 100, (this.map.h / 2), 0),
+            new Vect3((this.map.w / 2), (this.map.h / 2), 0),
             new Vect3(0, 0, 0),
-            { weapon: 'flamer', pickupDelay: 0 }));
+            { weapon: 'lance', pickupDelay: 0, startDelay: 0 }));
+        this.map.blocks.push(new WeaponPickup(
+            allID++,
+            new Vect3((this.map.w / 2), (this.map.h / 2), 0),
+            new Vect3(0, 0, 0),
+            { weapon: 'rifle', pickupDelay: 0, startDelay: 0 }));
+        this.map.blocks.push(new WeaponPickup(
+            allID++,
+            new Vect3((this.map.w / 2), (this.map.h / 2) + 0, 0),
+            new Vect3(0, 0, 0),
+            { weapon: 'flamer', pickupDelay: 0, startDelay: 0 }));
+
+        // for every block in the blocks array
+        // if the block's type is not 'block'
+        // add one to the counter
+        let blockCounter = 0;
+        for (const block of this.map.blocks) {
+            if (block.type == 'weapon') {
+                block.sineOffset = blockCounter++;
+                block.runFunc.push(
+                    function (bc) {
+                        this.HB.pos.x = this.spawn.x + sineAnimate(100, 0.025, (this.sineOffset * 60));
+                        this.HB.pos.y = this.spawn.y + sineAnimate(100, 0.025, (this.sineOffset * 60) + 60);
+                    }.bind(block)
+                );
+            }
+        }
     }
 }
 

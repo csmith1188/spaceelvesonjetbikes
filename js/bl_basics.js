@@ -36,6 +36,7 @@ class Block {
         this.runFunc = [];
         this.reflection = 0.5;
         this.friction = 0.5;
+        this.type = 'block';
 
         // Graphics
         this.imgFile = '';  // Leave blank to add collision to a background
@@ -58,7 +59,7 @@ class Block {
                 this[key] = options[key];
             }
         this.img.src = this.imgFile;
-        this.startDelay = this.startDelay + (game.match) ? game.match.ticks : 0;
+        this.startDelay = this.startDelay + ((game.match) ? game.match.ticks : 0);
     }
 
     step() {

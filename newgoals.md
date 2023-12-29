@@ -28,7 +28,9 @@ Dark elves believe everything is random:
 -->
 
 - bots drop weapons bug
-- For Honor interface and restart
+- For Honor hud
+- for honor countdown and end game (bo5?)
+- for honor weapons/ammo
 - For Speed
 - music
 - ship
