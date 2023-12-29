@@ -27,11 +27,14 @@ Dark elves believe everything is random:
 #########   ########          ###        ########### ###    ###  ########     ###
 -->
 
-- bots drop weapons bug
+- player 2 no aimX/aimY
+- player 2 no touchscreen
+- for honor screen too small
 - For Honor hud
 - for honor countdown and end game (bo5?)
 - for honor weapons/ammo
 - For Speed
+- high scores
 - music
 - ship
 

@@ -110,6 +110,8 @@ class Bullet extends Block {
                         if (c.parent.camera) c.parent.camera.shakeTime = 10;
                         // if the c's controller has a rumble, rumble it
                         if (c.parent.controller.type == 'gamepad') c.parent.controller.rumble(100, 1.0, 1.0);
+                        // if the c's controller is a touch controller, rumble it
+                        if (c.parent.controller.type == 'touch' && c.parent.controller.canVibrate) navigator.vibrate(100);
 
                     }
                 }

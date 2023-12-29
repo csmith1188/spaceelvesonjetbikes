@@ -479,6 +479,10 @@ class Touch extends Controller {
             event.stopImmediatePropagation();
             getTouch(event);
         }, { passive: false });
+
+        this.canVibrate = false;
+        if ('vibrate' in navigator)
+            this.canVibrate = true;
     }
 
     /*
