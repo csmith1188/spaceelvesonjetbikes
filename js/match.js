@@ -5,6 +5,7 @@ class Match {
 
     reset() {
         this.ticks = -1;
+        this.spmp = 'sp' // 'sp' single player, 'ss' split screen, 'mp' multiplayer
         this.paused = false;
         this.map = new Map();
         this.bots = [];
@@ -102,7 +103,7 @@ class Start_Screen extends Match {
         game.player.character.active = false;
         this.map.blocks.push(new Block(
             allID++,
-            new Vect3((this.map.w / 2) - 0, (this.map.h / 2) + 100, 0),
+            new Vect3((this.map.w / 2) - 0, (this.map.h / 2), 0),
             new Vect3(0, 0, 0),
             { color: [101, 101, 101], colorSide: [201, 201, 201] }))
         game.player.camera.target = this.map.blocks[this.map.blocks.length - 1];
@@ -274,28 +275,38 @@ class Match_ForHonor extends Match {
         this.map = new Map_Deathbox();
         this.name = "For Honor";
         this.description = "A duel to the death.";
+        this.spmp = 'ss';
     }
     setup() {
+        // Add player 1
         game.player.character = new Jetbike(
             allID++,
-            new Vect3((this.map.w / 2), (this.map.h / 2) + 200, 0),
+            new Vect3((this.map.w / 2) - 800, (this.map.h / 2), 0),
             game.player,
             { name: 'Cpt. Fabius', gfx: 'img/sprites/jetbike' });
-        this.bots.push(new Player()) //Kevin / Jae'Sin
+
+        // Add player 2
+        this.bots.push(new Bot()) //Kevin / Jae'Sin
         this.bots[this.bots.length - 1].character = new Jetbike(
             allID++,
-            new Vect3((this.map.w / 2) - 1000, (this.map.h / 2) - 1000, 0),
+            new Vect3((this.map.w / 2) + 800, (this.map.h / 2), 0),
             this.bots[this.bots.length - 1],
             { name: getName(), team: 1, gfx: 'img/sprites/dark2', color: [0, 0, 255] }
         );
-        this.bots[this.bots.length - 1].controller = new Controller();
+        // Attach their controller
+        // this.bots[this.bots.length - 1].controller = new Controller();
+
+        // Create a block to attach the camera to
         this.bots[this.bots.length - 1].name = 'Player 2';
         this.blocks.push(new Block(
             allID++,
-            new Vect3((this.map.w / 2), (this.map.h / 2) - 0, 0),
+            new Vect3((this.map.w / 2), (this.map.h / 2), 0),
             new Vect3(0, 0, 0),
             { solid: false, visible: false }));
+        // Attach the camera to the block
         game.player.camera.target = this.blocks[this.blocks.length - 1];
+
+        // add weapons to the center of the map
         this.map.blocks.push(new WeaponPickup(
             allID++,
             new Vect3((this.map.w / 2) - 100, (this.map.h / 2), 0),
@@ -546,7 +557,7 @@ class Match_ForEver extends Match {
                 game.match.reset();
                 game.match.setup();
             }
-            
+
         }
     }
 

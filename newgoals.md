@@ -27,8 +27,12 @@ Dark elves believe everything is random:
 #########   ########          ###        ########### ###    ###  ########     ###
 -->
 
-- For Honor
--- crosshair and aimx/y
+- bots drop weapons bug
+- For Honor interface and restart
+- For Speed
+- music
+- ship
+
 - ISO draw
 - A* pathing
 - Gamepad and touch screen buttons

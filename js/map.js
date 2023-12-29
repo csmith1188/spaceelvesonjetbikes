@@ -30,8 +30,6 @@ class Map {
 
         this.runFunc = []; // A list of functions to run during the step
 
-        this.setup = () => { };
-
         if (typeof options == 'object')
             for (const setting of Object.keys(options)) {
                 if (this[setting] !== undefined)
@@ -322,12 +320,13 @@ class Map_FieldCity extends Map {
 class Map_Deathbox extends Map {
     constructor() {
         super();
-        this.w = 48 * 40;
-        this.h = 48 * 20;
         this.setup();
     }
-
-    setup = () => {
+    
+    setup() {
+        this.w = 48 * 40; // 1872
+        this.h = 48 * 22; // 1056
+        this.tileSet = new Tileset({ size: {x: 40, y: 22}, generate: true });
         /*
             _      _    _   ___ _         _
            /_\  __| |__| | | _ ) |___  __| |__ ___
@@ -353,26 +352,26 @@ class Tileset {
         this.tileSize = 48;
         this.grid = [[]];
         this.generate = false;
+        this.size = new Vect2(100, 100);
         if (typeof options == 'object')
             for (const setting of Object.keys(options)) {
                 if (this[setting] !== undefined)
                     this[setting] = options[setting];
             }
-
         if (this.generate) {
-            this.randomGrid();
+            this.randomGrid(this.size);
         }
     }
 
-    randomGrid = () => {
-        for (let x = 0; x < 100; x++) {
+    randomGrid = (size) => {
+        for (let y = 0; y < size.y; y++) {
             this.grid.push([]);
-            for (let y = 0; y < 100; y++) {
+            for (let x = 0; x < size.x; x++) {
                 // 1 in 20 chance of not getting grass
                 let ran = Math.floor(Math.random() * 20);
                 if (ran == 0) ran = Math.floor(Math.random() * 6)
                 else ran = 0;
-                this.grid[x].push(
+                this.grid[y].push(
                     ['G', 'B', 'D', 'T', 'E']
                     [ran]
                 );
@@ -417,9 +416,8 @@ class Tileset {
                             this.tileSize,
                             this.tileSize
                         );
+                    }
                 }
-            }
-
         }
         // console.log("Drew a total of " + count + " tiles");
     }
