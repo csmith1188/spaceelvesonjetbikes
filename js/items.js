@@ -112,7 +112,7 @@ class Pistol extends Item {
                 );
 
                 if (user.parent.controller.type == 'gamepad') user.parent.controller.rumble(100, 0.5, 0);
-                if (c.parent.controller.type == 'touch' && c.parent.controller.canVibrate) navigator.vibrate(50);
+                if (user.parent.controller.type == 'touch' && user.parent.controller.canVibrate) navigator.vibrate(50);
 
 
             } else {
@@ -262,7 +262,7 @@ class Rifle extends Item {
                 // Shake the camera
                 if (user.parent.camera) user.parent.camera.shakeTime = 10;
                 if (user.parent.controller.type == 'gamepad') user.parent.controller.rumble(100, 0, 1.0);
-                if (c.parent.controller.type == 'touch' && c.parent.controller.canVibrate) navigator.vibrate(50);
+                if (user.parent.controller.type == 'touch' && user.parent.controller.canVibrate) navigator.vibrate(50);
 
 
             } else {
@@ -368,7 +368,7 @@ class Flamer extends Item {
                 }
 
                 if (user.parent.controller.type == 'gamepad') user.parent.controller.rumble(100, 0, 0.5);
-                if (c.parent.controller.type == 'touch' && c.parent.controller.canVibrate) navigator.vibrate(50);
+                if (user.parent.controller.type == 'touch' && user.parent.controller.canVibrate) navigator.vibrate(50);
 
 
             } else {
@@ -536,7 +536,7 @@ class Lance extends Item {
 
                 // If the user has a gamepad, rumble
                 if (user.parent.controller.type == 'gamepad') user.parent.controller.rumble(100, 1.0, 0);
-                if (c.parent.controller.type == 'touch' && c.parent.controller.canVibrate) navigator.vibrate(50);
+                if (user.parent.controller.type == 'touch' && user.parent.controller.canVibrate) navigator.vibrate(50);
 
 
 

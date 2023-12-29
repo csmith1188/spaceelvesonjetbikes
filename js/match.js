@@ -97,6 +97,7 @@ class Start_Screen extends Match {
         this.map = new Map_Deathbox();
         this.name = "Game Menu";
         this.description = "";
+        this.despawnTimer = 360;
     }
 
     setup() {
