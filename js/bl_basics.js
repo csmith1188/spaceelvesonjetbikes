@@ -23,7 +23,6 @@ class Block {
         this.active = true; //Are we tracking this in the game?
         this.dying = false; //Is the lifespan counting down?
         this.cleanup = true; //Is this ready to be removed from the game?
-        this.startDelay = 0; //Number of frames to wait before starting
         this.livetime = -1; //Number of frames to live (-1 forever)
         this.repeat = 0;
 
@@ -59,7 +58,6 @@ class Block {
                 this[key] = options[key];
             }
         this.img.src = this.imgFile;
-        this.startDelay = this.startDelay + ((game.match) ? game.match.ticks : 0);
     }
 
     step() {
@@ -70,7 +68,7 @@ class Block {
          |_|_|_\___/\_/\___|_|_|_\___|_||_\__|
 
         */
-        if (game.match.ticks >= this.startDelay && this.livetime != 0) {
+        if (this.livetime != 0) {
             this.HB.pos.x += this.speed.x;
             this.HB.pos.y += this.speed.y;
             this.HB.pos.z += this.speed.z;

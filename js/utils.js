@@ -347,3 +347,13 @@ function easeinout(userValue, maxValue) {
     const modifiedValue = (easeInValue + easeOutValue) / 2 * maxValue;
     return modifiedValue
 }
+
+function formatTicks(ticks) {
+    let milliseconds = Math.floor(ticks % 60);
+    let seconds = Math.floor(ticks / 60);
+    let minutes = Math.floor(seconds / 60);
+    seconds = seconds % 60;
+    if (seconds < 10) seconds = '0' + seconds;
+    if (minutes < 10) minutes = '0' + minutes;
+    return minutes + ':' + seconds + '.' + milliseconds;
+}

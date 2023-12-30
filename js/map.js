@@ -1,7 +1,7 @@
 class Map {
     constructor(options) {
-        this.tileSet = new Tileset({ generate: true });
         this.tileSize = 48;
+        this.tileSet = new Tileset({ generate: true });
         this.w = this.tileSize * this.tileSet.grid[0].length; //7200
         this.h = this.tileSize * this.tileSet.grid.length; //4800
         this.nodes = [];
@@ -282,9 +282,24 @@ class Node {
     }
 }
 
+/*
+      :::::::::: ::::::::::: :::::::::: :::        :::::::::          :::::::: ::::::::::: ::::::::::: :::   :::
+     :+:            :+:     :+:        :+:        :+:    :+:        :+:    :+:    :+:         :+:     :+:   :+:
+    +:+            +:+     +:+        +:+        +:+    +:+        +:+           +:+         +:+      +:+ +:+
+   :#::+::#       +#+     +#++:++#   +#+        +#+    +:+        +#+           +#+         +#+       +#++:
+  +#+            +#+     +#+        +#+        +#+    +#+        +#+           +#+         +#+        +#+
+ #+#            #+#     #+#        #+#        #+#    #+#        #+#    #+#    #+#         #+#        #+#
+###        ########### ########## ########## #########          ######## ###########     ###        ###
+*/
 class Map_FieldCity extends Map {
-    constructor() {
-        super();
+    constructor(options) {
+        super(options);
+        this.startBlocks = 50;
+        if (typeof options == 'object')
+            for (const setting of Object.keys(options)) {
+                if (this[setting] !== undefined)
+                    this[setting] = options[setting];
+            }
         this.setup();
     }
 
@@ -296,7 +311,7 @@ class Map_FieldCity extends Map {
          /_/ \_\__,_\__,_| |___/_\___/\__|_\_\/__/
         
         */
-        for (let i = 0; i < 50; i++) {
+        for (let i = 0; i < this.startBlocks; i++) {
             let ran1 = function () { return Math.floor(Math.random() * 3) + 1 }
             let ran2 = function () { return Math.floor(Math.random() * 3) + 1 }
             let ran3 = function () { return Math.floor(Math.random() * 3) + 1 }

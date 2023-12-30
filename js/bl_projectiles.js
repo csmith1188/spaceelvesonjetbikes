@@ -74,99 +74,98 @@ class Bullet extends Block {
     }
 
     step() {
-        if (this.active && game.match.ticks >= this.startDelay) {
-            if (game.match.ticks >= this.startDelay && this.livetime != 0) {
-                // Move
-                this.HB.pos.x += this.speed.x;
-                this.HB.pos.y += this.speed.y;
-                this.HB.pos.z += this.speed.z;
 
-                /*
-                   ___     _ _         _
-                  / __|  _| (_)_ _  __| |___ _ _
-                 | (_| || | | | ' \/ _` / -_) '_|
-                  \___\_, |_|_|_||_\__,_\___|_|
-                      |__/
-                */
-                for (let c of [game.player, ...game.match.bots]) {
-                    if (c.character === this.user) //Don't collide with yourself
-                        continue;
-                    c = c.character; //Get the character from the bot
-                    let side = this.HB.collide(c.HB); //Check for collision
-                    if (side && c.solid && c.team !== this.user.team) {
-                        //play hit2 sound
-                        this.touchSFX.currentTime = 0;
-                        if (!this.user.muted)
-                            this.touchSFX.play();
-                        if (!c.invulnerable)
-                            c.hp -= this.damage;
-                        c.speed.x += this.speed.x * this.force;
-                        c.speed.y += this.speed.y * this.force;
-                        c.speed.z += this.speed.z * this.force;
-                        c.trigger(this, side);
-                        this.active = false;
-                        this.hitSplash();
-                        // if the c's parent has a camera, shake it
-                        if (c.parent.camera) c.parent.camera.shakeTime = 10;
-                        // if the c's controller has a rumble, rumble it
-                        if (c.parent.controller.type == 'gamepad') c.parent.controller.rumble(100, 1.0, 1.0);
-                        // if the c's controller is a touch controller, rumble it
-                        if (c.parent.controller.type == 'touch' && c.parent.controller.canVibrate) navigator.vibrate(100);
+        if (this.active && this.livetime != 0) {
+            // Move
+            this.HB.pos.x += this.speed.x;
+            this.HB.pos.y += this.speed.y;
+            this.HB.pos.z += this.speed.z;
 
-                    }
+            /*
+               ___     _ _         _
+              / __|  _| (_)_ _  __| |___ _ _
+             | (_| || | | | ' \/ _` / -_) '_|
+              \___\_, |_|_|_||_\__,_\___|_|
+                  |__/
+            */
+            for (let c of [game.player, ...game.match.bots]) {
+                if (c.character === this.user) //Don't collide with yourself
+                    continue;
+                c = c.character; //Get the character from the bot
+                let side = this.HB.collide(c.HB); //Check for collision
+                if (side && c.solid && c.team !== this.user.team) {
+                    //play hit2 sound
+                    this.touchSFX.currentTime = 0;
+                    if (!this.user.muted)
+                        this.touchSFX.play();
+                    if (!c.invulnerable)
+                        c.hp -= this.damage;
+                    c.speed.x += this.speed.x * this.force;
+                    c.speed.y += this.speed.y * this.force;
+                    c.speed.z += this.speed.z * this.force;
+                    c.trigger(this, side);
+                    this.active = false;
+                    this.hitSplash();
+                    // if the c's parent has a camera, shake it
+                    if (c.parent.camera) c.parent.camera.shakeTime = 10;
+                    // if the c's controller has a rumble, rumble it
+                    if (c.parent.controller.type == 'gamepad') c.parent.controller.rumble(100, 1.0, 1.0);
+                    // if the c's controller is a touch controller, rumble it
+                    if (c.parent.controller.type == 'touch' && c.parent.controller.canVibrate) navigator.vibrate(100);
+
                 }
-
-                /*
-                  ___ _         _
-                 | _ ) |___  __| |__ ___
-                 | _ \ / _ \/ _| / /(_-<
-                 |___/_\___/\__|_\_\/__/
-     
-                */
-                for (const c of game.match.map.blocks) { //For each block
-                    let side = this.HB.collide(c.HB); //Check for collision
-                    if (c.solid && side) { //If the block is solid and you collided
-                        switch (side) { //see which side you collided on
-                            case 'front':
-                                //Move the character to the edge of the block
-                                this.HB.pos.y = c.HB.pos.y + c.HB.volume.y + this.HB.radius;
-                                break;
-                            case 'rear':
-                                this.HB.pos.y = c.HB.pos.y - this.HB.radius;
-                                break;
-                            case 'right':
-                                this.HB.pos.x = c.HB.pos.x + c.HB.volume.x + this.HB.radius;
-                                break;
-                            case 'left':
-                                this.HB.pos.x = c.HB.pos.x - this.HB.radius;
-                                break;
-                            case 'top':
-                                this.HB.pos.z = c.HB.pos.z + c.HB.volume.z;
-                                break;
-                            case 'bottom':
-                                this.HB.pos.z = c.HB.pos.z - this.HB.height;
-                                break;
-                            default:
-                                //break if you didn't collide
-                                break;
-                        }
-                        //play hit sound
-                        this.touchSFX.currentTime = 0;
-                        if (!this.user.muted)
-                            this.touchSFX.play();
-                        this.active = false;
-                        c.trigger(this, side); //Trigger the block's trigger function
-                        this.hitSplash();
-                    }
-                }
-
-                for (const func of this.runFunc) {
-                    func();
-                }
-                this.livetime--;
-            } else if (this.livetime == 0) {
-                this.active = false;
             }
+
+            /*
+              ___ _         _
+             | _ ) |___  __| |__ ___
+             | _ \ / _ \/ _| / /(_-<
+             |___/_\___/\__|_\_\/__/
+ 
+            */
+            for (const c of game.match.map.blocks) { //For each block
+                let side = this.HB.collide(c.HB); //Check for collision
+                if (c.solid && side) { //If the block is solid and you collided
+                    switch (side) { //see which side you collided on
+                        case 'front':
+                            //Move the character to the edge of the block
+                            this.HB.pos.y = c.HB.pos.y + c.HB.volume.y + this.HB.radius;
+                            break;
+                        case 'rear':
+                            this.HB.pos.y = c.HB.pos.y - this.HB.radius;
+                            break;
+                        case 'right':
+                            this.HB.pos.x = c.HB.pos.x + c.HB.volume.x + this.HB.radius;
+                            break;
+                        case 'left':
+                            this.HB.pos.x = c.HB.pos.x - this.HB.radius;
+                            break;
+                        case 'top':
+                            this.HB.pos.z = c.HB.pos.z + c.HB.volume.z;
+                            break;
+                        case 'bottom':
+                            this.HB.pos.z = c.HB.pos.z - this.HB.height;
+                            break;
+                        default:
+                            //break if you didn't collide
+                            break;
+                    }
+                    //play hit sound
+                    this.touchSFX.currentTime = 0;
+                    if (!this.user.muted)
+                        this.touchSFX.play();
+                    this.active = false;
+                    c.trigger(this, side); //Trigger the block's trigger function
+                    this.hitSplash();
+                }
+            }
+
+            for (const func of this.runFunc) {
+                func();
+            }
+            this.livetime--;
+        } else if (this.livetime == 0) {
+            this.active = false;
         }
     }
 

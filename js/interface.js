@@ -361,6 +361,28 @@ class Interface {
         }
 
         /*
+          _____                  _
+         |_   _|_ _ _ _ __ _ ___| |_
+           | |/ _` | '_/ _` / -_)  _|
+           |_|\__,_|_| \__, \___|\__|
+                       |___/
+        */
+
+        // draw the target on the minimap in yellow
+        if (this.player.character.target) {
+            let distance = Math.sqrt((this.player.character.target.HB.pos.x - game.player.character.HB.pos.x) ** 2 + (this.player.character.target.HB.pos.y - game.player.character.HB.pos.y) ** 2);
+            let angle = Math.atan2(this.player.character.target.HB.pos.y - game.player.character.HB.pos.y, this.player.character.target.HB.pos.x - game.player.character.HB.pos.x);
+            let x = (game.window.w / 2) + (Math.cos(angle) * Math.min(distance / 10, this.minimapRadius));
+            let y = (game.window.h - 100) + (Math.sin(angle) * Math.min(distance / 10, this.minimapRadius));
+            ctx.fillStyle = "#00FF00";
+            ctx.beginPath();
+            ctx.arc(x, y, 5, 0, Math.PI * 2);
+            ctx.fill();
+        }
+
+
+
+        /*
                _
           _ __| |__ _ _  _ ___ _ _
          | '_ \ / _` | || / -_) '_|
