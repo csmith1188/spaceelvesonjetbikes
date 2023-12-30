@@ -27,13 +27,14 @@ Dark elves believe everything is random:
 #########   ########          ###        ########### ###    ###  ########     ###
 -->
 
-- two controllers cannot be detected at once
-- player 2 no touchscreen
 - for honor screen too small pause
+- two controllers cannot be detected at once
 - for honor countdown and end game (bo5?)
+- janky menus (better menu handling)
 - For Speed
 - high scores
 - music
+- graphics
 - ship
 
 - ISO draw

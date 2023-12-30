@@ -119,7 +119,10 @@ class Game {
             }
 
             //Draw Controller HUD
-            this.player.controller.draw();
+            for (const bot of [this.player, ...this.match.bots]) {
+                if (bot.controller)
+                    bot.controller.draw();
+            }
 
             if (this.menu)
                 this.menu.draw();

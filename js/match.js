@@ -374,6 +374,13 @@ class Match_ForHonor extends Match {
             }
         }
     }
+
+    step() {
+        super.step();
+        if (game.window.w < 1720 || game.window.h < 920) {
+            game.paused = true;
+        }
+    }
 }
 
 /*

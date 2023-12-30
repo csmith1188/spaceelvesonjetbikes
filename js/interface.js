@@ -431,7 +431,6 @@ class Interface {
 class Interface_LocalMP extends Interface {
     constructor(player, position) {
         super(player);
-        console.log(position);
         this.position = position;
     }
 
@@ -540,7 +539,7 @@ class Interface_LocalMP extends Interface {
         ctx.fillStyle = "#FFFFFF";
         ctx.fillText(this.player.character.name, hudBox.x + 80, hudBox.y + 18);
         // draw the player's icon
-        ctx.drawImage(this.player.character.img, hudBox.x + 80, hudBox.y + 40, 58, 37);
+        ctx.drawImage(this.player.character.img, hudBox.x + 80, hudBox.y + 40 - sineAnimate(1, 0.1), 58, 37);
 
 
         //if one item, it is active

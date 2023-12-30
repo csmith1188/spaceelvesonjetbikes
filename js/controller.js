@@ -504,16 +504,18 @@ class Touch extends Controller {
                 let touchCoord = getCanvasRelative(touch, false);
                 this.lastTouch = touchCoord;
 
-                if (game.player.interface.touchButton.inventory1)
-                    if (game.player.interface.touchButton.inventory1.collidePoint(touchCoord.x, touchCoord.y))
+
+                if (this.owner.interface.touchButton.inventory1)
+                    if (this.owner.interface.touchButton.inventory1.collidePoint(touchCoord.x, touchCoord.y))
                         this.buttons.inventory1.current = 1;
                     else this.buttons.inventory1.current = 0;
-                if (game.player.interface.touchButton.inventory2)
-                    if (game.player.interface.touchButton.inventory2.collidePoint(touchCoord.x, touchCoord.y))
+                if (this.owner.interface.touchButton.inventory2)
+                    if (this.owner.interface.touchButton.inventory2.collidePoint(touchCoord.x, touchCoord.y))
                         this.buttons.inventory2.current = 1;
                     else this.buttons.inventory2.current = 0;
-                if (game.player.interface.touchButton.pause.collidePoint(touchCoord.x, touchCoord.y) && this.touch.eventType != 'move')
-                    game.paused = !game.paused;
+                if (this.owner.interface.touchButton.pause)
+                    if (this.owner.interface.touchButton.pause.collidePoint(touchCoord.x, touchCoord.y) && this.touch.eventType != 'move')
+                        game.paused = !game.paused;
 
                 // Check for left touch
                 let touchX = touchCoord.x - this.touch.left.pos.x;
