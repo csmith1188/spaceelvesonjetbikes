@@ -276,7 +276,6 @@ class Match_ForHonor extends Match {
         this.map = new Map_Deathbox();
         this.name = "For Honor";
         this.description = "A duel to the death.";
-        this.spmp = 'ss';
     }
 
     setup() {
@@ -286,6 +285,7 @@ class Match_ForHonor extends Match {
             new Vect3((this.map.w / 2) - 800, (this.map.h / 2), 0),
             game.player,
             { name: 'Cpt. Fabius', gfx: 'img/sprites/jetbike' });
+        game.player.interface = new Interface_LocalMP(game.player, new Vect2(0, 0));
 
         // Add player 2
         this.bots.push(new Player()) //Kevin / Jae'Sin
@@ -295,8 +295,8 @@ class Match_ForHonor extends Match {
             this.bots[this.bots.length - 1],
             { name: getName(), team: 1, gfx: 'img/sprites/dark2', color: [0, 0, 255] }
         );
-        // Attach their controller
-        // this.bots[this.bots.length - 1].controller = new Controller();
+        // Change to local multiplayer interaface
+        this.bots[this.bots.length - 1].interface = new Interface_LocalMP(this.bots[this.bots.length - 1], new Vect2(game.window.w - 280, 0));
 
         // Create a block to attach the camera to
         this.bots[this.bots.length - 1].name = 'Player 2';

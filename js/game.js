@@ -48,21 +48,21 @@ class Game {
         this.checkInput();
 
         this.player.controller.read(); // Read the input from the main player
-        
+
         // If the game is waiting for a controller to press a button
         if (this.awaitingInput) {
             this.menus.awaitingInput.step(); // Show the input menu
         }
-        
+
         // If the game is paused
         else if (this.paused) {
             this.menus.pause.step(); // Show the pause menu
         }
-        
+
         // If the game is not paused and all controllers have been assigned, play the match
         else {
 
-            if (this.menu) { 
+            if (this.menu) {
                 this.menu.step(); // Show the main menu
             }
 
@@ -112,8 +112,11 @@ class Game {
             //Draw Match
             this.match.draw();
 
-            //Draw HUD
-            this.player.interface.drawHUD();
+            //Draw each HUD
+            for (const bot of [this.player, ...this.match.bots]) {
+                if (bot.interface)
+                    bot.interface.drawHUD();
+            }
 
             //Draw Controller HUD
             this.player.controller.draw();

@@ -306,7 +306,7 @@ class GamePad extends Controller {
 
     setupInputs() {
         window.addEventListener('gamepaddisconnected', (event) => {
-            game.player.controller.gamePad = null;
+            this.gamePad = null;
         });
     }
 
@@ -341,8 +341,8 @@ class GamePad extends Controller {
             else this.buttons.selectUp.current = 0;
             // If either axis of stick 2 is outside of deadzone
             if (Math.abs(gp.axes[2]) >= this.deadzone || Math.abs(gp.axes[3]) >= this.deadzone) {
-                game.player.controller.aimX = gp.axes[2] * 100;
-                game.player.controller.aimY = gp.axes[3] * 100;
+                this.aimX = gp.axes[2] * 100;
+                this.aimY = gp.axes[3] * 100;
             }
             if (gp.buttons[10].pressed) this.buttons.brake.current = 1;
             else this.buttons.brake.current = 0;
@@ -454,24 +454,24 @@ class Touch extends Controller {
         window.addEventListener('touchstart', (event) => {
             event.preventDefault();
             event.stopImmediatePropagation();
-            game.player.controller.touch.enabled = true;
-            game.player.controller.touch.event = event;
-            game.player.controller.touch.eventType = 'start';
+            this.touch.enabled = true;
+            this.touch.event = event;
+            this.touch.eventType = 'start';
 
         }, { passive: false });
 
         window.addEventListener('touchmove', (event) => {
             event.preventDefault();
             event.stopImmediatePropagation();
-            game.player.controller.touch.event = event;
-            game.player.controller.touch.eventType = 'move';
+            this.touch.event = event;
+            this.touch.eventType = 'move';
         }, { passive: false });
 
         window.addEventListener('touchend', (event) => {
             event.preventDefault();
             event.stopImmediatePropagation();
-            game.player.controller.touch.event = event;
-            game.player.controller.touch.eventType = 'end';
+            this.touch.event = event;
+            this.touch.eventType = 'end';
         }, { passive: false });
 
         window.addEventListener('touchcancel', (event) => {
@@ -670,7 +670,6 @@ class Touch extends Controller {
         ctx.fillRect(game.window.w - 45, 15, 10, 30);
         ctx.fillRect(game.window.w - 25, 15, 10, 30);
 
-        game.player.interface.touchButton.pause = new Rect(game.window.w - 55, 5, 50, 50);
     }
 }
 

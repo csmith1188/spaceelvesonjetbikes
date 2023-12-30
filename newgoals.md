@@ -27,12 +27,10 @@ Dark elves believe everything is random:
 #########   ########          ###        ########### ###    ###  ########     ###
 -->
 
-- player 2 no aimX/aimY
+- two controllers cannot be detected at once
 - player 2 no touchscreen
-- for honor screen too small
-- For Honor hud
+- for honor screen too small pause
 - for honor countdown and end game (bo5?)
-- for honor weapons/ammo
 - For Speed
 - high scores
 - music
