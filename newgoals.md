@@ -27,15 +27,15 @@ Dark elves believe everything is random:
 #########   ########          ###        ########### ###    ###  ########     ###
 -->
 
-- two controllers cannot be detected at once
-- for honor countdown and end game (bo5?)
-- janky menus (better menu handling)
 - For Speed
 - high scores
 - music
 - graphics
 - ship
 
+- all players in one list
+- janky menus (better menu handling)
+- for honor countdown and best of 5
 - ISO draw
 - A* pathing
 - Gamepad and touch screen buttons

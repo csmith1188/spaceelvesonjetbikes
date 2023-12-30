@@ -80,13 +80,6 @@ class Map {
             }
         }
 
-        for (const e of game.match.bots) {
-            if (e.character.cleanup && !e.character.active) {
-                //Remove bot
-                game.match.bots = game.match.bots.filter(function (el) { return el != e; });
-            }
-        }
-
         for (const e of this.bullets) {
             if (e.cleanup && !e.active) {
                 //Remove bullet

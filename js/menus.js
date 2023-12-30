@@ -169,7 +169,7 @@ class Menu_Pause extends Menu {
         this.type = 'pause';
         this.buttons = [
             new Menu_Button(new Rect(0, 0, 150, 30), "Restart Match", function () { game.match.reset(); game.match.setup(); game.paused = false; }),
-            new Menu_Button(new Rect(0, 40, 150, 30), "Quit to Menu", function () { game.match = new Start_Screen(); game.paused = false; }),
+            new Menu_Button(new Rect(0, 40, 150, 30), "Quit to Menu", function () { game.match = new Start_Screen(); game.paused = false; game.menu = game.menus.main }),
             // new Menu_Button(new Rect(0, 80, 150, 30), "Button 3", function () { window.alert("Button 3"); }),
             new Menu_Button(new Rect(0, 120, 150, 30), "Resume", function () { game.paused = false; })
         ]
