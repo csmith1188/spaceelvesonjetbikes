@@ -123,7 +123,7 @@ class Character {
     ########     ###     ########## ###
     */
 
-    step(controller) {
+    step() {
         if (this.active) {
             if (this.pp < this.pp_max)
                 this.pp += 1;
@@ -139,15 +139,20 @@ class Character {
              \__\___/_|_\___\__|\__| |_|_||_| .__/\_,_|\__|
                                             |_|
             */
-            if (controller.buttons.moveLeft.current) this.mom.x = -1;
-            if (controller.buttons.moveRight.current) this.mom.x = 1;
-            if (controller.buttons.moveUp.current) this.mom.y = -1;
-            if (controller.buttons.moveDown.current) this.mom.y = 1;
-            if (controller.buttons.jump.current && controller.buttons.brake.current) {
+
+            // If the player is pressing the start button
+            if (this.parent.controller.buttons.start.current != this.parent.controller.buttons.start.last && this.parent.controller.buttons.start.current)
+                game.paused = !game.paused;
+
+            if (this.parent.controller.buttons.moveLeft.current) this.mom.x = -1;
+            if (this.parent.controller.buttons.moveRight.current) this.mom.x = 1;
+            if (this.parent.controller.buttons.moveUp.current) this.mom.y = -1;
+            if (this.parent.controller.buttons.moveDown.current) this.mom.y = 1;
+            if (this.parent.controller.buttons.jump.current && this.parent.controller.buttons.brake.current) {
                 this.brace = 1;
             }
             else {
-                if (controller.buttons.jump.current) {
+                if (this.parent.controller.buttons.jump.current) {
                     // If the player has positive power points (pp)
                     if (this.pp > 2) {
                         // sounds.upBoost.currentTime = 0;
@@ -158,12 +163,12 @@ class Character {
                         this.pp -= 2;
                     }
                 }
-                if (controller.buttons.brake.current) this.mom.z = -1;
+                if (this.parent.controller.buttons.brake.current) this.mom.z = -1;
 
             }
             // if the boost button current is not equal to the boost button last
             // and the boost current is 1
-            if (controller.buttons.boost.current != controller.buttons.boost.last && controller.buttons.boost.current) {
+            if (this.parent.controller.buttons.boost.current != this.parent.controller.buttons.boost.last && this.parent.controller.buttons.boost.current) {
                 // if the player has positive power points (pp)
                 if (this.pp > 60) {
                     this.pp -= 60;
@@ -182,9 +187,9 @@ class Character {
              /__/_||_\___/\___/\__|_|_||_\__, |
                                          |___/
             */
-            if (controller.buttons.fire.current != controller.buttons.fire.last) {
+            if (this.parent.controller.buttons.fire.current != this.parent.controller.buttons.fire.last) {
                 if (this.inventory.length) {
-                    if (controller.buttons.fire.current) {
+                    if (this.parent.controller.buttons.fire.current) {
                         const xMulti = (game.player.camera._3D) ? game.player.camera.angle : 1;
                         let aimX = this.parent.controller.aimX * xMulti;
                         let aimY = this.parent.controller.aimY;
@@ -206,24 +211,24 @@ class Character {
                                               |__/                        |___/
             */
             // Weapon switching
-            if (controller.buttons.inventory1.current != controller.buttons.inventory1.last)
-                if (controller.buttons.inventory1.current)
+            if (this.parent.controller.buttons.inventory1.current != this.parent.controller.buttons.inventory1.last)
+                if (this.parent.controller.buttons.inventory1.current)
                     if (this.inventory.length > 0) {
                         this.item = 0;
                         if (this.parent.interface)
                             this.parent.interface.itemChangeTicks = game.match.ticks + 180;
                     }
 
-            if (controller.buttons.inventory2.current != controller.buttons.inventory2.last)
-                if (controller.buttons.inventory2.current)
+            if (this.parent.controller.buttons.inventory2.current != this.parent.controller.buttons.inventory2.last)
+                if (this.parent.controller.buttons.inventory2.current)
                     if (this.inventory.length > 1) {
                         this.item = 1;
                         if (this.parent.interface)
                             this.parent.interface.itemChangeTicks = game.match.ticks + 180;
                     }
 
-            if (controller.buttons.throw.current != controller.buttons.throw.last) {
-                if (controller.buttons.throw.current) {
+            if (this.parent.controller.buttons.throw.current != this.parent.controller.buttons.throw.last) {
+                if (this.parent.controller.buttons.throw.current) {
                     if (this.inventory.length > 0) {
                         // make a pickup
                         game.match.map.blocks.push(new WeaponPickup(

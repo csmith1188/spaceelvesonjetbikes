@@ -20,7 +20,7 @@ class Game {
         this.ticks = 0;
         this.lastTimestamp = 0;
         this.fps = 0;
-        getLastDevice();
+        listenLastDevice();
     }
 
     /*
@@ -135,22 +135,31 @@ class Game {
     }
 
     checkInput() {
-        for (const bot of [this.player, ...this.match.bots]) {
-            if (bot.controller.type == "controller") {
-                this.awaitingInput = bot.name;
+        for (const player of [this.player, ...this.match.bots]) {
+            if (player.controller.type == "controller") {
+                this.awaitingInput = player.name;
+                if (lastDevice == null)
+                    // for each connected gamepad, add an event listener to check for input
+                    for (const gamepad of navigator.getGamepads()) {
+                        if (gamepad)
+                            if (gamepad.buttons.some(button => button.pressed))
+                                lastDevice = gamepad.index;
+                    }
                 if (lastDevice !== null) {
                     for (const other of [this.player, ...this.match.bots]) {
-                        if (other.controller.type == lastDevice) {
+                        if (other.controller.type == lastDevice || other.controller.gamepadIndex === lastDevice) {
+                            lastDevice = null;
                             return;
                         }
                     }
+
                     // if the lastDevice was keyboard, touch, pad or something else
                     if (lastDevice == "keyboard") {
-                        bot.controller = new Keyboard(bot);
+                        player.controller = new Keyboard(player);
                     } else if (lastDevice == "touch") {
-                        bot.controller = new Touch(bot);
+                        player.controller = new Touch(player);
                     } else {
-                        bot.controller = new GamePad(bot, lastDevice);
+                        player.controller = new GamePad(player, lastDevice);
                     }
                     lastDevice = null;
                     this.awaitingInput = false;

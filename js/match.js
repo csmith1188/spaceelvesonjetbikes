@@ -12,6 +12,10 @@ class Match {
         this.blocks = []; // Different from map blocks. Think pickups and dropped items
         this.runFunc = []; // A list of functions to run every step
         game.player.interface.drawFunc = []; // clear other interface draw functions
+        this.menus = {
+            tooSmall: new Menu([], new Rect(0, 0, 350, 50), { text: 'Window too small to play.' }),
+        }
+        this.menu = null;
     }
 
     setup() {
@@ -31,7 +35,7 @@ class Match {
 
             for (const bot of this.bots) {
                 bot.AI();
-                bot.character.step(bot.controller);
+                bot.character.step();
             }
 
             for (const block of this.map.blocks) {
@@ -48,6 +52,13 @@ class Match {
 
             game.match.map.step();
 
+            //
+
+            // Run all runFunc
+            for (const func of this.runFunc) {
+                func();
+            }
+
             for (const e of this.bots) {
                 if (e.cleanup && !e.active) {
                     //Remove npcs
@@ -55,10 +66,6 @@ class Match {
                 }
             }
 
-            // Run all runFunc
-            for (const func of this.runFunc) {
-                func();
-            }
 
             this.ticks++;
 
@@ -285,7 +292,7 @@ class Match_ForHonor extends Match {
             new Vect3((this.map.w / 2) - 800, (this.map.h / 2), 0),
             game.player,
             { name: 'Cpt. Fabius', gfx: 'img/sprites/jetbike' });
-        game.player.interface = new Interface_LocalMP(game.player, new Vect2(0, 0));
+        game.player.interface = new Interface_LocalMP(game.player, 0, 0);
 
         // Add player 2
         this.bots.push(new Player()) //Kevin / Jae'Sin
@@ -296,7 +303,7 @@ class Match_ForHonor extends Match {
             { name: getName(), team: 1, gfx: 'img/sprites/dark2', color: [0, 0, 255] }
         );
         // Change to local multiplayer interaface
-        this.bots[this.bots.length - 1].interface = new Interface_LocalMP(this.bots[this.bots.length - 1], new Vect2(game.window.w - 280, 0));
+        this.bots[this.bots.length - 1].interface = new Interface_LocalMP(this.bots[this.bots.length - 1], () => { return game.window.w - 280 }, 0);
 
         // Create a block to attach the camera to
         this.bots[this.bots.length - 1].name = 'Player 2';
@@ -378,8 +385,19 @@ class Match_ForHonor extends Match {
     step() {
         super.step();
         if (game.window.w < 1720 || game.window.h < 920) {
-            game.paused = true;
+            game.match.paused = true;
+            this.menu = this.menus.tooSmall;
+        } else if (this.menu) {
+            game.match.paused = false;
+            this.menu = null;
         }
+        if (this.menu)
+            this.menu.step();
+    }
+
+    draw() {
+        if (this.menu)
+            this.menu.draw();
     }
 }
 

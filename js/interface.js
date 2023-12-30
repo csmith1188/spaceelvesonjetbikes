@@ -428,10 +428,20 @@ class Interface {
     }
 }
 
+
+/*
+      :::        ::::::::   ::::::::      :::     :::          :::   :::   :::::::::
+     :+:       :+:    :+: :+:    :+:   :+: :+:   :+:         :+:+: :+:+:  :+:    :+:
+    +:+       +:+    +:+ +:+         +:+   +:+  +:+        +:+ +:+:+ +:+ +:+    +:+
+   +#+       +#+    +:+ +#+        +#++:++#++: +#+        +#+  +:+  +#+ +#++:++#+
+  +#+       +#+    +#+ +#+        +#+     +#+ +#+        +#+       +#+ +#+
+ #+#       #+#    #+# #+#    #+# #+#     #+# #+#        #+#       #+# #+#
+########## ########   ########  ###     ### ########## ###       ### ###
+*/
 class Interface_LocalMP extends Interface {
-    constructor(player, position) {
+    constructor(player, posX, posY) {
         super(player);
-        this.position = position;
+        this.position = {x: posX, y: posY};
     }
 
     drawHUD() {
@@ -461,7 +471,14 @@ class Interface_LocalMP extends Interface {
 
 
         // create a rectangee to put the HUD in
-        let hudBox = new Rect(this.position.x, this.position.y, 280, 100);
+        // Sometimes the position is a function so it can auto-adjust to the size of the window
+        let x, y;
+        if (this.position.x instanceof Function) x = this.position.x();
+        else x = this.position.x;
+        if (this.position.y instanceof Function) y = this.position.y();
+        else y = this.position.y;
+
+        let hudBox = new Rect(x, y, 280, 100);
 
         // draw background
         ctx.fillStyle = "rgba(0, 0, 0, 0.25)";

@@ -11,12 +11,12 @@
 
 let lastDevice = null;
 
-function getLastDevice() {
+function listenLastDevice() {
     document.addEventListener("keyup", (event) => {
         lastDevice = "keyboard";
     });
-    window.addEventListener('gamepadconnected', (event) => { lastDevice = event.gamepad.index });
     window.addEventListener('touchstart', (event) => { lastDevice = "touch"; });
+    // Check for gamepads in game
 }
 
 // Collect all input data and send it to the controller for better handling
@@ -175,8 +175,7 @@ class Keyboard extends Controller {
             if (event.key.toLocaleLowerCase() === "s" || event.key === "ArrowDown") this.downKey = 1;
             if (event.key.toLocaleLowerCase() === "d" || event.key === "ArrowRight") this.rightKey = 1;
             if (event.key.toLocaleLowerCase() === " ") this.spaceKey = 1;
-            if (event.key === "Escape" || event.key === "Escape")
-                game.paused = !game.paused;
+            if (event.key === "Escape" || event.key === "Escape") this.startKey = 1;
 
         }.bind(this));
         /*
@@ -197,6 +196,7 @@ class Keyboard extends Controller {
             if (event.key.toLocaleLowerCase() === "s" || event.key === "ArrowDown") this.downKey = 0;
             if (event.key.toLocaleLowerCase() === "d" || event.key === "ArrowRight") this.rightKey = 0;
             if (event.key.toLocaleLowerCase() === " ") this.spaceKey = 0;
+            if (event.key === "Escape" || event.key === "Escape") this.startKey = 0;
         }.bind(this));
 
         /*
@@ -271,6 +271,8 @@ class Keyboard extends Controller {
         else this.buttons.inventory1.current = 0;
         if (this.inventory2Key) this.buttons.inventory2.current = 1;
         else this.buttons.inventory2.current = 0;
+        if (this.startKey) this.buttons.start.current = 1;
+        else this.buttons.start.current = 0;
         if (this.throwKey) this.buttons.throw.current = 1;
         else this.buttons.throw.current = 0;
         if (this.wheelUp) {
@@ -296,24 +298,24 @@ class Keyboard extends Controller {
 ########  ###     ### ###       ### ########## ###       ###     ### #########
 */
 class GamePad extends Controller {
-    constructor(owner, gamePadIndex) {
+    constructor(owner, gamepadIndexIndex) {
         super(owner);
         this.type = "gamepad";
-        this.gamePad = gamePadIndex;
+        this.gamepadIndex = gamepadIndexIndex;
         this.deadzone = 0.2;
         this.selectzone = 0.8;
     }
 
     setupInputs() {
         window.addEventListener('gamepaddisconnected', (event) => {
-            this.gamePad = null;
+            this.gamepadIndex = null;
         });
     }
 
     read() {
         super.read();
-        if (this.gamePad != null) {
-            let gp = navigator.getGamepads()[this.gamePad];
+        if (this.gamepadIndex != null) {
+            let gp = navigator.getGamepads()[this.gamepadIndex];
             // Get AXES
             // Move Right
             if (gp.axes[0] > this.deadzone) this.buttons.moveRight.current = gp.axes[0];
@@ -371,17 +373,8 @@ class GamePad extends Controller {
             if (gp.buttons[8].pressed) if (game.match.ticks > 180) location.reload();
 
             // Start button pauses game
-            if (gp.buttons[9].pressed) {
-                this.buttons.start.current = 1;
-                if (this.buttons.start.current != this.buttons.start.last) {
-                    game.paused = !game.paused;
-                }
-                this.buttons.start.last = this.buttons.start.current;
-            }
-            else {
-                this.buttons.start.current = 0;
-                this.buttons.start.last = this.buttons.start.current;
-            }
+            if (gp.buttons[9].pressed) this.buttons.start.current = 1;
+            else this.buttons.start.current = 0;
             if (gp.buttons[5].pressed) {
                 game.player.camera._3D = 1;
                 game.player.camera.angle = 0.35;
@@ -397,8 +390,8 @@ class GamePad extends Controller {
     }
 
     rumble(duration, weak, strong) {
-        if (this.gamePad != null) {
-            let gp = navigator.getGamepads()[this.gamePad];
+        if (this.gamepadIndex != null) {
+            let gp = navigator.getGamepads()[this.gamepadIndex];
             if (gp && gp.vibrationActuator) {
                 // Start a vibration effect
                 gp.vibrationActuator.playEffect("dual-rumble", {
@@ -515,7 +508,8 @@ class Touch extends Controller {
                     else this.buttons.inventory2.current = 0;
                 if (this.owner.interface.touchButton.pause)
                     if (this.owner.interface.touchButton.pause.collidePoint(touchCoord.x, touchCoord.y) && this.touch.eventType != 'move')
-                        game.paused = !game.paused;
+                        this.buttons.start.current = 1;
+                    else this.buttons.start.current = 0;
 
                 // Check for left touch
                 let touchX = touchCoord.x - this.touch.left.pos.x;

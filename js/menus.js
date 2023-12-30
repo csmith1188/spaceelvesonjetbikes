@@ -58,22 +58,28 @@ class Menu {
             offsety = (game.window.h / 2) - (this.shape.h / 2) + this.shape.y;
         }
 
-        // check if mouse is inside any button
-        for (const button of this.buttons) {
-            // check if mouse is inside the button
-            if (
-                x >= button.area.x + offsetx && x <= button.area.x + offsetx + button.area.w &&
-                y >= button.area.y + offsety && y <= button.area.y + offsety + button.area.h ||
-                game.player.interface.menuIndex == this.buttons.indexOf(button)
-            ) {
-                button.selected = true;
-                // check if the button is being pressed
-                if (game.player.controller.buttons.fire.current || game.player.controller.type == 'touch') {
-                    // if so, run the button's function
-                    button.func();
+        // for every player and bot in the bots list
+        for (const player of [game.player, ...game.match.bots]) {
+            // if the player is a player
+            if (player instanceof Player) {
+                // check if mouse is inside any button
+                for (const button of this.buttons) {
+                    // check if mouse is inside the button
+                    if (
+                        x >= button.area.x + offsetx && x <= button.area.x + offsetx + button.area.w &&
+                        y >= button.area.y + offsety && y <= button.area.y + offsety + button.area.h ||
+                        game.player.interface.menuIndex == this.buttons.indexOf(button)
+                    ) {
+                        button.selected = true;
+                        // check if the button is being pressed
+                        if (player.controller.buttons.fire.current || player.controller.buttons.inventory2.current || player.controller.type == 'touch') {
+                            // if so, run the button's function
+                            button.func();
+                        }
+                    } else {
+                        button.selected = false;
+                    }
                 }
-            } else {
-                button.selected = false;
             }
         }
     }
@@ -84,6 +90,7 @@ class Menu {
         if (this.style === 'center_stacked') {
             offsetx = (game.window.w / 2) - (this.shape.w / 2) + this.shape.x;
             offsety = (game.window.h / 2) - (this.shape.h / 2) + this.shape.y;
+            ctx.textAlign = "center";
         }
         // stroke a box around the menu
         ctx.fillStyle = "rgba(0, 0, 0, 0.5)";
@@ -92,6 +99,13 @@ class Menu {
         ctx.lineWidth = 2;
         // console.log(offsetx, offsety, this.shape.w, this.shape.h);
         ctx.strokeRect(offsetx, offsety, this.shape.w, this.shape.h);
+
+        // draw the text
+        ctx.fillStyle = "#FFFFFF";
+        ctx.font = '16px Jura';
+        ctx.fillText(this.title, offsetx + this.shape.w / 2, offsety - 10);
+        ctx.fillText(this.text, offsetx + this.shape.w / 2, offsety + this.padding + 16);
+
 
         // draw each button
         for (const button of this.buttons) {
