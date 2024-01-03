@@ -27,10 +27,10 @@ Dark elves believe everything is random:
 #########   ########          ###        ########### ###    ###  ########     ###
 -->
 
-- For Speed
 - high scores
 - music
 - graphics
+-- fix direction change src bug
 - ship
 
 - all players in one list
@@ -65,22 +65,6 @@ Dark elves believe everything is random:
 - Arc Aiming Cone
 
 <!--
-    #                                        #
-   # #   ###### ##### ###### #####           # ###### ##### #####  # #    # ######  ####
-  #   #  #        #   #      #    #          # #        #   #    # # #   #  #      #
- #     # #####    #   #####  #    #          # #####    #   #####  # ####   #####   ####
- ####### #        #   #      #####     #     # #        #   #    # # #  #   #           #
- #     # #        #   #      #   #     #     # #        #   #    # # #   #  #      #    #
- #     # #        #   ###### #    #     #####  ######   #   #####  # #    # ######  ####
-
--->
-- Advanced Inventory
--- Backpack bags/slots
--- Ordered / Sorted vs Slots
--- Hotkey bar with adjustable max slots
-
-
-<!--
       :::::::::  :::    :::  ::::::::   ::::::::
      :+:    :+: :+:    :+: :+:    :+: :+:    :+:
     +:+    +:+ +:+    +:+ +:+        +:+
@@ -98,6 +82,22 @@ Dark elves believe everything is random:
 - bullet cylinder shadow not aligning in iso view
 - choppy gamepad aim
 
+<!--
+    #                                        #
+   # #   ###### ##### ###### #####           # ###### ##### #####  # #    # ######  ####
+  #   #  #        #   #      #    #          # #        #   #    # # #   #  #      #
+ #     # #####    #   #####  #    #          # #####    #   #####  # ####   #####   ####
+ ####### #        #   #      #####     #     # #        #   #    # # #  #   #           #
+ #     # #        #   #      #   #     #     # #        #   #    # # #   #  #      #    #
+ #     # #        #   ###### #    #     #####  ######   #   #####  # #    # ######  ####
+
+-->
+
+- Advanced Inventory
+-- Backpack bags/slots
+-- Ordered / Sorted vs Slots
+-- Hotkey bar with adjustable max slots
+
 
 <!--
     :::       ::: ::::::::::     :::     :::::::::   ::::::::  ::::    :::          ::::::::::: :::::::::  ::::::::::     :::      ::::::::
@@ -108,7 +108,26 @@ Dark elves believe everything is random:
 #+#+# #+#+#  #+#        #+#     #+# #+#        #+#    #+# #+#   #+#+#              #+#     #+#    #+# #+#        #+#     #+# #+#    #+#
 ###   ###   ########## ###     ### ###         ########  ###    ####          ########### #########  ########## ###     ###  ########
 -->
-- ballistic beats crystal beats plasma beats ballistic
+- shield drains power to absorb and reflect damage
+- grapple hook slings you around blocks and disabling attacks
+- ballistic beats power beats plasma beats ballistic
 - pistol and sniper beat sheild and grapple by outranging
 - flamer and lance beat pistol and sniper by closing distance and burst damage
 - shield and grapple beat flamer and lance by disabling when grappled and reflecting momentum
+
+
+
+
+<!--
+      ::::    ::: :::::::::: :::       :::          ::::::::      :::       :::   :::   ::::::::::          ::::::::::: :::::::::  ::::::::::     :::      ::::::::
+     :+:+:   :+: :+:        :+:       :+:         :+:    :+:   :+: :+:    :+:+: :+:+:  :+:                     :+:     :+:    :+: :+:          :+: :+:   :+:    :+:
+    :+:+:+  +:+ +:+        +:+       +:+         +:+         +:+   +:+  +:+ +:+:+ +:+ +:+                     +:+     +:+    +:+ +:+         +:+   +:+  +:+
+   +#+ +:+ +#+ +#++:++#   +#+  +:+  +#+         :#:        +#++:++#++: +#+  +:+  +#+ +#++:++#                +#+     +#+    +:+ +#++:++#   +#++:++#++: +#++:++#++
+  +#+  +#+#+# +#+        +#+ +#+#+ +#+         +#+   +#+# +#+     +#+ +#+       +#+ +#+                     +#+     +#+    +#+ +#+        +#+     +#+        +#+
+ #+#   #+#+# #+#         #+#+# #+#+#          #+#    #+# #+#     #+# #+#       #+# #+#                     #+#     #+#    #+# #+#        #+#     #+# #+#    #+#
+###    #### ##########   ###   ###            ########  ###     ### ###       ### ##########          ########### #########  ########## ###     ###  ########
+-->
+
+- Space Elves fantasy mmo ala Runescape
+- Tank crew. 4 guys in a tank fight infantry in an APC
+- Warhammer 40k RTS from lists
