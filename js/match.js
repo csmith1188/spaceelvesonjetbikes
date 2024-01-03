@@ -102,6 +102,7 @@ class Start_Screen extends Match {
         this.description = "";
         this.despawnTimer = 360;
         game.player.character.active = false;
+        game.player.character.visible = false;
         this.map.blocks.push(new Block(
             allID++,
             new Vect3((this.map.w / 2) - 0, (this.map.h / 2), 0),
@@ -494,6 +495,7 @@ class Match_ForSpeed extends Match {
         if (who.laps >= 3) {
             who.endTime = this.ticks;
             who.active = false;
+            who.visible = false;
         } else {
             for (let i = 1; i < 16; i++) {
                 let ranX = Math.round(Math.random() * 200) - 100;
@@ -609,6 +611,7 @@ class Match_ForHonor extends Match {
         this.map.blocks = this.map.blocks.filter(function (el) { return el.type == 'block'; });
 
         game.player.character.active = true;
+        game.player.character.visible = true;
         game.player.character.HB.pos.x = (this.map.w / 2) - 800;
         game.player.character.HB.pos.y = (this.map.h / 2);
         game.player.character.HB.pos.z = 0;
@@ -622,6 +625,7 @@ class Match_ForHonor extends Match {
         game.player.character.ammo.ballistic = 1;
         game.player.character.ammo.plasma = 1;
         this.bots[0].character.active = true;
+        this.bots[0].character.visible = true;
         this.bots[0].character.HB.pos.x = (this.map.w / 2) + 800;
         this.bots[0].character.HB.pos.y = (this.map.h / 2);
         this.bots[0].character.HB.pos.z = 0;

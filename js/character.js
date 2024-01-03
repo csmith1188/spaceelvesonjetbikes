@@ -13,6 +13,7 @@ class Character {
         this.name = '';
         this.parent = parent;
         this.active = true;
+        this.visible = true;
         this.cleanup = true;
         this.team = 0;
         this.teams = [this.team];
@@ -532,6 +533,7 @@ class Character {
 
             if (this.hp <= 0) {
                 this.active = false;
+                this.visible = false;
                 if (!this.muted)
                 this.deathSFX.play();
                 if (this.inventory[this.item])
@@ -567,7 +569,7 @@ class Character {
 
         if (!this.active && this.cleanup) {
             return;
-        } else {
+        } else if (this.visible) {
             /*
                    _    _                        _    _
               _ __(_)__| |__  __ _ _ _ __ _ _ __| |_ (_)__
