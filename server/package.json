@@ -1,0 +1,31 @@
+{
+  "name": "sejb_server",
+  "version": "0.0.0",
+  "description": "Web Server for handling single player client and multiplayer games for SEJB",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/SuperMechaCow/spaceelvesonjetbikes.git"
+  },
+  "keywords": [
+    "online",
+    "multiplayer",
+    "action",
+    "game",
+    "canvas"
+  ],
+  "author": "C. Smith",
+  "license": "CC-BY-NC-SA-4.0",
+  "bugs": {
+    "url": "https://github.com/SuperMechaCow/spaceelvesonjetbikes/issues"
+  },
+  "homepage": "https://github.com/SuperMechaCow/spaceelvesonjetbikes#readme",
+  "dependencies": {
+    "ejs": "^3.1.9",
+    "express": "^4.18.2",
+    "socketio": "^1.0.0"
+  }
+}
