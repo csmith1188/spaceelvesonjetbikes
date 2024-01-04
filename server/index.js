@@ -25,10 +25,15 @@ const io = socketio(server);
 
 io.on("connection", (socket) => {
     console.log("User connected: " + socket.id);
-    io.emit("message", "Welcome to the server!");
     socket.on("disconnect", function () {
         console.log("User disconnected: " + socket.id);
     });
+
+    // Listen for client events
+    socket.on('update_clsv', (data) => {
+        socket.broadcast.emit('update_svcl', data);
+    });
+    
 });
 
 // Define your routes here

@@ -148,7 +148,7 @@ class Cube {
      * @param {Vect3} origin - The origin position of the cube.
      * @param {Vect3} volume - The volume of the cube.
      */
-    constructor(origin, volume) {
+    constructor(origin = new Vect3(0,0,0), volume = new Vect3(0,0,0)) {
         this.pos = origin;
         this.volume = volume;
         this.end = new Vect3(origin.x + volume.x, origin.y + volume.y, origin.z + volume.z);
