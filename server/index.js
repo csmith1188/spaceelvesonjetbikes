@@ -30,8 +30,8 @@ io.on("connection", (socket) => {
     });
 
     // Listen for client events
-    socket.on('update_clsv', (data) => {
-        socket.broadcast.emit('update_svcl', data);
+    socket.on('update_cl_buttons', (data) => {
+        io.emit('update_sv_buttons', data);
     });
     
 });
