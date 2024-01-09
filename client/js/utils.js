@@ -357,3 +357,10 @@ function formatTicks(ticks) {
     if (minutes < 10) minutes = '0' + minutes;
     return minutes + ':' + seconds + '.' + milliseconds;
 }
+
+function decodeWS(event) {
+    const receivedArray = new Uint8Array(event.data);
+    const textDecoder = new TextDecoder('utf-8');
+    const receivedMessage = textDecoder.decode(receivedArray);
+    return JSON.parse(receivedMessage);
+}

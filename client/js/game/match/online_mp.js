@@ -40,8 +40,19 @@ class Match_OnlineMP extends Match {
     setup() {
         super.setup();
 
-        // When buttons are changed, update the character's controller to match
-        socket.on('update_sv_buttons', (data) => {
+        // Event listener for WebSocket connection
+        socket.addEventListener('open', (event) => {
+            console.log('WebSocket connection opened');
+        });
+
+        // Event listener for WebSocket connection close
+        socket.addEventListener('close', (event) => {
+            console.log('WebSocket connection closed');
+        });
+
+        // Event listener for receiving messages
+        socket.addEventListener('message', (event) => {
+            const data = decodeWS(event);
             // for each player and bots in this match
             for (const e of [game.player, ... this.bots]) {
                 if (e.character.id == data.id) {
@@ -78,10 +89,11 @@ class Match_OnlineMP extends Match {
         }
 
         if (Object.keys(con.deltaButtons).length) {
-            socket.emit('update_cl_buttons', {
+            socket.send(JSON.stringify({
+                type: 'update_cl_buttons',
                 id: game.player.character.id,
                 buttons: con.deltaButtons
-            });
+            }));
         }
 
         game.player.character.step();
