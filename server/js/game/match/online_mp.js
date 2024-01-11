@@ -1,3 +1,5 @@
+const Match = require('./match.js');
+
 /*
       ::::::::  ::::    ::: :::        ::::::::::: ::::    ::: ::::::::::            :::   :::   :::    ::: :::    ::::::::::: ::::::::::: :::::::::  :::            :::   :::   ::: :::::::::: :::::::::
     :+:    :+: :+:+:   :+: :+:            :+:     :+:+:   :+: :+:                  :+:+: :+:+:  :+:    :+: :+:        :+:         :+:     :+:    :+: :+:          :+: :+: :+:   :+: :+:        :+:    :+:
@@ -40,62 +42,32 @@ class Match_OnlineMP extends Match {
     setup() {
         super.setup();
 
-        this.socket = new WebSocket('ws://localhost:3000');
-        this.socket.binaryType = 'arraybuffer';
-
         // Event listener for WebSocket connection
-        this.socket.addEventListener('open', (event) => {
-            //get event's IP
-            let ip = event.target.url.split('/')[2].split(':')[0];
-            console.log('WebSocket connection opened', ip);
-
+        socket.addEventListener('open', (event) => {
+            console.log('WebSocket connection opened');
         });
 
         // Event listener for WebSocket connection close
-        this.socket.addEventListener('close', (event) => {
+        socket.addEventListener('close', (event) => {
             console.log('WebSocket connection closed');
         });
 
         // Event listener for receiving messages
-        this.socket.addEventListener('message', (event) => {
+        socket.addEventListener('message', (event) => {
             const data = decodeWS(event);
-            console.log(data.type);
-            if (data.type == 'player_id') 
-                game.player.character.id = data.id;
-            if (data.type == 'playerList') {
-                for (const player of data.players) { 
-                    if (player.id == game.player.character.id) continue;
-                    let found = false;
-                    for (const e of this.bots) {
-                        if (e.character.id == player.id) {
-                            e.character.HB = player.HB;
-                            console.log(e);
-                            found = true;
-                            // break;
-                        }
-                    }
-                    if (!found) {
-                        this.bots.push(new Bot());
-                        this.bots[this.bots.length - 1].findTarget = () => { };
-                        this.bots[this.bots.length - 1].character.id = player.id;
-                    }
-                }
-            }
-            if (data.type == 'update_cl_buttons') {
-                // for each player and bots in this match
-                for (const e of [game.player, ... this.bots]) {
-                    if (e.character.id == data.id) {
-                        // for each button in the data
-                        for (const button in data.buttons) {
-                            e.character.controller.buttons[button].current = data.buttons[button];
-                        }
+            // for each player and bots in this match
+            for (const e of [game.player, ... this.bots]) {
+                if (e.character.id == data.id) {
+                    // for each button in the data
+                    for (const button in data.buttons) {
+                        e.character.controller.buttons[button].current = data.buttons[button];
                     }
                 }
             }
         });
 
-        // this.bots.push(new Bot());
-        // this.bots[this.bots.length - 1].findTarget = () => { };
+        this.bots.push(new Bot());
+        this.bots[this.bots.length - 1].findTarget = () => { };
         game.player.character.controller = new DummyController(game.player);
 
     }
@@ -119,7 +91,7 @@ class Match_OnlineMP extends Match {
         }
 
         if (Object.keys(con.deltaButtons).length) {
-            this.socket.send(JSON.stringify({
+            socket.send(JSON.stringify({
                 type: 'update_cl_buttons',
                 id: game.player.character.id,
                 buttons: con.deltaButtons
@@ -145,3 +117,5 @@ class Match_OnlineMP extends Match {
 
     }
 }
+
+module.exports = Match_OnlineMP;

@@ -4,6 +4,9 @@ let ctx;
 let game;
 let allID = 0;
 
+const socket = new WebSocket('ws://localhost:3000');
+socket.binaryType = 'arraybuffer';
+
 window.onload = function () {
     canvas = document.getElementById("game-canvas");
     ctx = canvas.getContext("2d");

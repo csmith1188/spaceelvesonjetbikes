@@ -370,3 +370,17 @@ function encodeWS(message) {
     const arrayBuffer = encoder.encode(JSON.stringify(message)).buffer;
     return arrayBuffer;
 }
+
+module.exports = {
+    Vect2,
+    Vect3,
+    Rect,
+    Cube,
+    Cylinder,
+    sineAnimate,
+    easeout,
+    easeinout,
+    formatTicks,
+    decodeWS,
+    encodeWS
+}
