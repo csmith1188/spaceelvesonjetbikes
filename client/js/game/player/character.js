@@ -146,42 +146,41 @@ class Character {
             if (this.controller.buttons.start.current != this.controller.buttons.start.last && this.controller.buttons.start.current)
                 game.paused = !game.paused;
 
-            if (this.controller.buttons.moveLeft.current) this.mom.x = -1;
-            if (this.controller.buttons.moveRight.current) this.mom.x = 1;
-            if (this.controller.buttons.moveUp.current) this.mom.y = -1;
-            if (this.controller.buttons.moveDown.current) this.mom.y = 1;
-            if (this.controller.buttons.jump.current && this.controller.buttons.brake.current) {
-                this.brace = 1;
-            }
-            else {
-                if (this.controller.buttons.jump.current) {
-                    // If the player has positive power points (pp)
-                    if (this.pp > 2) {
-                        // sounds.upBoost.currentTime = 0;
-                        // if (!this.muted) sounds.upBoost.play();
-                        // Set the z momentum to 1 (move upwards)
-                        this.mom.z = 1;
-                        // Decrease the power points by 1
-                        this.pp -= 2;
+                if (this.controller.buttons.moveLeft.current) this.mom.x = -1;
+                if (this.controller.buttons.moveRight.current) this.mom.x = 1;
+                if (this.controller.buttons.moveUp.current) this.mom.y = -1;
+                if (this.controller.buttons.moveDown.current) this.mom.y = 1;
+                if (this.controller.buttons.jump.current && this.controller.buttons.brake.current) {
+                    this.brace = 1;
+                }
+                else {
+                    if (this.controller.buttons.jump.current) {
+                        // If the player has positive power points (pp)
+                        if (this.pp > 2) {
+                            // sounds.upBoost.currentTime = 0;
+                            // if (!this.muted) sounds.upBoost.play();
+                            // Set the z momentum to 1 (move upwards)
+                            this.mom.z = 1;
+                            // Decrease the power points by 1
+                            this.pp -= 2;
+                        }
+                    }
+                    if (this.controller.buttons.brake.current) this.mom.z = -1;
+
+                }
+                // if the boost button current is not equal to the boost button last
+                // and the boost current is 1
+                if (this.controller.buttons.boost.current != this.controller.buttons.boost.last && this.controller.buttons.boost.current) {
+                    // if the player has positive power points (pp)
+                    if (this.pp > 60) {
+                        this.pp -= 60;
+                        sounds.boost.currentTime = 0;
+                        if (!this.muted) sounds.boost.play();
+                        this.speed.x += this.mom.x * 8;
+                        this.speed.y += this.mom.y * 8;
+                        this.speed.z += this.mom.z * 8;
                     }
                 }
-                if (this.controller.buttons.brake.current) this.mom.z = -1;
-
-            }
-            // if the boost button current is not equal to the boost button last
-            // and the boost current is 1
-            if (this.controller.buttons.boost.current != this.controller.buttons.boost.last && this.controller.buttons.boost.current) {
-                // if the player has positive power points (pp)
-                if (this.pp > 60) {
-                    this.pp -= 60;
-                    sounds.boost.currentTime = 0;
-                    if (!this.muted) sounds.boost.play();
-                    this.speed.x += this.mom.x * 8;
-                    this.speed.y += this.mom.y * 8;
-                    this.speed.z += this.mom.z * 8;
-                }
-            }
-
             /*
                  _             _   _
               __| |_  ___  ___| |_(_)_ _  __ _
@@ -237,7 +236,7 @@ class Character {
                             allID++,
                             new Vect3(this.HB.pos.x, this.HB.pos.y, this.HB.pos.z + this.HB.height / 2),
                             new Vect3(this.speed.x, this.speed.y, this.speed.z + 20),
-                            { weapon: this.inventory[this.item].weapon, ammo: this.inventory[this.item].ammo, livetime: game.match.despawnTimer, dying: true } ));
+                            { weapon: this.inventory[this.item].weapon, ammo: this.inventory[this.item].ammo, livetime: game.match.despawnTimer, dying: true }));
                         // remove the item from the inventory
                         this.inventory.splice(this.item, 1)[0];
                         // while the length of the inventory is less than  the item slot plus one, reduce the item slot by one
@@ -536,7 +535,7 @@ class Character {
                 this.active = false;
                 this.visible = false;
                 if (!this.muted)
-                this.deathSFX.play();
+                    this.deathSFX.play();
                 if (this.inventory[this.item])
                     game.match.map.blocks.push(new WeaponPickup(
                         allID++,

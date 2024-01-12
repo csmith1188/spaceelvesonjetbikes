@@ -687,3 +687,23 @@ class DummyController extends Controller {
     read() { return }
     draw() { return }
 }
+
+/*
+      ::::::::   ::::::::   ::::::::  :::    ::: :::::::::: :::::::::::
+    :+:    :+: :+:    :+: :+:    :+: :+:   :+:  :+:            :+:
+   +:+        +:+    +:+ +:+        +:+  +:+   +:+            +:+
+  +#++:++#++ +#+    +:+ +#+        +#++:++    +#++:++#       +#+
+        +#+ +#+    +#+ +#+        +#+  +#+   +#+            +#+
+#+#    #+# #+#    #+# #+#    #+# #+#   #+#  #+#            #+#
+########   ########   ########  ###    ### ##########     ###
+*/
+
+class SocketController extends Controller {
+    constructor(owner) {
+        super(owner);
+        this.type = "socket";
+    }
+    setupInputs() { return }
+    read() { return }
+    draw() { return }
+}

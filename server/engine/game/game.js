@@ -1,5 +1,7 @@
 const Match = require('./match/match.js');
 const { Bot, Player } = require('./player/player.js');
+const { Jetbike } = require('./player/character.js');
+const { Pistol } = require('./items.js');
 const WebSocket = require('ws');
 const utils = require('../utils.js');
 
@@ -11,7 +13,7 @@ class Game {
         this.debug = false;
         this.allID = 0;
         this.ticks = 0;
-        this.maxPlayers = 4;
+        this.maxPlayers = 30;
         this.players = [];
         this.match = new Match(this);
 
@@ -21,9 +23,14 @@ class Game {
 
             if (this.players.length < this.maxPlayers) {
                 this.players.push(new Player(this));
+                this.players[this.players.length - 1].character = new Jetbike(
+                    this.players[this.players.length - 1].character.id,
+                    new utils.Vect3(0, 0, 0),
+                    this.players[this.players.length - 1]);
+                this.players[this.players.length - 1].character.inventory.push(new Pistol());
                 this.players[this.players.length - 1].ws = ws;
                 ws.send(utils.encodeWS({ type: 'player_id', id: this.players[this.players.length - 1].character.id }));
-                this.broadcast(utils.encodeWS({type: 'playerList', players: this.playerList()}));
+                this.broadcast(utils.encodeWS({ type: 'playerList', players: this.playerList() }));
             }
 
             // Handle messages from clients
@@ -51,7 +58,7 @@ class Game {
             ws.on('close', () => {
                 console.log('WebSocket connection closed');
                 this.players = this.players.filter((player) => player.ws !== ws);
-                this.broadcast(utils.encodeWS({type: 'playerList', players: this.playerList()}));
+                this.broadcast(utils.encodeWS({ type: 'playerList', players: this.playerList() }));
             });
         });
     }
@@ -76,13 +83,14 @@ class Game {
 
         // If the game is paused
         if (this.paused) {
-            this.broadcast(utils.encodeWS({type: 'gamePause', value: this.paused }));
+            this.broadcast(utils.encodeWS({ type: 'gamePause', value: this.paused }));
         }
 
         // If the game is not paused and all controllers have been assigned, play the match
         else {
             this.match.step(); // Then step the match
-            this.broadcast(utils.encodeWS({type: 'playerList', players: this.playerList()}));
+            if (this.ticks % 1 == 0)
+                this.broadcast(utils.encodeWS({ type: 'playerList', players: this.playerList() }));
         }
     }
 
@@ -91,7 +99,8 @@ class Game {
         for (const player of this.players) {
             playerList.push({
                 id: player.character.id,
-                HB: player.character.HB
+                HB: player.character.HB,
+                speed: player.character.speed
             });
         }
         return playerList;

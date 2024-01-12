@@ -27,8 +27,6 @@ class Item {
         if (global.game.match.ticks == this.nextCool) {
             if (this.reloading) {
                 this.reloading = false;
-                if (this.owner instanceof Player)
-                    this.reload_done.play();
             }
         }
     }
@@ -111,9 +109,6 @@ class Pistol extends Item {
 
 
             } else {
-                if (this.owner instanceof Player)
-                    if (!user.muted)
-                        this.reload_empty.play();
                 if (user.ammo[this.type] > 0 && !this.reloading) {
                     this.reloading = true;    // set reloading to true
                     this.ammo = this.ammoMax;   // reload

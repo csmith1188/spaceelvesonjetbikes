@@ -40,7 +40,7 @@ class Match_OnlineMP extends Match {
     setup() {
         super.setup();
 
-        this.socket = new WebSocket('ws://localhost:3000');
+        this.socket = new WebSocket('ws://172.16.3.149:3000');
         this.socket.binaryType = 'arraybuffer';
 
         // Event listener for WebSocket connection
@@ -66,11 +66,13 @@ class Match_OnlineMP extends Match {
                     break;
                 case 'playerList':
                     for (const player of data.players) {
-                        if (player.id == game.player.character.id) continue;
+                        // if (player.id == game.player.character.id) continue;
                         let found = false;
-                        for (const e of this.bots) {
+                        for (const e of [game.player, ...this.bots]) {
                             if (e.character.id == player.id) {
-                                e.character.HB = player.HB;
+                                let HB = new Cylinder(new Vect3(player.HB.pos.x, player.HB.pos.y, player.HB.pos.z), player.HB.radius, player.HB.height);
+                                e.character.HB = HB;
+                                e.character.speed = player.speed;
                                 found = true;
                                 break;
                             }
@@ -78,7 +80,13 @@ class Match_OnlineMP extends Match {
                         if (!found) {
                             this.bots.push(new Bot());
                             this.bots[this.bots.length - 1].findTarget = () => { };
-                            this.bots[this.bots.length - 1].character.id = player.id;
+                            this.bots[this.bots.length - 1].character = new Jetbike(
+                                player.id,
+                                new Vect3((this.map.w / 2) - 800, (this.map.h / 2), 0),
+                                this.bots[this.bots.length - 1],
+                                { name: getName(), team: 1, gfx: 'img/sprites/dark2', cleanup: false, color: [0, 0, 255] });
+                            this.bots[this.bots.length - 1].character.inventory.push(new Pistol());
+                            this.bots[this.bots.length - 1].character.controller = new SocketController(this.bots[this.bots.length - 1]);
                         }
                     }
                     // remove each bot from the bot list that does not have an id in the data.players
@@ -111,17 +119,22 @@ class Match_OnlineMP extends Match {
             }
         });
 
-        // this.bots.push(new Bot());
-        // this.bots[this.bots.length - 1].findTarget = () => { };
-        game.player.character.controller = new DummyController(game.player);
+        game.player.character.controller = new SocketController(game.player);
+        game.player.character = new Jetbike(
+            game.player.character.id,
+            new Vect3(0, 0, 0),
+            game.player,
+            { name: 'Cpt. Fabius', gfx: 'img/sprites/jetbike', cleanup: false });
+        game.player.character.inventory.push(new Pistol());
+        game.player.camera = new Camera(game.player, { target: game.player.character });
 
     }
 
     step() {
-        // super.step();
+        super.step();
 
         // update the ticks
-        this.ticks++;
+        // this.ticks++;
 
         // Get updates from the user
 
@@ -135,15 +148,24 @@ class Match_OnlineMP extends Match {
             }
         }
 
+        if (!con.deltaAim) con.deltaAim = {};
+        if (con.aimX != con.deltaAim.aimX) con.deltaAim.aimX = con.aimX;
+        if (con.aimY != con.deltaAim.aimY) con.deltaAim.aimY = con.aimY;
+
         if (Object.keys(con.deltaButtons).length) {
             this.socket.send(JSON.stringify({
                 type: 'update_cl_buttons',
                 id: game.player.character.id,
-                buttons: con.deltaButtons
+                buttons: con.deltaButtons,
+                aim: con.deltaAim
             }));
         }
 
-        game.player.character.step();
+        // game.player.character.step();
+        // // step each bot
+        // for (const bot of this.bots) {
+        //     bot.character.step();
+        // }
 
     }
 
