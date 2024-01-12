@@ -140,7 +140,7 @@ class Character {
 
             // If the player is pressing the start button
             if (this.controller.buttons.start.current != this.controller.buttons.start.last && this.controller.buttons.start.current)
-                game.paused = !game.paused;
+                global.game.paused = !game.paused;
 
             if (this.controller.buttons.moveLeft.current) this.mom.x = -1;
             if (this.controller.buttons.moveRight.current) this.mom.x = 1;
@@ -184,13 +184,13 @@ class Character {
             if (this.controller.buttons.fire.current != this.controller.buttons.fire.last) {
                 if (this.inventory.length) {
                     if (this.controller.buttons.fire.current) {
-                        const xMulti = (game.player.camera._3D) ? game.player.camera.angle : 1;
+                        const xMulti = (global.game.player.camera._3D) ? global.game.player.camera.angle : 1;
                         let aimX = this.controller.aimX * xMulti;
                         let aimY = this.controller.aimY;
                         let aimZ = 0;
-                        if (game.player.camera._3D) {
-                            aimZ = aimY * game.player.camera.angle;
-                            aimY = aimY * (1 - game.player.camera.angle);
+                        if (global.game.player.camera._3D) {
+                            aimZ = aimY * global.game.player.camera.angle;
+                            aimY = aimY * (1 - global.game.player.camera.angle);
                         }
                         this.inventory[this.item].use(this, aimX, aimY, aimZ, 0, { color: this.color });
                     }
@@ -210,7 +210,7 @@ class Character {
                     if (this.inventory.length > 0) {
                         this.item = 0;
                         if (this.parent.interface)
-                            this.parent.interface.itemChangeTicks = game.match.ticks + 180;
+                            this.parent.interface.itemChangeTicks = global.game.match.ticks + 180;
                     }
 
             if (this.controller.buttons.inventory2.current != this.controller.buttons.inventory2.last)
@@ -218,18 +218,18 @@ class Character {
                     if (this.inventory.length > 1) {
                         this.item = 1;
                         if (this.parent.interface)
-                            this.parent.interface.itemChangeTicks = game.match.ticks + 180;
+                            this.parent.interface.itemChangeTicks = global.game.match.ticks + 180;
                     }
 
             if (this.controller.buttons.throw.current != this.controller.buttons.throw.last) {
                 if (this.parent.controller.buttons.throw.current) {
                     if (this.inventory.length > 0) {
                         // make a pickup
-                        game.match.map.blocks.push(new WeaponPickup(
+                        global.game.match.map.blocks.push(new WeaponPickup(
                             allID++,
                             new utils.Vect3(this.HB.pos.x, this.HB.pos.y, this.HB.pos.z + this.HB.height / 2),
                             new utils.Vect3(this.speed.x, this.speed.y, this.speed.z + 20),
-                            { weapon: this.inventory[this.item].weapon, ammo: this.inventory[this.item].ammo, livetime: game.match.despawnTimer, dying: true } ));
+                            { weapon: this.inventory[this.item].weapon, ammo: this.inventory[this.item].ammo, livetime: global.game.match.despawnTimer, dying: true } ));
                         // remove the item from the inventory
                         this.inventory.splice(this.item, 1)[0];
                         // while the length of the inventory is less than  the item slot plus one, reduce the item slot by one
@@ -237,7 +237,7 @@ class Character {
                             this.item--;
                         }
                         if (this.parent.interface)
-                            this.parent.interface.itemChangeTicks = game.match.ticks + 180;
+                            this.parent.interface.itemChangeTicks = global.game.match.ticks + 180;
                     }
                 }
             }
@@ -264,24 +264,24 @@ class Character {
              |_||_| |_\__|\__|_\___/_||_| \__,_|_||_\__,_| /_/ \_\__\__\___|_\___|_| \__,_|\__|_\___/_||_|
 
             */
-            if (this.HB.pos.z <= game.match.map.floor) { //Ground
+            if (this.HB.pos.z <= global.game.match.map.floor) { //Ground
                 //Accelerate Ground
                 this.speed.x += this.mom.x * this.accel.x;
                 this.speed.y += this.mom.y * this.accel.y;
                 this.speed.z += this.mom.z * this.accel.z;
                 // Friction Ground
-                this.speed.x *= 1 - game.match.map.friction.ground;
-                this.speed.y *= 1 - game.match.map.friction.ground;
+                this.speed.x *= 1 - global.game.match.map.friction.ground;
+                this.speed.y *= 1 - global.game.match.map.friction.ground;
             } else { //Air
                 //Accelerate Air
                 this.speed.x += this.mom.x * this.airAccel.x;
                 this.speed.y += this.mom.y * this.airAccel.y;
                 this.speed.z += this.mom.z * this.airAccel.z;
                 //Friction Air
-                this.speed.x *= 1 - game.match.map.friction.air;
-                this.speed.y *= 1 - game.match.map.friction.air;
+                this.speed.x *= 1 - global.game.match.map.friction.air;
+                this.speed.y *= 1 - global.game.match.map.friction.air;
             }
-            this.speed.z *= 1 - game.match.map.friction.air; //Air friction always applies to falling/rising
+            this.speed.z *= 1 - global.game.match.map.friction.air; //Air friction always applies to falling/rising
 
             /*
                  _
@@ -290,9 +290,9 @@ class Character {
              /__/\__\___/ .__/
                         |_|
             */
-            if (Math.abs(this.speed.x) < game.match.map.stopZone) this.speed.x = 0; //Stop if you are below the stop speed
-            if (Math.abs(this.speed.y) < game.match.map.stopZone) this.speed.y = 0;
-            // if (Math.abs(this.speed.z) < game.match.map.stopZone) this.speed.z = 0; //I don't know if this one makes a difference
+            if (Math.abs(this.speed.x) < global.game.match.map.stopZone) this.speed.x = 0; //Stop if you are below the stop speed
+            if (Math.abs(this.speed.y) < global.game.match.map.stopZone) this.speed.y = 0;
+            // if (Math.abs(this.speed.z) < global.game.match.map.stopZone) this.speed.z = 0; //I don't know if this one makes a difference
 
             /*
                                 _ _
@@ -301,7 +301,7 @@ class Character {
              \__, |_| \__,_|\_/|_|\__|\_, |
              |___/                    |__/
             */
-            this.speed.z -= game.match.map.gravity;
+            this.speed.z -= global.game.match.map.gravity;
 
 
             /*
@@ -321,7 +321,7 @@ class Character {
               \___\_, |_|_|_||_\__,_\___|_|
                   |__/
             */
-            for (let c of game.match.bots) {
+            for (let c of global.game.match.bots) {
                 if (c.character === this) //Don't collide with yourself
                     continue;
                 c = c.character; //Get the character from the bot
@@ -346,10 +346,10 @@ class Character {
                             } else {
                                 this.HB.pos.x += c.HB.radius + this.HB.radius;
                             }
-                            this.speed.x += c.speed.x * game.match.map.collideReflect; //Reflect the speed and mom by the map's reflect value
-                            this.speed.y += c.speed.y * game.match.map.collideReflect;
-                            c.speed.x -= this.speed.x * game.match.map.collideReflect;
-                            c.speed.y -= this.speed.y * game.match.map.collideReflect;
+                            this.speed.x += c.speed.x * global.game.match.map.collideReflect; //Reflect the speed and mom by the map's reflect value
+                            this.speed.y += c.speed.y * global.game.match.map.collideReflect;
+                            c.speed.x -= this.speed.x * global.game.match.map.collideReflect;
+                            c.speed.y -= this.speed.y * global.game.match.map.collideReflect;
                             break;
                         case 'top': //If you collided on the top
                             //move the character to the edge of the other character
@@ -375,7 +375,7 @@ class Character {
              |___/_\___/\__|_\_\/__/
 
             */
-            for (const c of game.match.map.blocks) { //For each block
+            for (const c of global.game.match.map.blocks) { //For each block
                 if (this.HB.above(c.HB) && c.solid) { //If you are above the block and the block is not solid
                     this.floor = c.HB.pos.z + c.HB.volume.z; //Set the floor to the block's height
                 }
@@ -436,7 +436,7 @@ class Character {
 
             */
             if (this.HB.pos.z < this.hover + this.floor) { //If you are lower than the hover threshold
-                this.speed.z += Math.max((1 - (this.HB.pos.z / this.hover)) * this.bouyancy, 0) + game.match.map.gravity;
+                this.speed.z += Math.max((1 - (this.HB.pos.z / this.hover)) * this.bouyancy, 0) + global.game.match.map.gravity;
                 //Move up by your bouyancy times the percent between your z and you hover, not negative
                 //Also cancel out gravity
             }
@@ -469,8 +469,8 @@ class Character {
                 this.speed.x *= -game.match.map.collideReflect;
                 this.mom.x *= -game.match.map.collideReflect;
             }
-            if (this.HB.pos.x > game.match.map.w) {
-                this.HB.pos.x = game.match.map.w;
+            if (this.HB.pos.x > global.game.match.map.w) {
+                this.HB.pos.x = global.game.match.map.w;
                 this.speed.x *= -game.match.map.collideReflect;
                 this.mom.x *= -game.match.map.collideReflect;
             }
@@ -479,8 +479,8 @@ class Character {
                 this.speed.y *= -game.match.map.collideReflect;
                 this.mom.y *= -game.match.map.collideReflect;
             }
-            if (this.HB.pos.y > game.match.map.h) {
-                this.HB.pos.y = game.match.map.h;
+            if (this.HB.pos.y > global.game.match.map.h) {
+                this.HB.pos.y = global.game.match.map.h;
                 this.speed.y *= -game.match.map.collideReflect;
                 this.mom.y *= -game.match.map.collideReflect;
             }
@@ -492,7 +492,7 @@ class Character {
               \___|_| \___/\_,_|_||_\__,_|  \___\___/_|_|_/__/_\___/_||_|
 
             */
-            if (-this.speed.z > this.HB.pos.z + game.match.map.floor) {
+            if (-this.speed.z > this.HB.pos.z + global.game.match.map.floor) {
                 this.HB.pos.z = 0;
                 // this.speed.z *= -0.5
             }
@@ -514,22 +514,22 @@ class Character {
                 if (!this.muted)
                 this.deathSFX.play();
                 if (this.inventory[this.item])
-                    game.match.map.blocks.push(new WeaponPickup(
+                    global.game.match.map.blocks.push(new WeaponPickup(
                         allID++,
                         new utils.Vect3(this.HB.pos.x, this.HB.pos.y, this.HB.pos.z + this.HB.height / 2),
                         new utils.Vect3(this.speed.x, this.speed.y, this.speed.z + 20),
-                        { weapon: this.inventory[this.item].weapon, ammo: this.inventory[this.item].ammo, livetime: game.match.despawnTimer, dying: true }))
+                        { weapon: this.inventory[this.item].weapon, ammo: this.inventory[this.item].ammo, livetime: global.game.match.despawnTimer, dying: true }))
             }
         }
     }
 
     unitColor(fullOpaque = 0) {
-        if (this.team == game.player.character.team) {
-            return `rgba(0,255,0, ${Math.max(Number(fullOpaque), game.player.interface.drawFriendlyRing)})`;
-        } else if (game.player.character.teams.includes(this.team)) {
-            return `rgba(255,255,0, ${Math.max(Number(fullOpaque), game.player.interface.drawNeutralRing)})`;
+        if (this.team == global.game.player.character.team) {
+            return `rgba(0,255,0, ${Math.max(Number(fullOpaque), global.game.player.interface.drawFriendlyRing)})`;
+        } else if (global.game.player.character.teams.includes(this.team)) {
+            return `rgba(255,255,0, ${Math.max(Number(fullOpaque), global.game.player.interface.drawNeutralRing)})`;
         } else {
-            return `rgba(255,0,0, ${Math.max(Number(fullOpaque), game.player.interface.drawEnemyRing)})`;
+            return `rgba(255,0,0, ${Math.max(Number(fullOpaque), global.game.player.interface.drawEnemyRing)})`;
         }
     }
 
@@ -556,11 +556,11 @@ class Character {
             */
 
 
-            let compareX = game.player.camera.x - this.HB.pos.x;
-            let compareY = game.player.camera.y - this.HB.pos.y;
+            let compareX = global.game.player.camera.x - this.HB.pos.x;
+            let compareY = global.game.player.camera.y - this.HB.pos.y;
 
 
-            if (game.player.camera._3D) {
+            if (global.game.player.camera._3D) {
                 this.draw3D();
             } else {
 
@@ -575,8 +575,8 @@ class Character {
                 let shadowShrink = this.HB.radius * Math.min(((this.HB.pos.z - this.floor) / 128), 1)
                 ctx.drawImage(
                     this.shadow,
-                    game.window.w / 2 - compareX - this.HB.radius + shadowShrink,
-                    game.window.h / 2 - compareY - this.HB.radius + shadowShrink - this.floor,
+                    global.game.window.w / 2 - compareX - this.HB.radius + shadowShrink,
+                    global.game.window.h / 2 - compareY - this.HB.radius + shadowShrink - this.floor,
                     this.HB.radius * 2 - shadowShrink * 2,
                     this.HB.radius * 2 - shadowShrink * 2
                 );
@@ -593,8 +593,8 @@ class Character {
                 ctx.lineWidth = 3;
                 ctx.beginPath();
                 ctx.ellipse(
-                    game.window.w / 2 - compareX,
-                    game.window.h / 2 - compareY - this.floor,
+                    global.game.window.w / 2 - compareX,
+                    global.game.window.h / 2 - compareY - this.floor,
                     this.HB.radius,
                     this.HB.radius,
                     0, 0, 2 * Math.PI);
@@ -613,8 +613,8 @@ class Character {
                 ctx.beginPath();
                 ctx.beginPath();
                 ctx.arc(
-                    game.window.w / 2 - compareX,
-                    game.window.h / 2 - compareY - this.floor,
+                    global.game.window.w / 2 - compareX,
+                    global.game.window.h / 2 - compareY - this.floor,
                     this.HB.radius + 16,
                     Math.PI * 0.75,
                     Math.PI * 0.25,
@@ -626,8 +626,8 @@ class Character {
                 ctx.lineWidth = 3;
                 ctx.beginPath();
                 ctx.arc(
-                    game.window.w / 2 - compareX,
-                    game.window.h / 2 - compareY - this.floor,
+                    global.game.window.w / 2 - compareX,
+                    global.game.window.h / 2 - compareY - this.floor,
                     this.HB.radius + 16,
                     Math.PI * 0.75,
                     Math.PI * (0.75 - ((this.hp / this.hp_max) * 0.5)),
@@ -647,8 +647,8 @@ class Character {
                 ctx.lineWidth = 5;
                 ctx.beginPath();
                 ctx.arc(
-                    game.window.w / 2 - compareX,
-                    game.window.h / 2 - compareY - this.floor,
+                    global.game.window.w / 2 - compareX,
+                    global.game.window.h / 2 - compareY - this.floor,
                     this.HB.radius + 8,
                     Math.PI * 0.75,
                     Math.PI * 0.25,
@@ -661,8 +661,8 @@ class Character {
                 ctx.lineWidth = 3;
                 ctx.beginPath();
                 ctx.arc(
-                    game.window.w / 2 - compareX,
-                    game.window.h / 2 - compareY - this.floor,
+                    global.game.window.w / 2 - compareX,
+                    global.game.window.h / 2 - compareY - this.floor,
                     this.HB.radius + 8,
                     Math.PI * 0.75,
                     Math.PI * (0.75 - ((this.pp / this.pp_max) * 0.5)),
@@ -680,27 +680,27 @@ class Character {
                 */
                 ctx.drawImage(
                     this.img,
-                    game.window.w / 2 - compareX - this.HB.radius,
-                    game.window.h / 2 - compareY - this.HB.height - this.HB.pos.z - sineAnimate(1, 0.1),
+                    global.game.window.w / 2 - compareX - this.HB.radius,
+                    global.game.window.h / 2 - compareY - this.HB.height - this.HB.pos.z - sineAnimate(1, 0.1),
                     this.HB.radius * 2, this.HB.height
                 );
-                if (game.debug) {
+                if (global.game.debug) {
                     ctx.fillStyle = "#FF0000";
-                    ctx.fillRect(game.window.w / 2 - compareX - 2, game.window.h / 2 - compareY - 2, 4, 4);
+                    ctx.fillRect(global.game.window.w / 2 - compareX - 2, global.game.window.h / 2 - compareY - 2, 4, 4);
                     ctx.strokeStyle = "#FF0000";
                     ctx.lineWidth = 2;
                     ctx.beginPath();
                     ctx.ellipse(
-                        game.window.w / 2 - compareX,
-                        game.window.h / 2 - compareY - this.HB.pos.z,
+                        global.game.window.w / 2 - compareX,
+                        global.game.window.h / 2 - compareY - this.HB.pos.z,
                         this.HB.radius,
                         this.HB.radius,
                         0, 0, 2 * Math.PI);
                     ctx.stroke();
                     ctx.beginPath();
                     ctx.ellipse(
-                        game.window.w / 2 - compareX,
-                        game.window.h / 2 - compareY - this.HB.height - this.HB.pos.z,
+                        global.game.window.w / 2 - compareX,
+                        global.game.window.h / 2 - compareY - this.HB.height - this.HB.pos.z,
                         this.HB.radius,
                         this.HB.radius,
                         0, 0, 2 * Math.PI);
@@ -720,11 +720,11 @@ class Character {
                 //first draw the text in black to create a shadow
                 ctx.fillStyle = '#000000';
                 ctx.font = "12px Jura";
-                ctx.fillText(this.name, game.window.w / 2 - compareX + 2, game.window.h / 2 - compareY - this.HB.height - this.HB.pos.z - 8);
+                ctx.fillText(this.name, global.game.window.w / 2 - compareX + 2, global.game.window.h / 2 - compareY - this.HB.height - this.HB.pos.z - 8);
                 //then draw the text in white
                 ctx.fillStyle = '#FFFFFF';
                 ctx.font = "12px Jura";
-                ctx.fillText(this.name, game.window.w / 2 - compareX, game.window.h / 2 - compareY - this.HB.height - this.HB.pos.z - 10);
+                ctx.fillText(this.name, global.game.window.w / 2 - compareX, global.game.window.h / 2 - compareY - this.HB.height - this.HB.pos.z - 10);
             }
 
             /*
@@ -737,16 +737,16 @@ class Character {
             // This can draw a line to the closest part of a rectangle
             // except it broke at some point when i moved to utils
             // It can still draw to the XY which is good for tubes, but not blocks
-            if (this.target && game.debug) {
-                compareX = game.player.camera.x - this.HB.pos.x; //If you change this to the target.pos
-                compareY = game.player.camera.y - this.HB.pos.y; //If you change this to the target.pos
-                let targetX = game.player.camera.x - this.target.HB.pos.x;
-                let targetY = game.player.camera.y - this.target.HB.pos.y;
+            if (this.target && global.game.debug) {
+                compareX = global.game.player.camera.x - this.HB.pos.x; //If you change this to the target.pos
+                compareY = global.game.player.camera.y - this.HB.pos.y; //If you change this to the target.pos
+                let targetX = global.game.player.camera.x - this.target.HB.pos.x;
+                let targetY = global.game.player.camera.y - this.target.HB.pos.y;
                 ctx.strokeStyle = "#FFFFFF"
                 ctx.lineWidth = 2;
                 ctx.beginPath();
-                ctx.moveTo(game.window.w / 2 - targetX, game.window.h / 2 - targetY);
-                ctx.lineTo(game.window.w / 2 - compareX, game.window.h / 2 - compareY);
+                ctx.moveTo(global.game.window.w / 2 - targetX, global.game.window.h / 2 - targetY);
+                ctx.lineTo(global.game.window.w / 2 - compareX, global.game.window.h / 2 - compareY);
                 ctx.stroke();
             }
         }
@@ -764,8 +764,8 @@ class Character {
     */
     draw3D() {
 
-        let compareX = game.player.camera.x - this.HB.pos.x;
-        let compareY = game.player.camera.y - this.HB.pos.y;
+        let compareX = global.game.player.camera.x - this.HB.pos.x;
+        let compareY = global.game.player.camera.y - this.HB.pos.y;
 
         /*
              _            _
@@ -778,10 +778,10 @@ class Character {
         let shadowShrink = this.HB.radius * Math.min(((this.HB.pos.z - this.floor) / 128), 1)
         ctx.drawImage(
             this.shadow,
-            game.window.w / 2 - compareX - this.HB.radius + shadowShrink,
-            game.window.h / 2 - (compareY * game.player.camera.angle) - this.HB.radius + (this.HB.height * (1 - game.player.camera.angle)) + (shadowShrink * game.player.camera.angle) - (this.floor * (1 - game.player.camera.angle)),
+            global.game.window.w / 2 - compareX - this.HB.radius + shadowShrink,
+            global.game.window.h / 2 - (compareY * global.game.player.camera.angle) - this.HB.radius + (this.HB.height * (1 - global.game.player.camera.angle)) + (shadowShrink * global.game.player.camera.angle) - (this.floor * (1 - global.game.player.camera.angle)),
             (this.HB.radius * 2) - (shadowShrink * 2),
-            ((this.HB.radius * 2) - (shadowShrink * 2)) * game.player.camera.angle
+            ((this.HB.radius * 2) - (shadowShrink * 2)) * global.game.player.camera.angle
         );
         ctx.globalAlpha = 1;
 
@@ -796,10 +796,10 @@ class Character {
         ctx.lineWidth = 3;
         ctx.beginPath();
         ctx.ellipse(
-            game.window.w / 2 - compareX,
-            game.window.h / 2 - (compareY * game.player.camera.angle) - (this.floor * (1 - game.player.camera.angle)),
+            global.game.window.w / 2 - compareX,
+            global.game.window.h / 2 - (compareY * global.game.player.camera.angle) - (this.floor * (1 - global.game.player.camera.angle)),
             this.HB.radius,
-            this.HB.radius * game.player.camera.angle,
+            this.HB.radius * global.game.player.camera.angle,
             0, 0, 2 * Math.PI);
         ctx.stroke();
         // draw an arc around the bottom half of the selector ring offest by 10 pixels outside that represents the character's health, and adjust for camera angle
@@ -809,8 +809,8 @@ class Character {
         ctx.beginPath();
         ctx.beginPath();
         ctx.arc(
-            game.window.w / 2 - compareX,
-            game.window.h / 2 - (compareY * game.player.camera.angle) - (this.floor * (1 - game.player.camera.angle)),
+            global.game.window.w / 2 - compareX,
+            global.game.window.h / 2 - (compareY * global.game.player.camera.angle) - (this.floor * (1 - global.game.player.camera.angle)),
             this.HB.radius + 10,
             Math.PI,
             Math.PI * 2,
@@ -821,8 +821,8 @@ class Character {
         ctx.lineWidth = 3;
         ctx.beginPath();
         ctx.arc(
-            game.window.w / 2 - compareX,
-            game.window.h / 2 - (compareY * game.player.camera.angle) - (this.floor * (1 - game.player.camera.angle)),
+            global.game.window.w / 2 - compareX,
+            global.game.window.h / 2 - (compareY * global.game.player.camera.angle) - (this.floor * (1 - global.game.player.camera.angle)),
             this.HB.radius + 10,
             Math.PI,
             Math.PI * (1 - (this.hp / this.hp_max)),
@@ -833,25 +833,25 @@ class Character {
         if (this.faceCamera)
             ctx.drawImage(
                 this.img,
-                game.window.w / 2 - compareX - this.HB.radius,
-                game.window.h / 2 - (compareY * game.player.camera.angle) - this.HB.height - (this.HB.pos.z * (1 - game.player.camera.angle)) - ((sineAnimate(1, 0.1) * (1 - game.player.camera.angle))),
+                global.game.window.w / 2 - compareX - this.HB.radius,
+                global.game.window.h / 2 - (compareY * global.game.player.camera.angle) - this.HB.height - (this.HB.pos.z * (1 - global.game.player.camera.angle)) - ((sineAnimate(1, 0.1) * (1 - global.game.player.camera.angle))),
                 this.HB.radius * 2,
                 this.HB.height
             );
         else
             ctx.drawImage(
                 this.img,
-                game.window.w / 2 - compareX - this.HB.radius,
-                game.window.h / 2 - (compareY * game.player.camera.angle) - (this.HB.height * (1 - game.player.camera.angle)) - (this.HB.pos.z * (1 - game.player.camera.angle)) - ((sineAnimate(1, 0.1) * (1 - game.player.camera.angle))),
+                global.game.window.w / 2 - compareX - this.HB.radius,
+                global.game.window.h / 2 - (compareY * global.game.player.camera.angle) - (this.HB.height * (1 - global.game.player.camera.angle)) - (this.HB.pos.z * (1 - global.game.player.camera.angle)) - ((sineAnimate(1, 0.1) * (1 - global.game.player.camera.angle))),
                 this.HB.radius * 2,
-                this.HB.height * (1 - game.player.camera.angle)
+                this.HB.height * (1 - global.game.player.camera.angle)
             );
 
         // Draw character's name above their head, adjusting for camera angle
         ctx.fillStyle = "#FFFFFF";
         ctx.font = "12px Jura";
         ctx.textAlign = "center";
-        ctx.fillText(this.name, game.window.w / 2 - compareX, game.window.h / 2 - (compareY * game.player.camera.angle) - this.HB.height - (this.HB.pos.z * (1 - game.player.camera.angle)) - 10);
+        ctx.fillText(this.name, global.game.window.w / 2 - compareX, global.game.window.h / 2 - (compareY * global.game.player.camera.angle) - this.HB.height - (this.HB.pos.z * (1 - global.game.player.camera.angle)) - 10);
 
         /*
              _     _                _    _ _   _
@@ -860,25 +860,25 @@ class Character {
          \__,_\___|_.__/\_,_\__, | |_||_|_|\__|_.__/\___/_\_\
                             |___/
         */
-        if (game.debug) {
+        if (global.game.debug) {
             ctx.lineWidth = 2;
             ctx.fillStyle = "#FF0000";
             ctx.strokeStyle = "#FF0000";
-            ctx.fillRect(game.window.w / 2 - compareX - 2, game.window.h / 2 - (compareY * game.player.camera.angle) - 2, 4, 4);
+            ctx.fillRect(global.game.window.w / 2 - compareX - 2, global.game.window.h / 2 - (compareY * global.game.player.camera.angle) - 2, 4, 4);
             ctx.beginPath();
             ctx.ellipse(
-                game.window.w / 2 - compareX,
-                game.window.h / 2 - (compareY * game.player.camera.angle) - (this.HB.pos.z * (1 - game.player.camera.angle)),
+                global.game.window.w / 2 - compareX,
+                global.game.window.h / 2 - (compareY * global.game.player.camera.angle) - (this.HB.pos.z * (1 - global.game.player.camera.angle)),
                 this.HB.radius,
-                this.HB.radius * game.player.camera.angle,
+                this.HB.radius * global.game.player.camera.angle,
                 0, 0, 2 * Math.PI);
             ctx.stroke();
             ctx.beginPath();
             ctx.ellipse(
-                game.window.w / 2 - compareX,
-                game.window.h / 2 - (compareY * game.player.camera.angle) - (this.HB.height * (1 - game.player.camera.angle)) - (this.HB.pos.z * (1 - game.player.camera.angle)),
+                global.game.window.w / 2 - compareX,
+                global.game.window.h / 2 - (compareY * global.game.player.camera.angle) - (this.HB.height * (1 - global.game.player.camera.angle)) - (this.HB.pos.z * (1 - global.game.player.camera.angle)),
                 this.HB.radius,
-                this.HB.radius * game.player.camera.angle,
+                this.HB.radius * global.game.player.camera.angle,
                 0, 0, 2 * Math.PI);
             ctx.stroke();
             ctx.lineWidth = 4;
@@ -888,11 +888,11 @@ class Character {
             let newZ = this.HB.pos.z + this.speed.z;
             ctx.lineWidth = 2;
             ctx.beginPath();
-            ctx.moveTo(game.window.w / 2, game.window.h / 2);
-            compareX = game.player.camera.x - newX;
-            compareY = game.player.camera.y - newY;
+            ctx.moveTo(global.game.window.w / 2, global.game.window.h / 2);
+            compareX = global.game.player.camera.x - newX;
+            compareY = global.game.player.camera.y - newY;
             let compareZ = newZ - this.HB.pos.z;
-            ctx.lineTo(game.window.w / 2 - compareX, game.window.h / 2 - (compareY * game.player.camera.angle) - (this.speed.z * (1 - game.player.camera.angle)));
+            ctx.lineTo(global.game.window.w / 2 - compareX, global.game.window.h / 2 - (compareY * global.game.player.camera.angle) - (this.speed.z * (1 - global.game.player.camera.angle)));
             ctx.stroke();
         }
     }

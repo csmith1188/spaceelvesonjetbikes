@@ -13,7 +13,7 @@ class Game {
         this.ticks = 0;
         this.maxPlayers = 4;
         this.players = [];
-        this.match = new Match();
+        this.match = new Match(this);
 
         // Handle WebSocket connections
         wss.on('connection', (ws) => {
@@ -60,12 +60,12 @@ class Game {
 
         // If the game is paused
         if (this.paused) {
-            this.menus.paused.step(); // Show the pause menu
+            this.broadcast(utils.encodeWS({type: 'gamePause', value: this.paused }));
         }
 
         // If the game is not paused and all controllers have been assigned, play the match
         else {
-            // this.match.step(); // Then step the match
+            this.match.step(); // Then step the match
             this.broadcast(utils.encodeWS({type: 'playerList', players: this.playerList()}));
         }
     }

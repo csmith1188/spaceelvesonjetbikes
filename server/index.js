@@ -4,7 +4,7 @@ const path = require('path');
 const http = require('http');
 const WebSocket = require('ws');
 
-const Game = require('./js/game/game.js');
+const Game = require('./engine/game/game.js');
 
 const PORT = process.env.PORT || 3000;
 
@@ -29,7 +29,7 @@ app.set('views', path.join(__dirname, 'views'));
 // Set the path for the public folder
 app.use(express.static(path.join(__dirname, '../client')));
 
-const game = new Game();
+global.game = new Game();
 
 // Define your routes here
 

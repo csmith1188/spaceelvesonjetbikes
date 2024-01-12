@@ -1,5 +1,8 @@
+const Map = require('./map/map.js');
+
 class Match {
-    constructor() {
+    constructor(game) {
+        this.game = game;
         this.setup();
     }
 
@@ -11,7 +14,7 @@ class Match {
         this.ticks = -1;
         this.spmp = 'sp' // 'sp' single player, 'ss' split screen, 'mp' multiplayer
         this.paused = false;
-        // this.map = new Map();
+        this.map = new Map();
         this.bots = [];
         this.blocks = []; // Different from map blocks. Think pickups and dropped items
         this.runFunc = []; // A list of functions to run every step
@@ -22,24 +25,24 @@ class Match {
 
             // game.player.character.step();
 
-            for (const bot of this.bots) {
+            for (const bot of this.game.players) {
                 bot.AI();
                 bot.character.step();
             }
 
-            for (const block of this.map.blocks) {
-                block.step();
-            }
+            // for (const block of this.map.blocks) {
+            //     block.step();
+            // }
 
-            for (const bullet of this.map.bullets) {
-                bullet.step();
-            }
+            // for (const bullet of this.map.bullets) {
+            //     bullet.step();
+            // }
 
-            for (const debris of this.map.debris) {
-                debris.step();
-            }
+            // for (const debris of this.map.debris) {
+            //     debris.step();
+            // }
 
-            this.map.step();
+            // this.map.step();
 
             // Run all runFunc
             for (const func of this.runFunc) {
