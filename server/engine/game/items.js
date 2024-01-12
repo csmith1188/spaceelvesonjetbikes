@@ -1,3 +1,7 @@
+const { Bullet } = require('./match/map/blocks/projectiles.js');
+const { Block } = require('./match/map/blocks/block.js');
+const utils = require('../utils.js');
+
 /*
       ::::::::::: ::::::::::: ::::::::::   :::   :::
          :+:         :+:     :+:         :+:+: :+:+:
@@ -70,8 +74,6 @@ class Pistol extends Item {
                 // Set next cooldown
                 this.nextCool = global.game.match.ticks + this.coolDown;
                 this.ammo--; // consume a bullet
-                this.shootSFX.currentTime = 0;
-                if (!user.muted) this.shootSFX.play(); // play shoot sound
                 //find the distance from player to mouse with pythagorean theorem
                 let distance = ((aimX ** 2) + (aimY ** 2)) ** 0.5;
                 //Normalize the dimension distance by the real distance (ratio)
@@ -95,10 +97,10 @@ class Pistol extends Item {
                 // Add bullet to map
                 global.game.match.map.bullets.push(
                     new Bullet(
-                        allID++, // ID
-                        new Vect3(user.HB.pos.x, user.HB.pos.y, user.HB.pos.z), new Vect3(4, 4, 0), user, // Position and size
+                        global.game.allID++, // ID
+                        new utils.Vect3(user.HB.pos.x, user.HB.pos.y, user.HB.pos.z), new utils.Vect3(4, 4, 0), user, // Position and size
                         {
-                            speed: new Vect3(aimX, aimY, 0), //aimZ doesn't work
+                            speed: new utils.Vect3(aimX, aimY, 0), //aimZ doesn't work
                             color: user.color
                         }
                     )
@@ -138,7 +140,6 @@ class Rifle extends Item {
         this.type = 'ballistic';
         this.name = 'Mercurian Rifle';
         this.weapon = 'rifle';
-        this.shootSFX = new Audio('sfx/rifle_shoot.wav');
         this.projectileSpeed = 30;
         this.damage = 40;
         this.range = 600;
@@ -168,8 +169,6 @@ class Rifle extends Item {
                 let yaim = aimY;
                 let zaim = aimZ;
                 this.ammo--; // consume a bullet
-                this.shootSFX.currentTime = 0;
-                if (!user.muted) this.shootSFX.play(); // play shoot sound
                 //find the distance from player to mouse with pythagorean theorem
                 let distance = ((xaim ** 2) + (yaim ** 2)) ** 0.5;
                 //Normalize the dimension distance by the real distance (ratio)
@@ -184,10 +183,10 @@ class Rifle extends Item {
                 // Add bullet to map
                 global.game.match.map.bullets.push(
                     new Bullet(
-                        allID++, // ID
-                        new Vect3(user.HB.pos.x, user.HB.pos.y, user.HB.pos.z), new Vect3(4, 4, 0), user, // Position and size
+                        global.game.allID++, // ID
+                        new utils.Vect3(user.HB.pos.x, user.HB.pos.y, user.HB.pos.z), new utils.Vect3(4, 4, 0), user, // Position and size
                         {
-                            speed: new Vect3(xaim, yaim, 0), //zaim doesn't work
+                            speed: new utils.Vect3(xaim, yaim, 0), //zaim doesn't work
                             color: user.color,
                             damage: this.damage,
                             livetime: 300,
@@ -200,12 +199,12 @@ class Rifle extends Item {
                         let tempz = ((Math.random() * 1) - 0.5) * 2;
                         global.game.match.map.debris.push(
                             new Block(
-                                allID++,
-                                new Vect3(this.HB.pos.x, this.HB.pos.y, this.HB.pos.z),
-                                new Vect3(1, 1, 1),
+                                global.game.allID++,
+                                new utils.Vect3(this.HB.pos.x, this.HB.pos.y, this.HB.pos.z),
+                                new utils.Vect3(1, 1, 1),
                                 {
-                                    speed: new Vect3(tempx, tempy, tempz),
-                                    HB: new Cube(new Vect3(this.HB.pos.x, this.HB.pos.y, this.HB.pos.z), new Vect3(4, 4, 4)),
+                                    speed: new utils.Vect3(tempx, tempy, tempz),
+                                    HB: new utils.Cube(new utils.Vect3(this.HB.pos.x, this.HB.pos.y, this.HB.pos.z), new utils.Vect3(4, 4, 4)),
                                     z: this.HB.pos.z,
                                     color: [220, 220, 200],
                                     livetime: 15,
@@ -224,12 +223,12 @@ class Rifle extends Item {
                         let tempC = Math.ceil(Math.random() * 255);
                         global.game.match.map.debris.push(
                             new Block(
-                                allID++,
-                                new Vect3(this.HB.pos.x, this.HB.pos.y, this.HB.pos.z),
-                                new Vect3(1, 1, 1),
+                                global.game.allID++,
+                                new utils.Vect3(this.HB.pos.x, this.HB.pos.y, this.HB.pos.z),
+                                new utils.Vect3(1, 1, 1),
                                 {
-                                    speed: new Vect3(tempx + (this.speed.x * 0.25), tempy + (this.speed.y * 0.25), tempz + (this.speed.z * 0.25)),
-                                    HB: new Cube(new Vect3(this.HB.pos.x, this.HB.pos.y, this.HB.pos.z), new Vect3(6, 3, 1)),
+                                    speed: new utils.Vect3(tempx + (this.speed.x * 0.25), tempy + (this.speed.y * 0.25), tempz + (this.speed.z * 0.25)),
+                                    HB: new utils.Cube(new utils.Vect3(this.HB.pos.x, this.HB.pos.y, this.HB.pos.z), new utils.Vect3(6, 3, 1)),
                                     z: this.HB.pos.z,
                                     color: [0, tempC, 255],
                                     livetime: 20,
@@ -309,10 +308,6 @@ class Flamer extends Item {
                 // Set next cooldown
                 this.nextCool = global.game.match.ticks + this.coolDown;
                 this.ammo--; // consume a bullet
-                this.shootSFX.currentTime = 0;
-                // if (!user.muted) this.shootSFX.play(); // play shoot sound
-                if (!user.muted)
-                    this.shootSFX.play(); // play shoot sound
                 for (let i = 0; i < 5; i++) {
 
                     // There's a serious bug here.
@@ -333,11 +328,11 @@ class Flamer extends Item {
                     // Add bullets to map
                     global.game.match.map.bullets.push(
                         new Bullet(
-                            allID++, // ID
-                            new Vect3(user.HB.pos.x, user.HB.pos.y, user.HB.pos.z), new Vect3(4, 4, 0), user, // Position and size
+                            global.game.allID++, // ID
+                            new utils.Vect3(user.HB.pos.x, user.HB.pos.y, user.HB.pos.z), new utils.Vect3(4, 4, 0), user, // Position and size
                             {
                                 livetime: 16,
-                                speed: new Vect3(aimX, aimY, 0),
+                                speed: new utils.Vect3(aimX, aimY, 0),
                                 color: user.color,
                                 damage: 10,
                             }
@@ -408,8 +403,6 @@ class Lance extends Item {
                 // Set next cooldown
                 this.nextCool = global.game.match.ticks + this.coolDown;
                 this.ammo--; // consume a bullet
-                this.shootSFX.currentTime = 0;
-                if (!user.muted) this.shootSFX.play(); // play shoot sound
                 //find the distance from player to mouse with pythagorean theorem
                 let distance = ((aimX ** 2) + (aimY ** 2)) ** 0.5;
                 //Normalize the dimension distance by the real distance (ratio)
@@ -427,10 +420,10 @@ class Lance extends Item {
                 // Add a new missile at this user's position
                 global.game.match.map.bullets.push(
                     new Bullet(
-                        allID++, // ID
-                        new Vect3(user.HB.pos.x, user.HB.pos.y, user.HB.pos.z), new Vect3(4, 4, 0), user, // Position and size
+                        global.game.allID++, // ID
+                        new utils.Vect3(user.HB.pos.x, user.HB.pos.y, user.HB.pos.z), new utils.Vect3(4, 4, 0), user, // Position and size
                         {
-                            speed: new Vect3(aimX, aimY, 0),
+                            speed: new utils.Vect3(aimX, aimY, 0),
                             parent: user,
                             color: user.color,
                             damage: 10,
@@ -461,12 +454,12 @@ class Lance extends Item {
                         // add a debris block to the map at the player's position with a random speed
                         global.game.match.map.debris.push(
                             new Block(
-                                allID++,
-                                new Vect3(this.HB.pos.x, this.HB.pos.y, this.HB.pos.z),
-                                new Vect3(1, 1, 1),
+                                global.game.allID++,
+                                new utils.Vect3(this.HB.pos.x, this.HB.pos.y, this.HB.pos.z),
+                                new utils.Vect3(1, 1, 1),
                                 {
-                                    speed: new Vect3(tempx, tempy, tempz),
-                                    HB: new Cube(new Vect3(this.HB.pos.x, this.HB.pos.y, this.HB.pos.z), new Vect3(4, 4, 4)),
+                                    speed: new utils.Vect3(tempx, tempy, tempz),
+                                    HB: new utils.Cube(new utils.Vect3(this.HB.pos.x, this.HB.pos.y, this.HB.pos.z), new utils.Vect3(4, 4, 4)),
                                     z: this.HB.pos.z,
                                     color: [tempC1, 0, tempC2],
                                     colorSide: [tempC2, 0, tempC1],
@@ -487,12 +480,12 @@ class Lance extends Item {
                         let tempC = Math.ceil(Math.random() * 255);
                         global.game.match.map.debris.push(
                             new Block(
-                                allID++,
-                                new Vect3(this.HB.pos.x, this.HB.pos.y, this.HB.pos.z),
-                                new Vect3(1, 1, 1),
+                                global.game.allID++,
+                                new utils.Vect3(this.HB.pos.x, this.HB.pos.y, this.HB.pos.z),
+                                new utils.Vect3(1, 1, 1),
                                 {
-                                    speed: new Vect3(tempx + (this.speed.x * 0.25), tempy + (this.speed.y * 0.25), tempz + (this.speed.z * 0.25)),
-                                    HB: new Cube(new Vect3(this.HB.pos.x, this.HB.pos.y, this.HB.pos.z), new Vect3(6, 3, 1)),
+                                    speed: new utils.Vect3(tempx + (this.speed.x * 0.25), tempy + (this.speed.y * 0.25), tempz + (this.speed.z * 0.25)),
+                                    HB: new utils.Cube(new utils.Vect3(this.HB.pos.x, this.HB.pos.y, this.HB.pos.z), new utils.Vect3(6, 3, 1)),
                                     z: this.HB.pos.z,
                                     color: [255, tempC, 0],
                                     livetime: 20,
@@ -565,8 +558,6 @@ class Sword extends Item {
                 user.pp -= this.ppCost;
                 // Set next cooldown
                 this.nextCool = global.game.match.ticks + this.coolDown;
-                this.shootSFX.currentTime = 0;
-                if (!user.muted) this.shootSFX.play(); // play shoot sound
                 //find the distance from player to mouse with pythagorean theorem
                 let distance = ((aimX ** 2) + (aimY ** 2)) ** 0.5;
                 //Normalize the dimension distance by the real distance (ratio)
@@ -577,10 +568,10 @@ class Sword extends Item {
                 // Add a new missile at this user's position
                 global.game.match.map.bullets.push(
                     new Bullet(
-                        allID++, // ID
-                        new Vect3(user.HB.pos.x, user.HB.pos.y, user.HB.pos.z), new Vect3(4, 4, 0), user, // Position and size
+                        global.game.allID++, // ID
+                        new utils.Vect3(user.HB.pos.x, user.HB.pos.y, user.HB.pos.z), new utils.Vect3(4, 4, 0), user, // Position and size
                         {
-                            speed: new Vect3(aimX, aimY, 0),
+                            speed: new utils.Vect3(aimX, aimY, 0),
                             parent: user,
                             color: user.color,
                             damage: 10,
@@ -611,12 +602,12 @@ class Sword extends Item {
 
                         global.game.match.map.debris.push(
                             new Block(
-                                allID++,
-                                new Vect3(this.HB.pos.x, this.HB.pos.y, this.HB.pos.z),
-                                new Vect3(1, 1, 1),
+                                global.game.allID++,
+                                new utils.Vect3(this.HB.pos.x, this.HB.pos.y, this.HB.pos.z),
+                                new utils.Vect3(1, 1, 1),
                                 {
-                                    speed: new Vect3(tempx, tempy, tempz),
-                                    HB: new Cube(new Vect3(compareX, compareY, this.HB.pos.z + this.HB.height), new Vect3(2, 2, 2)),
+                                    speed: new utils.Vect3(tempx, tempy, tempz),
+                                    HB: new utils.Cube(new utils.Vect3(compareX, compareY, this.HB.pos.z + this.HB.height), new utils.Vect3(2, 2, 2)),
                                     z: this.HB.pos.z,
                                     color: [tempC1, tempC1, tempC1],
                                     colorSide: [tempC2, tempC2, tempC2],
@@ -668,12 +659,12 @@ class Sword extends Item {
                         let tempC = Math.ceil(Math.random() * 255);
                         global.game.match.map.debris.push(
                             new Block(
-                                allID++,
-                                new Vect3(this.HB.pos.x, this.HB.pos.y, this.HB.pos.z),
-                                new Vect3(1, 1, 1),
+                                global.game.allID++,
+                                new utils.Vect3(this.HB.pos.x, this.HB.pos.y, this.HB.pos.z),
+                                new utils.Vect3(1, 1, 1),
                                 {
-                                    speed: new Vect3(tempx + (this.speed.x * 0.25), tempy + (this.speed.y * 0.25), tempz + (this.speed.z * 0.25)),
-                                    HB: new Cube(new Vect3(this.HB.pos.x, this.HB.pos.y, this.HB.pos.z), new Vect3(6, 3, 1)),
+                                    speed: new utils.Vect3(tempx + (this.speed.x * 0.25), tempy + (this.speed.y * 0.25), tempz + (this.speed.z * 0.25)),
+                                    HB: new utils.Cube(new utils.Vect3(this.HB.pos.x, this.HB.pos.y, this.HB.pos.z), new utils.Vect3(6, 3, 1)),
                                     z: this.HB.pos.z,
                                     color: [tempC, tempC, tempC],
                                     livetime: 20,
@@ -687,9 +678,6 @@ class Sword extends Item {
 
 
             } else {
-                if (this.owner instanceof Player)
-                    if (!user.muted)
-                        this.reload_empty.play();
                 if (user.ammo[this.type] > 0 && !this.reloading) {
                     this.reloading = true;    // set reloading to true
                     this.ammo = this.ammoMax;   // reload

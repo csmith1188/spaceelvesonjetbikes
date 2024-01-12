@@ -1,3 +1,4 @@
+const utils = require('../../../../utils.js');
 /*
       :::::::::  :::        ::::::::   ::::::::  :::    :::
      :+:    :+: :+:       :+:    :+: :+:    :+: :+:   :+:
@@ -11,11 +12,11 @@
 class Block {
     constructor(id, posVect, volVect, options) {
         // Position
-        this.spawn = new Vect3(posVect.x, posVect.y, posVect.z)
-        this.HB = new Cube(new Vect3(posVect.x, posVect.y, posVect.z), new Vect3(volVect.x, volVect.y, volVect.z))
-        this.aim = new Vect3(0, 0, 0);
-        this.angle = new Vect3(0, 0, 0);
-        this.speed = new Vect3(0, 0, 0);
+        this.spawn = new utils.Vect3(posVect.x, posVect.y, posVect.z)
+        this.HB = new utils.Cube(new utils.Vect3(posVect.x, posVect.y, posVect.z), new utils.Vect3(volVect.x, volVect.y, volVect.z))
+        this.aim = new utils.Vect3(0, 0, 0);
+        this.angle = new utils.Vect3(0, 0, 0);
+        this.speed = new utils.Vect3(0, 0, 0);
 
         // Lifespan
         this.id = id;
@@ -43,21 +44,14 @@ class Block {
         this.opacity = 1;
         this.color = [100, 100, 100];    // Leave blank to add collision to a background
         this.colorSide = [200, 200, 200]; //The color of the wall of the block
-        this.img = new Image();
-        this.img.src = this.imgFile;
-        this.imgSide = new Image();
-        this.imgSide.src = this.imgFileSide;
         this.drawStyle = 'tile'; // 'tile' or 'stretch'
         this.shadowDraw = false;
-        this.shadow = new Image();
-        this.shadow.src = 'img/sprites/shadow.png';
         this.drawFunc = [];
         // Options
         if (typeof options === 'object')
             for (var key of Object.keys(options)) {
                 this[key] = options[key];
             }
-        this.img.src = this.imgFile;
     }
 
     step() {
@@ -461,3 +455,5 @@ class PolyBlock {
         }
     }
 }
+
+module.exports = { Block, PolyBlock };

@@ -1,3 +1,6 @@
+const { Block } = require('./block.js');
+const utils = require('../../../../utils.js');
+
 /*
       :::::::::  :::::::::   ::::::::  ::::::::::: :::::::::: :::::::: ::::::::::: ::::::::::: :::        :::::::::: ::::::::
      :+:    :+: :+:    :+: :+:    :+:     :+:     :+:       :+:    :+:    :+:         :+:     :+:        :+:       :+:    :+:
@@ -11,13 +14,12 @@ class Bullet extends Block {
     constructor(id, posVect, volVect, user, options) {
         super(id, posVect, volVect, options);
         this.user = user;
-        this.HB = new Cylinder(new Vect3(posVect.x, posVect.y, posVect.z), volVect.x, volVect.y);
+        this.HB = new utils.Cylinder(new utils.Vect3(posVect.x, posVect.y, posVect.z), volVect.x, volVect.y);
         this.dying = true;
         this.livetime = 100;
         this.type = 'bullet';
         this.color = [255, 0, 0];
         this.colorSide = [255, 128, 0];
-        this.touchSFX = new Audio('sfx/hit_01.wav');
         this.damage = 10;
         this.force = 0.15; // How much of this projectile's speed is applied to the target
         this.shadowDraw = true;
@@ -29,12 +31,12 @@ class Bullet extends Block {
                 let tempC = Math.ceil(Math.random() * 255);
                 game.match.map.debris.push(
                     new Block(
-                        allID++,
-                        new Vect3(this.HB.pos.x, this.HB.pos.y, this.HB.pos.z),
-                        new Vect3(1, 1, 1),
+                        global.game.allID++,
+                        new utils.Vect3(this.HB.pos.x, this.HB.pos.y, this.HB.pos.z),
+                        new utils.Vect3(1, 1, 1),
                         {
-                            speed: new Vect3(tempx, tempy, tempz),
-                            HB: new Cube(new Vect3(this.HB.pos.x, this.HB.pos.y, this.HB.pos.z), new Vect3(2, 1, 1)),
+                            speed: new utils.Vect3(tempx, tempy, tempz),
+                            HB: new utils.Cube(new utils.Vect3(this.HB.pos.x, this.HB.pos.y, this.HB.pos.z), new utils.Vect3(2, 1, 1)),
                             z: this.HB.pos.z,
                             color: [255, tempC, 0],
                             livetime: 20,
@@ -52,12 +54,12 @@ class Bullet extends Block {
                 let tempz = ((Math.random() * 1) - 0.5) * 2;
                 if (game.match.ticks % 4 == 0) game.match.map.debris.push(
                     new Block(
-                        allID++,
-                        new Vect3(this.HB.pos.x, this.HB.pos.y, this.HB.pos.z),
-                        new Vect3(1, 1, 1),
+                        global.game.allID++,
+                        new utils.Vect3(this.HB.pos.x, this.HB.pos.y, this.HB.pos.z),
+                        new utils.Vect3(1, 1, 1),
                         {
-                            speed: new Vect3(tempx, tempy, tempz),
-                            HB: new Cube(new Vect3(this.HB.pos.x, this.HB.pos.y, this.HB.pos.z), new Vect3(2, 2, 2)),
+                            speed: new utils.Vect3(tempx, tempy, tempz),
+                            HB: new utils.Cube(new utils.Vect3(this.HB.pos.x, this.HB.pos.y, this.HB.pos.z), new utils.Vect3(2, 2, 2)),
                             z: this.HB.pos.z,
                             color: [255, 255, 0],
                             livetime: 15,
@@ -88,16 +90,12 @@ class Bullet extends Block {
               \___\_, |_|_|_||_\__,_\___|_|
                   |__/
             */
-            for (let c of [game.player, ...game.match.bots]) {
+            for (let c of global.game.match.bots) {
                 if (c.character === this.user) //Don't collide with yourself
                     continue;
                 c = c.character; //Get the character from the bot
                 let side = this.HB.collide(c.HB); //Check for collision
                 if (side && c.solid && c.team !== this.user.team) {
-                    //play hit2 sound
-                    this.touchSFX.currentTime = 0;
-                    if (!this.user.muted)
-                        this.touchSFX.play();
                     if (!c.invulnerable)
                         c.hp -= this.damage;
                     c.speed.x += this.speed.x * this.force;
@@ -150,10 +148,6 @@ class Bullet extends Block {
                             //break if you didn't collide
                             break;
                     }
-                    //play hit sound
-                    this.touchSFX.currentTime = 0;
-                    if (!this.user.muted)
-                        this.touchSFX.play();
                     this.active = false;
                     c.trigger(this, side); //Trigger the block's trigger function
                     this.hitSplash();
@@ -170,3 +164,5 @@ class Bullet extends Block {
     }
 
 }
+
+module.exports = { Bullet };

@@ -23,19 +23,35 @@ class Game {
                 this.players.push(new Player(this));
                 this.players[this.players.length - 1].ws = ws;
                 ws.send(utils.encodeWS({ type: 'player_id', id: this.players[this.players.length - 1].character.id }));
-                this.broadcast(utils.encodeWS({type: 'playerList', players: this.playerList()}, ws));
+                this.broadcast(utils.encodeWS({type: 'playerList', players: this.playerList()}));
             }
 
             // Handle messages from clients
             ws.on('message', (message) => {
                 const data = JSON.parse(message);
-                console.log(`Received message: ${message}`);
+                switch (data.type) {
+                    case 'update_cl_buttons':
+                        // for each player and bots in this match
+                        for (const e of this.players) {
+                            if (e.character.id == data.id) {
+                                // for each button in the data
+                                for (const button in data.buttons) {
+                                    e.character.controller.buttons[button].current = data.buttons[button];
+                                }
+                            }
+                        }
+                        break;
+                    default:
+                        break;
+                }
                 this.broadcast(message);
             });
 
             // Handle WebSocket connection close
             ws.on('close', () => {
                 console.log('WebSocket connection closed');
+                this.players = this.players.filter((player) => player.ws !== ws);
+                this.broadcast(utils.encodeWS({type: 'playerList', players: this.playerList()}));
             });
         });
     }

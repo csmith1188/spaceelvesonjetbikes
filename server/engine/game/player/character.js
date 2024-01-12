@@ -184,14 +184,15 @@ class Character {
             if (this.controller.buttons.fire.current != this.controller.buttons.fire.last) {
                 if (this.inventory.length) {
                     if (this.controller.buttons.fire.current) {
-                        const xMulti = (global.game.player.camera._3D) ? global.game.player.camera.angle : 1;
+                        // const xMulti = (global.game.player.camera._3D) ? global.game.player.camera.angle : 1;
+                        const xMulti = 1;
                         let aimX = this.controller.aimX * xMulti;
                         let aimY = this.controller.aimY;
                         let aimZ = 0;
-                        if (global.game.player.camera._3D) {
-                            aimZ = aimY * global.game.player.camera.angle;
-                            aimY = aimY * (1 - global.game.player.camera.angle);
-                        }
+                        // if (global.game.player.camera._3D) {
+                        //     aimZ = aimY * global.game.player.camera.angle;
+                        //     aimY = aimY * (1 - global.game.player.camera.angle);
+                        // }
                         this.inventory[this.item].use(this, aimX, aimY, aimZ, 0, { color: this.color });
                     }
                 }

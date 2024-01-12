@@ -46,9 +46,7 @@ class Match_OnlineMP extends Match {
         // Event listener for WebSocket connection
         this.socket.addEventListener('open', (event) => {
             //get event's IP
-            let ip = event.target.url.split('/')[2].split(':')[0];
-            console.log('WebSocket connection opened', ip);
-
+            console.log('WebSocket connection opened');
         });
 
         // Event listener for WebSocket connection close
@@ -59,7 +57,6 @@ class Match_OnlineMP extends Match {
         // Event listener for receiving messages
         this.socket.addEventListener('message', (event) => {
             const data = decodeWS(event);
-            console.log(data.type);
             switch (data.type) {
                 case 'player_id':
                     game.player.character.id = data.id;
@@ -73,7 +70,6 @@ class Match_OnlineMP extends Match {
                         let found = false;
                         for (const e of this.bots) {
                             if (e.character.id == player.id) {
-                                console.log(e.character.HB, player.HB);
                                 e.character.HB = player.HB;
                                 found = true;
                                 break;
@@ -83,6 +79,19 @@ class Match_OnlineMP extends Match {
                             this.bots.push(new Bot());
                             this.bots[this.bots.length - 1].findTarget = () => { };
                             this.bots[this.bots.length - 1].character.id = player.id;
+                        }
+                    }
+                    // remove each bot from the bot list that does not have an id in the data.players
+                    for (let i = this.bots.length - 1; i >= 0; i--) {
+                        let found = false;
+                        for (const player of data.players) {
+                            if (player.id == this.bots[i].character.id) {
+                                found = true;
+                                break;
+                            }
+                        }
+                        if (!found) {
+                            this.bots.splice(i, 1);
                         }
                     }
                     break;
