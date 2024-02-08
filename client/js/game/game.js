@@ -9,7 +9,7 @@ class Game {
         this.paused = false;
         this.awaitingInput = false;
         this.menu = null;
-        this.debug = true;
+        this.debug = false;
         this.allID = 0;
         this.menus = {
             pause: new Menu_Pause([], new Rect(0, 0, 170, 170)),
