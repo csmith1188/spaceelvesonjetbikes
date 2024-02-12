@@ -208,8 +208,6 @@ class Block {
                         let blockXOnScreen = game.window.w / 2 - compareX;
                         let blockYOnScreen = game.window.h / 2 - compareY - this.HB.volume.z - this.HB.pos.z;
 
-                        console.log(blockXOnScreen);
-
                         // Translate the context by the top-left corner of the rectangle
                         ctx.translate(game.window.w / 2 - compareX, game.window.h / 2 - compareY - this.HB.volume.z - this.HB.pos.z);
 
