@@ -20,7 +20,7 @@ class Start_Screen extends Match {
 
     setup() {
         super.setup();
-        this.map = new Map_Deathbox();
+        this.map = new Map();
         this.name = "Game Menu";
         this.description = "";
         this.despawnTimer = 360;

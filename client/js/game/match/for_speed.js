@@ -29,8 +29,8 @@ class Match_ForSpeed extends Match {
         super.setup();
 
         super.setup();
-        this.map = new Map_FieldCity({ w: 9600, h: 9600, startBlocks: 200 });
-        this.map.tileSet = new Tileset({ generate: true, size: new Vect2(200, 200) })
+        this.map = new Map({ w: 9600, h: 9600});
+        this.map.tileSet = new TileMap({ generate: true, size: new Vect2(200, 200) })
         this.name = "For Speed";
         this.description = "A deadly race to the finish.";
 
