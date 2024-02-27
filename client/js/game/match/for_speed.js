@@ -29,15 +29,14 @@ class Match_ForSpeed extends Match {
         super.setup();
 
         super.setup();
-        this.map = new Map({ w: 9600, h: 9600});
-        this.map.tileSet = new TileMap({ generate: true, size: new Vect2(200, 200) })
+        this.map = new Map();
         this.name = "For Speed";
         this.description = "A deadly race to the finish.";
 
         // Add player 1
         game.player.character = new Jetbike(
             allID++,
-            new Vect3((this.map.w / 2) + 4500, (this.map.h / 2)),
+            new Vect3((this.map.w / 2), (this.map.h / 2)),
             game.player,
             {
                 name: 'Cpt. Fabius', gfx: 'img/sprites/jetbike',

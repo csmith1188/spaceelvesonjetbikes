@@ -89,7 +89,10 @@ class Character {
                        |_|
         */
         this.img = new Image();
+        this.gfximg = new Image();
+        this.leftgfximg = new Image();
         this.gfx = 'img/sprites/lilguy';
+        this.leftgfx = this.gfx + '_l';
         this.color = [255, 0, 0];
         this.faceCamera = true;
         this.shadow = new Image();
@@ -110,7 +113,10 @@ class Character {
                 this[key] = options[key];
             }
         this.leftgfx = this.gfx + '_l'; // Set this after options so you only have to set gfx
-        this.img.src = this.gfx + '.png'
+        this.gfximg.src = this.gfx + '.png';
+        this.leftgfximg.src = this.leftgfx + '.png';
+        //this.img.src = this.gfx + '.png';
+        this.img = this.gfximg;
         this.runFunc = [];
     }
 
@@ -577,8 +583,10 @@ class Character {
              | .__/_\__|_\_\ \__, |_| \__,_| .__/_||_|_\__|
              |_|             |___/         |_|
             */
-            if (this.mom.x < 0) this.img.src = this.leftgfx + '.png'
-            if (this.mom.x > 0) this.img.src = this.gfx + '.png'
+            //if (this.mom.x < 0) this.img.src = this.leftgfx + '.png'
+            //if (this.mom.x > 0) this.img.src = this.gfx + '.png'
+            if (this.mom.x < 0) this.img = this.leftgfximg;
+            if (this.mom.x > 0) this.img = this.gfximg;
 
 
             let compareX = game.player.camera.x - this.HB.pos.x;
