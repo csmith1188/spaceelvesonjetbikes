@@ -11,7 +11,7 @@ class Match {
         this.ticks = -1;
         this.spmp = 'sp' // 'sp' single player, 'ss' split screen, 'mp' multiplayer
         this.paused = false;
-        this.map = new Map();
+        this.map = new Map(testMap, {});
         this.bots = [];
         this.blocks = []; // Different from map blocks. Think pickups and dropped items
         this.runFunc = []; // A list of functions to run every step

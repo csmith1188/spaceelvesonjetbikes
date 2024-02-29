@@ -21,6 +21,7 @@ class Start_Screen extends Match {
     setup() {
         super.setup();
         this.map = new Map();
+        this.map.loadMap(testMap);
         this.name = "Game Menu";
         this.description = "";
         this.despawnTimer = 360;

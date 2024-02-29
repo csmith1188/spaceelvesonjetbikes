@@ -117,7 +117,7 @@ class Block {
                     );
                     ctx.globalAlpha = 1;
                 }
-                if (this.imgFile) {
+                if (this.img) {
                     ctx.drawImage(this.img, game.window.w / 2 - compareX, game.window.h / 2 - compareY - this.HB.pos.z, this.HB.radius, this.HB.radius);
                 } else {
                     //SIDE

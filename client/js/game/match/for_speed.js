@@ -30,6 +30,7 @@ class Match_ForSpeed extends Match {
 
         super.setup();
         this.map = new Map();
+        this.map.loadMap(testMap);
         this.name = "For Speed";
         this.description = "A deadly race to the finish.";
 
@@ -55,6 +56,7 @@ class Match_ForSpeed extends Match {
             let ranY = Math.round(Math.random() * 200) - 100;
             this.map.blocks.push(new Block(
                 allID++,
+                //Mr.smith, I don't even. I don't want to even. Never do I ever even want to even, think about this even, even.
                 new Vect3((this.map.w / 2) + (4000 + ((ranX + 500) * (i % 2))) * Math.cos(i * -22.5 * Math.PI / 180), (this.map.h / 2) + (4000 + ((ranY + 500) * (i % 2))) * Math.sin(i * -22.5 * Math.PI / 180), 0),
                 new Vect3(128, 128, 64),
                 { color: [101, 101, 101], colorSide: [201, 201, 201], solid: false, opacity: 0.25 }

@@ -979,6 +979,8 @@ function getName() {
         "Hae'din",
         "Ai'Zaya",
         "Mah'Vrick",
+        "Zae'Kor",
+        "Rah'Burt",
         "Jae'Sin",
         "Loh'Gahn",
         "Ah'Lex",

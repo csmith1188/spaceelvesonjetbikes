@@ -121,7 +121,8 @@ class Match_ForHonor extends Match {
 
     setup() {
         super.setup();
-        this.map = new Map_Deathbox();
+        this.map = new Map();
+        this.map.loadMap(testMap);
         this.name = "For Honor";
         this.description = "A duel to the death.";
 
