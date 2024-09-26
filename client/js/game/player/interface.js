@@ -67,6 +67,25 @@ class Interface {
                 ctx.fillStyle = "#FFFFFF";
                 ctx.font = '12px Jura';
                 ctx.fillText(game.fps, 100, 150);
+                ctx.fillText(game.fpsAVG, 100, 170);
+                // Set up some basic styling
+                ctx.strokeStyle = 'green';
+                ctx.fillStyle = 'black';
+                ctx.lineWidth = 1;
+
+                // Draw the FPS graph line
+                ctx.beginPath();
+                for (let i = 0; i < game.fpsAVG.length; i++) {
+                    const fpsValue = Math.min(game.fpsAVG[i], maxFPS); // Cap FPS to avoid spikes
+                    const x = (i / (game.fpsAVG.length - 1)) * canvas.width;
+                    const y = canvas.height - (fpsValue / maxFPS) * canvas.height; // Scale FPS to height
+                    if (i === 0) {
+                        ctx.moveTo(x, y);
+                    } else {
+                        ctx.lineTo(x, y);
+                    }
+                }
+                ctx.stroke();
                 document.getElementById("debugger").style.display = "block";
             } else {
                 document.getElementById("debugger").style.display = "none";
@@ -463,7 +482,7 @@ class Interface {
 class Interface_LocalMP extends Interface {
     constructor(player, posX, posY) {
         super(player);
-        this.position = {x: posX, y: posY};
+        this.position = { x: posX, y: posY };
     }
 
     drawHUD() {

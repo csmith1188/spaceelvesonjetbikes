@@ -21,6 +21,8 @@ class Game {
         this.deltaTime = 0;
         this.lastTimestamp = 0;
         this.fps = 0;
+        this.fpsAVG = 0;
+        this.frameList = [];
         listenLastDevice();
     }
 
@@ -39,6 +41,17 @@ class Game {
         let now = performance.now();
         this.deltaTime = now - this.lastTimestamp;
         this.fps = Math.round(1000 / this.deltaTime);
+        if (this.debug) {
+            this.frameList.push(this.deltaTime);
+            if (this.frameList.length > 60) {
+                this.frameList.shift();
+                let sum = 0;
+                for (let i = 0; i < this.frameList.length; i++) {
+                    sum += this.frameList[i];
+                }
+                this.fpsAVG = Math.round(1000 / (sum / this.frameList.length));
+            }
+        }
         this.deltaTime /= 16;
         this.lastTimestamp = now;
 
