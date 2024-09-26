@@ -452,9 +452,9 @@ class Character {
              |_|  |_\__,_|_\_\___|  \__|_||_\___| |_|  |_\___/\_/\___|
 
             */
-            this.HB.pos.x += this.speed.x;
-            this.HB.pos.y += this.speed.y;
-            this.HB.pos.z += this.speed.z;
+            this.HB.pos.x += this.speed.x * game.deltaTime;
+            this.HB.pos.y += this.speed.y * game.deltaTime;
+            this.HB.pos.z += this.speed.z * game.deltaTime;
 
             /*
                ___       _          __   ___                   _

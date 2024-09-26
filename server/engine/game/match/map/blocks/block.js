@@ -63,9 +63,9 @@ class Block {
 
         */
         if (this.livetime != 0) {
-            this.HB.pos.x += this.speed.x;
-            this.HB.pos.y += this.speed.y;
-            this.HB.pos.z += this.speed.z;
+            this.HB.pos.x += this.speed.x * game.deltaTime;
+            this.HB.pos.y += this.speed.y * game.deltaTime;
+            this.HB.pos.z += this.speed.z * game.deltaTime;
             if (this.dying)
                 this.livetime--;
             for (const func of this.runFunc) {

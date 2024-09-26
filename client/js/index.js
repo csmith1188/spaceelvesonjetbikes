@@ -12,9 +12,9 @@ window.onload = function () {
 
     game = new Game();
 
-    // game.match = new Start_Screen();
+    game.match = new Start_Screen();
     // game.match = new DebugMatch();
-    game.match = new Match_OnlineMP();
+    // game.match = new Match_OnlineMP();
 
     //Run the step() function every 16ms (60fps)
     setInterval(game.step.bind(game), 16);

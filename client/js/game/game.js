@@ -9,7 +9,7 @@ class Game {
         this.paused = false;
         this.awaitingInput = false;
         this.menu = null;
-        this.debug = false;
+        this.debug = true;
         this.allID = 0;
         this.menus = {
             pause: new Menu_Pause([], new Rect(0, 0, 170, 170)),
@@ -18,6 +18,7 @@ class Game {
         }
         this.player = new Player();
         this.ticks = 0;
+        this.deltaTime = 0;
         this.lastTimestamp = 0;
         this.fps = 0;
         listenLastDevice();
@@ -34,6 +35,16 @@ class Game {
     */
 
     step() {
+        //calculate deltatime
+        let now = performance.now();
+        this.deltaTime = now - this.lastTimestamp;
+        this.fps = Math.round(1000 / this.deltaTime);
+        this.deltaTime /= 16;
+        this.lastTimestamp = now;
+
+        // // Update last timestamp
+        // this.lastTimestamp = currentTimestamp;
+
         // Advance the game's master tick counter
         this.ticks++;
 
@@ -74,14 +85,6 @@ class Game {
         }
 
         this.player.camera.update(); // Update the camera
-
-        //Performance Check
-        const currentTimestamp = performance.now();
-        const elapsedMilliseconds = currentTimestamp - this.lastTimestamp;
-        this.fps = Math.round(1000 / elapsedMilliseconds);
-
-        // Update last timestamp
-        this.lastTimestamp = currentTimestamp;
 
         //Draw game
         this.draw();

@@ -69,9 +69,9 @@ class Wave extends Block {
         this.shadowDraw = false;
         this.runFunc = [
             () => {
-                this.HB.pos.x += this.speed.x;
-                this.HB.pos.y += this.speed.y;
-                this.HB.pos.z += this.speed.z;
+                this.HB.pos.x += this.speed.x * game.deltaTime;
+                this.HB.pos.y += this.speed.y * game.deltaTime;
+                this.HB.pos.z += this.speed.z * game.deltaTime;
                 // generate wavelets at random positions within this wave
                 if (game.match.ticks % 5 == 0) {
                     // generate sine offset for wavelets

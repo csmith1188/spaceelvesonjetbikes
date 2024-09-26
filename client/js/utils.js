@@ -203,9 +203,9 @@ class Cylinder {
         //RECT/CUBE COLLIDE
         if (c instanceof Rect || c instanceof Cube) {
             // Calculate the potential new position of the circle after movement
-            let newX = this.pos.x + speed.x;
-            let newY = this.pos.y + speed.y;
-            let newZ = this.pos.z + speed.z + this.height / 2;
+            let newX = this.pos.x + (speed.x * game.deltaTime);
+            let newY = this.pos.y + (speed.y * game.deltaTime);
+            let newZ = this.pos.z + (speed.z * game.deltaTime) + this.height / 2;
 
             // Find the closest point on the rectangle to the circle
             let closestX = Math.max(Math.min(newX, c.pos.x + c.volume.x), c.pos.x);
