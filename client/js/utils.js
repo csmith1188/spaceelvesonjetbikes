@@ -249,9 +249,9 @@ class Cylinder {
             }
         } else if (c instanceof Cylinder) {
             // Calculate the potential new position of the circle after movement
-            let newX = this.pos.x + speed.x;
-            let newY = this.pos.y + speed.y;
-            let newZ = this.pos.z + speed.z;
+            let newX = this.pos.x + speed.x * game.deltaTime;
+            let newY = this.pos.y + speed.y * game.deltaTime;
+            let newZ = this.pos.z + speed.z * game.deltaTime;
 
             // calculate the distance between the circle's center and the other circle's center
             let distanceXY = Math.sqrt((newX - c.pos.x) ** 2 + (newY - c.pos.y) ** 2);
