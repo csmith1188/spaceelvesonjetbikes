@@ -9,6 +9,10 @@
 
 */
 
+//!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+//Robert was here smify :)
+//!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
 class Match_ForSpeed extends Match {
     constructor() {
         super();
@@ -25,15 +29,15 @@ class Match_ForSpeed extends Match {
         super.setup();
 
         super.setup();
-        this.map = new Map_FieldCity({ w: 9600, h: 9600, startBlocks: 200 });
-        this.map.tileSet = new Tileset({ generate: true, size: new Vect2(200, 200) })
+        this.map = new Map();
+        this.map.loadMap(testMap);
         this.name = "For Speed";
         this.description = "A deadly race to the finish.";
 
         // Add player 1
         game.player.character = new Jetbike(
             allID++,
-            new Vect3((this.map.w / 2) + 4500, (this.map.h / 2)),
+            new Vect3((this.map.w / 2), (this.map.h / 2)),
             game.player,
             {
                 name: 'Cpt. Fabius', gfx: 'img/sprites/jetbike',
@@ -52,6 +56,7 @@ class Match_ForSpeed extends Match {
             let ranY = Math.round(Math.random() * 200) - 100;
             this.map.blocks.push(new Block(
                 allID++,
+                //Mr.smith, I don't even. I don't want to even. Never do I ever even want to even, think about this even, even.
                 new Vect3((this.map.w / 2) + (4000 + ((ranX + 500) * (i % 2))) * Math.cos(i * -22.5 * Math.PI / 180), (this.map.h / 2) + (4000 + ((ranY + 500) * (i % 2))) * Math.sin(i * -22.5 * Math.PI / 180), 0),
                 new Vect3(128, 128, 64),
                 { color: [101, 101, 101], colorSide: [201, 201, 201], solid: false, opacity: 0.25 }

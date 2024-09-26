@@ -19,7 +19,8 @@ class Match_ForEver extends Match {
 
     setup() {
         super.setup();
-        this.map = new Map_FieldCity();
+        this.map = new Map();
+        this.map.loadMap(testMap);
         this.name = "Forever";
         this.description = "Survive against the endless waves of enemies.";
         this.waves = 0;

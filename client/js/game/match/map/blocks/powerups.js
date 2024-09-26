@@ -26,6 +26,8 @@ class PickUp extends Block {
         this.touchSFX = sounds.pickup_ammo;
         this.solid = false;
         this.shadowDraw = true;
+        this.img = new Image();
+        this.imgSide = new Image();
         this.runFunc = [
             (actor, side) => {
                 this.HB.pos.z = sineAnimate(5, 0.05) + 10;
@@ -35,7 +37,6 @@ class PickUp extends Block {
             for (var key of Object.keys(options)) {
                 this[key] = options[key];
             }
-        this.img.src = this.imgFile;
 
     }
 

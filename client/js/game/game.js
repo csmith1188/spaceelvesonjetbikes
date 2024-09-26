@@ -40,7 +40,7 @@ class Game {
         // The next two lines will always max screen
         this.window.h = window.innerHeight;
         this.window.w = window.innerWidth;
-        this.player.camera.radius = Math.sqrt((this.window.w / 2) ** 2 + (this.window.h / 2) ** 2)
+        this.player.camera.radius = Math.sqrt((this.window.w / 2) ** 2 + (this.window.h / 2) ** 2) * 1.5
 
         canvas.width = this.window.w;
         canvas.height = this.window.h;

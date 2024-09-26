@@ -43,10 +43,8 @@ class Block {
         this.opacity = 1;
         this.color = [100, 100, 100];    // Leave blank to add collision to a background
         this.colorSide = [200, 200, 200]; //The color of the wall of the block
-        this.img = new Image();
-        this.img.src = this.imgFile;
-        this.imgSide = new Image();
-        this.imgSide.src = this.imgFileSide;
+        this.img;
+        this.imgSide;
         this.drawStyle = 'tile'; // 'tile' or 'stretch'
         this.shadowDraw = false;
         this.shadow = new Image();
@@ -57,7 +55,6 @@ class Block {
             for (var key of Object.keys(options)) {
                 this[key] = options[key];
             }
-        this.img.src = this.imgFile;
     }
 
     step() {
@@ -120,7 +117,7 @@ class Block {
                     );
                     ctx.globalAlpha = 1;
                 }
-                if (this.imgFile) {
+                if (this.img) {
                     ctx.drawImage(this.img, game.window.w / 2 - compareX, game.window.h / 2 - compareY - this.HB.pos.z, this.HB.radius, this.HB.radius);
                 } else {
                     //SIDE
@@ -184,7 +181,7 @@ class Block {
                 //     this.HB.volume.x,
                 //     this.HB.volume.y
                 // );
-                if (this.imgFile) {
+                if (this.img && this.imgSide) {
                     if (this.drawStyle == 'stretch') {
                         ctx.drawImage(
                             this.img,
@@ -201,24 +198,24 @@ class Block {
                             this.HB.volume.z
                         );
                     } else if (this.drawStyle == 'tile') {
-                        let texture = new Image();
-                        texture.src = this.imgFile;
-                        let pattern = ctx.createPattern(texture, 'repeat');
-                        ctx.fillStyle = pattern;
+                        let topTexture = this.img;
+                        let topPattern = ctx.createPattern(topTexture, 'repeat');
+                        let sideTexture = this.imgSide;
+                        let sidePattern = ctx.createPattern(sideTexture, 'repeat');
+                        let blockXOnScreen = game.window.w / 2 - compareX;
+                        let blockYOnScreen = game.window.h / 2 - compareY - this.HB.volume.z - this.HB.pos.z;
+
+                        ctx.fillStyle = topPattern;
 
                         // Translate the context by the top-left corner of the rectangle
                         ctx.translate(game.window.w / 2 - compareX, game.window.h / 2 - compareY - this.HB.volume.z - this.HB.pos.z);
-
                         // Now fill the rectangle, but with the origin at (0, 0)
                         ctx.fillRect(0, 0, this.HB.volume.x, this.HB.volume.y);
-
                         // Translate the context back
                         ctx.translate(-(game.window.w / 2 - compareX), -(game.window.h / 2 - compareY - this.HB.volume.z - this.HB.pos.z));
 
-                        texture = new Image();
-                        texture.src = this.imgFileSide;
-                        pattern = ctx.createPattern(texture, 'repeat');
-                        ctx.fillStyle = pattern;
+                        // Draw the side
+                        ctx.fillStyle = sidePattern;
                         ctx.translate(game.window.w / 2 - compareX, game.window.h / 2 - compareY - this.HB.pos.z - this.HB.volume.z + this.HB.volume.y);
                         ctx.fillRect(0, 0, this.HB.volume.x, this.HB.volume.z);
                         ctx.translate(-(game.window.w / 2 - compareX), -(game.window.h / 2 - compareY - this.HB.pos.z - this.HB.volume.z + this.HB.volume.y));
