@@ -63,22 +63,26 @@ class Interface {
             //Menu
             this.drawMenu();
 
+            //FPS Information
             if (game.debug) {
                 ctx.fillStyle = "#FFFFFF";
                 ctx.font = '12px Jura';
-                ctx.fillText(game.fps, 100, 150);
-                ctx.fillText(game.fpsAVG, 100, 170);
+                ctx.fillText(game.fps, 200, 120);
+                ctx.fillText(game.fpsAVG, 200, 140);
                 // Set up some basic styling
                 ctx.strokeStyle = 'green';
-                ctx.fillStyle = 'black';
+                ctx.fillStyle = 'green';
                 ctx.lineWidth = 1;
 
+                //draw transparent background behind fps bar
+                ctx.fillStyle = "rgba(0, 0, 0, 0.5)";
+                ctx.fillRect(10, 100, 180, 60);
                 // Draw the FPS graph line
                 ctx.beginPath();
-                for (let i = 0; i < game.fpsAVG.length; i++) {
-                    const fpsValue = Math.min(game.fpsAVG[i], maxFPS); // Cap FPS to avoid spikes
-                    const x = (i / (game.fpsAVG.length - 1)) * canvas.width;
-                    const y = canvas.height - (fpsValue / maxFPS) * canvas.height; // Scale FPS to height
+                for (let i = 0; i < game.frameList.length; i++) {
+                    const fpsValue = Math.min(game.frameList[i], 60); // Cap FPS to avoid spikes
+                    const x = 10 + (i / (game.frameList.length - 1)) * 180;
+                    const y = 100 + (fpsValue / 60) * 60; // Scale FPS to height
                     if (i === 0) {
                         ctx.moveTo(x, y);
                     } else {

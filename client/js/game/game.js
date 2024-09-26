@@ -43,7 +43,7 @@ class Game {
         this.fps = Math.round(1000 / this.deltaTime);
         if (this.debug) {
             this.frameList.push(this.deltaTime);
-            if (this.frameList.length > 60) {
+            if (this.frameList.length > 180) {
                 this.frameList.shift();
                 let sum = 0;
                 for (let i = 0; i < this.frameList.length; i++) {

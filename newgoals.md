@@ -27,18 +27,26 @@ Dark elves believe everything is random:
 #########   ########          ###        ########### ###    ###  ########     ###
 -->
 
-- high scores
-- music
-- graphics
--- fix direction change src bug
-- ship
+- Improve FPS
+- fix direction change src bug
+- tiled images in ISO
+- Shoot along z rotation in iso view
 
+- perspective drawing
+
+- formbar login
+- highscores
+- A* pathing
+- Gamepad and touch screen buttons
+- Waves and Wind
+
+- graphics
+- music
+- chat rooms
+- game rooms
 - all players in one list
 - janky menus (better menu handling)
 - for honor countdown and best of 5
-- ISO draw
-- A* pathing
-- Gamepad and touch screen buttons
 - Create more bullet types
 - Inventory Management
 -- X is pickup, A is always Sword, never drop A
@@ -46,8 +54,6 @@ Dark elves believe everything is random:
 - Collision rays (fast objects go through colliders)
 - Sound distances
 -- Web Audio API
-- Waves and Wind
-- Shoot along z rotation in iso view
 - Bots always shoot at z axis in every view (no hiding on top of blocks)
 - Racing
 - Complete speed physics (top speed, actual speed, weight)
