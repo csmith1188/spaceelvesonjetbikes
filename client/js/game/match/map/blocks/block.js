@@ -339,7 +339,58 @@ class Block {
                 ctx.globalAlpha = 1;
             }
             if (this.imgFile) {
-                // ctx.drawImage(this.img, game.window.w / 2 - compareX, game.window.h / 2 - compareY - this.HB.pos.z, this.HB.volume.x, this.HB.volume.y);
+                let texture = new Image();
+                texture.src = this.imgFile;
+                let pattern;
+
+                // Set the dimensions of the offscreen canvas to scale the image
+                scale_canvas.width = texture.width; // Scale width
+                scale_canvas.height = texture.height * game.player.camera.angle; // Scale height
+
+                //If the texture is big enough to draw
+                if (scale_canvas.height >= 1) {
+                    // Draw the scaled image onto the offscreen canvas
+                    sctx.drawImage(texture, 0, 0, scale_canvas.width, scale_canvas.height);
+
+                    pattern = ctx.createPattern(scale_canvas, 'repeat');
+
+                    ctx.fillStyle = pattern;
+
+                    // Translate the context by the top-left corner of the rectangle
+                    ctx.translate(game.window.w / 2 - compareX, game.window.h / 2 - (compareY * game.player.camera.angle) - (this.HB.volume.z * (1 - game.player.camera.angle)) - (this.HB.pos.z * (1 - game.player.camera.angle)));
+
+                    // Now fill the rectangle, but with the origin at (0, 0)
+                    ctx.fillRect(0, 0, this.HB.volume.x, this.HB.volume.y * game.player.camera.angle);
+
+                    // Translate the context back
+                    ctx.translate(-(game.window.w / 2 - compareX), -(game.window.h / 2 - (compareY * game.player.camera.angle) - (this.HB.volume.z * (1 - game.player.camera.angle)) - (this.HB.pos.z * (1 - game.player.camera.angle))));
+                }
+
+                texture = new Image();
+                texture.src = this.imgFileSide;
+
+                // Set the dimensions of the offscreen canvas to scale the image
+                scale_canvas.width = texture.width; // Scale width
+                scale_canvas.height = texture.height * (1 - game.player.camera.angle); // Scale height
+                if (scale_canvas.height >= 1) {
+
+                    sctx.drawImage(texture, 0, 0, scale_canvas.width, scale_canvas.height);
+
+                    pattern = ctx.createPattern(scale_canvas, 'repeat');
+
+                    ctx.fillStyle = pattern;
+
+                    ctx.translate(
+                        game.window.w / 2 - compareX,
+                        game.window.h / 2 - (compareY * game.player.camera.angle) - (this.HB.pos.z * (1 - game.player.camera.angle)) - (this.HB.volume.z * (1 - game.player.camera.angle)) + (this.HB.volume.y * game.player.camera.angle)
+                    );
+                    ctx.fillRect(0, 0, this.HB.volume.x, this.HB.volume.z * (1 - game.player.camera.angle));
+                    ctx.translate(
+                        -(game.window.w / 2 - compareX),
+                        -(game.window.h / 2 - (compareY * game.player.camera.angle) - (this.HB.pos.z * (1 - game.player.camera.angle)) - (this.HB.volume.z * (1 - game.player.camera.angle)) + (this.HB.volume.y * game.player.camera.angle))
+                    );
+                }
+
             } else if (this.color) {
                 ctx.fillStyle = `rgba(${this.color[0]}, ${this.color[1]}, ${this.color[2]}, ${this.opacity})`;
                 ctx.fillRect(

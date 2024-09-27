@@ -9,7 +9,7 @@ class Game {
         this.paused = false;
         this.awaitingInput = false;
         this.menu = null;
-        this.debug = true;
+        this.debug = false;
         this.allID = 0;
         this.menus = {
             pause: new Menu_Pause([], new Rect(0, 0, 170, 170)),
@@ -43,7 +43,7 @@ class Game {
         this.fps = Math.round(1000 / this.deltaTime);
         if (this.debug) {
             this.frameList.push(this.deltaTime);
-            if (this.frameList.length > 180) {
+            if (this.frameList.length > 60) {
                 this.frameList.shift();
                 let sum = 0;
                 for (let i = 0; i < this.frameList.length; i++) {

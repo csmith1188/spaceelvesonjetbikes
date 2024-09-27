@@ -96,7 +96,7 @@ class DebugMatch extends Match {
 
     setup = () => {
         game.debug = true;
-
+        game.player.camera._3D = true;
         game.player.character = new Jetbike(
             allID++,
             new Vect3((this.map.w / 2), (this.map.h / 2), 0),
@@ -132,7 +132,38 @@ class DebugMatch extends Match {
             allID++,
             new Vect3((this.map.w / 2) - 300, (this.map.h / 2) - 0, 0),
             new Vect3(128, 128, 64),
-            { color: [101, 101, 101], colorSide: [201, 201, 201] }))
+            { color: [101, 101, 101], colorSide: [201, 201, 201], imgFile: 'img/tiles/wall_top.png', imgFileSide: 'img/tiles/wall_side.png' }))
         // this.map.blocks[this.map.blocks.length - 1].HB.pos.z = 100;
+    }
+
+    draw() {
+
+        // //FPS Information
+        // ctx.fillStyle = "#FFFFFF";
+        // ctx.font = '12px Jura';
+        // ctx.fillText(game.fps, 200, 120);
+        // ctx.fillText(game.fpsAVG, 200, 140);
+        // // Set up some basic styling
+        // ctx.strokeStyle = 'green';
+        // ctx.fillStyle = 'green';
+        // ctx.lineWidth = 2;
+
+        // //draw transparent background behind fps bar
+        // ctx.fillStyle = "rgba(0, 0, 0, 0.5)";
+        // ctx.fillRect(10, 100, 180, 60);
+        // // Draw the FPS graph line
+        // ctx.beginPath();
+        // for (let i = 0; i < game.frameList.length; i++) {
+        //     const fpsValue = Math.min(game.frameList[i], 60); // Cap FPS to avoid spikes
+        //     const x = 10 + (i / (game.frameList.length - 1)) * 180;
+        //     const y = 100 + (fpsValue / 60) * 60; // Scale FPS to height
+        //     if (i === 0) {
+        //         ctx.moveTo(x, y);
+        //     } else {
+        //         ctx.lineTo(x, y);
+        //     }
+        // }
+        // ctx.stroke();
+        // document.getElementById("debugger").style.display = "block";
     }
 }

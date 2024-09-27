@@ -21,7 +21,7 @@
 class PickUp extends Block {
     constructor(id, posVect, volVect, options) {
         super(id, posVect, volVect, options);
-        this.HB = new Cube(new Vect3(posVect.x, posVect.y, posVect.z + 16), new Vect3(32, 32, 16));
+        this.HB = new Cube(new Vect3(posVect.x, posVect.y, posVect.z + 16), new Vect3(32, 32, 32));
         this.type = 'pickup';
         this.touchSFX = sounds.pickup_ammo;
         this.solid = false;
@@ -69,7 +69,8 @@ class Ammo_Ballistic extends PickUp {
         this.type = 'pickup';
         this.subtype = 'ammo_ballistic';
         this.imgFile = 'img/sprites/pickups/ammo_ballistic_top.png';
-        this.imgFileSide = 'img/sprites/pickups/ammo_ballistic_side.png';
+        this.imgFileSide = 'img/sprites/pickups/ammo_ballistic_top.png';
+        // this.imgFileSide = 'img/sprites/pickups/ammo_ballistic_side.png';
         this.color = [255, 0, 0];
         this.colorSide = [255, 128, 128];
         this.shadowDraw = true;
@@ -110,7 +111,8 @@ class Ammo_Plasma extends PickUp {
         this.type = 'pickup';
         this.subtype = 'ammo_plasma';
         this.imgFile = 'img/sprites/pickups/ammo_plasma_top.png';
-        this.imgFileSide = 'img/sprites/pickups/ammo_plasma_side.png';
+        this.imgFileSide = 'img/sprites/pickups/ammo_plasma_top.png';
+        // this.imgFileSide = 'img/sprites/pickups/ammo_plasma_side.png';
         this.img.src = this.imgFile;
         this.color = [255, 0, 255];
         this.colorSide = [255, 128, 255];
@@ -152,7 +154,8 @@ class HealthPickup extends PickUp {
         this.type = 'pickup';
         this.subtype = 'health';
         this.imgFile = 'img/sprites/pickups/health_top.png';
-        this.imgFileSide = 'img/sprites/pickups/health_side.png';
+        this.imgFileSide = 'img/sprites/pickups/health_top.png';
+        // this.imgFileSide = 'img/sprites/pickups/health_side.png';
         this.touchSFX = sounds.pickup_health;
         this.color = [0, 255, 0];
         this.colorSide = [128, 255, 128];
@@ -238,7 +241,8 @@ class WeaponPickup extends PickUp {
             this.item.ammo = this.ammo;
             if (this.ammo < this.ammoMax) this.imgFile = 'img/sprites/inventory/pistol_inactive.png';
             else this.imgFile = 'img/sprites/inventory/pistol_active.png';
-            this.imgFileSide = 'img/sprites/pickups/ammo_ballistic_side.png';
+            this.imgFileSide = 'img/sprites/inventory/pistol_inactive.png';
+            // this.imgFileSide = 'img/sprites/pickups/ammo_ballistic_side.png';
         }
         if (this.weapon == 'rifle') {
             this.item = new Rifle();
@@ -247,7 +251,8 @@ class WeaponPickup extends PickUp {
             this.item.ammo = this.ammo;
             if (this.ammo < this.ammoMax) this.imgFile = 'img/sprites/inventory/rifle_inactive.png';
             else this.imgFile = 'img/sprites/inventory/rifle_active.png';
-            this.imgFileSide = 'img/sprites/pickups/ammo_ballistic_side.png';
+            this.imgFileSide = 'img/sprites/inventory/rifle_inactive.png';
+            // this.imgFileSide = 'img/sprites/pickups/ammo_ballistic_side.png';
         }
         if (this.weapon == 'flamer') {
             this.item = new Flamer();
@@ -256,7 +261,8 @@ class WeaponPickup extends PickUp {
             this.item.ammo = this.ammo;
             if (this.ammo < this.ammoMax) this.imgFile = 'img/sprites/inventory/flamer_inactive.png';
             else this.imgFile = 'img/sprites/inventory/flamer_active.png';
-            this.imgFileSide = 'img/sprites/pickups/ammo_plasma_side.png';
+            this.imgFileSide = 'img/sprites/inventory/flamer_inactive.png';
+            // this.imgFileSide = 'img/sprites/pickups/ammo_plasma_side.png';
         }
         if (this.weapon == 'lance') {
             this.item = new Lance();
@@ -265,12 +271,14 @@ class WeaponPickup extends PickUp {
             this.item.ammo = this.ammo;
             if (this.ammo < this.ammoMax) this.imgFile = 'img/sprites/inventory/lance_inactive.png';
             else this.imgFile = 'img/sprites/inventory/lance_active.png';
-            this.imgFileSide = 'img/sprites/pickups/ammo_plasma_side.png';
+            this.imgFileSide = 'img/sprites/inventory/lance_inactive.png';
+            // this.imgFileSide = 'img/sprites/pickups/ammo_plasma_side.png';
         }
         if (this.weapon == 'sword') {
             this.item = new Sword();
             this.imgFile = 'img/sprites/inventory/sword_active.png';
-            this.imgFileSide = 'img/sprites/pickups/grey_side.png';
+            this.imgFileSide = 'img/sprites/inventory/sword_inactive.png';
+            // this.imgFileSide = 'img/sprites/pickups/grey_side.png';
         }
         this.img.src = this.imgFile;
         this.imgSide.src = this.imgFileSide;
