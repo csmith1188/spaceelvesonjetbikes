@@ -1,5 +1,6 @@
 class Map {
     constructor(options) {
+        this.name = "Map";
         this.tileSize = 48;
         this.tileSet = new Tileset({ generate: true });
         this.w = this.tileSize * this.tileSet.grid[0].length; //7200
@@ -48,11 +49,12 @@ class Map {
 
     */
     buildNavMesh() {
+        this.nodes = [];
         for (let x = 0; x < this.w / this.tileSize; x++) {
             for (let y = 0; y < this.h / this.tileSize; y++) {
-                this.nodes.push(new Node(x * this.tileSize, y * this.tileSize), this.tileSize, this.tileSize);
-                for (const block of game.match.map.blocks) {
-                    if (this.nodes[this.nodes.length - 1].pos.collideCube(block.HB)) {
+                this.nodes.push(new Node(x * this.tileSize, y * this.tileSize, this.tileSize, this.tileSize));
+                for (const block of this.blocks) {
+                    if (this.nodes[this.nodes.length - 1].pos.collideCube(block.HB) && block.type == "block") {
                         this.nodes[this.nodes.length - 1].pass = false;
                     } else {
                     }
@@ -260,24 +262,25 @@ class Node {
     }
 
     draw() {
-        if (this.pass)
+        if (this.pass) {
             ctx.strokeStyle = "#0000FF"
-        else
-            ctx.strokeStyle = "#FF0000"
-        let compareX = game.player.camera.x - this.pos.x;
-        let compareY = game.player.camera.y - this.pos.y;
-        if (game.player.camera.radius > Math.max(Math.abs(compareX), Math.abs(compareY))) {
-            ctx.lineWidth = 0.2;
-            if (game.player.camera._3D)
-                ctx.strokeRect(
-                    game.window.w / 2 - compareX,
-                    game.window.h / 2 - (compareY * game.player.camera.angle),
-                    this.pos.w,
-                    this.pos.h * game.player.camera.angle
-                );
-            else
-                ctx.strokeRect(game.window.w / 2 - compareX, game.window.h / 2 - compareY, this.pos.w, this.pos.h);
-
+            // return
+            // else
+            // ctx.strokeStyle = "#FF0000"
+            let compareX = game.player.camera.x - this.pos.x;
+            let compareY = game.player.camera.y - this.pos.y;
+            if (game.player.camera.radius > Math.max(Math.abs(compareX), Math.abs(compareY))) {
+                ctx.lineWidth = 0.2;
+                if (game.player.camera._3D)
+                    ctx.strokeRect(
+                        game.window.w / 2 - compareX,
+                        game.window.h / 2 - (compareY * game.player.camera.angle),
+                        this.pos.w,
+                        this.pos.h * game.player.camera.angle
+                    );
+                else
+                    ctx.strokeRect(game.window.w / 2 - compareX, game.window.h / 2 - compareY, this.pos.w, this.pos.h);
+            }
         }
     }
 }
@@ -294,6 +297,7 @@ class Node {
 class Map_FieldCity extends Map {
     constructor(options) {
         super(options);
+        this.name = "Field City";
         this.startBlocks = 50;
         if (typeof options == 'object')
             for (const setting of Object.keys(options)) {
@@ -327,6 +331,7 @@ class Map_FieldCity extends Map {
 class Map_Deathbox extends Map {
     constructor() {
         super();
+        this.name = "Deathbox";
         this.setup();
     }
 

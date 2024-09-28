@@ -96,7 +96,7 @@ class DebugMatch extends Match {
 
     setup = () => {
         game.debug = true;
-        game.player.camera._3D = true;
+        game.player.camera._3D = false;
         game.player.character = new Jetbike(
             allID++,
             new Vect3((this.map.w / 2), (this.map.h / 2), 0),
@@ -134,6 +134,8 @@ class DebugMatch extends Match {
             new Vect3(128, 128, 64),
             { color: [101, 101, 101], colorSide: [201, 201, 201], imgFile: 'img/tiles/wall_top.png', imgFileSide: 'img/tiles/wall_side.png' }))
         // this.map.blocks[this.map.blocks.length - 1].HB.pos.z = 100;
+        
+        this.map.buildNavMesh();
     }
 
     draw() {

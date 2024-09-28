@@ -27,6 +27,7 @@ Dark elves believe everything is random:
 #########   ########          ###        ########### ###    ###  ########     ###
 -->
 
+- Fix Mouse aiming when zoomed in/out
 - Improve FPS
 - fix direction change src bug
 - tiled images in ISO

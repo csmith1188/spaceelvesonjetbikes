@@ -3,7 +3,7 @@ class Bot {
         this.type = 'bot';
         this.name = 'Bot';
         this.controller = new DummyController();
-        this.character = new Character(allID++, new Vect3(0,0,0), this);
+        this.character = new Character(allID++, new Vect3(0, 0, 0), this);
         this.best = {
             air: 0,
             airtime: 0,
@@ -84,6 +84,10 @@ class Bot {
                     } else { // Otherwise, reset vertical movement
                         this.controller.buttons.moveDown.current = this.controller.buttons.moveUp.current = 0; // Reset vertical movement
                     }
+
+
+
+
                 }
 
                 /*
@@ -237,7 +241,7 @@ class Player extends Bot {
         this.type = 'player';
         this.name = 'Player 1'
         this.controller = new Controller(this);
-        this.character = new Character(allID++, new Vect3(0,0,0), this);
+        this.character = new Character(allID++, new Vect3(0, 0, 0), this);
         this.camera = new Camera(this, { target: this.character });
         this.interface = new Interface(this);
         // Options

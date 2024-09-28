@@ -62,12 +62,12 @@ class Game {
         this.ticks++;
 
         // The next two lines will always max screen
-        this.window.h = window.innerHeight;
-        this.window.w = window.innerWidth;
+        this.window.w =  Math.min(window.innerWidth, 1920);
+        this.window.h =  Math.min(window.innerHeight, 1080);
         this.player.camera.radius = Math.sqrt((this.window.w / 2) ** 2 + (this.window.h / 2) ** 2)
 
-        canvas.width = this.window.w;
-        canvas.height = this.window.h;
+        canvas.width = Math.min(this.window.w, 1920);
+        canvas.height = Math.min(this.window.h, 1080);
 
         this.checkInput();
 
