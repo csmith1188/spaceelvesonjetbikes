@@ -677,8 +677,8 @@ class Sword extends Item {
                         let compareX = game.player.camera.x - this.parent.HB.pos.x;
                         let compareY = game.player.camera.y - this.parent.HB.pos.y;
                         ctx.moveTo(
-                            game.window.w / 2 - compareX,
-                            game.window.h / 2 - compareY - this.parent.HB.pos.z - this.parent.HB.height / 2
+                            game.gameView.w / 2 - compareX,
+                            game.gameView.h / 2 - compareY - this.parent.HB.pos.z - this.parent.HB.height / 2
                         );
                         // find where the bullet is on the camera
                         let targetX = game.player.camera.x - this.HB.pos.x;
@@ -691,8 +691,8 @@ class Sword extends Item {
                         targetY = (targetY / distance) * -60;
                         // Draw line from user to target
                         ctx.lineTo(
-                            game.window.w / 2 - compareX - targetX,
-                            game.window.h / 2 - compareY - targetY - this.parent.HB.pos.z - this.parent.HB.height / 2
+                            game.gameView.w / 2 - compareX - targetX,
+                            game.gameView.h / 2 - compareY - targetY - this.parent.HB.pos.z - this.parent.HB.height / 2
                         );
                         ctx.stroke();
                     }.bind(game.match.map.bullets[game.match.map.bullets.length - 1])

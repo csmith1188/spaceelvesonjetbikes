@@ -6,6 +6,12 @@ class Game {
             cx: this.w / 2,
             cy: this.h / 2,
         }
+        this.gameView = {
+            w: 900,
+            h: 600,
+            cx: this.w / 2,
+            cy: this.h / 2,
+        }
         this.paused = false;
         this.awaitingInput = false;
         this.menu = null;
@@ -62,12 +68,15 @@ class Game {
         this.ticks++;
 
         // The next two lines will always max screen
-        this.window.w =  Math.min(window.innerWidth, 1920);
-        this.window.h =  Math.min(window.innerHeight, 1080);
+        this.window.w = window.innerWidth;
+        this.window.h = window.innerHeight;
+        this.gameView.w =  Math.min(window.innerWidth, 1920);
+        this.gameView.h =  Math.min(window.innerHeight, 1080);
+        
+        canvas.width = this.gameView.w;
+        canvas.height = this.gameView.h;
+        
         this.player.camera.radius = Math.sqrt((this.window.w / 2) ** 2 + (this.window.h / 2) ** 2)
-
-        canvas.width = Math.min(this.window.w, 1920);
-        canvas.height = Math.min(this.window.h, 1080);
 
         this.checkInput();
 

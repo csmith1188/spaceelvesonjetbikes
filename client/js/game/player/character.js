@@ -600,8 +600,8 @@ class Character {
                 let shadowShrink = this.HB.radius * Math.min(((this.HB.pos.z - this.floor) / 128), 1)
                 ctx.drawImage(
                     this.shadow,
-                    game.window.w / 2 - compareX - this.HB.radius + shadowShrink,
-                    game.window.h / 2 - compareY - this.HB.radius + shadowShrink - this.floor,
+                    game.gameView.w / 2 - compareX - this.HB.radius + shadowShrink,
+                    game.gameView.h / 2 - compareY - this.HB.radius + shadowShrink - this.floor,
                     this.HB.radius * 2 - shadowShrink * 2,
                     this.HB.radius * 2 - shadowShrink * 2
                 );
@@ -618,8 +618,8 @@ class Character {
                 ctx.lineWidth = 3;
                 ctx.beginPath();
                 ctx.ellipse(
-                    game.window.w / 2 - compareX,
-                    game.window.h / 2 - compareY - this.floor,
+                    game.gameView.w / 2 - compareX,
+                    game.gameView.h / 2 - compareY - this.floor,
                     this.HB.radius,
                     this.HB.radius,
                     0, 0, 2 * Math.PI);
@@ -638,8 +638,8 @@ class Character {
                 ctx.beginPath();
                 ctx.beginPath();
                 ctx.arc(
-                    game.window.w / 2 - compareX,
-                    game.window.h / 2 - compareY - this.floor,
+                    game.gameView.w / 2 - compareX,
+                    game.gameView.h / 2 - compareY - this.floor,
                     this.HB.radius + 16,
                     Math.PI * 0.75,
                     Math.PI * 0.25,
@@ -651,8 +651,8 @@ class Character {
                 ctx.lineWidth = 3;
                 ctx.beginPath();
                 ctx.arc(
-                    game.window.w / 2 - compareX,
-                    game.window.h / 2 - compareY - this.floor,
+                    game.gameView.w / 2 - compareX,
+                    game.gameView.h / 2 - compareY - this.floor,
                     this.HB.radius + 16,
                     Math.PI * 0.75,
                     Math.PI * (0.75 - ((this.hp / this.hp_max) * 0.5)),
@@ -672,8 +672,8 @@ class Character {
                 ctx.lineWidth = 5;
                 ctx.beginPath();
                 ctx.arc(
-                    game.window.w / 2 - compareX,
-                    game.window.h / 2 - compareY - this.floor,
+                    game.gameView.w / 2 - compareX,
+                    game.gameView.h / 2 - compareY - this.floor,
                     this.HB.radius + 8,
                     Math.PI * 0.75,
                     Math.PI * 0.25,
@@ -686,8 +686,8 @@ class Character {
                 ctx.lineWidth = 3;
                 ctx.beginPath();
                 ctx.arc(
-                    game.window.w / 2 - compareX,
-                    game.window.h / 2 - compareY - this.floor,
+                    game.gameView.w / 2 - compareX,
+                    game.gameView.h / 2 - compareY - this.floor,
                     this.HB.radius + 8,
                     Math.PI * 0.75,
                     Math.PI * (0.75 - ((this.pp / this.pp_max) * 0.5)),
@@ -705,27 +705,27 @@ class Character {
                 */
                 ctx.drawImage(
                     this.img,
-                    game.window.w / 2 - compareX - this.HB.radius,
-                    game.window.h / 2 - compareY - this.HB.height - this.HB.pos.z - sineAnimate(1, 0.1),
+                    game.gameView.w / 2 - compareX - this.HB.radius,
+                    game.gameView.h / 2 - compareY - this.HB.height - this.HB.pos.z - sineAnimate(1, 0.1),
                     this.HB.radius * 2, this.HB.height
                 );
                 if (game.debug) {
                     ctx.fillStyle = "#FF0000";
-                    ctx.fillRect(game.window.w / 2 - compareX - 2, game.window.h / 2 - compareY - 2, 4, 4);
+                    ctx.fillRect(game.gameView.w / 2 - compareX - 2, game.gameView.h / 2 - compareY - 2, 4, 4);
                     ctx.strokeStyle = "#FF0000";
                     ctx.lineWidth = 2;
                     ctx.beginPath();
                     ctx.ellipse(
-                        game.window.w / 2 - compareX,
-                        game.window.h / 2 - compareY - this.HB.pos.z,
+                        game.gameView.w / 2 - compareX,
+                        game.gameView.h / 2 - compareY - this.HB.pos.z,
                         this.HB.radius,
                         this.HB.radius,
                         0, 0, 2 * Math.PI);
                     ctx.stroke();
                     ctx.beginPath();
                     ctx.ellipse(
-                        game.window.w / 2 - compareX,
-                        game.window.h / 2 - compareY - this.HB.height - this.HB.pos.z,
+                        game.gameView.w / 2 - compareX,
+                        game.gameView.h / 2 - compareY - this.HB.height - this.HB.pos.z,
                         this.HB.radius,
                         this.HB.radius,
                         0, 0, 2 * Math.PI);
@@ -745,11 +745,11 @@ class Character {
                 //first draw the text in black to create a shadow
                 ctx.fillStyle = '#000000';
                 ctx.font = "12px Jura";
-                ctx.fillText(this.name, game.window.w / 2 - compareX + 2, game.window.h / 2 - compareY - this.HB.height - this.HB.pos.z - 8);
+                ctx.fillText(this.name, game.gameView.w / 2 - compareX + 2, game.gameView.h / 2 - compareY - this.HB.height - this.HB.pos.z - 8);
                 //then draw the text in white
                 ctx.fillStyle = '#FFFFFF';
                 ctx.font = "12px Jura";
-                ctx.fillText(this.name, game.window.w / 2 - compareX, game.window.h / 2 - compareY - this.HB.height - this.HB.pos.z - 10);
+                ctx.fillText(this.name, game.gameView.w / 2 - compareX, game.gameView.h / 2 - compareY - this.HB.height - this.HB.pos.z - 10);
             }
 
             /*
@@ -770,8 +770,8 @@ class Character {
                 ctx.strokeStyle = "#FFFFFF"
                 ctx.lineWidth = 2;
                 ctx.beginPath();
-                ctx.moveTo(game.window.w / 2 - targetX, game.window.h / 2 - targetY);
-                ctx.lineTo(game.window.w / 2 - compareX, game.window.h / 2 - compareY);
+                ctx.moveTo(game.gameView.w / 2 - targetX, game.gameView.h / 2 - targetY);
+                ctx.lineTo(game.gameView.w / 2 - compareX, game.gameView.h / 2 - compareY);
                 ctx.stroke();
             }
         }
@@ -803,8 +803,8 @@ class Character {
         let shadowShrink = this.HB.radius * Math.min(((this.HB.pos.z - this.floor) / 128), 1)
         ctx.drawImage(
             this.shadow,
-            game.window.w / 2 - compareX - this.HB.radius + shadowShrink,
-            game.window.h / 2 - (compareY * game.player.camera.angle) - this.HB.radius + (this.HB.height * (1 - game.player.camera.angle)) + (shadowShrink * game.player.camera.angle) - (this.floor * (1 - game.player.camera.angle)),
+            game.gameView.w / 2 - compareX - this.HB.radius + shadowShrink,
+            game.gameView.h / 2 - (compareY * game.player.camera.angle) - this.HB.radius + (this.HB.height * (1 - game.player.camera.angle)) + (shadowShrink * game.player.camera.angle) - (this.floor * (1 - game.player.camera.angle)),
             (this.HB.radius * 2) - (shadowShrink * 2),
             ((this.HB.radius * 2) - (shadowShrink * 2)) * game.player.camera.angle
         );
@@ -821,8 +821,8 @@ class Character {
         ctx.lineWidth = 3;
         ctx.beginPath();
         ctx.ellipse(
-            game.window.w / 2 - compareX,
-            game.window.h / 2 - (compareY * game.player.camera.angle) - (this.floor * (1 - game.player.camera.angle)),
+            game.gameView.w / 2 - compareX,
+            game.gameView.h / 2 - (compareY * game.player.camera.angle) - (this.floor * (1 - game.player.camera.angle)),
             this.HB.radius,
             this.HB.radius * game.player.camera.angle,
             0, 0, 2 * Math.PI);
@@ -834,8 +834,8 @@ class Character {
         ctx.beginPath();
         ctx.beginPath();
         ctx.arc(
-            game.window.w / 2 - compareX,
-            game.window.h / 2 - (compareY * game.player.camera.angle) - (this.floor * (1 - game.player.camera.angle)),
+            game.gameView.w / 2 - compareX,
+            game.gameView.h / 2 - (compareY * game.player.camera.angle) - (this.floor * (1 - game.player.camera.angle)),
             this.HB.radius + 10,
             Math.PI,
             Math.PI * 2,
@@ -846,8 +846,8 @@ class Character {
         ctx.lineWidth = 3;
         ctx.beginPath();
         ctx.arc(
-            game.window.w / 2 - compareX,
-            game.window.h / 2 - (compareY * game.player.camera.angle) - (this.floor * (1 - game.player.camera.angle)),
+            game.gameView.w / 2 - compareX,
+            game.gameView.h / 2 - (compareY * game.player.camera.angle) - (this.floor * (1 - game.player.camera.angle)),
             this.HB.radius + 10,
             Math.PI,
             Math.PI * (1 - (this.hp / this.hp_max)),
@@ -858,16 +858,16 @@ class Character {
         if (this.faceCamera)
             ctx.drawImage(
                 this.img,
-                game.window.w / 2 - compareX - this.HB.radius,
-                game.window.h / 2 - (compareY * game.player.camera.angle) - this.HB.height - (this.HB.pos.z * (1 - game.player.camera.angle)) - ((sineAnimate(1, 0.1) * (1 - game.player.camera.angle))),
+                game.gameView.w / 2 - compareX - this.HB.radius,
+                game.gameView.h / 2 - (compareY * game.player.camera.angle) - this.HB.height - (this.HB.pos.z * (1 - game.player.camera.angle)) - ((sineAnimate(1, 0.1) * (1 - game.player.camera.angle))),
                 this.HB.radius * 2,
                 this.HB.height
             );
         else
             ctx.drawImage(
                 this.img,
-                game.window.w / 2 - compareX - this.HB.radius,
-                game.window.h / 2 - (compareY * game.player.camera.angle) - (this.HB.height * (1 - game.player.camera.angle)) - (this.HB.pos.z * (1 - game.player.camera.angle)) - ((sineAnimate(1, 0.1) * (1 - game.player.camera.angle))),
+                game.gameView.w / 2 - compareX - this.HB.radius,
+                game.gameView.h / 2 - (compareY * game.player.camera.angle) - (this.HB.height * (1 - game.player.camera.angle)) - (this.HB.pos.z * (1 - game.player.camera.angle)) - ((sineAnimate(1, 0.1) * (1 - game.player.camera.angle))),
                 this.HB.radius * 2,
                 this.HB.height * (1 - game.player.camera.angle)
             );
@@ -876,7 +876,7 @@ class Character {
         ctx.fillStyle = "#FFFFFF";
         ctx.font = "12px Jura";
         ctx.textAlign = "center";
-        ctx.fillText(this.name, game.window.w / 2 - compareX, game.window.h / 2 - (compareY * game.player.camera.angle) - this.HB.height - (this.HB.pos.z * (1 - game.player.camera.angle)) - 10);
+        ctx.fillText(this.name, game.gameView.w / 2 - compareX, game.gameView.h / 2 - (compareY * game.player.camera.angle) - this.HB.height - (this.HB.pos.z * (1 - game.player.camera.angle)) - 10);
 
         /*
              _     _                _    _ _   _
@@ -889,19 +889,19 @@ class Character {
             ctx.lineWidth = 2;
             ctx.fillStyle = "#FF0000";
             ctx.strokeStyle = "#FF0000";
-            ctx.fillRect(game.window.w / 2 - compareX - 2, game.window.h / 2 - (compareY * game.player.camera.angle) - 2, 4, 4);
+            ctx.fillRect(game.gameView.w / 2 - compareX - 2, game.gameView.h / 2 - (compareY * game.player.camera.angle) - 2, 4, 4);
             ctx.beginPath();
             ctx.ellipse(
-                game.window.w / 2 - compareX,
-                game.window.h / 2 - (compareY * game.player.camera.angle) - (this.HB.pos.z * (1 - game.player.camera.angle)),
+                game.gameView.w / 2 - compareX,
+                game.gameView.h / 2 - (compareY * game.player.camera.angle) - (this.HB.pos.z * (1 - game.player.camera.angle)),
                 this.HB.radius,
                 this.HB.radius * game.player.camera.angle,
                 0, 0, 2 * Math.PI);
             ctx.stroke();
             ctx.beginPath();
             ctx.ellipse(
-                game.window.w / 2 - compareX,
-                game.window.h / 2 - (compareY * game.player.camera.angle) - (this.HB.height * (1 - game.player.camera.angle)) - (this.HB.pos.z * (1 - game.player.camera.angle)),
+                game.gameView.w / 2 - compareX,
+                game.gameView.h / 2 - (compareY * game.player.camera.angle) - (this.HB.height * (1 - game.player.camera.angle)) - (this.HB.pos.z * (1 - game.player.camera.angle)),
                 this.HB.radius,
                 this.HB.radius * game.player.camera.angle,
                 0, 0, 2 * Math.PI);
@@ -913,11 +913,11 @@ class Character {
             let newZ = this.HB.pos.z + this.speed.z;
             ctx.lineWidth = 2;
             ctx.beginPath();
-            ctx.moveTo(game.window.w / 2, game.window.h / 2);
+            ctx.moveTo(game.gameView.w / 2, game.gameView.h / 2);
             compareX = game.player.camera.x - newX;
             compareY = game.player.camera.y - newY;
             let compareZ = newZ - this.HB.pos.z;
-            ctx.lineTo(game.window.w / 2 - compareX, game.window.h / 2 - (compareY * game.player.camera.angle) - (this.speed.z * (1 - game.player.camera.angle)));
+            ctx.lineTo(game.gameView.w / 2 - compareX, game.gameView.h / 2 - (compareY * game.player.camera.angle) - (this.speed.z * (1 - game.player.camera.angle)));
             ctx.stroke();
         }
     }

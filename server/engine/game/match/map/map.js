@@ -124,18 +124,18 @@ class Map {
         */
         //Ground
         ctx.fillStyle = "#333300";
-        ctx.fillRect(0, 0, global.game.window.w, global.game.window.h);
+        ctx.fillRect(0, 0, global.game.gameView.w, global.game.gameView.h);
 
         //If in 3D mode, draw the sky (This overdraws things past the horizon, even if visible)
         if (global.game.player.camera._3D) {
             ctx.fillStyle = "#8cb8ff";
-            ctx.fillRect(0, 0, global.game.window.w, (global.game.window.h / 2) /* * (1 - global.game.player.camera.angle)) */);
+            ctx.fillRect(0, 0, global.game.gameView.w, (global.game.gameView.h / 2) /* * (1 - global.game.player.camera.angle)) */);
         }
 
         // If in 3D mode, draw the underground (This overdraws things past the underground, even if visible)
         if (global.game.player.camera._3D) {
             ctx.fillStyle = "#281800";
-            ctx.fillRect(0, (global.game.window.h / 2) /* +  ((global.game.window.h / 1)  * (global.game.player.camera.angle) ) */, global.game.window.w, global.game.window.h);
+            ctx.fillRect(0, (global.game.gameView.h / 2) /* +  ((global.game.gameView.h / 1)  * (global.game.player.camera.angle) ) */, global.game.gameView.w, global.game.gameView.h);
         }
 
         /*
@@ -173,7 +173,7 @@ class Map {
             let compareY = global.game.player.camera.y - entity.HB.pos.y;
             let horizonCalc = 0;
             if (global.game.player.camera._3D)
-                horizonCalc = (global.game.window.h / 2) * (1 - global.game.player.camera.angle)
+                horizonCalc = (global.game.gameView.h / 2) * (1 - global.game.player.camera.angle)
             if (global.game.player.camera.radius > Math.abs(compareX) && global.game.player.camera.radius > Math.abs(compareY) - horizonCalc)
                 entity.draw(global.game.player.character);
         }
@@ -189,28 +189,28 @@ class Map {
         if (global.game.player.camera._3D) {
             let grd = ctx.createLinearGradient(
                 0,
-                (global.game.window.h / 4) * (1 - global.game.player.camera.angle),
+                (global.game.gameView.h / 4) * (1 - global.game.player.camera.angle),
                 0,
-                (global.game.window.h / 4) * (1 - global.game.player.camera.angle) + (global.game.window.h / 6) * (1 - global.game.player.camera.angle));
+                (global.game.gameView.h / 4) * (1 - global.game.player.camera.angle) + (global.game.gameView.h / 6) * (1 - global.game.player.camera.angle));
             grd.addColorStop(0, "rgba(140, 184, 255, 1)");
             grd.addColorStop(1, "rgba(140, 184, 255, 0)");
             ctx.fillStyle = grd;
-            ctx.fillRect(0, 0, global.game.window.w, (global.game.window.h / 2) * (1 - global.game.player.camera.angle));
+            ctx.fillRect(0, 0, global.game.gameView.w, (global.game.gameView.h / 2) * (1 - global.game.player.camera.angle));
         }
 
         // overdraw the underground as a gradient from the bottom of the screen to the underground horizon
         if (global.game.player.camera._3D) {
             let grd = ctx.createLinearGradient(
                 0,
-                (global.game.window.h / 2) + ((global.game.window.h / 1) * (global.game.player.camera.angle)) + (global.game.window.h / 8) * (global.game.player.camera.angle),
+                (global.game.gameView.h / 2) + ((global.game.gameView.h / 1) * (global.game.player.camera.angle)) + (global.game.gameView.h / 8) * (global.game.player.camera.angle),
                 0,
-                (global.game.window.h / 2) + ((global.game.window.h / 1) * (global.game.player.camera.angle))
+                (global.game.gameView.h / 2) + ((global.game.gameView.h / 1) * (global.game.player.camera.angle))
             );
             grd.addColorStop(0, "rgba(40, 24, 0, 1)");
             // grd.addColorStop(0.5, "rgba(40, 24, 0, 0.5)");
             grd.addColorStop(1, "rgba(40, 24, 0, 0)");
             ctx.fillStyle = grd;
-            ctx.fillRect(0, (global.game.window.h / 2) + ((global.game.window.h / 1) * (global.game.player.camera.angle)), global.game.window.w, global.game.window.h);
+            ctx.fillRect(0, (global.game.gameView.h / 2) + ((global.game.gameView.h / 1) * (global.game.player.camera.angle)), global.game.gameView.w, global.game.gameView.h);
         }
 
         /*
@@ -240,7 +240,7 @@ class Map {
     lighting() {
         // ctx.globalCompositeOperation = "screen";
         ctx.fillStyle = `rgba(${this.lightValue[0]}, ${this.lightValue[1]}, ${this.lightValue[2]}, ${this.lightValue[3]})`
-        ctx.fillRect(0, 0, global.game.window.w, global.game.window.h);
+        ctx.fillRect(0, 0, global.game.gameView.w, global.game.gameView.h);
         // ctx.globalCompositeOperation = "source-over";
     }
 
@@ -272,13 +272,13 @@ class Node {
             ctx.lineWidth = 0.2;
             if (global.game.player.camera._3D)
                 ctx.strokeRect(
-                    global.game.window.w / 2 - compareX,
-                    global.game.window.h / 2 - (compareY * global.game.player.camera.angle),
+                    global.game.gameView.w / 2 - compareX,
+                    global.game.gameView.h / 2 - (compareY * global.game.player.camera.angle),
                     this.pos.w,
                     this.pos.h * global.game.player.camera.angle
                 );
             else
-                ctx.strokeRect(global.game.window.w / 2 - compareX, global.game.window.h / 2 - compareY, this.pos.w, this.pos.h);
+                ctx.strokeRect(global.game.gameView.w / 2 - compareX, global.game.gameView.h / 2 - compareY, this.pos.w, this.pos.h);
 
         }
     }
@@ -469,7 +469,7 @@ class Tileset {
                 // TODO: horizon count doesn't actually line up with the horizon. sky overdraws it
                 let horizonCalc = 0;
                 if (global.game.player.camera._3D)
-                    horizonCalc = (global.game.window.h / 2) * (1 - global.game.player.camera.angle)
+                    horizonCalc = (global.game.gameView.h / 2) * (1 - global.game.player.camera.angle)
                 if (global.game.player.camera.radius > Math.abs(compareX) && global.game.player.camera.radius > Math.abs(compareY) - horizonCalc) {
                     count++;
                     let tileIMG = this.decodeTile(this.grid[y][x]);
@@ -477,8 +477,8 @@ class Tileset {
                     if (global.game.player.camera._3D)
                         ctx.drawImage(
                             tileIMG,
-                            global.game.window.w / 2 - compareX,
-                            global.game.window.h / 2 - (compareY * global.game.player.camera.angle),
+                            global.game.gameView.w / 2 - compareX,
+                            global.game.gameView.h / 2 - (compareY * global.game.player.camera.angle),
                             this.tileSize,
                             this.tileSize * global.game.player.camera.angle
                         );
@@ -486,8 +486,8 @@ class Tileset {
                     else
                         ctx.drawImage(
                             tileIMG,
-                            global.game.window.w / 2 - compareX,
-                            global.game.window.h / 2 - compareY,
+                            global.game.gameView.w / 2 - compareX,
+                            global.game.gameView.h / 2 - compareY,
                             this.tileSize,
                             this.tileSize
                         );

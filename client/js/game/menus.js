@@ -54,8 +54,8 @@ class Menu {
         let offsetx = this.shape.x;
         let offsety = this.shape.y;
         if (this.style === 'center_stacked') {
-            offsetx = (game.window.w / 2) - (this.shape.w / 2) + this.shape.x;
-            offsety = (game.window.h / 2) - (this.shape.h / 2) + this.shape.y;
+            offsetx = (game.gameView.w / 2) - (this.shape.w / 2) + this.shape.x;
+            offsety = (game.gameView.h / 2) - (this.shape.h / 2) + this.shape.y;
         }
 
         // for every player and bot in the bots list
@@ -88,8 +88,8 @@ class Menu {
         if (this.visible == false) return;
         let offsetx, offsety;
         if (this.style === 'center_stacked') {
-            offsetx = (game.window.w / 2) - (this.shape.w / 2) + this.shape.x;
-            offsety = (game.window.h / 2) - (this.shape.h / 2) + this.shape.y;
+            offsetx = (game.gameView.w / 2) - (this.shape.w / 2) + this.shape.x;
+            offsety = (game.gameView.h / 2) - (this.shape.h / 2) + this.shape.y;
             ctx.textAlign = "center";
         }
         // stroke a box around the menu
@@ -197,8 +197,8 @@ class Menu_Awaiting extends Menu {
         super.draw();
         let offsetx, offsety;
         if (this.style === 'center_stacked') {
-            offsetx = (game.window.w / 2) - (this.shape.w / 2) - this.shape.x;
-            offsety = (game.window.h / 2) - (this.shape.h / 2) - this.shape.y;
+            offsetx = (game.gameView.w / 2) - (this.shape.w / 2) - this.shape.x;
+            offsety = (game.gameView.h / 2) - (this.shape.h / 2) - this.shape.y;
         }
         ctx.textAlign = "center";
         ctx.fillStyle = "#FFFFFF";

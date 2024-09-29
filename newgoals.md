@@ -27,8 +27,8 @@ Dark elves believe everything is random:
 #########   ########          ###        ########### ###    ###  ########     ###
 -->
 
-- Fix Mouse aiming when zoomed in/out
 - Improve FPS
+- Change tick timing to ms timing
 - fix direction change src bug
 - tiled images in ISO
 - Shoot along z rotation in iso view

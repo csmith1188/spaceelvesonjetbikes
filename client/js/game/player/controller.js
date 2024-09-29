@@ -38,8 +38,8 @@ function getCanvasRelative(e, center = true) {
             center.y = game.player.camera.y - center.y;
         }
         return {
-            x: e.clientX + center.x - (bx.width / 2),
-            y: e.clientY + center.y - (bx.height / 2),
+            x: e.clientX - bx.left + center.x - (bx.width / 2),
+            y: e.clientY - bx.top + center.y - (bx.height / 2),
             bx: bx
         };
     } else {
@@ -513,7 +513,7 @@ class Touch extends Controller {
 
                 // Check for left touch
                 let touchX = touchCoord.x - this.touch.left.pos.x;
-                let touchY = touchCoord.y - (game.window.h - this.touch.left.pos.y);
+                let touchY = touchCoord.y - (game.gameView.h - this.touch.left.pos.y);
                 let distance = Math.sqrt(touchX ** 2 + touchY ** 2);
                 if (distance < this.touch.left.radius * 2) {
 
@@ -538,8 +538,8 @@ class Touch extends Controller {
 
                 }
                 // Check for right touch
-                touchX = touchCoord.x - (game.window.w - this.touch.right.pos.x);
-                touchY = touchCoord.y - (game.window.h - this.touch.right.pos.y);
+                touchX = touchCoord.x - (game.gameView.w - this.touch.right.pos.x);
+                touchY = touchCoord.y - (game.gameView.h - this.touch.right.pos.y);
                 distance = Math.sqrt(touchX ** 2 + touchY ** 2);
                 if (distance < this.touch.right.radius * 2) {
                     touchRightFound = true;
@@ -566,7 +566,7 @@ class Touch extends Controller {
             for (const touch of this.touch.event.changedTouches) {
                 let touchCoord = getCanvasRelative(touch);
                 let touchX = touchCoord.x - this.touch.left.pos.x;
-                let touchY = touchCoord.y - (game.window.h - this.touch.left.pos.y);
+                let touchY = touchCoord.y - (game.gameView.h - this.touch.left.pos.y);
                 let distance = Math.sqrt(touchX ** 2 + touchY ** 2);
                 if ((distance > this.touch.left.radius) && (distance < (this.touch.left.radius * 2)))
                     this.touch.left.lastBoostTouch = game.match.ticks;
@@ -605,7 +605,7 @@ class Touch extends Controller {
             ctx.beginPath();
             ctx.arc(
                 this.touch.left.pos.x,
-                game.window.h - this.touch.left.pos.y,
+                game.gameView.h - this.touch.left.pos.y,
                 this.touch.left.radius * 2,
                 0, 2 * Math.PI);
             ctx.closePath();
@@ -614,7 +614,7 @@ class Touch extends Controller {
             ctx.beginPath();
             ctx.arc(
                 this.touch.left.pos.x,
-                game.window.h - this.touch.left.pos.y,
+                game.gameView.h - this.touch.left.pos.y,
                 this.touch.left.radius,
                 0, 2 * Math.PI);
             ctx.closePath();
@@ -629,8 +629,8 @@ class Touch extends Controller {
             */
             ctx.beginPath();
             ctx.arc(
-                game.window.w - this.touch.right.pos.x,
-                game.window.h - this.touch.right.pos.y,
+                game.gameView.w - this.touch.right.pos.x,
+                game.gameView.h - this.touch.right.pos.y,
                 this.touch.right.radius * 2,
                 0, 2 * Math.PI);
             ctx.closePath();
@@ -638,8 +638,8 @@ class Touch extends Controller {
             ctx.stroke();
             ctx.beginPath();
             ctx.arc(
-                game.window.w - this.touch.right.pos.x,
-                game.window.h - this.touch.right.pos.y,
+                game.gameView.w - this.touch.right.pos.x,
+                game.gameView.h - this.touch.right.pos.y,
                 this.touch.right.radius,
                 0, 2 * Math.PI);
             ctx.closePath();
@@ -656,15 +656,15 @@ class Touch extends Controller {
         */
         // draw a rectangle  in the top right corner for the pause button
         ctx.fillStyle = "rgba(255,255,255,0.5)";
-        ctx.fillRect(game.window.w - 55, 5, 50, 50);
+        ctx.fillRect(game.gameView.w - 55, 5, 50, 50);
         // white outline
         ctx.strokeStyle = "#FFFFFF";
         ctx.lineWidth = 2;
-        ctx.strokeRect(game.window.w - 55, 5, 50, 50);
+        ctx.strokeRect(game.gameView.w - 55, 5, 50, 50);
         // draw a pause icon
         ctx.fillStyle = "#000000";
-        ctx.fillRect(game.window.w - 45, 15, 10, 30);
-        ctx.fillRect(game.window.w - 25, 15, 10, 30);
+        ctx.fillRect(game.gameView.w - 45, 15, 10, 30);
+        ctx.fillRect(game.gameView.w - 25, 15, 10, 30);
 
     }
 }

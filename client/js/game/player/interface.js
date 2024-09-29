@@ -101,11 +101,11 @@ class Interface {
     drawMapEdge() {
         // Map locators
         ctx.fillStyle = "#FF0000";
-        ctx.fillRect((this.player.camera.x / game.match.map.w) * game.window.w - 3, 0, 6, 6);
-        ctx.fillRect((this.player.camera.x / game.match.map.w) * game.window.w - 3, game.window.h - 6, 6, 6);
+        ctx.fillRect((this.player.camera.x / game.match.map.w) * game.gameView.w - 3, 0, 6, 6);
+        ctx.fillRect((this.player.camera.x / game.match.map.w) * game.gameView.w - 3, game.gameView.h - 6, 6, 6);
         ctx.fillStyle = "#0000FF";
-        ctx.fillRect(0, (this.player.camera.y / game.match.map.h) * game.window.h - 3, 6, 6);
-        ctx.fillRect(game.window.w - 6, (this.player.camera.y / game.match.map.h) * game.window.h - 3, 6, 6);
+        ctx.fillRect(0, (this.player.camera.y / game.match.map.h) * game.gameView.h - 3, 6, 6);
+        ctx.fillRect(game.gameView.w - 6, (this.player.camera.y / game.match.map.h) * game.gameView.h - 3, 6, 6);
     }
 
     /*
@@ -122,7 +122,7 @@ class Interface {
         if (this.player.character.active) {
             let item = this.player.character.inventory[this.player.character.item];
 
-            let ammoBox = new Vect2((game.window.w / 2) - 130, game.window.h - 170);
+            let ammoBox = new Vect2((game.gameView.w / 2) - 130, game.gameView.h - 170);
 
             ctx.textAlign = "left";
 
@@ -196,23 +196,23 @@ class Interface {
                                             |__/
             */
             //if one item, it is active
-            if (this.player.character.inventory.length == 1) ctx.drawImage(this.player.character.inventory[0].icon, (game.window.w / 2) - 150, game.window.h - 64, 64, 64);
+            if (this.player.character.inventory.length == 1) ctx.drawImage(this.player.character.inventory[0].icon, (game.gameView.w / 2) - 150, game.gameView.h - 64, 64, 64);
             else if (this.player.character.inventory.length == 2) {
                 // if you have two, draw both
                 switch (this.player.character.item) {
                     case 0:
-                        ctx.drawImage(this.player.character.inventory[0].icon, (game.window.w / 2) - 150, game.window.h - 64, 64, 64);
-                        ctx.drawImage(this.player.character.inventory[1].iconInactive, (game.window.w / 2) + 88, game.window.h - 64, 64, 64);
+                        ctx.drawImage(this.player.character.inventory[0].icon, (game.gameView.w / 2) - 150, game.gameView.h - 64, 64, 64);
+                        ctx.drawImage(this.player.character.inventory[1].iconInactive, (game.gameView.w / 2) + 88, game.gameView.h - 64, 64, 64);
                         break;
                     case 1:
-                        ctx.drawImage(this.player.character.inventory[0].iconInactive, (game.window.w / 2) - 150, game.window.h - 64, 64, 64)
-                        ctx.drawImage(this.player.character.inventory[1].icon, (game.window.w / 2) + 88, game.window.h - 64, 64, 64);
+                        ctx.drawImage(this.player.character.inventory[0].iconInactive, (game.gameView.w / 2) - 150, game.gameView.h - 64, 64, 64)
+                        ctx.drawImage(this.player.character.inventory[1].icon, (game.gameView.w / 2) + 88, game.gameView.h - 64, 64, 64);
                         break;
                 }
             }
-            this.touchButton.inventory1 = new Rect((game.window.w / 2) - 150, game.window.h - 64, 64, 64);
-            this.touchButton.inventory2 = new Rect((game.window.w / 2) + 90, game.window.h - 64, 64, 64);
-            this.touchButton.pause = new Rect(game.window.w - 55, 5, 50, 50);
+            this.touchButton.inventory1 = new Rect((game.gameView.w / 2) - 150, game.gameView.h - 64, 64, 64);
+            this.touchButton.inventory2 = new Rect((game.gameView.w / 2) + 90, game.gameView.h - 64, 64, 64);
+            this.touchButton.pause = new Rect(game.gameView.w - 55, 5, 50, 50);
             if (this.itemChangeTicks > game.match.ticks && this.player.character.inventory[this.player.character.item]) {
                 // globalAlpha is percentage of time left
                 ctx.globalAlpha = (this.itemChangeTicks - game.match.ticks) / 180;
@@ -221,10 +221,10 @@ class Interface {
                 // draw black shadow first
                 ctx.fillStyle = "#000000";
                 ctx.font = '16px Jura';
-                ctx.fillText(this.player.character.inventory[this.player.character.item].name, (game.window.w / 2) + 1, game.window.h - 59);
+                ctx.fillText(this.player.character.inventory[this.player.character.item].name, (game.gameView.w / 2) + 1, game.gameView.h - 59);
                 // then draw white text
                 ctx.fillStyle = "#FFFFFF";
-                ctx.fillText(this.player.character.inventory[this.player.character.item].name, (game.window.w / 2), game.window.h - 60);
+                ctx.fillText(this.player.character.inventory[this.player.character.item].name, (game.gameView.w / 2), game.gameView.h - 60);
             }
             ctx.globalAlpha = 1;
 
@@ -259,7 +259,7 @@ class Interface {
             let aimRad = 150;
 
             // Draw the original image
-            ctx.drawImage(this.xhair, (game.window.w / 2) - compareX + aimX * aimRad - 8, (game.window.h / 2) - compareY + aimY * aimRad - 8 - (this.player.character.HB.height / 2), 16, 16);
+            ctx.drawImage(this.xhair, (game.gameView.w / 2) - compareX + aimX * aimRad - 8, (game.gameView.h / 2) - compareY + aimY * aimRad - 8 - (this.player.character.HB.height / 2), 16, 16);
 
         }
     }
@@ -288,32 +288,32 @@ class Interface {
         // Background for both bars
         ctx.beginPath();
         ctx.strokeStyle = "#000000";
-        ctx.arc(game.window.w / 2, game.window.h - 100, this.minimapRadius + 7.5, -Math.PI / 2, Math.PI * 1.5);
+        ctx.arc(game.gameView.w / 2, game.gameView.h - 100, this.minimapRadius + 7.5, -Math.PI / 2, Math.PI * 1.5);
         ctx.stroke();
         ctx.globalAlpha = 0.75;
         ctx.lineWidth = 4;
         // Health
         ctx.beginPath();
         ctx.strokeStyle = "#00FF00";
-        ctx.arc(game.window.w / 2, game.window.h - 100, this.minimapRadius + 10, -Math.PI / 2, -Math.PI / 2 + (Math.PI * 2 * (this.player.character.hp / this.player.character.hp_max)));
+        ctx.arc(game.gameView.w / 2, game.gameView.h - 100, this.minimapRadius + 10, -Math.PI / 2, -Math.PI / 2 + (Math.PI * 2 * (this.player.character.hp / this.player.character.hp_max)));
         ctx.stroke();
         // Power
         ctx.beginPath();
         ctx.strokeStyle = "#0099FF";
-        ctx.arc(game.window.w / 2, game.window.h - 100, this.minimapRadius + 5, -Math.PI / 2, -Math.PI / 2 + (Math.PI * 2 * (this.player.character.pp / this.player.character.pp_max)));
+        ctx.arc(game.gameView.w / 2, game.gameView.h - 100, this.minimapRadius + 5, -Math.PI / 2, -Math.PI / 2 + (Math.PI * 2 * (this.player.character.pp / this.player.character.pp_max)));
         ctx.stroke();
         ctx.globalAlpha = 1;
         // draw the minimap circle
         ctx.fillStyle = "#000000";
         ctx.globalAlpha = 0.25;
         ctx.beginPath();
-        ctx.arc(game.window.w / 2, game.window.h - 100, this.minimapRadius, 0, Math.PI * 2);
+        ctx.arc(game.gameView.w / 2, game.gameView.h - 100, this.minimapRadius, 0, Math.PI * 2);
         ctx.fill();
         ctx.strokeStyle = "#00FF00";
         for (let i = 1; i < 4; i++) {
             ctx.beginPath();
             ctx.lineWidth = i;
-            ctx.arc(game.window.w / 2, game.window.h - 100, (this.minimapRadius / 3) * i, 0, Math.PI * 2);
+            ctx.arc(game.gameView.w / 2, game.gameView.h - 100, (this.minimapRadius / 3) * i, 0, Math.PI * 2);
             ctx.stroke();
         }
         /*
@@ -330,8 +330,8 @@ class Interface {
             //calculate the angle from the player to the bot
             let angle = Math.atan2(game.match.bots[i].character.HB.pos.y - game.player.character.HB.pos.y, game.match.bots[i].character.HB.pos.x - game.player.character.HB.pos.x);
             //calculate the bot's position on the minimap
-            let x = (game.window.w / 2) + (Math.cos(angle) * Math.min(distance / 10, this.minimapRadius));
-            let y = (game.window.h - 100) + (Math.sin(angle) * Math.min(distance / 10, this.minimapRadius));
+            let x = (game.gameView.w / 2) + (Math.cos(angle) * Math.min(distance / 10, this.minimapRadius));
+            let y = (game.gameView.h - 100) + (Math.sin(angle) * Math.min(distance / 10, this.minimapRadius));
             // if the x or y distance is greater than the minimap radius, reduce opacity 0.5
             if (distance > this.minimapRadius * 12.5)
                 ctx.globalAlpha = 0.5;
@@ -367,8 +367,8 @@ class Interface {
                 //calculate the angle from the player to the bot
                 let angle = Math.atan2(item.HB.pos.y - game.player.character.HB.pos.y, item.HB.pos.x - game.player.character.HB.pos.x);
                 //calculate the bot's position on the minimap
-                let x = (game.window.w / 2) + (Math.cos(angle) * Math.min(distance / 10, this.minimapRadius));
-                let y = (game.window.h - 100) + (Math.sin(angle) * Math.min(distance / 10, this.minimapRadius));
+                let x = (game.gameView.w / 2) + (Math.cos(angle) * Math.min(distance / 10, this.minimapRadius));
+                let y = (game.gameView.h - 100) + (Math.sin(angle) * Math.min(distance / 10, this.minimapRadius));
                 //draw the item
                 if (item.subtype == "ammo_ballistic") {
                     ctx.fillStyle = "#FF0000";
@@ -395,8 +395,8 @@ class Interface {
         if (this.player.character.target) {
             let distance = Math.sqrt((this.player.character.target.HB.pos.x - game.player.character.HB.pos.x) ** 2 + (this.player.character.target.HB.pos.y - game.player.character.HB.pos.y) ** 2);
             let angle = Math.atan2(this.player.character.target.HB.pos.y - game.player.character.HB.pos.y, this.player.character.target.HB.pos.x - game.player.character.HB.pos.x);
-            let x = (game.window.w / 2) + (Math.cos(angle) * Math.min(distance / 10, this.minimapRadius));
-            let y = (game.window.h - 100) + (Math.sin(angle) * Math.min(distance / 10, this.minimapRadius));
+            let x = (game.gameView.w / 2) + (Math.cos(angle) * Math.min(distance / 10, this.minimapRadius));
+            let y = (game.gameView.h - 100) + (Math.sin(angle) * Math.min(distance / 10, this.minimapRadius));
             ctx.fillStyle = "#00FF00";
             ctx.beginPath();
             ctx.arc(x, y, 5, 0, Math.PI * 2);
@@ -416,7 +416,7 @@ class Interface {
         //draw the player
         ctx.fillStyle = "#FFFFFF";
         ctx.beginPath();
-        ctx.arc(game.window.w / 2, game.window.h - 100, 5, 0, Math.PI * 2);
+        ctx.arc(game.gameView.w / 2, game.gameView.h - 100, 5, 0, Math.PI * 2);
         ctx.fill();
 
         /*
@@ -431,36 +431,36 @@ class Interface {
         ctx.globalAlpha = 1;
         ctx.fillStyle = "#000000";
         ctx.beginPath();
-        ctx.arc(game.window.w / 2 - 64, game.window.h - 20, 20, 0, Math.PI * 2);
+        ctx.arc(game.gameView.w / 2 - 64, game.gameView.h - 20, 20, 0, Math.PI * 2);
         ctx.fill();
         ctx.beginPath();
-        ctx.arc(game.window.w / 2 + 64, game.window.h - 20, 20, 0, Math.PI * 2);
+        ctx.arc(game.gameView.w / 2 + 64, game.gameView.h - 20, 20, 0, Math.PI * 2);
         ctx.fill();
         // draw a vertical bar in the center of the z position circle
         // that represents the player's z position to a max of 200
         ctx.fillStyle = "#999900";
-        ctx.fillRect(game.window.w / 2 - 69, game.window.h - 5, 10, -Math.min((this.player.character.HB.pos.z / 600) * 30, 30));
+        ctx.fillRect(game.gameView.w / 2 - 69, game.gameView.h - 5, 10, -Math.min((this.player.character.HB.pos.z / 600) * 30, 30));
         // first draw the text in black to create a black outline
         ctx.fillStyle = "#000000";
         ctx.font = '16px Jura';
-        ctx.fillText(Math.round(this.player.character.HB.pos.z), game.window.w / 2 - 63, game.window.h - 14);
+        ctx.fillText(Math.round(this.player.character.HB.pos.z), game.gameView.w / 2 - 63, game.gameView.h - 14);
         // then draw the text in white
         ctx.fillStyle = "#FFFFFF";
-        ctx.fillText(Math.round(this.player.character.HB.pos.z), game.window.w / 2 - 64, game.window.h - 15);
+        ctx.fillText(Math.round(this.player.character.HB.pos.z), game.gameView.w / 2 - 64, game.gameView.h - 15);
         // calculate the player's total speed
         let speed = Math.sqrt(this.player.character.speed.x ** 2 + this.player.character.speed.y ** 2 + this.player.character.speed.z ** 2);
         ctx.fillStyle = "#990099";
-        ctx.fillRect(game.window.w / 2 + 59, game.window.h - 5, 10, -Math.min((speed / 50) * 30, 30));
+        ctx.fillRect(game.gameView.w / 2 + 59, game.gameView.h - 5, 10, -Math.min((speed / 50) * 30, 30));
         ctx.fillStyle = "#FFFFFF";
-        ctx.fillText(Math.round(speed), game.window.w / 2 + 64, game.window.h - 15);
+        ctx.fillText(Math.round(speed), game.gameView.w / 2 + 64, game.gameView.h - 15);
         // draw white outline around edge of black circles
         ctx.strokeStyle = "#FFFFFF";
         ctx.lineWidth = 1;
         ctx.beginPath();
-        ctx.arc(game.window.w / 2 - 64, game.window.h - 20, 20, 0, Math.PI * 2);
+        ctx.arc(game.gameView.w / 2 - 64, game.gameView.h - 20, 20, 0, Math.PI * 2);
         ctx.stroke();
         ctx.beginPath();
-        ctx.arc(game.window.w / 2 + 64, game.window.h - 20, 20, 0, Math.PI * 2);
+        ctx.arc(game.gameView.w / 2 + 64, game.gameView.h - 20, 20, 0, Math.PI * 2);
         ctx.stroke();
     }
 

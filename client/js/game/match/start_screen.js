@@ -91,20 +91,20 @@ class Start_Screen extends Match {
 
     draw() {
         // draw a vignette with a gradient
-        let gradient = ctx.createRadialGradient(game.window.w / 2, game.window.h / 2, 0, game.window.w / 2, game.window.h / 2, game.window.w / 2);
+        let gradient = ctx.createRadialGradient(game.gameView.w / 2, game.gameView.h / 2, 0, game.gameView.w / 2, game.gameView.h / 2, game.gameView.w / 2);
         gradient.addColorStop(0, "rgba(20,0,20,0)");
         gradient.addColorStop(1, "rgba(20,0,20,1)");
         ctx.fillStyle = gradient;
-        ctx.fillRect(0, 0, game.window.w, game.window.h);
+        ctx.fillRect(0, 0, game.gameView.w, game.gameView.h);
         // draw the title
         ctx.fillStyle = "#FFFFFF";
         ctx.font = "36px Jura";
         ctx.textAlign = "center";
         // first draw the text in black to create a shadow
         ctx.fillStyle = "#000000";
-        ctx.fillText(`Space Elves on Jetbikes`, game.window.w / 2 + 2, game.window.h / 2 - 88);
+        ctx.fillText(`Space Elves on Jetbikes`, game.gameView.w / 2 + 2, game.gameView.h / 2 - 88);
         ctx.fillStyle = "#FFFFFF";
         // then draw the text in white
-        ctx.fillText(`Space Elves on Jetbikes`, game.window.w / 2, game.window.h / 2 - 90);
+        ctx.fillText(`Space Elves on Jetbikes`, game.gameView.w / 2, game.gameView.h / 2 - 90);
     }
 }

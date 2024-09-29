@@ -127,19 +127,19 @@ class Match_ForSpeed extends Match {
                 ctx.fillStyle = "rgba(0,0,0," + alpha + ")";
                 ctx.font = "30px Jura";
                 ctx.textAlign = "center";
-                ctx.fillText(this.name, game.window.w / 2 + 2, game.window.h / 2 - 138);
+                ctx.fillText(this.name, game.gameView.w / 2 + 2, game.gameView.h / 2 - 138);
                 ctx.font = "20px Jura";
-                ctx.fillText(this.description, game.window.w / 2 + 2, game.window.h / 2 - 98);
+                ctx.fillText(this.description, game.gameView.w / 2 + 2, game.gameView.h / 2 - 98);
                 //then draw the text in white
                 ctx.fillStyle = "rgba(255,255,255," + alpha + ")";
                 ctx.font = "30px Jura";
                 ctx.textAlign = "center";
-                ctx.fillText(this.name, game.window.w / 2, game.window.h / 2 - 140);
+                ctx.fillText(this.name, game.gameView.w / 2, game.gameView.h / 2 - 140);
                 ctx.font = "20px Jura";
-                ctx.fillText(this.description, game.window.w / 2, game.window.h / 2 - 100);
+                ctx.fillText(this.description, game.gameView.w / 2, game.gameView.h / 2 - 100);
             }
 
-            let matchBox = new Vect2((game.window.w / 2) - 150, game.window.h - 280);
+            let matchBox = new Vect2((game.gameView.w / 2) - 150, game.gameView.h - 280);
 
             // draw the lap counter in the matchBox
             ctx.fillStyle = "#FFFFFF";
@@ -167,20 +167,20 @@ class Match_ForSpeed extends Match {
             let state, color;
             if (game.player.character.laps >= 3) { color = "#00FF00"; state = "Finished!"; }
             else { color = "#FF0000"; state = "Failed!"; }
-            ctx.fillText(state, game.window.w / 2 + 2, 92);
+            ctx.fillText(state, game.gameView.w / 2 + 2, 92);
             ctx.fillStyle = color;
-            ctx.fillText(state, game.window.w / 2, 90);
+            ctx.fillText(state, game.gameView.w / 2, 90);
             // Draw the player's time
             ctx.fillStyle = "#FFFFFF";
             ctx.font = "16px Jura";
             ctx.textAlign = "center";
             // first draw the text in black to create a shadow
             ctx.fillStyle = "#000000";
-            ctx.fillText(`Best Lap: ${formatTicks(game.player.character.lapBest)}`, game.window.w / 2 + 2, 132);
-            ctx.fillText(`Total: ${formatTicks(game.player.character.endTime - game.player.character.startTime)}`, game.window.w / 2 + 2, 152);
+            ctx.fillText(`Best Lap: ${formatTicks(game.player.character.lapBest)}`, game.gameView.w / 2 + 2, 132);
+            ctx.fillText(`Total: ${formatTicks(game.player.character.endTime - game.player.character.startTime)}`, game.gameView.w / 2 + 2, 152);
             ctx.fillStyle = "#FFFFFF";
-            ctx.fillText(`Best Lap: ${formatTicks(game.player.character.lapBest)}`, game.window.w / 2, 130);
-            ctx.fillText(`Total: ${formatTicks(game.player.character.endTime - game.player.character.startTime)}`, game.window.w / 2, 150);
+            ctx.fillText(`Best Lap: ${formatTicks(game.player.character.lapBest)}`, game.gameView.w / 2, 130);
+            ctx.fillText(`Total: ${formatTicks(game.player.character.endTime - game.player.character.startTime)}`, game.gameView.w / 2, 150);
             // draw restart prompt
             let promptButton;
             switch (game.player.controller.type) {
@@ -201,14 +201,14 @@ class Match_ForSpeed extends Match {
             ctx.textAlign = "center";
             // first draw the text in black to create a shadow
             ctx.fillStyle = "#000000";
-            ctx.fillText(`Press [ ${promptButton} ] to restart`, game.window.w / 2 + 2, 192);
+            ctx.fillText(`Press [ ${promptButton} ] to restart`, game.gameView.w / 2 + 2, 192);
             ctx.fillStyle = "#FFFFFF";
             // then draw the text in white
-            ctx.fillText(`Press [ ${promptButton} ] to restart`, game.window.w / 2, 190);
+            ctx.fillText(`Press [ ${promptButton} ] to restart`, game.gameView.w / 2, 190);
             if (game.player.controller.type == 'touch') {
                 let img = new Image();
                 img.src = 'img/sprites/inventory/sword_inactive.png';
-                ctx.drawImage(img, (game.window.w / 2) - 150, game.window.h - 64, 64, 64);
+                ctx.drawImage(img, (game.gameView.w / 2) - 150, game.gameView.h - 64, 64, 64);
             }
         }
     }

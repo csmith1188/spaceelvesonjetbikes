@@ -265,16 +265,16 @@ class Match_ForEver extends Match {
             ctx.fillStyle = "rgba(0,0,0," + alpha + ")";
             ctx.font = "30px Jura";
             ctx.textAlign = "center";
-            ctx.fillText(this.name, game.window.w / 2 + 2, game.window.h / 2 - 138);
+            ctx.fillText(this.name, game.gameView.w / 2 + 2, game.gameView.h / 2 - 138);
             ctx.font = "20px Jura";
-            ctx.fillText(this.description, game.window.w / 2 + 2, game.window.h / 2 - 98);
+            ctx.fillText(this.description, game.gameView.w / 2 + 2, game.gameView.h / 2 - 98);
             //then draw the text in white
             ctx.fillStyle = "rgba(255,255,255," + alpha + ")";
             ctx.font = "30px Jura";
             ctx.textAlign = "center";
-            ctx.fillText(this.name, game.window.w / 2, game.window.h / 2 - 140);
+            ctx.fillText(this.name, game.gameView.w / 2, game.gameView.h / 2 - 140);
             ctx.font = "20px Jura";
-            ctx.fillText(this.description, game.window.w / 2, game.window.h / 2 - 100);
+            ctx.fillText(this.description, game.gameView.w / 2, game.gameView.h / 2 - 100);
         }
 
 
@@ -292,7 +292,7 @@ class Match_ForEver extends Match {
             for (let i = 0; i < game.match.bots.length; i++) {
                 if (game.match.bots[i].character.team != game.player.character.team) enemies++;
             }
-            let matchBox = new Vect2((game.window.w / 2) - 150, game.window.h - 280);
+            let matchBox = new Vect2((game.gameView.w / 2) - 150, game.gameView.h - 280);
             ctx.textAlign = "left";
             ctx.font = '16px Jura';
             // first draw the text lines in black to create a shadow
@@ -317,10 +317,10 @@ class Match_ForEver extends Match {
             ctx.textAlign = "center";
             // first draw the text in black to create a shadow
             ctx.fillStyle = "#000000";
-            ctx.fillText(`Waves: ${game.match.waves}`, game.window.w / 2 + 2, game.window.h / 2 + 2);
+            ctx.fillText(`Waves: ${game.match.waves}`, game.gameView.w / 2 + 2, game.gameView.h / 2 + 2);
             ctx.fillStyle = "#FFFFFF";
             // then draw the text in white
-            ctx.fillText(`Waves: ${game.match.waves}`, game.window.w / 2, game.window.h / 2);
+            ctx.fillText(`Waves: ${game.match.waves}`, game.gameView.w / 2, game.gameView.h / 2);
             // draw restart prompt
             let promptButton;
             switch (game.player.controller.type) {
@@ -341,14 +341,14 @@ class Match_ForEver extends Match {
             ctx.textAlign = "center";
             // first draw the text in black to create a shadow
             ctx.fillStyle = "#000000";
-            ctx.fillText(`Press [ ${promptButton} ] to restart`, game.window.w / 2 + 2, game.window.h / 2 + 42);
+            ctx.fillText(`Press [ ${promptButton} ] to restart`, game.gameView.w / 2 + 2, game.gameView.h / 2 + 42);
             ctx.fillStyle = "#FFFFFF";
             // then draw the text in white
-            ctx.fillText(`Press [ ${promptButton} ] to restart`, game.window.w / 2, game.window.h / 2 + 40);
+            ctx.fillText(`Press [ ${promptButton} ] to restart`, game.gameView.w / 2, game.gameView.h / 2 + 40);
             if (game.player.controller.type == 'touch') {
                 let img = new Image();
                 img.src = 'img/sprites/inventory/sword_inactive.png';
-                ctx.drawImage(img, (game.window.w / 2) - 150, game.window.h - 64, 64, 64);
+                ctx.drawImage(img, (game.gameView.w / 2) - 150, game.gameView.h - 64, 64, 64);
             }
         }
     }

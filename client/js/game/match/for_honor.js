@@ -142,7 +142,7 @@ class Match_ForHonor extends Match {
             { name: getName(), team: 1, gfx: 'img/sprites/dark2', cleanup: false, color: [0, 0, 255] }
         );
         // Change to local multiplayer interaface
-        this.bots[this.bots.length - 1].interface = new Interface_LocalMP(this.bots[this.bots.length - 1], () => { return game.window.w - 280 }, 0);
+        this.bots[this.bots.length - 1].interface = new Interface_LocalMP(this.bots[this.bots.length - 1], () => { return game.gameView.w - 280 }, 0);
 
         // Create a block to attach the camera to
         this.bots[this.bots.length - 1].name = 'Player 2';
@@ -159,7 +159,7 @@ class Match_ForHonor extends Match {
 
     step() {
         super.step();
-        if (game.window.w < 1720 || game.window.h < 920) {
+        if (game.gameView.w < 1720 || game.gameView.h < 920) {
             this.paused = true;
             this.menu = this.menus.tooSmall;
         } else if (this.menu) {
@@ -184,16 +184,16 @@ class Match_ForHonor extends Match {
         super.draw();
         if (this.lastWinner) {
             ctx.fillStyle = "rgba(0,0,0,0.5)";
-            ctx.fillRect(0, 0, game.window.w, game.window.h);
+            ctx.fillRect(0, 0, game.gameView.w, game.gameView.h);
             ctx.fillStyle = "#FFFFFF";
             ctx.font = "36px Jura";
             ctx.textAlign = "center";
             // first draw the text in black to create a shadow
             ctx.fillStyle = "#000000";
-            ctx.fillText(`${this.lastWinner} wins!`, game.window.w / 2 + 2, game.window.h / 2 - 88);
+            ctx.fillText(`${this.lastWinner} wins!`, game.gameView.w / 2 + 2, game.gameView.h / 2 - 88);
             ctx.fillStyle = "#FFFFFF";
             // then draw the text in white
-            ctx.fillText(`${this.lastWinner} wins!`, game.window.w / 2, game.window.h / 2 - 90);
+            ctx.fillText(`${this.lastWinner} wins!`, game.gameView.w / 2, game.gameView.h / 2 - 90);
             // draw restart prompt
             let promptButton;
             switch (game.player.controller.type) {
@@ -214,14 +214,14 @@ class Match_ForHonor extends Match {
             ctx.textAlign = "center";
             // first draw the text in black to create a shadow
             ctx.fillStyle = "#000000";
-            ctx.fillText(`Press [ ${promptButton} ] to restart`, game.window.w / 2 + 2, game.window.h / 2 + 42);
+            ctx.fillText(`Press [ ${promptButton} ] to restart`, game.gameView.w / 2 + 2, game.gameView.h / 2 + 42);
             ctx.fillStyle = "#FFFFFF";
             // then draw the text in white
-            ctx.fillText(`Press [ ${promptButton} ] to restart`, game.window.w / 2, game.window.h / 2 + 40);
+            ctx.fillText(`Press [ ${promptButton} ] to restart`, game.gameView.w / 2, game.gameView.h / 2 + 40);
             if (game.player.controller.type == 'touch') {
                 let img = new Image();
                 img.src = 'img/sprites/inventory/sword_inactive.png';
-                ctx.drawImage(img, (game.window.w / 2) - 150, game.window.h - 64, 64, 64);
+                ctx.drawImage(img, (game.gameView.w / 2) - 150, game.gameView.h - 64, 64, 64);
             }
         }
         if (this.menu)

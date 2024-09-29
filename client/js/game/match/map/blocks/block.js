@@ -113,22 +113,22 @@ class Block {
                     ctx.globalAlpha = 0.4;
                     ctx.drawImage(
                         this.shadow,
-                        game.window.w / 2 - compareX,
-                        game.window.h / 2 - compareY,
+                        game.gameView.w / 2 - compareX,
+                        game.gameView.h / 2 - compareY,
                         this.HB.radius,
                         this.HB.radius
                     );
                     ctx.globalAlpha = 1;
                 }
                 if (this.imgFile) {
-                    ctx.drawImage(this.img, game.window.w / 2 - compareX, game.window.h / 2 - compareY - this.HB.pos.z, this.HB.radius, this.HB.radius);
+                    ctx.drawImage(this.img, game.gameView.w / 2 - compareX, game.gameView.h / 2 - compareY - this.HB.pos.z, this.HB.radius, this.HB.radius);
                 } else {
                     //SIDE
                     ctx.fillStyle = `rgba(${this.colorSide[0]}, ${this.colorSide[1]}, ${this.colorSide[2]}, ${this.opacity})`;
                     ctx.beginPath();
                     ctx.ellipse(
-                        game.window.w / 2 - compareX,
-                        game.window.h / 2 - compareY - this.HB.pos.z,
+                        game.gameView.w / 2 - compareX,
+                        game.gameView.h / 2 - compareY - this.HB.pos.z,
                         this.HB.radius,
                         this.HB.radius,
                         0, 0, 2 * Math.PI
@@ -136,8 +136,8 @@ class Block {
                     ctx.fill();
                     ctx.beginPath();
                     ctx.fillRect(
-                        game.window.w / 2 - compareX - this.HB.radius,
-                        game.window.h / 2 - compareY - this.HB.pos.z - this.HB.height,
+                        game.gameView.w / 2 - compareX - this.HB.radius,
+                        game.gameView.h / 2 - compareY - this.HB.pos.z - this.HB.height,
                         this.HB.radius * 2,
                         this.HB.height
                     );
@@ -146,8 +146,8 @@ class Block {
                     ctx.fillStyle = `rgba(${this.color[0]}, ${this.color[1]}, ${this.color[2]}, ${this.opacity})`;
                     ctx.beginPath();
                     ctx.ellipse(
-                        game.window.w / 2 - compareX,
-                        game.window.h / 2 - compareY - this.HB.height - this.HB.pos.z,
+                        game.gameView.w / 2 - compareX,
+                        game.gameView.h / 2 - compareY - this.HB.height - this.HB.pos.z,
                         this.HB.radius,
                         this.HB.radius,
                         0, 0, 2 * Math.PI
@@ -169,8 +169,8 @@ class Block {
                     ctx.globalAlpha = 0.4;
                     ctx.drawImage(
                         this.shadow,
-                        game.window.w / 2 - compareX,
-                        game.window.h / 2 - compareY,
+                        game.gameView.w / 2 - compareX,
+                        game.gameView.h / 2 - compareY,
                         this.HB.volume.x,
                         this.HB.volume.y
                     );
@@ -179,8 +179,8 @@ class Block {
                 // Box shadow
                 // ctx.fillStyle = 'rgba(0,0,0,0.2)'
                 // ctx.fillRect(
-                //     game.window.w / 2 - compareX,
-                //     game.window.h / 2 - compareY,
+                //     game.gameView.w / 2 - compareX,
+                //     game.gameView.h / 2 - compareY,
                 //     this.HB.volume.x,
                 //     this.HB.volume.y
                 // );
@@ -188,15 +188,15 @@ class Block {
                     if (this.drawStyle == 'stretch') {
                         ctx.drawImage(
                             this.img,
-                            game.window.w / 2 - compareX,
-                            game.window.h / 2 - compareY - this.HB.volume.z - this.HB.pos.z,
+                            game.gameView.w / 2 - compareX,
+                            game.gameView.h / 2 - compareY - this.HB.volume.z - this.HB.pos.z,
                             this.HB.volume.x,
                             this.HB.volume.y
                         );
                         ctx.drawImage(
                             this.imgSide,
-                            game.window.w / 2 - compareX,
-                            game.window.h / 2 - compareY - this.HB.pos.z - this.HB.volume.z + this.HB.volume.y,
+                            game.gameView.w / 2 - compareX,
+                            game.gameView.h / 2 - compareY - this.HB.pos.z - this.HB.volume.z + this.HB.volume.y,
                             this.HB.volume.x,
                             this.HB.volume.z
                         );
@@ -207,36 +207,36 @@ class Block {
                         ctx.fillStyle = pattern;
 
                         // Translate the context by the top-left corner of the rectangle
-                        ctx.translate(game.window.w / 2 - compareX, game.window.h / 2 - compareY - this.HB.volume.z - this.HB.pos.z);
+                        ctx.translate(game.gameView.w / 2 - compareX, game.gameView.h / 2 - compareY - this.HB.volume.z - this.HB.pos.z);
 
                         // Now fill the rectangle, but with the origin at (0, 0)
                         ctx.fillRect(0, 0, this.HB.volume.x, this.HB.volume.y);
 
                         // Translate the context back
-                        ctx.translate(-(game.window.w / 2 - compareX), -(game.window.h / 2 - compareY - this.HB.volume.z - this.HB.pos.z));
+                        ctx.translate(-(game.gameView.w / 2 - compareX), -(game.gameView.h / 2 - compareY - this.HB.volume.z - this.HB.pos.z));
 
                         texture = new Image();
                         texture.src = this.imgFileSide;
                         pattern = ctx.createPattern(texture, 'repeat');
                         ctx.fillStyle = pattern;
-                        ctx.translate(game.window.w / 2 - compareX, game.window.h / 2 - compareY - this.HB.pos.z - this.HB.volume.z + this.HB.volume.y);
+                        ctx.translate(game.gameView.w / 2 - compareX, game.gameView.h / 2 - compareY - this.HB.pos.z - this.HB.volume.z + this.HB.volume.y);
                         ctx.fillRect(0, 0, this.HB.volume.x, this.HB.volume.z);
-                        ctx.translate(-(game.window.w / 2 - compareX), -(game.window.h / 2 - compareY - this.HB.pos.z - this.HB.volume.z + this.HB.volume.y));
+                        ctx.translate(-(game.gameView.w / 2 - compareX), -(game.gameView.h / 2 - compareY - this.HB.pos.z - this.HB.volume.z + this.HB.volume.y));
                     }
                 } else {
                     //TOP
                     ctx.fillStyle = `rgba(${this.color[0]}, ${this.color[1]}, ${this.color[2]}, ${this.opacity})`;
                     ctx.fillRect(
-                        game.window.w / 2 - compareX,
-                        game.window.h / 2 - compareY - this.HB.volume.z - this.HB.pos.z,
+                        game.gameView.w / 2 - compareX,
+                        game.gameView.h / 2 - compareY - this.HB.volume.z - this.HB.pos.z,
                         this.HB.volume.x,
                         this.HB.volume.y
                     );
                     //SIDE
                     ctx.fillStyle = `rgba(${this.colorSide[0]}, ${this.colorSide[1]}, ${this.colorSide[2]}, ${this.opacity})`;
                     ctx.fillRect(
-                        game.window.w / 2 - compareX,
-                        game.window.h / 2 - compareY - this.HB.pos.z - this.HB.volume.z + this.HB.volume.y,
+                        game.gameView.w / 2 - compareX,
+                        game.gameView.h / 2 - compareY - this.HB.pos.z - this.HB.volume.z + this.HB.volume.y,
                         this.HB.volume.x,
                         this.HB.volume.z
                     );
@@ -276,22 +276,22 @@ class Block {
                 ctx.globalAlpha = 0.4;
                 ctx.drawImage(
                     this.shadow,
-                    game.window.w / 2 - compareX,
-                    game.window.h / 2 - compareY,
+                    game.gameView.w / 2 - compareX,
+                    game.gameView.h / 2 - compareY,
                     this.HB.radius,
                     this.HB.radius
                 );
                 ctx.globalAlpha = 1;
             }
             if (this.imgFile) {
-                ctx.drawImage(this.img, game.window.w / 2 - compareX, game.window.h / 2 - compareY - this.HB.pos.z, this.HB.radius, this.HB.radius);
+                ctx.drawImage(this.img, game.gameView.w / 2 - compareX, game.gameView.h / 2 - compareY - this.HB.pos.z, this.HB.radius, this.HB.radius);
             } else {
                 //SIDE
                 ctx.beginPath();
                 ctx.fillStyle = `rgba(${this.colorSide[0]}, ${this.colorSide[1]}, ${this.colorSide[2]}, ${this.opacity})`;
                 ctx.ellipse(
-                    game.window.w / 2 - compareX,
-                    game.window.h / 2 - (compareY * game.player.camera.angle) - (this.HB.pos.z * (1 - game.player.camera.angle)),
+                    game.gameView.w / 2 - compareX,
+                    game.gameView.h / 2 - (compareY * game.player.camera.angle) - (this.HB.pos.z * (1 - game.player.camera.angle)),
                     this.HB.radius,
                     this.HB.radius * game.player.camera.angle,
                     0, 0, 2 * Math.PI
@@ -299,8 +299,8 @@ class Block {
                 ctx.fill();
                 ctx.beginPath();
                 ctx.fillRect(
-                    game.window.w / 2 - compareX - this.HB.radius,
-                    game.window.h / 2 - (compareY * game.player.camera.angle) - (this.HB.height * (1 - game.player.camera.angle)) - (this.HB.pos.z * (1 - game.player.camera.angle)),
+                    game.gameView.w / 2 - compareX - this.HB.radius,
+                    game.gameView.h / 2 - (compareY * game.player.camera.angle) - (this.HB.height * (1 - game.player.camera.angle)) - (this.HB.pos.z * (1 - game.player.camera.angle)),
                     this.HB.radius * 2,
                     this.HB.height * (1 - game.player.camera.angle)
                 );
@@ -309,8 +309,8 @@ class Block {
                 ctx.beginPath();
                 ctx.fillStyle = `rgba(${this.color[0]}, ${this.color[1]}, ${this.color[2]}, ${this.opacity})`;
                 ctx.ellipse(
-                    game.window.w / 2 - compareX,
-                    game.window.h / 2 - (compareY * game.player.camera.angle) - (this.HB.height * (1 - game.player.camera.angle)) - (this.HB.pos.z * (1 - game.player.camera.angle)),
+                    game.gameView.w / 2 - compareX,
+                    game.gameView.h / 2 - (compareY * game.player.camera.angle) - (this.HB.height * (1 - game.player.camera.angle)) - (this.HB.pos.z * (1 - game.player.camera.angle)),
                     this.HB.radius,
                     this.HB.radius * game.player.camera.angle,
                     0, 0, 2 * Math.PI
@@ -331,8 +331,8 @@ class Block {
                 ctx.globalAlpha = 0.4;
                 ctx.drawImage(
                     this.shadow,
-                    game.window.w / 2 - compareX,
-                    game.window.h / 2 - (compareY * game.player.camera.angle),
+                    game.gameView.w / 2 - compareX,
+                    game.gameView.h / 2 - (compareY * game.player.camera.angle),
                     this.HB.volume.x,
                     this.HB.volume.y * game.player.camera.angle
                 );
@@ -357,13 +357,13 @@ class Block {
                     ctx.fillStyle = pattern;
 
                     // Translate the context by the top-left corner of the rectangle
-                    ctx.translate(game.window.w / 2 - compareX, game.window.h / 2 - (compareY * game.player.camera.angle) - (this.HB.volume.z * (1 - game.player.camera.angle)) - (this.HB.pos.z * (1 - game.player.camera.angle)));
+                    ctx.translate(game.gameView.w / 2 - compareX, game.gameView.h / 2 - (compareY * game.player.camera.angle) - (this.HB.volume.z * (1 - game.player.camera.angle)) - (this.HB.pos.z * (1 - game.player.camera.angle)));
 
                     // Now fill the rectangle, but with the origin at (0, 0)
                     ctx.fillRect(0, 0, this.HB.volume.x, this.HB.volume.y * game.player.camera.angle);
 
                     // Translate the context back
-                    ctx.translate(-(game.window.w / 2 - compareX), -(game.window.h / 2 - (compareY * game.player.camera.angle) - (this.HB.volume.z * (1 - game.player.camera.angle)) - (this.HB.pos.z * (1 - game.player.camera.angle))));
+                    ctx.translate(-(game.gameView.w / 2 - compareX), -(game.gameView.h / 2 - (compareY * game.player.camera.angle) - (this.HB.volume.z * (1 - game.player.camera.angle)) - (this.HB.pos.z * (1 - game.player.camera.angle))));
                 }
 
                 texture = new Image();
@@ -381,29 +381,29 @@ class Block {
                     ctx.fillStyle = pattern;
 
                     ctx.translate(
-                        game.window.w / 2 - compareX,
-                        game.window.h / 2 - (compareY * game.player.camera.angle) - (this.HB.pos.z * (1 - game.player.camera.angle)) - (this.HB.volume.z * (1 - game.player.camera.angle)) + (this.HB.volume.y * game.player.camera.angle)
+                        game.gameView.w / 2 - compareX,
+                        game.gameView.h / 2 - (compareY * game.player.camera.angle) - (this.HB.pos.z * (1 - game.player.camera.angle)) - (this.HB.volume.z * (1 - game.player.camera.angle)) + (this.HB.volume.y * game.player.camera.angle)
                     );
                     ctx.fillRect(0, 0, this.HB.volume.x, this.HB.volume.z * (1 - game.player.camera.angle));
                     ctx.translate(
-                        -(game.window.w / 2 - compareX),
-                        -(game.window.h / 2 - (compareY * game.player.camera.angle) - (this.HB.pos.z * (1 - game.player.camera.angle)) - (this.HB.volume.z * (1 - game.player.camera.angle)) + (this.HB.volume.y * game.player.camera.angle))
+                        -(game.gameView.w / 2 - compareX),
+                        -(game.gameView.h / 2 - (compareY * game.player.camera.angle) - (this.HB.pos.z * (1 - game.player.camera.angle)) - (this.HB.volume.z * (1 - game.player.camera.angle)) + (this.HB.volume.y * game.player.camera.angle))
                     );
                 }
 
             } else if (this.color) {
                 ctx.fillStyle = `rgba(${this.color[0]}, ${this.color[1]}, ${this.color[2]}, ${this.opacity})`;
                 ctx.fillRect(
-                    game.window.w / 2 - compareX,
-                    game.window.h / 2 - (compareY * game.player.camera.angle) - (this.HB.volume.z * (1 - game.player.camera.angle)) - (this.HB.pos.z * (1 - game.player.camera.angle)),
+                    game.gameView.w / 2 - compareX,
+                    game.gameView.h / 2 - (compareY * game.player.camera.angle) - (this.HB.volume.z * (1 - game.player.camera.angle)) - (this.HB.pos.z * (1 - game.player.camera.angle)),
                     this.HB.volume.x,
                     this.HB.volume.y * game.player.camera.angle
                 );
                 if (this.colorSide) {
                     ctx.fillStyle = `rgba(${this.colorSide[0]}, ${this.colorSide[1]}, ${this.colorSide[2]}, ${this.opacity})`;
                     ctx.fillRect(
-                        game.window.w / 2 - compareX,
-                        game.window.h / 2 - (compareY * game.player.camera.angle) - (this.HB.pos.z * (1 - game.player.camera.angle)) - (this.HB.volume.z * (1 - game.player.camera.angle)) + (this.HB.volume.y * game.player.camera.angle),
+                        game.gameView.w / 2 - compareX,
+                        game.gameView.h / 2 - (compareY * game.player.camera.angle) - (this.HB.pos.z * (1 - game.player.camera.angle)) - (this.HB.volume.z * (1 - game.player.camera.angle)) + (this.HB.volume.y * game.player.camera.angle),
                         this.HB.volume.x,
                         this.HB.volume.z * (1 - game.player.camera.angle)
                     );
@@ -470,7 +470,7 @@ class PolyBlock {
         let compare = origin[axis] - this[axis];
         let dimension = 'w';
         if (axis == 'y') dimension = 'h';
-        return game.window[dimension] / 2 - compare + offset;
+        return game.gameView[dimension] / 2 - compare + offset;
     }
 
     step() {
