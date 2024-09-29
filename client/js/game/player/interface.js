@@ -196,17 +196,39 @@ class Interface {
                                             |__/
             */
             //if one item, it is active
-            if (this.player.character.inventory.length == 1) ctx.drawImage(this.player.character.inventory[0].icon, (game.gameView.w / 2) - 150, game.gameView.h - 64, 64, 64);
+            if (this.player.character.inventory.length == 1) {
+                // Save the current context state
+                ctx.save();
+
+                // Draw the image as a trapezoid
+                ctx.setTransform(1, 0, -0.2, 1, (game.gameView.w / 2) - 150, game.gameView.h - 64);
+                ctx.drawImage(this.player.character.inventory[0].icon, 0, 0, 64, 64);
+
+                // Restore the context to the original state
+                ctx.restore();
+            }
             else if (this.player.character.inventory.length == 2) {
                 // if you have two, draw both
                 switch (this.player.character.item) {
                     case 0:
-                        ctx.drawImage(this.player.character.inventory[0].icon, (game.gameView.w / 2) - 150, game.gameView.h - 64, 64, 64);
-                        ctx.drawImage(this.player.character.inventory[1].iconInactive, (game.gameView.w / 2) + 88, game.gameView.h - 64, 64, 64);
+                        ctx.save();
+                        ctx.setTransform(1, 0, -0.2, 1, (game.gameView.w / 2) - 150, game.gameView.h - 64);
+                        ctx.drawImage(this.player.character.inventory[0].icon, 0, 0, 64, 64);
+                        ctx.restore();
+                        ctx.save();
+                        ctx.setTransform(1, 0, 0.2, 1, (game.gameView.w / 2) + 88, game.gameView.h - 64);
+                        ctx.drawImage(this.player.character.inventory[1].iconInactive, 0, 0, 64, 64);
+                        ctx.restore();
                         break;
                     case 1:
-                        ctx.drawImage(this.player.character.inventory[0].iconInactive, (game.gameView.w / 2) - 150, game.gameView.h - 64, 64, 64)
-                        ctx.drawImage(this.player.character.inventory[1].icon, (game.gameView.w / 2) + 88, game.gameView.h - 64, 64, 64);
+                        ctx.save();
+                        ctx.setTransform(1, 0, -0.2, 1, (game.gameView.w / 2) - 150, game.gameView.h - 64);
+                        ctx.drawImage(this.player.character.inventory[0].iconInactive, 0, 0, 64, 64);
+                        ctx.restore();
+                        ctx.save();
+                        ctx.setTransform(1, 0, 0.2, 1, (game.gameView.w / 2) + 88, game.gameView.h - 64);
+                        ctx.drawImage(this.player.character.inventory[1].icon, 0, 0, 64, 64);
+                        ctx.restore();
                         break;
                 }
             }
@@ -246,7 +268,7 @@ class Interface {
         if (!game.match.paused && !game.paused) {
             let compareX = game.player.camera.x - this.player.character.HB.pos.x;
             let compareY = game.player.camera.y - this.player.character.HB.pos.y;
-               
+
             // Calculate a relative aimX without changing the original aimX
             let aimX = this.player.controller.aimX;
             let aimY = this.player.controller.aimY;
