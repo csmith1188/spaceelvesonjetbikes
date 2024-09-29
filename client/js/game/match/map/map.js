@@ -262,26 +262,26 @@ class Node {
     }
 
     draw() {
-        if (this.pass) {
-            ctx.strokeStyle = "#0000FF"
-            // return
-            // else
-            // ctx.strokeStyle = "#FF0000"
-            let compareX = game.player.camera.x - this.pos.x;
-            let compareY = game.player.camera.y - this.pos.y;
-            if (game.player.camera.radius > Math.max(Math.abs(compareX), Math.abs(compareY))) {
-                ctx.lineWidth = 0.2;
-                if (game.player.camera._3D)
-                    ctx.strokeRect(
-                        game.gameView.w / 2 - compareX,
-                        game.gameView.h / 2 - (compareY * game.player.camera.angle),
-                        this.pos.w,
-                        this.pos.h * game.player.camera.angle
-                    );
-                else
-                    ctx.strokeRect(game.gameView.w / 2 - compareX, game.gameView.h / 2 - compareY, this.pos.w, this.pos.h);
-            }
-        }
+        // if (this.pass) {
+        //     ctx.strokeStyle = "#0000FF"
+        //     // return
+        //     // else
+        //     // ctx.strokeStyle = "#FF0000"
+        //     let compareX = game.player.camera.x - this.pos.x;
+        //     let compareY = game.player.camera.y - this.pos.y;
+        //     if (game.player.camera.radius > Math.max(Math.abs(compareX), Math.abs(compareY))) {
+        //         ctx.lineWidth = 0.2;
+        //         if (game.player.camera._3D)
+        //             ctx.strokeRect(
+        //                 game.gameView.w / 2 - compareX,
+        //                 game.gameView.h / 2 - (compareY * game.player.camera.angle),
+        //                 this.pos.w,
+        //                 this.pos.h * game.player.camera.angle
+        //             );
+        //         else
+        //             ctx.strokeRect(game.gameView.w / 2 - compareX, game.gameView.h / 2 - compareY, this.pos.w, this.pos.h);
+        //     }
+        // }
     }
 }
 
@@ -459,6 +459,41 @@ class Tileset {
     }
 
     draw = () => {
+        if (game.player.camera._3D) {
+            this.draw3D();
+        } else {
+            // For every column that the map can make from the total space
+            let count = 0;
+            const rows = this.grid.length
+            for (let y = 0; y < rows; y++) {
+                let compareY = game.player.camera.y - (y * this.tileSize);
+                //For every row
+                const cols = this.grid[y].length
+                for (let x = 0; x < cols; x++) {
+                    let compareX = game.player.camera.x - (x * this.tileSize);
+                    //If the tile is within the camera's viewable radius and the horizon
+                    // TODO: horizon count doesn't actually line up with the horizon. sky overdraws it
+                    let horizonCalc = 0;
+                    if (game.player.camera._3D)
+                        horizonCalc = (game.gameView.h / 2) * (1 - game.player.camera.angle)
+                    if (game.player.camera.radius > Math.abs(compareX) && game.player.camera.radius > Math.abs(compareY) - horizonCalc) {
+                        count++;
+                        let tileIMG = this.decodeTile(this.grid[y][x]);
+                        ctx.drawImage(
+                            tileIMG,
+                            game.gameView.w / 2 - compareX,
+                            game.gameView.h / 2 - compareY,
+                            this.tileSize,
+                            this.tileSize
+                        );
+                    }
+                }
+            }
+            // console.log("Drew a total of " + count + " tiles");
+        }
+    }
+
+    draw3D = () => {
         // For every column that the map can make from the total space
         let count = 0;
         const rows = this.grid.length
@@ -469,31 +504,18 @@ class Tileset {
             for (let x = 0; x < cols; x++) {
                 let compareX = game.player.camera.x - (x * this.tileSize);
                 //If the tile is within the camera's viewable radius and the horizon
-                // TODO: horizon count doesn't actually line up with the horizon. sky overdraws it
-                let horizonCalc = 0;
-                if (game.player.camera._3D)
-                    horizonCalc = (game.gameView.h / 2) * (1 - game.player.camera.angle)
+                let horizonCalc = (game.gameView.h / 2) * (1 - game.player.camera.angle)
                 if (game.player.camera.radius > Math.abs(compareX) && game.player.camera.radius > Math.abs(compareY) - horizonCalc) {
                     count++;
                     let tileIMG = this.decodeTile(this.grid[y][x]);
-                    // Adjust y and h if 3D draw mode
-                    if (game.player.camera._3D)
-                        ctx.drawImage(
-                            tileIMG,
-                            game.gameView.w / 2 - compareX,
-                            game.gameView.h / 2 - (compareY * game.player.camera.angle),
-                            this.tileSize,
-                            this.tileSize * game.player.camera.angle
-                        );
-                    //Otherwise, draw normally
-                    else
-                        ctx.drawImage(
-                            tileIMG,
-                            game.gameView.w / 2 - compareX,
-                            game.gameView.h / 2 - compareY,
-                            this.tileSize,
-                            this.tileSize
-                        );
+                    let perspectiveW = 1 - ((compareY * (1 -game.player.camera.angle) / game.gameView.h));
+                    ctx.drawImage(
+                        tileIMG,
+                        game.gameView.w / 2 - compareX * perspectiveW,
+                        game.gameView.h / 2 - (compareY * game.player.camera.angle),
+                        this.tileSize * perspectiveW,
+                        this.tileSize * game.player.camera.angle
+                    );
                 }
             }
         }

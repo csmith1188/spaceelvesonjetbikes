@@ -146,41 +146,41 @@ class Character {
             if (this.controller.buttons.start.current != this.controller.buttons.start.last && this.controller.buttons.start.current)
                 game.paused = !game.paused;
 
-                if (this.controller.buttons.moveLeft.current) this.mom.x = -1;
-                if (this.controller.buttons.moveRight.current) this.mom.x = 1;
-                if (this.controller.buttons.moveUp.current) this.mom.y = -1;
-                if (this.controller.buttons.moveDown.current) this.mom.y = 1;
-                if (this.controller.buttons.jump.current && this.controller.buttons.brake.current) {
-                    this.brace = 1;
-                }
-                else {
-                    if (this.controller.buttons.jump.current) {
-                        // If the player has positive power points (pp)
-                        if (this.pp > 2) {
-                            // sounds.upBoost.currentTime = 0;
-                            // if (!this.muted) sounds.upBoost.play();
-                            // Set the z momentum to 1 (move upwards)
-                            this.mom.z = 1;
-                            // Decrease the power points by 1
-                            this.pp -= 2;
-                        }
+            if (this.controller.buttons.moveLeft.current) this.mom.x = -1;
+            if (this.controller.buttons.moveRight.current) this.mom.x = 1;
+            if (this.controller.buttons.moveUp.current) this.mom.y = -1;
+            if (this.controller.buttons.moveDown.current) this.mom.y = 1;
+            if (this.controller.buttons.jump.current && this.controller.buttons.brake.current) {
+                this.brace = 1;
+            }
+            else {
+                if (this.controller.buttons.jump.current) {
+                    // If the player has positive power points (pp)
+                    if (this.pp > 2) {
+                        // sounds.upBoost.currentTime = 0;
+                        // if (!this.muted) sounds.upBoost.play();
+                        // Set the z momentum to 1 (move upwards)
+                        this.mom.z = 1;
+                        // Decrease the power points by 1
+                        this.pp -= 2;
                     }
-                    if (this.controller.buttons.brake.current) this.mom.z = -1;
+                }
+                if (this.controller.buttons.brake.current) this.mom.z = -1;
 
+            }
+            // if the boost button current is not equal to the boost button last
+            // and the boost current is 1
+            if (this.controller.buttons.boost.current != this.controller.buttons.boost.last && this.controller.buttons.boost.current) {
+                // if the player has positive power points (pp)
+                if (this.pp > 60) {
+                    this.pp -= 60;
+                    sounds.boost.currentTime = 0;
+                    if (!this.muted) sounds.boost.play();
+                    this.speed.x += this.mom.x * 8;
+                    this.speed.y += this.mom.y * 8;
+                    this.speed.z += this.mom.z * 8;
                 }
-                // if the boost button current is not equal to the boost button last
-                // and the boost current is 1
-                if (this.controller.buttons.boost.current != this.controller.buttons.boost.last && this.controller.buttons.boost.current) {
-                    // if the player has positive power points (pp)
-                    if (this.pp > 60) {
-                        this.pp -= 60;
-                        sounds.boost.currentTime = 0;
-                        if (!this.muted) sounds.boost.play();
-                        this.speed.x += this.mom.x * 8;
-                        this.speed.y += this.mom.y * 8;
-                        this.speed.z += this.mom.z * 8;
-                    }
-                }
+            }
             /*
                  _             _   _
               __| |_  ___  ___| |_(_)_ _  __ _
@@ -750,29 +750,30 @@ class Character {
                 ctx.fillStyle = '#FFFFFF';
                 ctx.font = "12px Jura";
                 ctx.fillText(this.name, game.gameView.w / 2 - compareX, game.gameView.h / 2 - compareY - this.HB.height - this.HB.pos.z - 10);
-            }
 
-            /*
-              _                     _     _ _
-             | |_ __ _ _ _ __ _ ___| |_  | (_)_ _  ___
-             |  _/ _` | '_/ _` / -_)  _| | | | ' \/ -_)
-              \__\__,_|_| \__, \___|\__| |_|_|_||_\___|
-                          |___/
-            */
-            // This can draw a line to the closest part of a rectangle
-            // except it broke at some point when i moved to utils
-            // It can still draw to the XY which is good for tubes, but not blocks
-            if (this.target && game.debug) {
-                compareX = game.player.camera.x - this.HB.pos.x; //If you change this to the target.pos
-                compareY = game.player.camera.y - this.HB.pos.y; //If you change this to the target.pos
-                let targetX = game.player.camera.x - this.target.HB.pos.x;
-                let targetY = game.player.camera.y - this.target.HB.pos.y;
-                ctx.strokeStyle = "#FFFFFF"
-                ctx.lineWidth = 2;
-                ctx.beginPath();
-                ctx.moveTo(game.gameView.w / 2 - targetX, game.gameView.h / 2 - targetY);
-                ctx.lineTo(game.gameView.w / 2 - compareX, game.gameView.h / 2 - compareY);
-                ctx.stroke();
+                /*
+                 _                     _     _ _
+                | |_ __ _ _ _ __ _ ___| |_  | (_)_ _  ___
+                |  _/ _` | '_/ _` / -_)  _| | | | ' \/ -_)
+                \__\__,_|_| \__, \___|\__| |_|_|_||_\___|
+                            |___/
+                */
+                // This can draw a line to the closest part of a rectangle
+                // except it broke at some point when i moved to utils
+                // It can still draw to the XY which is good for tubes, but not blocks
+                if (this.target && game.debug) {
+                    compareX = game.player.camera.x - this.HB.pos.x; //If you change this to the target.pos
+                    compareY = game.player.camera.y - this.HB.pos.y; //If you change this to the target.pos
+                    let targetX = game.player.camera.x - this.target.HB.pos.x;
+                    let targetY = game.player.camera.y - this.target.HB.pos.y;
+                    ctx.strokeStyle = "#FFFFFF"
+                    ctx.lineWidth = 2;
+                    ctx.beginPath();
+                    ctx.moveTo(game.gameView.w / 2 - targetX, game.gameView.h / 2 - targetY);
+                    ctx.lineTo(game.gameView.w / 2 - compareX, game.gameView.h / 2 - compareY);
+                    ctx.stroke();
+                }
+
             }
         }
     }
@@ -791,6 +792,7 @@ class Character {
 
         let compareX = game.player.camera.x - this.HB.pos.x;
         let compareY = game.player.camera.y - this.HB.pos.y;
+        let perspectiveW = 1 - ((compareY * (1 - game.player.camera.angle) / game.gameView.h));
 
         /*
              _            _
@@ -803,9 +805,9 @@ class Character {
         let shadowShrink = this.HB.radius * Math.min(((this.HB.pos.z - this.floor) / 128), 1)
         ctx.drawImage(
             this.shadow,
-            game.gameView.w / 2 - compareX - this.HB.radius + shadowShrink,
+            game.gameView.w / 2 - compareX * perspectiveW - this.HB.radius * perspectiveW + shadowShrink,
             game.gameView.h / 2 - (compareY * game.player.camera.angle) - this.HB.radius + (this.HB.height * (1 - game.player.camera.angle)) + (shadowShrink * game.player.camera.angle) - (this.floor * (1 - game.player.camera.angle)),
-            (this.HB.radius * 2) - (shadowShrink * 2),
+            ((this.HB.radius * 2) - (shadowShrink * 2)) * perspectiveW,
             ((this.HB.radius * 2) - (shadowShrink * 2)) * game.player.camera.angle
         );
         ctx.globalAlpha = 1;
@@ -821,7 +823,7 @@ class Character {
         ctx.lineWidth = 3;
         ctx.beginPath();
         ctx.ellipse(
-            game.gameView.w / 2 - compareX,
+            game.gameView.w / 2 - compareX * perspectiveW,
             game.gameView.h / 2 - (compareY * game.player.camera.angle) - (this.floor * (1 - game.player.camera.angle)),
             this.HB.radius,
             this.HB.radius * game.player.camera.angle,
@@ -829,39 +831,56 @@ class Character {
         ctx.stroke();
         // draw an arc around the bottom half of the selector ring offest by 10 pixels outside that represents the character's health, and adjust for camera angle
         // draw bar background
-        ctx.strokeStyle = "#000000";
-        ctx.lineWidth = 5;
-        ctx.beginPath();
-        ctx.beginPath();
-        ctx.arc(
-            game.gameView.w / 2 - compareX,
-            game.gameView.h / 2 - (compareY * game.player.camera.angle) - (this.floor * (1 - game.player.camera.angle)),
-            this.HB.radius + 10,
-            Math.PI,
-            Math.PI * 2,
-            true
-        );
-        ctx.stroke();
-        ctx.strokeStyle = this.unitColor(true);
-        ctx.lineWidth = 3;
-        ctx.beginPath();
-        ctx.arc(
-            game.gameView.w / 2 - compareX,
-            game.gameView.h / 2 - (compareY * game.player.camera.angle) - (this.floor * (1 - game.player.camera.angle)),
-            this.HB.radius + 10,
-            Math.PI,
-            Math.PI * (1 - (this.hp / this.hp_max)),
-            true
-        );
-        ctx.stroke();
+        if (game.player.camera.angle < 0.05) {
+            // Display a bar
+            ctx.strokeStyle = "#000000";
+            ctx.lineWidth = 5;
+            ctx.beginPath();
+            ctx.moveTo(game.gameView.w / 2 - compareX * perspectiveW - this.HB.radius - 10, game.gameView.h / 2 - (compareY * game.player.camera.angle) - (this.floor * (1 - game.player.camera.angle)) - 5);
+            ctx.lineTo(game.gameView.w / 2 - compareX * perspectiveW + this.HB.radius + 10, game.gameView.h / 2 - (compareY * game.player.camera.angle) - (this.floor * (1 - game.player.camera.angle)) - 5);
+            ctx.stroke();
+            ctx.strokeStyle = this.unitColor(true);
+            ctx.lineWidth = 3;
+            ctx.beginPath();
+            ctx.moveTo(game.gameView.w / 2 - compareX * perspectiveW - this.HB.radius - 10, game.gameView.h / 2 - (compareY * game.player.camera.angle) - (this.floor * (1 - game.player.camera.angle)) - 5);
+            ctx.lineTo(game.gameView.w / 2 - compareX * perspectiveW - this.HB.radius - 10 + ((this.hp / this.hp_max) * (this.HB.radius * 2 + 20)), game.gameView.h / 2 - (compareY * game.player.camera.angle) - (this.floor * (1 - game.player.camera.angle)) - 5);
+            ctx.stroke();
+        } else {
+            // Display an ellipse
+            ctx.strokeStyle = "#000000";
+            ctx.lineWidth = 5;
+            ctx.beginPath();
+            ctx.ellipse(
+                game.gameView.w / 2 - compareX * perspectiveW,
+                game.gameView.h / 2 - (compareY * game.player.camera.angle) - (this.floor * (1 - game.player.camera.angle)),
+                this.HB.radius + 10,
+                (this.HB.radius + 10) * game.player.camera.angle,
+                0, Math.PI, Math.PI * 2,
+                true
+            );
+            ctx.stroke();
+            ctx.strokeStyle = this.unitColor(true);
+            ctx.lineWidth = 3;
+            ctx.beginPath();
+            ctx.ellipse(
+                game.gameView.w / 2 - compareX * perspectiveW,
+                game.gameView.h / 2 - (compareY * game.player.camera.angle) - (this.floor * (1 - game.player.camera.angle)),
+                this.HB.radius + 10,
+                (this.HB.radius + 10) * game.player.camera.angle,
+                0, Math.PI,
+                Math.PI * (1 - (this.hp / this.hp_max)),
+                true
+            );
+            ctx.stroke();
+        }
 
         if (this.faceCamera)
             ctx.drawImage(
                 this.img,
-                game.gameView.w / 2 - compareX - this.HB.radius,
+                game.gameView.w / 2 - compareX * perspectiveW - this.HB.radius * perspectiveW,
                 game.gameView.h / 2 - (compareY * game.player.camera.angle) - this.HB.height - (this.HB.pos.z * (1 - game.player.camera.angle)) - ((sineAnimate(1, 0.1) * (1 - game.player.camera.angle))),
-                this.HB.radius * 2,
-                this.HB.height
+                (this.HB.radius * 2) * perspectiveW,
+                this.HB.height * perspectiveW
             );
         else
             ctx.drawImage(
@@ -876,7 +895,7 @@ class Character {
         ctx.fillStyle = "#FFFFFF";
         ctx.font = "12px Jura";
         ctx.textAlign = "center";
-        ctx.fillText(this.name, game.gameView.w / 2 - compareX, game.gameView.h / 2 - (compareY * game.player.camera.angle) - this.HB.height - (this.HB.pos.z * (1 - game.player.camera.angle)) - 10);
+        ctx.fillText(this.name, game.gameView.w / 2 - compareX * perspectiveW, game.gameView.h / 2 - (compareY * game.player.camera.angle) - this.HB.height - (this.HB.pos.z * (1 - game.player.camera.angle)) - 10);
 
         /*
              _     _                _    _ _   _
@@ -889,10 +908,10 @@ class Character {
             ctx.lineWidth = 2;
             ctx.fillStyle = "#FF0000";
             ctx.strokeStyle = "#FF0000";
-            ctx.fillRect(game.gameView.w / 2 - compareX - 2, game.gameView.h / 2 - (compareY * game.player.camera.angle) - 2, 4, 4);
+            ctx.fillRect(game.gameView.w / 2 - compareX * perspectiveW - 2, game.gameView.h / 2 - (compareY * game.player.camera.angle) - 2, 4, 4);
             ctx.beginPath();
             ctx.ellipse(
-                game.gameView.w / 2 - compareX,
+                game.gameView.w / 2 - compareX * perspectiveW,
                 game.gameView.h / 2 - (compareY * game.player.camera.angle) - (this.HB.pos.z * (1 - game.player.camera.angle)),
                 this.HB.radius,
                 this.HB.radius * game.player.camera.angle,
@@ -900,7 +919,7 @@ class Character {
             ctx.stroke();
             ctx.beginPath();
             ctx.ellipse(
-                game.gameView.w / 2 - compareX,
+                game.gameView.w / 2 - compareX * perspectiveW,
                 game.gameView.h / 2 - (compareY * game.player.camera.angle) - (this.HB.height * (1 - game.player.camera.angle)) - (this.HB.pos.z * (1 - game.player.camera.angle)),
                 this.HB.radius,
                 this.HB.radius * game.player.camera.angle,
@@ -917,8 +936,31 @@ class Character {
             compareX = game.player.camera.x - newX;
             compareY = game.player.camera.y - newY;
             let compareZ = newZ - this.HB.pos.z;
-            ctx.lineTo(game.gameView.w / 2 - compareX, game.gameView.h / 2 - (compareY * game.player.camera.angle) - (this.speed.z * (1 - game.player.camera.angle)));
+            ctx.lineTo(game.gameView.w / 2 - compareX * perspectiveW, game.gameView.h / 2 - (compareY * game.player.camera.angle) - (this.speed.z * (1 - game.player.camera.angle)));
             ctx.stroke();
+
+            /*
+              _                     _     _ _
+             | |_ __ _ _ _ __ _ ___| |_  | (_)_ _  ___
+             |  _/ _` | '_/ _` / -_)  _| | | | ' \/ -_)
+              \__\__,_|_| \__, \___|\__| |_|_|_||_\___|
+                          |___/
+            */
+            // This can draw a line to the closest part of a rectangle
+            // except it broke at some point when i moved to utils
+            // It can still draw to the XY which is good for tubes, but not blocks
+            if (this.target) {
+                compareX = game.player.camera.x - this.HB.pos.x; //If you change this to the target.pos
+                compareY = game.player.camera.y - this.HB.pos.y; //If you change this to the target.pos
+                let targetX = game.player.camera.x - this.target.HB.pos.x;
+                let targetY = game.player.camera.y - this.target.HB.pos.y;
+                ctx.strokeStyle = "#FFFFFF"
+                ctx.lineWidth = 2;
+                ctx.beginPath();
+                ctx.moveTo(game.gameView.w / 2 - targetX * perspectiveW, game.gameView.h / 2 - targetY);
+                ctx.lineTo(game.gameView.w / 2 - compareX * perspectiveW, game.gameView.h / 2 - compareY);
+                ctx.stroke();
+            }
         }
     }
 

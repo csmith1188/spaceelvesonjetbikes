@@ -263,6 +263,8 @@ class Block {
     draw3D() {
         let compareX = game.player.camera.x - this.HB.pos.x;
         let compareY = game.player.camera.y - this.HB.pos.y;
+        let perspectiveW = 1 - ((compareY * (1 - game.player.camera.angle) / game.gameView.h));
+
         /*
                          _                           _ _         _
                       __| |_ _ __ ___ __ __  __ _  _| (_)_ _  __| |___ _ _
@@ -276,21 +278,21 @@ class Block {
                 ctx.globalAlpha = 0.4;
                 ctx.drawImage(
                     this.shadow,
-                    game.gameView.w / 2 - compareX,
+                    game.gameView.w / 2 - compareX * perspectiveW,
                     game.gameView.h / 2 - compareY,
                     this.HB.radius,
-                    this.HB.radius
+                    this.HB.radius * perspectiveW
                 );
                 ctx.globalAlpha = 1;
             }
             if (this.imgFile) {
-                ctx.drawImage(this.img, game.gameView.w / 2 - compareX, game.gameView.h / 2 - compareY - this.HB.pos.z, this.HB.radius, this.HB.radius);
+                ctx.drawImage(this.img, game.gameView.w / 2 - compareX * perspectiveW, game.gameView.h / 2 - compareY - this.HB.pos.z, this.HB.radius, this.HB.radius);
             } else {
                 //SIDE
                 ctx.beginPath();
                 ctx.fillStyle = `rgba(${this.colorSide[0]}, ${this.colorSide[1]}, ${this.colorSide[2]}, ${this.opacity})`;
                 ctx.ellipse(
-                    game.gameView.w / 2 - compareX,
+                    game.gameView.w / 2 - compareX * perspectiveW,
                     game.gameView.h / 2 - (compareY * game.player.camera.angle) - (this.HB.pos.z * (1 - game.player.camera.angle)),
                     this.HB.radius,
                     this.HB.radius * game.player.camera.angle,
@@ -299,20 +301,20 @@ class Block {
                 ctx.fill();
                 ctx.beginPath();
                 ctx.fillRect(
-                    game.gameView.w / 2 - compareX - this.HB.radius,
+                    game.gameView.w / 2 - compareX * perspectiveW - this.HB.radius * perspectiveW,
                     game.gameView.h / 2 - (compareY * game.player.camera.angle) - (this.HB.height * (1 - game.player.camera.angle)) - (this.HB.pos.z * (1 - game.player.camera.angle)),
                     this.HB.radius * 2,
-                    this.HB.height * (1 - game.player.camera.angle)
+                    this.HB.height * (1 - game.player.camera.angle) * perspectiveW
                 );
                 ctx.fill();
                 //TOP
                 ctx.beginPath();
                 ctx.fillStyle = `rgba(${this.color[0]}, ${this.color[1]}, ${this.color[2]}, ${this.opacity})`;
                 ctx.ellipse(
-                    game.gameView.w / 2 - compareX,
+                    game.gameView.w / 2 - compareX * perspectiveW,
                     game.gameView.h / 2 - (compareY * game.player.camera.angle) - (this.HB.height * (1 - game.player.camera.angle)) - (this.HB.pos.z * (1 - game.player.camera.angle)),
                     this.HB.radius,
-                    this.HB.radius * game.player.camera.angle,
+                    this.HB.radius * game.player.camera.angle  * perspectiveW,
                     0, 0, 2 * Math.PI
                 );
                 ctx.fill();
@@ -331,9 +333,9 @@ class Block {
                 ctx.globalAlpha = 0.4;
                 ctx.drawImage(
                     this.shadow,
-                    game.gameView.w / 2 - compareX,
+                    game.gameView.w / 2 - compareX * perspectiveW,
                     game.gameView.h / 2 - (compareY * game.player.camera.angle),
-                    this.HB.volume.x,
+                    this.HB.volume.x * perspectiveW,
                     this.HB.volume.y * game.player.camera.angle
                 );
                 ctx.globalAlpha = 1;
@@ -343,8 +345,9 @@ class Block {
                 texture.src = this.imgFile;
                 let pattern;
 
+
                 // Set the dimensions of the offscreen canvas to scale the image
-                scale_canvas.width = texture.width; // Scale width
+                scale_canvas.width = texture.width  * perspectiveW; // Scale width
                 scale_canvas.height = texture.height * game.player.camera.angle; // Scale height
 
                 //If the texture is big enough to draw
@@ -356,21 +359,31 @@ class Block {
 
                     ctx.fillStyle = pattern;
 
+
                     // Translate the context by the top-left corner of the rectangle
-                    ctx.translate(game.gameView.w / 2 - compareX, game.gameView.h / 2 - (compareY * game.player.camera.angle) - (this.HB.volume.z * (1 - game.player.camera.angle)) - (this.HB.pos.z * (1 - game.player.camera.angle)));
+                    ctx.translate(
+                        game.gameView.w / 2 - compareX * perspectiveW,
+                        game.gameView.h / 2 - (compareY * game.player.camera.angle) - (this.HB.volume.z * (1 - game.player.camera.angle)) - (this.HB.pos.z * (1 - game.player.camera.angle))
+                    );
 
                     // Now fill the rectangle, but with the origin at (0, 0)
-                    ctx.fillRect(0, 0, this.HB.volume.x, this.HB.volume.y * game.player.camera.angle);
+                    ctx.fillRect(0, 0,
+                        this.HB.volume.x * perspectiveW,
+                        this.HB.volume.y * game.player.camera.angle
+                    );
 
                     // Translate the context back
-                    ctx.translate(-(game.gameView.w / 2 - compareX), -(game.gameView.h / 2 - (compareY * game.player.camera.angle) - (this.HB.volume.z * (1 - game.player.camera.angle)) - (this.HB.pos.z * (1 - game.player.camera.angle))));
+                    ctx.translate(
+                        -(game.gameView.w / 2 - compareX * perspectiveW),
+                        -(game.gameView.h / 2 - (compareY * game.player.camera.angle) - (this.HB.volume.z * (1 - game.player.camera.angle)) - (this.HB.pos.z * (1 - game.player.camera.angle)))
+                    );
                 }
 
                 texture = new Image();
                 texture.src = this.imgFileSide;
 
                 // Set the dimensions of the offscreen canvas to scale the image
-                scale_canvas.width = texture.width; // Scale width
+                scale_canvas.width = texture.width  * perspectiveW; // Scale width
                 scale_canvas.height = texture.height * (1 - game.player.camera.angle); // Scale height
                 if (scale_canvas.height >= 1) {
 
@@ -381,12 +394,15 @@ class Block {
                     ctx.fillStyle = pattern;
 
                     ctx.translate(
-                        game.gameView.w / 2 - compareX,
+                        game.gameView.w / 2 - compareX * perspectiveW,
                         game.gameView.h / 2 - (compareY * game.player.camera.angle) - (this.HB.pos.z * (1 - game.player.camera.angle)) - (this.HB.volume.z * (1 - game.player.camera.angle)) + (this.HB.volume.y * game.player.camera.angle)
                     );
-                    ctx.fillRect(0, 0, this.HB.volume.x, this.HB.volume.z * (1 - game.player.camera.angle));
+                    ctx.fillRect(0, 0,
+                        this.HB.volume.x * perspectiveW,
+                        this.HB.volume.z * (1 - game.player.camera.angle)
+                    );
                     ctx.translate(
-                        -(game.gameView.w / 2 - compareX),
+                        -(game.gameView.w / 2 - compareX * perspectiveW),
                         -(game.gameView.h / 2 - (compareY * game.player.camera.angle) - (this.HB.pos.z * (1 - game.player.camera.angle)) - (this.HB.volume.z * (1 - game.player.camera.angle)) + (this.HB.volume.y * game.player.camera.angle))
                     );
                 }
@@ -394,17 +410,17 @@ class Block {
             } else if (this.color) {
                 ctx.fillStyle = `rgba(${this.color[0]}, ${this.color[1]}, ${this.color[2]}, ${this.opacity})`;
                 ctx.fillRect(
-                    game.gameView.w / 2 - compareX,
-                    game.gameView.h / 2 - (compareY * game.player.camera.angle) - (this.HB.volume.z * (1 - game.player.camera.angle)) - (this.HB.pos.z * (1 - game.player.camera.angle)),
-                    this.HB.volume.x,
-                    this.HB.volume.y * game.player.camera.angle
+                    game.gameView.w / 2 - compareX * perspectiveW,
+                    game.gameView.h / 2 - ((compareY * game.player.camera.angle) * perspectiveW) - (this.HB.volume.z * (1 - game.player.camera.angle)) - (this.HB.pos.z * (1 - game.player.camera.angle)),
+                    this.HB.volume.x * perspectiveW,
+                    this.HB.volume.y * game.player.camera.angle * perspectiveW
                 );
                 if (this.colorSide) {
                     ctx.fillStyle = `rgba(${this.colorSide[0]}, ${this.colorSide[1]}, ${this.colorSide[2]}, ${this.opacity})`;
                     ctx.fillRect(
-                        game.gameView.w / 2 - compareX,
+                        game.gameView.w / 2 - compareX * perspectiveW,
                         game.gameView.h / 2 - (compareY * game.player.camera.angle) - (this.HB.pos.z * (1 - game.player.camera.angle)) - (this.HB.volume.z * (1 - game.player.camera.angle)) + (this.HB.volume.y * game.player.camera.angle),
-                        this.HB.volume.x,
+                        this.HB.volume.x * perspectiveW,
                         this.HB.volume.z * (1 - game.player.camera.angle)
                     );
                 }

@@ -246,6 +246,7 @@ class Interface {
         if (!game.match.paused && !game.paused) {
             let compareX = game.player.camera.x - this.player.character.HB.pos.x;
             let compareY = game.player.camera.y - this.player.character.HB.pos.y;
+               
             // Calculate a relative aimX without changing the original aimX
             let aimX = this.player.controller.aimX;
             let aimY = this.player.controller.aimY;
@@ -254,7 +255,7 @@ class Interface {
             //Normalize the dimension distance by the real distance (ratio)
             //Then multiply by the distance of the out circle
             aimX = (aimX / distance);
-            aimY = (aimY / distance);
+            aimY = (aimY / distance) * game.player.camera.angle;
 
             let aimRad = 150;
 

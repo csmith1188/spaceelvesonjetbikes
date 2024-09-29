@@ -31,7 +31,7 @@ Dark elves believe everything is random:
 - Change tick timing to ms timing
 - fix direction change src bug
 - tiled images in ISO
-- Shoot along z rotation in iso view
+- Shoot along z rotation in iso view?
 
 - perspective drawing
 

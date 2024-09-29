@@ -73,6 +73,68 @@ class Match {
     draw() {
 
     }
+
+    command(command) {
+        switch (command) {
+            case 'pause':
+                this.paused = !this.paused;
+                break;
+            case 'menu':
+                if (this.menu) {
+                    this.menu = null;
+                } else {
+                    this.menu = this.menus.tooSmall;
+                }
+                break;
+            case 'debug':
+                game.debug = !game.debug;
+                break;
+            case 'reset':
+                this.setup();
+                break;
+            case 'new_friend':
+                // Friendly
+                this.bots.push(new Bot()) //Big ounce / Loh'Ghan
+                this.bots[this.bots.length - 1].character = new Character(
+                    allID++,
+                    new Vect3((this.map.w / 2), (this.map.h / 2)),
+                    this.bots[this.bots.length - 1],
+                    {
+                        // target: null,
+                        target: this.bots[this.bots.length - 1].character,
+                        name: getName(), team: 0, gfx: 'img/sprites/dark1', color: [0, 255, 0],
+                        hover: 16, airAccel: new Vect3(0.15, 0.15, 1),
+                        runFunc: [
+                            function () { }.bind(this.bots[this.bots.length - 1].character)
+                        ]
+                    }
+                );
+                this.bots[this.bots.length - 1].character.HB = new Cylinder(new Vect3(Math.round(Math.random() * this.map.w), Math.round(Math.random() * this.map.h), 0), 29, 37);
+                let rand = Math.floor(Math.random() * 3);
+                if (rand == 0) {
+                    let rand = Math.floor(Math.random() * 4);
+                    this.bots[this.bots.length - 1].character.inventory.push(new Pistol())
+                    switch (rand) {
+                        case 0:
+                            this.bots[this.bots.length - 1].character.inventory.push(new Pistol())
+                            break;
+                        case 1:
+                            this.bots[this.bots.length - 1].character.inventory.push(new Rifle())
+                            break;
+                        case 2:
+                            this.bots[this.bots.length - 1].character.inventory.push(new Flamer())
+                            break;
+                        case 3:
+                            this.bots[this.bots.length - 1].character.inventory.push(new Flamer())
+                            break;
+                    }
+                    this.bots[this.bots.length - 1].character.item = Math.round(Math.random());
+                }
+
+            default:
+                console.log('Command not recognized: ' + command);
+        }
+    }
 }
 
 /*
@@ -96,7 +158,8 @@ class DebugMatch extends Match {
 
     setup = () => {
         game.debug = true;
-        game.player.camera._3D = false;
+        game.player.camera._3D = true;
+        game.player.camera.angle = 0.5;
         game.player.character = new Jetbike(
             allID++,
             new Vect3((this.map.w / 2), (this.map.h / 2), 0),
@@ -107,16 +170,19 @@ class DebugMatch extends Match {
             this.map.blocks.push(new Ammo_Ballistic(
                 allID++,
                 new Vect3(Math.round(Math.random() * this.map.w), Math.round(Math.random() * this.map.h), 0),
-                new Vect3(128, 128, 64)));
+                new Vect3(128, 128, 64))
+            );
             this.map.blocks.push(new Ammo_Plasma(
                 allID++,
                 new Vect3(Math.round(Math.random() * this.map.w), Math.round(Math.random() * this.map.h), 0),
-                new Vect3(128, 128, 64)));
+                new Vect3(128, 128, 64))
+            );
         }
         this.map.blocks.push(new WeaponPickup(
             allID++,
             new Vect3((this.map.w / 2) + 200, (this.map.h / 2), 0),
-            new Vect3(0, 0, 0, { weapon: 'rifle', pickupDelay: 0 })));
+            new Vect3(0, 0, 0, { weapon: 'rifle', pickupDelay: 0 }))
+        );
 
         // this.bots.push(new Bot()) //Kevin / Jae'Sin
         // this.bots[this.bots.length - 1].character = new Jetbike(
@@ -128,13 +194,15 @@ class DebugMatch extends Match {
         // // add a pistol to the last bot's character's inventory
         // this.bots[this.bots.length - 1].character.inventory.push(new Pistol())
 
+        // this.command('new_friend');
+
         this.map.blocks.push(new Block(
             allID++,
             new Vect3((this.map.w / 2) - 300, (this.map.h / 2) - 0, 0),
             new Vect3(128, 128, 64),
             { color: [101, 101, 101], colorSide: [201, 201, 201], imgFile: 'img/tiles/wall_top.png', imgFileSide: 'img/tiles/wall_side.png' }))
         // this.map.blocks[this.map.blocks.length - 1].HB.pos.z = 100;
-        
+
         this.map.buildNavMesh();
     }
 
