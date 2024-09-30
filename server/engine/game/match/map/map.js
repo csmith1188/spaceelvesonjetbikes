@@ -221,7 +221,7 @@ class Map {
                             |___/
         */
         //If debugging, show node grid
-        if (global.game.debug)
+        if (global.game.debug.all)
             for (const node of this.nodes) {
                 node.draw();
             }

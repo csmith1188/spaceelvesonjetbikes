@@ -64,7 +64,7 @@ class Interface {
             this.drawMenu();
 
             //FPS Information
-            if (game.debug) {
+            if (game.debug.all) {
                 ctx.fillStyle = "#FFFFFF";
                 ctx.font = '12px Jura';
                 ctx.fillText(game.fps, 200, 120);

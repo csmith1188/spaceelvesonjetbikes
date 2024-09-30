@@ -75,6 +75,8 @@ class Match {
     }
 
     command(command) {
+        let cmd = command.split(' ')[0];
+        let args = command.split(' ').slice(1);
         switch (command) {
             case 'pause':
                 this.paused = !this.paused;
@@ -87,7 +89,7 @@ class Match {
                 }
                 break;
             case 'debug':
-                game.debug = !game.debug;
+                game.debug.all = !game.debug.all;
                 break;
             case 'reset':
                 this.setup();
@@ -157,7 +159,7 @@ class DebugMatch extends Match {
     }
 
     setup = () => {
-        game.debug = true;
+        game.debug.all = true;
         game.player.camera._3D = true;
         game.player.camera.angle = 0.5;
         game.player.character = new Jetbike(

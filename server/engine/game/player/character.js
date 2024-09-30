@@ -685,7 +685,7 @@ class Character {
                     global.game.gameView.h / 2 - compareY - this.HB.height - this.HB.pos.z - sineAnimate(1, 0.1),
                     this.HB.radius * 2, this.HB.height
                 );
-                if (global.game.debug) {
+                if (global.game.debug.all) {
                     ctx.fillStyle = "#FF0000";
                     ctx.fillRect(global.game.gameView.w / 2 - compareX - 2, global.game.gameView.h / 2 - compareY - 2, 4, 4);
                     ctx.strokeStyle = "#FF0000";
@@ -738,7 +738,7 @@ class Character {
             // This can draw a line to the closest part of a rectangle
             // except it broke at some point when i moved to utils
             // It can still draw to the XY which is good for tubes, but not blocks
-            if (this.target && global.game.debug) {
+            if (this.target && global.game.debug.all) {
                 compareX = global.game.player.camera.x - this.HB.pos.x; //If you change this to the target.pos
                 compareY = global.game.player.camera.y - this.HB.pos.y; //If you change this to the target.pos
                 let targetX = global.game.player.camera.x - this.target.HB.pos.x;
@@ -861,7 +861,7 @@ class Character {
          \__,_\___|_.__/\_,_\__, | |_||_|_|\__|_.__/\___/_\_\
                             |___/
         */
-        if (global.game.debug) {
+        if (global.game.debug.all) {
             ctx.lineWidth = 2;
             ctx.fillStyle = "#FF0000";
             ctx.strokeStyle = "#FF0000";

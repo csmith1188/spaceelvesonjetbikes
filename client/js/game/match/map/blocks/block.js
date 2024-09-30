@@ -263,7 +263,7 @@ class Block {
     draw3D() {
         let compareX = game.player.camera.x - this.HB.pos.x;
         let compareY = game.player.camera.y - this.HB.pos.y;
-        let perspectiveW = 1 - ((compareY * (1 - game.player.camera.angle) / game.gameView.h));
+        let perspectiveW = 1 - (((compareY / 2) * (1 - game.player.camera.angle)) / game.gameView.h);
 
         /*
                          _                           _ _         _
@@ -295,7 +295,7 @@ class Block {
                     game.gameView.w / 2 - compareX * perspectiveW,
                     game.gameView.h / 2 - (compareY * game.player.camera.angle) - (this.HB.pos.z * (1 - game.player.camera.angle)),
                     this.HB.radius,
-                    this.HB.radius * game.player.camera.angle,
+                    this.HB.radius * game.player.camera.angle * Math.max(0, perspectiveW),
                     0, 0, 2 * Math.PI
                 );
                 ctx.fill();
@@ -304,7 +304,7 @@ class Block {
                     game.gameView.w / 2 - compareX * perspectiveW - this.HB.radius * perspectiveW,
                     game.gameView.h / 2 - (compareY * game.player.camera.angle) - (this.HB.height * (1 - game.player.camera.angle)) - (this.HB.pos.z * (1 - game.player.camera.angle)),
                     this.HB.radius * 2,
-                    this.HB.height * (1 - game.player.camera.angle) * perspectiveW
+                    this.HB.height * (1 - game.player.camera.angle) * Math.max(0, perspectiveW)
                 );
                 ctx.fill();
                 //TOP
@@ -314,7 +314,7 @@ class Block {
                     game.gameView.w / 2 - compareX * perspectiveW,
                     game.gameView.h / 2 - (compareY * game.player.camera.angle) - (this.HB.height * (1 - game.player.camera.angle)) - (this.HB.pos.z * (1 - game.player.camera.angle)),
                     this.HB.radius,
-                    this.HB.radius * game.player.camera.angle  * perspectiveW,
+                    this.HB.radius * game.player.camera.angle * Math.max(0, perspectiveW),
                     0, 0, 2 * Math.PI
                 );
                 ctx.fill();
@@ -351,7 +351,7 @@ class Block {
                 scale_canvas.height = texture.height * game.player.camera.angle; // Scale height
 
                 //If the texture is big enough to draw
-                if (scale_canvas.height >= 1) {
+                if (scale_canvas.height >= 1 && scale_canvas.width >= 1) {
                     // Draw the scaled image onto the offscreen canvas
                     sctx.drawImage(texture, 0, 0, scale_canvas.width, scale_canvas.height);
 
@@ -385,7 +385,7 @@ class Block {
                 // Set the dimensions of the offscreen canvas to scale the image
                 scale_canvas.width = texture.width  * perspectiveW; // Scale width
                 scale_canvas.height = texture.height * (1 - game.player.camera.angle); // Scale height
-                if (scale_canvas.height >= 1) {
+                if (scale_canvas.height >= 1 && scale_canvas.width >= 1) {
 
                     sctx.drawImage(texture, 0, 0, scale_canvas.width, scale_canvas.height);
 

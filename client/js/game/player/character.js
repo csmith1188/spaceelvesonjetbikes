@@ -709,7 +709,7 @@ class Character {
                     game.gameView.h / 2 - compareY - this.HB.height - this.HB.pos.z - sineAnimate(1, 0.1),
                     this.HB.radius * 2, this.HB.height
                 );
-                if (game.debug) {
+                if (game.debug.all) {
                     ctx.fillStyle = "#FF0000";
                     ctx.fillRect(game.gameView.w / 2 - compareX - 2, game.gameView.h / 2 - compareY - 2, 4, 4);
                     ctx.strokeStyle = "#FF0000";
@@ -761,7 +761,7 @@ class Character {
                 // This can draw a line to the closest part of a rectangle
                 // except it broke at some point when i moved to utils
                 // It can still draw to the XY which is good for tubes, but not blocks
-                if (this.target && game.debug) {
+                if (this.target && game.debug.all) {
                     compareX = game.player.camera.x - this.HB.pos.x; //If you change this to the target.pos
                     compareY = game.player.camera.y - this.HB.pos.y; //If you change this to the target.pos
                     let targetX = game.player.camera.x - this.target.HB.pos.x;
@@ -825,7 +825,7 @@ class Character {
         ctx.ellipse(
             game.gameView.w / 2 - compareX * perspectiveW,
             game.gameView.h / 2 - (compareY * game.player.camera.angle) - (this.floor * (1 - game.player.camera.angle)),
-            this.HB.radius,
+            this.HB.radius * Math.max(0, perspectiveW),
             this.HB.radius * game.player.camera.angle,
             0, 0, 2 * Math.PI);
         ctx.stroke();
@@ -853,8 +853,8 @@ class Character {
             ctx.ellipse(
                 game.gameView.w / 2 - compareX * perspectiveW,
                 game.gameView.h / 2 - (compareY * game.player.camera.angle) - (this.floor * (1 - game.player.camera.angle)),
-                this.HB.radius + 10,
-                (this.HB.radius + 10) * game.player.camera.angle,
+                this.HB.radius * Math.max(0, perspectiveW) + 10,
+                this.HB.radius * game.player.camera.angle + 10,
                 0, Math.PI, Math.PI * 2,
                 true
             );
@@ -865,8 +865,8 @@ class Character {
             ctx.ellipse(
                 game.gameView.w / 2 - compareX * perspectiveW,
                 game.gameView.h / 2 - (compareY * game.player.camera.angle) - (this.floor * (1 - game.player.camera.angle)),
-                this.HB.radius + 10,
-                (this.HB.radius + 10) * game.player.camera.angle,
+                this.HB.radius * Math.max(0, perspectiveW) + 10,
+                this.HB.radius * game.player.camera.angle + 10,
                 0, Math.PI,
                 Math.PI * (1 - (this.hp / this.hp_max)),
                 true
@@ -904,7 +904,7 @@ class Character {
          \__,_\___|_.__/\_,_\__, | |_||_|_|\__|_.__/\___/_\_\
                             |___/
         */
-        if (game.debug) {
+        if (game.debug.all) {
             ctx.lineWidth = 2;
             ctx.fillStyle = "#FF0000";
             ctx.strokeStyle = "#FF0000";

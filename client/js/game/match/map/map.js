@@ -221,7 +221,7 @@ class Map {
                             |___/
         */
         //If debugging, show node grid
-        if (game.debug)
+        if (game.debug.all)
             for (const node of this.nodes) {
                 node.draw();
             }
@@ -497,28 +497,75 @@ class Tileset {
         // For every column that the map can make from the total space
         let count = 0;
         const rows = this.grid.length
+        let firstRow = 0;
+        let midRow = 0;
+        let rowTrack = 0;
+        let perspectiveW = 0;
+        let compareY = 0;
+        let compareX = 0;
+        let nom = 0;
+        let denom = 0;
         for (let y = 0; y < rows; y++) {
-            let compareY = game.player.camera.y - (y * this.tileSize);
-            //For every row
-            const cols = this.grid[y].length
-            for (let x = 0; x < cols; x++) {
-                let compareX = game.player.camera.x - (x * this.tileSize);
-                //If the tile is within the camera's viewable radius and the horizon
-                let horizonCalc = (game.gameView.h / 2) * (1 - game.player.camera.angle)
-                if (game.player.camera.radius > Math.abs(compareX) && game.player.camera.radius > Math.abs(compareY) - horizonCalc) {
-                    count++;
-                    let tileIMG = this.decodeTile(this.grid[y][x]);
-                    let perspectiveW = 1 - ((compareY * (1 -game.player.camera.angle) / game.gameView.h));
-                    ctx.drawImage(
-                        tileIMG,
-                        game.gameView.w / 2 - compareX * perspectiveW,
-                        game.gameView.h / 2 - (compareY * game.player.camera.angle),
-                        this.tileSize * perspectiveW,
-                        this.tileSize * game.player.camera.angle
-                    );
+            compareY = game.player.camera.y - (y * this.tileSize);
+            let horizonCalc = (game.gameView.h / 2) * (1 - game.player.camera.angle)
+            if (game.player.camera.radius > Math.abs(compareY) - horizonCalc) {
+
+
+                //Calculate the perspective
+                nom = compareY - game.gameView.h;
+                denom = game.gameView.h;
+                perspectiveW = nom / denom;
+                // perspectiveW = 1 - ((compareY / game.gameView.h));
+
+
+                // Was this the first row?
+                if (firstRow == 0) {
+                    firstRow = y
+                    console.log("First row is " + firstRow);
+                    console.log(compareY, nom, denom, perspectiveW);
+                }
+                //if this compareY is horizontal to the player's vertical hitbox
+                if (compareY <= this.tileSize / 2 && compareY > -this.tileSize / 2) {
+                    midRow = y;
+                    console.log("Mid row is " + midRow);
+                    console.log(compareY, nom, denom, perspectiveW);
+                }
+                rowTrack = y;
+                //For every row
+                const cols = this.grid[y].length
+
+                // console.log(game.gameView.h / 2 - (compareY * (perspectiveW * game.player.camera.angle)));
+                
+                for (let x = 0; x < cols; x++) {
+                    compareX = game.player.camera.x - (x * this.tileSize);
+                    //If the tile is within the camera's viewable radius and the horizon
+                    if (game.player.camera.radius > Math.abs(compareX)) {
+                        count++;
+                        let tileIMG = this.decodeTile(this.grid[y][x]);
+                        // ctx.drawImage(
+                        //     tileIMG,
+                        //     game.gameView.w / 2 - compareX * perspectiveW,
+                        //     game.gameView.h / 2 - compareY * perspectiveW * game.player.camera.angle,
+                        //     this.tileSize * perspectiveW,
+                        //     this.tileSize * perspectiveW * game.player.camera.angle
+                        // );
+                        //draw a rectangle to show the perspective
+                        ctx.strokeStyle = "#FF0000";
+                        ctx.strokeRect(
+                            game.gameView.w / 2 - compareX * perspectiveW,
+                            game.gameView.h / 2 - compareY * perspectiveW,
+                            this.tileSize * perspectiveW,
+                            this.tileSize * perspectiveW,
+                        );
+                        
+                        ctx.stroke();
+                    }
                 }
             }
         }
+        // console.log("The last row is " + rowTrack);
+        // console.log(nom, (game.player.camera.y - (rowTrack * this.tileSize)) + game.gameView.h, perspectiveW);
+        
         // console.log("Drew a total of " + count + " tiles");
     }
 

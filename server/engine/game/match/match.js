@@ -79,7 +79,7 @@ class DebugMatch extends Match {
     }
 
     setup = () => {
-        game.debug = true;
+        game.debug.all = true;
 
         game.player.character = new Jetbike(
             allID++,
