@@ -200,10 +200,10 @@ class WeaponPickup extends PickUp {
         this.item = new Pistol();
         this.ammoMax = 10;
         this.shadowDraw = true;
-        this.pickupDelay = ((game.match) ? game.match.ticks : 0) + 180;
+        this.pickupDelay = ((game.match) ? game.match.clock : 0) + 1000;
         this.touchSFX = sounds.pickup_weapon;
         this.runFunc = [(actor, side) => {
-            if (this.pickupDelay < game.match.ticks) {
+            if (this.pickupDelay < game.match.clock) {
                 if (actor instanceof Character) {
                     if (actor.inventory.length < 2) {
                         if (!actor.muted)

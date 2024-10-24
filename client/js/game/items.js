@@ -20,7 +20,7 @@ class Item {
     }
 
     step() {
-        if (game.match.ticks == this.nextCool) {
+        if (game.match.clock > this.nextCool) {
             if (this.reloading) {
                 this.reloading = false;
                 if (this.owner instanceof Player)
@@ -50,8 +50,8 @@ class Pistol extends Item {
         this.reload_done = sounds.reload_done;
         this.projectileSpeed = 20;
         this.range = 400;
-        this.coolDown = 10;
-        this.reloadTime = 60;
+        this.coolDown = 160;
+        this.reloadTime = 960;
         this.nextCool = 0;
         this.reloading = false;
         this.ammo = 12;
@@ -69,13 +69,13 @@ class Pistol extends Item {
 
     use(user, aimX, aimY, aimZ, mode) {
         // Check cooldown
-        if (game.match.ticks > this.nextCool) {
+        if (game.match.clock > this.nextCool) {
             // Stop reloading
             this.reloading = false;
             // Check ammo
             if (this.ammo > 0) {
                 // Set next cooldown
-                this.nextCool = game.match.ticks + this.coolDown;
+                this.nextCool = game.match.clock + this.coolDown;
                 this.ammo--; // consume a bullet
                 this.shootSFX.currentTime = 0;
                 if (!user.muted) this.shootSFX.play(); // play shoot sound
@@ -122,7 +122,7 @@ class Pistol extends Item {
                 if (user.ammo[this.type] > 0 && !this.reloading) {
                     this.reloading = true;    // set reloading to true
                     this.ammo = this.ammoMax;   // reload
-                    this.nextCool = game.match.ticks + this.reloadTime; // set reload time
+                    this.nextCool = game.match.clock + this.reloadTime; // set reload time
                     user.ammo[this.type]--;      // consume a clip from a user
                 }
             }
@@ -151,8 +151,8 @@ class Rifle extends Item {
         this.projectileSpeed = 30;
         this.damage = 40;
         this.range = 600;
-        this.coolDown = 40;
-        this.reloadTime = 180;
+        this.coolDown = 640;
+        this.reloadTime = 2880;
         this.nextCool = 0;
         this.reloading = false;
         this.ammo = 3;
@@ -170,13 +170,13 @@ class Rifle extends Item {
 
     use(user, aimX, aimY, aimZ, mode) {
         // Check cooldown
-        if (game.match.ticks > this.nextCool) {
+        if (game.match.clock > this.nextCool) {
             // Stop reloading
             this.reloading = false;
             // Check ammo
             if (this.ammo > 0) {
                 // Set next cooldown
-                this.nextCool = game.match.ticks + this.coolDown;
+                this.nextCool = game.match.clock + this.coolDown;
                 let xaim = aimX;
                 let yaim = aimY;
                 let zaim = aimZ;
@@ -272,7 +272,7 @@ class Rifle extends Item {
                 if (user.ammo[this.type] > 0 && !this.reloading) {
                     this.reloading = true;    // set reloading to true
                     this.ammo = this.ammoMax;   // reload
-                    this.nextCool = game.match.ticks + this.reloadTime; // set reload time
+                    this.nextCool = game.match.clock + this.reloadTime; // set reload time
                     user.ammo[this.type]--;      // consume a clip from a user
                     if (this.owner instanceof Player)
                         if (!user.muted)
@@ -303,8 +303,8 @@ class Flamer extends Item {
         this.reload_done = sounds.reload_done;
         this.projectileSpeed = 10;
         this.range = 200;
-        this.coolDown = 6;
-        this.reloadTime = 60;
+        this.coolDown = 96;
+        this.reloadTime = 960;
         this.nextCool = 0;
         this.reloading = false;
         this.ammo = 6;
@@ -321,14 +321,14 @@ class Flamer extends Item {
     }
     use(user, aimX, aimY, mode) {
         // Check cooldown
-        if (game.match.ticks > this.nextCool) {
+        if (game.match.clock > this.nextCool) {
             user.parent.controller.buttons.fire.last = 0;
             // Check ammo
             if (this.ammo > 0) {
                 // Stop reloading
                 this.reloading = false;
                 // Set next cooldown
-                this.nextCool = game.match.ticks + this.coolDown;
+                this.nextCool = game.match.clock + this.coolDown;
                 this.ammo--; // consume a bullet
                 this.shootSFX.currentTime = 0;
                 // if (!user.muted) this.shootSFX.play(); // play shoot sound
@@ -378,7 +378,7 @@ class Flamer extends Item {
                 if (user.ammo[this.type] > 0 && !this.reloading) {
                     this.reloading = true;    // set reloading to true
                     this.ammo = this.ammoMax;   // reload
-                    this.nextCool = game.match.ticks + this.reloadTime; // set reload time
+                    this.nextCool = game.match.clock + this.reloadTime; // set reload time
                     user.ammo[this.type]--;      // consume a clip from a user
                     if (this.owner instanceof Player)
                         if (!user.muted)
@@ -410,8 +410,8 @@ class Lance extends Item {
         this.boostSpeed = 15;
         this.hopSpeed = 6;
         this.range = 300;
-        this.coolDown = 120;
-        this.reloadTime = 60;
+        this.coolDown = 1920;
+        this.reloadTime = 960;
         this.nextCool = 0;
         this.reloading = false;
         this.ammo = 4;
@@ -429,13 +429,13 @@ class Lance extends Item {
 
     use(user, aimX, aimY, aimZ, mode) {
         // Check cooldown
-        if (game.match.ticks > this.nextCool) {
+        if (game.match.clock > this.nextCool) {
             // Stop reloading
             this.reloading = false;
             // Check ammo
             if (this.ammo > 0) {
                 // Set next cooldown
-                this.nextCool = game.match.ticks + this.coolDown;
+                this.nextCool = game.match.clock + this.coolDown;
                 this.ammo--; // consume a bullet
                 this.shootSFX.currentTime = 0;
                 if (!user.muted) this.shootSFX.play(); // play shoot sound
@@ -547,7 +547,7 @@ class Lance extends Item {
                 if (user.ammo[this.type] > 0 && !this.reloading) {
                     this.reloading = true;    // set reloading to true
                     this.ammo = this.ammoMax;   // reload
-                    this.nextCool = game.match.ticks + this.reloadTime; // set reload time
+                    this.nextCool = game.match.clock + this.reloadTime; // set reload time
                     user.ammo[this.type]--;      // consume a clip from a user
                 }
             }
@@ -575,7 +575,7 @@ class Sword extends Item {
         this.reload_done = sounds.reload_done;
         this.ppCost = 40;
         this.range = 150;
-        this.coolDown = 10;
+        this.coolDown = 160;
         this.reloadTime = 0;
         this.nextCool = 0;
         this.reloading = false;
@@ -594,14 +594,14 @@ class Sword extends Item {
 
     use(user, aimX, aimY, aimZ, mode) {
         // Check cooldown
-        if (game.match.ticks > this.nextCool) {
+        if (game.match.clock > this.nextCool) {
             // Stop reloading
             this.reloading = false;
             // Check ammo
             if (user.pp >= this.ppCost) {
                 user.pp -= this.ppCost;
                 // Set next cooldown
-                this.nextCool = game.match.ticks + this.coolDown;
+                this.nextCool = game.match.clock + this.coolDown;
                 this.shootSFX.currentTime = 0;
                 if (!user.muted) this.shootSFX.play(); // play shoot sound
                 //find the distance from player to mouse with pythagorean theorem
@@ -731,7 +731,7 @@ class Sword extends Item {
                 if (user.ammo[this.type] > 0 && !this.reloading) {
                     this.reloading = true;    // set reloading to true
                     this.ammo = this.ammoMax;   // reload
-                    this.nextCool = game.match.ticks + this.reloadTime; // set reload time
+                    this.nextCool = game.match.clock + this.reloadTime; // set reload time
                     user.ammo[this.type]--;      // consume a clip from a user
                 }
             }

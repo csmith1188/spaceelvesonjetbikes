@@ -9,6 +9,9 @@ class Match {
 
     setup() {
         this.ticks = -1;
+        this.clock = 0;
+        this.startTime = performance.now();
+        this.sinceStart = 0;
         this.spmp = 'sp' // 'sp' single player, 'ss' split screen, 'mp' multiplayer
         this.paused = false;
         this.map = new Map();
@@ -60,6 +63,8 @@ class Match {
             }
 
             this.ticks++;
+            this.clock = performance.now();
+            this.sinceStart = this.clock - this.startTime;
 
         }
 

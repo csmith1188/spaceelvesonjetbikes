@@ -370,7 +370,7 @@ class GamePad extends Controller {
             else this.buttons.fire.current = 0;
 
             // Select Button reloads window
-            if (gp.buttons[8].pressed) if (game.match.ticks > 180) location.reload();
+            if (gp.buttons[8].pressed) if (game.match.clock > 3000) location.reload();
 
             // Start button pauses game
             if (gp.buttons[9].pressed) this.buttons.start.current = 1;
@@ -520,7 +520,7 @@ class Touch extends Controller {
                     touchLeftFound = true;
 
                     if (distance > this.touch.right.radius)
-                        if (game.match.ticks - this.touch.left.lastBoostTouch <= 10)
+                        if (game.match.clock - this.touch.left.lastBoostTouch <= 160)
                             this.buttons.boost.current = 1;
                     //Normalize, but add a little bonus outside of main ring
                     touchX /= (distance / this.touch.left.radius) * 100;
@@ -569,7 +569,7 @@ class Touch extends Controller {
                 let touchY = touchCoord.y - (game.gameView.h - this.touch.left.pos.y);
                 let distance = Math.sqrt(touchX ** 2 + touchY ** 2);
                 if ((distance > this.touch.left.radius) && (distance < (this.touch.left.radius * 2)))
-                    this.touch.left.lastBoostTouch = game.match.ticks;
+                    this.touch.left.lastBoostTouch = game.match.clock;
             }
 
         }

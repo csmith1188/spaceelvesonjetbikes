@@ -29,6 +29,10 @@ Dark elves believe everything is random:
 
 - Improve FPS
 - Change tick timing to ms timing
+-- Complete on UI and weapons
+-- Need Wave timers
+-- Need debris spawning and removal
+-- All live times
 - fix direction change src bug
 - tiled images in ISO
 - Shoot along z rotation in iso view?
