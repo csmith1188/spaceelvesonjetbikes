@@ -501,21 +501,34 @@ class Tileset {
             let compareY = game.player.camera.y - (y * this.tileSize);
             //For every row
             const cols = this.grid[y].length
+            // Calculate Perspective
+            let perspectiveW = Math.max(1 - ((compareY * (1 - game.player.camera.angle) / game.gameView.h)), 0);
+            let nextCompareY = game.player.camera.y - ((y + 1) * this.tileSize);
+            let diffY = (game.gameView.h / 2 - (nextCompareY * game.player.camera.angle * perspectiveW)) - (game.gameView.h / 2 - (compareY * game.player.camera.angle * perspectiveW))
+            console.log("Row height ", y,": ", diffY , "vs tile height: ", this.tileSize * game.player.camera.angle * perspectiveW);
+            //If the tile is within the camera's viewable radius and the horizon
+            let horizonCalc = (game.gameView.h / 2) * (1 - game.player.camera.angle)
             for (let x = 0; x < cols; x++) {
                 let compareX = game.player.camera.x - (x * this.tileSize);
-                //If the tile is within the camera's viewable radius and the horizon
-                let horizonCalc = (game.gameView.h / 2) * (1 - game.player.camera.angle)
                 if (game.player.camera.radius > Math.abs(compareX) && game.player.camera.radius > Math.abs(compareY) - horizonCalc) {
                     count++;
                     let tileIMG = this.decodeTile(this.grid[y][x]);
-                    let perspectiveW = 1 - ((compareY * (1 -game.player.camera.angle) / game.gameView.h));
+                    
                     ctx.drawImage(
                         tileIMG,
-                        game.gameView.w / 2 - compareX * perspectiveW,
+                        game.gameView.w / 2 - (compareX * perspectiveW),
                         game.gameView.h / 2 - (compareY * game.player.camera.angle),
                         this.tileSize * perspectiveW,
                         this.tileSize * game.player.camera.angle
                     );
+                    // For testing perspective. Copy these coords into the drawImage above to see the difference
+                    // ctx.strokeStyle = "#FF0000";
+                    // ctx.strokeRect(
+                    //     game.gameView.w / 2 - (compareX * perspectiveW),
+                    //     game.gameView.h / 2 - (compareY * game.player.camera.angle * perspectiveW),
+                    //     this.tileSize * perspectiveW,
+                    //     this.tileSize * game.player.camera.angle * perspectiveW
+                    // );
                 }
             }
         }
