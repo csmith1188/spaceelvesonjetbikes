@@ -503,11 +503,16 @@ class Tileset {
             const cols = this.grid[y].length
             // Calculate Perspective
             let perspectiveW = Math.max(1 - ((compareY * (1 - game.player.camera.angle) / game.gameView.h)), 0);
-            let nextCompareY = game.player.camera.y - ((y + 1) * this.tileSize);
-            let diffY = (game.gameView.h / 2 - (nextCompareY * game.player.camera.angle * perspectiveW)) - (game.gameView.h / 2 - (compareY * game.player.camera.angle * perspectiveW))
-            console.log("Row height ", y,": ", diffY , "vs tile height: ", this.tileSize * game.player.camera.angle * perspectiveW);
+
+            // // These next three lines are for debugging perspective
+            // // For some reason, the way I want to do it doesn't match row distance and tile height per row
+            // let nextCompareY = game.player.camera.y - ((y + 1) * this.tileSize);
+            // let diffY = (game.gameView.h / 2 - (nextCompareY * game.player.camera.angle * perspectiveW)) - (game.gameView.h / 2 - (compareY * game.player.camera.angle * perspectiveW))
+            // console.log("Row height ", y,": ", diffY , "vs tile height: ", this.tileSize * game.player.camera.angle * perspectiveW);
+
             //If the tile is within the camera's viewable radius and the horizon
             let horizonCalc = (game.gameView.h / 2) * (1 - game.player.camera.angle)
+
             for (let x = 0; x < cols; x++) {
                 let compareX = game.player.camera.x - (x * this.tileSize);
                 if (game.player.camera.radius > Math.abs(compareX) && game.player.camera.radius > Math.abs(compareY) - horizonCalc) {
