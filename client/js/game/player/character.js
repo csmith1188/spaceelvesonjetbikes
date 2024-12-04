@@ -997,6 +997,24 @@ class Jetbike extends Character {
         this.airAccel = new Vect3(0.15, 0.15, 1);
         this.hover = 16;
     }
+
+    step() {
+        super.step();
+        if (!this.muted && game.player.character == this && this.active) {
+            const combinedSpeed = Math.sqrt(this.speed.x ** 2 + this.speed.y ** 2);
+            this.lastCombinedSpeed = combinedSpeed;
+            const freq = Math.min(Math.floor(combinedSpeed / 0.6), 19);
+            const lastFreq = Math.min(Math.floor(this.lastCombinedSpeed / 0.6), 19);
+            if (freq !== lastFreq) {
+                sounds.prop[lastFreq].pause();
+                sounds.prop[lastFreq].currentTime = 0;
+            }
+            if (sounds.prop[freq].currentTime > (16 * game.deltaTime) / 1000)
+                sounds.prop[freq].currentTime = 0;
+            sounds.prop[freq].volume = 0.2;
+            sounds.prop[freq].play();
+        }
+    }
 }
 
 /*
