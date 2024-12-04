@@ -75,12 +75,12 @@ class Game {
         // The next two lines will always max screen
         this.window.w = window.innerWidth;
         this.window.h = window.innerHeight;
-        this.gameView.w =  Math.min(window.innerWidth, 1920);
-        this.gameView.h =  Math.min(window.innerHeight, 1080);
-        
+        this.gameView.w = Math.min(window.innerWidth, 1920);
+        this.gameView.h = Math.min(window.innerHeight, 1080);
+
         canvas.width = this.gameView.w;
         canvas.height = this.gameView.h;
-        
+
         this.player.camera.radius = Math.sqrt((this.window.w / 2) ** 2 + (this.window.h / 2) ** 2)
 
         this.checkInput();
@@ -162,6 +162,38 @@ class Game {
             this.menus.pause.draw();
 
 
+        // this.scanLines();
+
+
+    }
+
+    scanLines() {
+        // Function to draw CRT interlace effect (scanlines)
+        const lineHeight = 2; // Height of each scanline
+
+        // Determine whether to draw odd or even lines based on the game tick
+        const isOddFrame = game.ticks % 2 === 0;
+
+        ctx.fillStyle = 'rgba(0, 0, 0, 0.5)';
+
+        // Draw solid black lines on either odd or even rows
+        for (let y = isOddFrame ? 0 : lineHeight; y < canvas.height; y += lineHeight * 2) {
+            ctx.fillRect(0, y, canvas.width, lineHeight);
+        }
+
+
+        // Function to add noise
+        const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+        const data = imageData.data;
+
+        for (let i = 0; i < data.length; i += 4) {
+            const noise = Math.random() * 50 - 25; // Add random noise between -25 and 25
+            data[i] += noise;     // Red
+            data[i + 1] += noise; // Green
+            data[i + 2] += noise; // Blue
+        }
+
+        ctx.putImageData(imageData, 0, 0);
     }
 
     checkInput() {
