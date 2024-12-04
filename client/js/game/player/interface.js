@@ -139,12 +139,12 @@ class Interface {
                     ammoBox.x + 20, // left of bar
                     ammoBox.y + 100 // bottom of bar
                     - (Math.min( // the smaller value of
-                        Math.max(item.nextCool - game.match.ticks, 0) / maxTime, // 0 to 1 of cooldown
+                        Math.max(item.nextCool - game.match.clock, 0) / maxTime, // 0 to 1 of cooldown
                         1) // or 1 (if cooldown is greater than 1)
                         * 100), // times the size of the full bar
                     10, // width of bar
                     (Math.min(  // bar is the same height as the distance from top, conviently
-                        Math.max(item.nextCool - game.match.ticks, 0) / maxTime,
+                        Math.max(item.nextCool - game.match.clock, 0) / maxTime,
                         1)
                         * 100) // times the size of the full bar
                 );
@@ -235,9 +235,9 @@ class Interface {
             this.touchButton.inventory1 = new Rect((game.gameView.w / 2) - 150, game.gameView.h - 64, 64, 64);
             this.touchButton.inventory2 = new Rect((game.gameView.w / 2) + 90, game.gameView.h - 64, 64, 64);
             this.touchButton.pause = new Rect(game.gameView.w - 55, 5, 50, 50);
-            if (this.itemChangeTicks > game.match.ticks && this.player.character.inventory[this.player.character.item]) {
+            if (this.itemChangeTicks > game.match.clock && this.player.character.inventory[this.player.character.item]) {
                 // globalAlpha is percentage of time left
-                ctx.globalAlpha = (this.itemChangeTicks - game.match.ticks) / 180;
+                ctx.globalAlpha = (this.itemChangeTicks - game.match.clock) / 1000;
                 // center the text
                 ctx.textAlign = "center";
                 // draw black shadow first
@@ -569,12 +569,12 @@ class Interface_LocalMP extends Interface {
                 hudBox.x + 20, // left of bar
                 hudBox.y + 80 // bottom of bar
                 - (Math.min( // the smaller value of
-                    Math.max(item.nextCool - game.match.ticks, 0) / maxTime, // 0 to 1 of cooldown
+                    Math.max(item.nextCool - game.match.clock, 0) / maxTime, // 0 to 1 of cooldown
                     1) // or 1 (if cooldown is greater than 1)
                     * 60), // times the size of the full bar
                 10, // width of bar
                 (Math.min(  // bar is the same height as the distance from top, conviently
-                    Math.max(item.nextCool - game.match.ticks, 0) / maxTime,
+                    Math.max(item.nextCool - game.match.clock, 0) / maxTime,
                     1)
                     * 60) // times the size of the full bar
             );

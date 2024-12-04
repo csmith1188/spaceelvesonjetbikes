@@ -259,8 +259,8 @@ class Match_ForEver extends Match {
           \___\__,_|_|_|_\___| |_|  |_\___/\__,_\___| |___/\__,_|_||_|_||_\___|_|
 
         */
-        if (game.match.ticks < 240) {
-            let alpha = 1 - (game.match.ticks) / 240;
+        if (game.match.sinceStart < 4000) {
+            let alpha = 1 - (game.match.sinceStart) / 4000;
             //first draw the text in black to create a shadow
             ctx.fillStyle = "rgba(0,0,0," + alpha + ")";
             ctx.font = "30px Jura";

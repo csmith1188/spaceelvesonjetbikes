@@ -217,7 +217,7 @@ class Character {
                     if (this.inventory.length > 0) {
                         this.item = 0;
                         if (this.parent.interface)
-                            this.parent.interface.itemChangeTicks = game.match.ticks + 180;
+                            this.parent.interface.itemChangeTicks = game.match.clock + 1000;
                     }
 
             if (this.controller.buttons.inventory2.current != this.controller.buttons.inventory2.last)
@@ -225,7 +225,7 @@ class Character {
                     if (this.inventory.length > 1) {
                         this.item = 1;
                         if (this.parent.interface)
-                            this.parent.interface.itemChangeTicks = game.match.ticks + 180;
+                            this.parent.interface.itemChangeTicks = game.match.clock + 1000;
                     }
 
             if (this.controller.buttons.throw.current != this.controller.buttons.throw.last) {
@@ -244,7 +244,7 @@ class Character {
                             this.item--;
                         }
                         if (this.parent.interface)
-                            this.parent.interface.itemChangeTicks = game.match.ticks + 180;
+                            this.parent.interface.itemChangeTicks = game.match.clock + 1000;
                     }
                 }
             }
