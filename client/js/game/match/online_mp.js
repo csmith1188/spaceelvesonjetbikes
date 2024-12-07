@@ -84,7 +84,7 @@ class Match_OnlineMP extends Match {
                                 player.id,
                                 new Vect3((this.map.w / 2) - 800, (this.map.h / 2), 0),
                                 this.bots[this.bots.length - 1],
-                                { name: getName(), team: 1, gfx: 'img/sprites/dark2', cleanup: false, color: [0, 0, 255] });
+                                { name: getName(), team: 1, cleanup: false, color: [0, 0, 255] });
                             this.bots[this.bots.length - 1].character.inventory.push(new Pistol());
                             this.bots[this.bots.length - 1].character.controller = new SocketController(this.bots[this.bots.length - 1]);
                         }
@@ -124,7 +124,7 @@ class Match_OnlineMP extends Match {
             game.player.character.id,
             new Vect3(0, 0, 0),
             game.player,
-            { name: 'Cpt. Fabius', gfx: 'img/sprites/jetbike', cleanup: false });
+            { name: 'Cpt. Fabius', cleanup: false });
         game.player.character.inventory.push(new Pistol());
         game.player.camera = new Camera(game.player, { target: game.player.character });
 

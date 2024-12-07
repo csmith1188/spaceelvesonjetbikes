@@ -29,7 +29,7 @@ class Match_ForEver extends Match {
             allID++,
             new Vect3((this.map.w / 2), (this.map.h / 2) + 200),
             game.player,
-            { name: 'Cpt. Fabius', gfx: 'img/sprites/jetbike' });
+            { name: 'Cpt. Fabius' });
         game.player.camera.target = game.player.character
 
         /*
@@ -87,7 +87,7 @@ class Match_ForEver extends Match {
                     {
                         target: game.player.character,
                         // target: this.bots[this.bots.length - 1].character,
-                        name: getName(), team: 1, gfx: 'img/sprites/dark2', color: [0, 0, 255],
+                        name: getName(), team: 1, color: [0, 0, 255],
                     }
                 );
                 let rand = Math.floor(Math.random() * 4);
@@ -178,15 +178,15 @@ class Match_ForEver extends Match {
                 for (let i = 0; i < spawns; i++) {
                     // Friendly
                     this.bots.push(new Bot()) //Big ounce / Loh'Ghan
-                    this.bots[this.bots.length - 1].character = new Character(
+                    this.bots[this.bots.length - 1].character = new Jetbike(
                         allID++,
                         new Vect3((this.map.w / 2), (this.map.h / 2)),
                         this.bots[this.bots.length - 1],
                         {
                             target: null,
                             // target: this.bots[this.bots.length - 1].character,
-                            name: getName(), team: 0, gfx: 'img/sprites/dark1', color: [0, 255, 0],
-                            hover: 16, airAccel: new Vect3(0.15, 0.15, 1),
+                            name: getName(), team: 0, color: [0, 255, 0],
+                            // hover: 16, airAccel: new Vect3(0.15, 0.15, 1),
                             runFunc: [
                                 function () { }.bind(this.bots[this.bots.length - 1].character)
                             ]

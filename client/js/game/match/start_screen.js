@@ -41,7 +41,7 @@ class Start_Screen extends Match {
                 allID++,
                 new Vect3(Math.random() * this.map.w, Math.random() * this.map.h),
                 this.bots[this.bots.length - 1],
-                { name: getName(), team: 1, gfx: 'img/sprites/dark2', color: [0, 0, 255], muted: true }
+                { name: getName(), team: 1, color: [0, 0, 255], muted: true }
             );
             this.bots[this.bots.length - 1].character.inventory.push(new Pistol());
             this.bots.push(new Bot()) //Kevin / Jae'Sin
@@ -49,7 +49,7 @@ class Start_Screen extends Match {
                 allID++,
                 new Vect3(Math.random() * this.map.w, Math.random() * this.map.h),
                 this.bots[this.bots.length - 1],
-                { name: getName(), team: 0, gfx: 'img/sprites/dark1', color: [0, 128, 0], muted: true }
+                { name: getName(), team: 0, color: [0, 128, 0], muted: true }
             );
             this.bots[this.bots.length - 1].character.inventory.push(new Pistol());
         }
@@ -72,7 +72,7 @@ class Start_Screen extends Match {
                 allID++,
                 new Vect3(Math.random() * this.map.w, Math.random() * this.map.h),
                 this.bots[this.bots.length - 1],
-                { name: getName(), team: 1, gfx: 'img/sprites/dark2', color: [0, 0, 255], muted: true }
+                { name: getName(), team: 1, color: [0, 0, 255], muted: true }
             );
             this.bots[this.bots.length - 1].character.inventory.push(new Pistol());
         }
@@ -83,7 +83,7 @@ class Start_Screen extends Match {
                 allID++,
                 new Vect3(Math.random() * this.map.w, Math.random() * this.map.h),
                 this.bots[this.bots.length - 1],
-                { name: getName(), team: 0, gfx: 'img/sprites/dark1', color: [0, 0, 255], muted: true }
+                { name: getName(), team: 0, color: [0, 0, 255], muted: true }
             );
             this.bots[this.bots.length - 1].character.inventory.push(new Pistol());
         }

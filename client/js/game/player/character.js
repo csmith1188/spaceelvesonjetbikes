@@ -90,7 +90,7 @@ class Character {
                        |_|
         */
         this.img = new Image();
-        this.gfx = 'img/sprites/lilguy';
+        this.img.src = 'img/sprites/lilguy.png';
         this.color = [255, 0, 0];
         this.faceCamera = true;
         this.shadow = new Image();
@@ -98,6 +98,11 @@ class Character {
         this.shadowDraw = true;
         this.deathSFX = sounds.death;
         this.muted = false;
+        this.pageSize = 32;
+        this.page = { x: 0, y: 0 };
+        this.spriteOffset = { x: 0, y: 0 };
+
+        this.runFunc = [];
 
         /*
             ___       _   _
@@ -110,9 +115,6 @@ class Character {
             for (var key of Object.keys(options)) {
                 this[key] = options[key];
             }
-        this.leftgfx = this.gfx + '_l'; // Set this after options so you only have to set gfx
-        this.img.src = this.gfx + '.png'
-        this.runFunc = [];
     }
 
     /*
@@ -577,9 +579,43 @@ class Character {
              | .__/_\__|_\_\ \__, |_| \__,_| .__/_||_|_\__|
              |_|             |___/         |_|
             */
-            if (this.mom.x < 0) this.img.src = this.leftgfx + '.png'
-            if (this.mom.x > 0) this.img.src = this.gfx + '.png'
+            // get the ratio of momentum directions
+            let xRatio = this.mom.x / this.mom.y;
+            let yRatio = this.mom.y / this.mom.x;
 
+            if (Math.abs(xRatio) > Math.abs(yRatio)) {
+                if (xRatio > 0) {
+                    // direction = 'right';
+                    this.page = { x: this.pageSize * 2, y: this.pageSize * 0 }
+                } else {
+                    // direction = 'left';
+                    this.page = { x: this.pageSize * 2, y: this.pageSize * 1 }
+                }
+            } else {
+                if (yRatio > 0) {
+                    // direction = 'down';
+                    this.page = { x: this.pageSize * 0, y: this.pageSize * 0 }
+                } else {
+                    // direction = 'up';
+                    this.page = { x: this.pageSize * 0, y: this.pageSize * 1 }
+                }
+            }
+
+            if (Math.abs(xRatio) > 0.5 && Math.abs(yRatio) > 0.5) {
+                if (this.mom.x > 0 && this.mom.y > 0) {
+                    // direction = 'down-right';
+                    this.page = { x: this.pageSize * 1, y: this.pageSize * 0 }
+                } else if (this.mom.x > 0 && this.mom.y < 0) {
+                    // direction = 'up-right';
+                    this.page = { x: this.pageSize * 3, y: this.pageSize * 0 }
+                } else if (this.mom.x < 0 && this.mom.y > 0) {
+                    // direction = 'down-left';
+                    this.page = { x: this.pageSize * 3, y: this.pageSize * 1 }
+                } else if (this.mom.x < 0 && this.mom.y < 0) {
+                    // direction = 'up-left';
+                    this.page = { x: this.pageSize * 1, y: this.pageSize * 1 }
+                }
+            }
 
             let compareX = game.player.camera.x - this.HB.pos.x;
             let compareY = game.player.camera.y - this.HB.pos.y;
@@ -705,9 +741,11 @@ class Character {
                 */
                 ctx.drawImage(
                     this.img,
-                    game.gameView.w / 2 - compareX - this.HB.radius,
-                    game.gameView.h / 2 - compareY - this.HB.height - this.HB.pos.z - sineAnimate(1, 0.1),
-                    this.HB.radius * 2, this.HB.height
+                    this.page.x, this.page.y,
+                    this.pageSize, this.pageSize,
+                    this.spriteOffset.x + game.gameView.w / 2 - compareX - this.HB.radius,
+                    this.spriteOffset.y + game.gameView.h / 2 - compareY - this.HB.height - this.HB.pos.z - sineAnimate(1, 0.1),
+                    this.spriteOffset.w + this.HB.radius * 2, this.spriteOffset.h + this.HB.height
                 );
                 if (game.debug.all) {
                     ctx.fillStyle = "#FF0000";
@@ -993,9 +1031,25 @@ class Character {
 class Jetbike extends Character {
     constructor(id, spawnVect, parent, options) {
         super(id, spawnVect, parent, options);
-        this.HB = new Cylinder(new Vect3(spawnVect.x, spawnVect.y, spawnVect.z), 29, 37);
+        this.HB = new Cylinder(new Vect3(spawnVect.x, spawnVect.y, spawnVect.z), 32, 32);
         this.airAccel = new Vect3(0.15, 0.15, 1);
         this.hover = 16;
+        this.img = new Image();
+        this.img.src = 'img/sprites/test_sheet.png';
+        this.pageSize = 270;
+        this.page = { x: 0, y: 0 };
+        this.spriteOffset = {x: -16, y: -16, w: 32, h: 32};
+        /*
+          ___       _   _
+         / _ \ _ __| |_(_)___ _ _  ___
+        | (_) | '_ \  _| / _ \ ' \(_-<
+         \___/| .__/\__|_\___/_||_/__/
+              |_|
+        */
+        if (typeof options === 'object')
+            for (var key of Object.keys(options)) {
+                this[key] = options[key];
+            }
     }
 
     step() {

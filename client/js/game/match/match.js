@@ -109,7 +109,7 @@ class Match {
                     {
                         // target: null,
                         target: this.bots[this.bots.length - 1].character,
-                        name: getName(), team: 0, gfx: 'img/sprites/dark1', color: [0, 255, 0],
+                        name: getName(), team: 0, color: [0, 255, 0],
                         hover: 16, airAccel: new Vect3(0.15, 0.15, 1),
                         runFunc: [
                             function () { }.bind(this.bots[this.bots.length - 1].character)
@@ -171,7 +171,7 @@ class DebugMatch extends Match {
             allID++,
             new Vect3((this.map.w / 2), (this.map.h / 2), 0),
             game.player,
-            { name: 'Cpt. Fabius', gfx: 'img/sprites/jetbike' });
+            { name: 'Cpt. Fabius' });
         game.player.camera.target = game.player.character;
         for (let i = 0; i < 5; i++) {
             this.map.blocks.push(new Ammo_Ballistic(
@@ -196,7 +196,7 @@ class DebugMatch extends Match {
         //     allID++,
         //     new Vect3((this.map.w / 2) - 1000, (this.map.h / 2) - 1000, 0),
         //     this.bots[this.bots.length - 1],
-        //     { name: getName(), team: 1, gfx: 'img/sprites/dark2', color: [0, 0, 255] }
+        //     { name: getName(), team: 1, color: [0, 0, 255] }
         // );
         // // add a pistol to the last bot's character's inventory
         // this.bots[this.bots.length - 1].character.inventory.push(new Pistol())

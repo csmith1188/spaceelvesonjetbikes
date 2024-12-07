@@ -65,12 +65,10 @@ class Bot {
                     if (compareX > 0) { // If the target is to the right, move right
                         this.controller.buttons.moveLeft.current = 0; // Reset left movement
                         this.controller.buttons.moveRight.current = directX; // Move right
-                        this.character.img.src = this.character.gfx + '.png'; // Face right
                     }
                     else if (compareX <= 0) { // If the target is to the left, move left
                         this.controller.buttons.moveRight.current = 0; // Reset right movement
                         this.controller.buttons.moveLeft.current = directX; // Move left
-                        this.character.img.src = this.character.leftgfx + '.png'; // Face left
                     } else { // Otherwise, reset horizontal movement
                         this.controller.buttons.moveLeft.current = this.controller.buttons.moveRight.current = 0; // Reset horizontal movement
                     }
